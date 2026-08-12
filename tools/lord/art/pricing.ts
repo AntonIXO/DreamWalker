@@ -72,6 +72,69 @@ export const MEASURED: Record<string, PriceNote> = {
   "rd_fast__game_asset@320x176": { usd: 0.026, flat: false },
 };
 
+/**
+ * The canvas edit tools, from `GET /v1/edit/tools` on 2026-08-12.
+ *
+ * This matters more than it looks: **the entire ingestion chain is free**. Downscaling a
+ * 48px sprite to the atlas grid, locking it to the dream's palette and snapping it back
+ * onto whole pixels all cost nothing, so every acceptance check in §5 of
+ * `prompts-pixelart.md` — «проверять скриптом, не глазом» — can run on every asset,
+ * every time, without touching the balance. All the budget risk is in generation.
+ *
+ * Call `client.editTools()` rather than trusting this copy; it is here so a plan can be
+ * costed offline and so a tool quietly becoming paid shows up as a diff.
+ */
+export const EDIT_TOOLS: Record<string, PriceNote> = {
+  k_centroid_downscale: {
+    usd: 0,
+    flat: true,
+    note: "input_image,width,height — 48px sprite frames to the atlas grid",
+  },
+  palette_converter: {
+    usd: 0,
+    flat: true,
+    note: "input_image,input_palette,dither_mode,dither_strength — the palette lock",
+  },
+  pixel_correction: {
+    usd: 0,
+    flat: true,
+    note: "input_image — snaps to the pixel grid",
+  },
+  color_reducer: {
+    usd: 0,
+    flat: true,
+    note: "input_image,color_count,dither_mode,dither_strength",
+  },
+  rotate: { usd: 0, flat: true, note: "input_image,rotation_degrees" },
+  background_remover: { usd: 0.01, flat: true },
+  color_style_transfer: { usd: 0.01, flat: true },
+  image_edit: { usd: 0.18, flat: true },
+  inpainting: { usd: 0.18, flat: true },
+  outpainting: { usd: 0.18, flat: true },
+  seam_tiling: { usd: 0.18, flat: true },
+};
+
+/**
+ * How to make one character's portrait and sprite look like the same person.
+ *
+ * The problem `prompts-pixelart.md` §0 is about: four portrait states generated
+ * independently come back as four different people. Its answer is reference images,
+ * which are RD Pro only at $0.18 each.
+ *
+ * `input_image` + `strength` does the same conditioning on any model, and RD's own
+ * `03_img2img.py` documents it — raw base64, no data URI, RGB without transparency,
+ * and never send a `model` field because the model comes from `prompt_style`. So the
+ * cheap chain is:
+ *
+ *   1. one walk sheet            $0.07   four angles of the character
+ *   2. its south-facing frame  → input_image for the neutral portrait
+ *   3. the curated portrait    → input_image for the other three states
+ *
+ * The sprite and the face are then tied to the same source rather than to the same
+ * adjectives, for $0.07 + 4 × $0.033 = $0.20 a character instead of $1.26 at RD Pro.
+ */
+export const CONSISTENCY_STRENGTH = 0.45;
+
 /** RD's published formulas, for a size that was never measured directly. */
 export function estimateLocally(
   style: string,

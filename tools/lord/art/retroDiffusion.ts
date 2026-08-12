@@ -100,6 +100,24 @@ interface AsyncResponse {
   request_id: string;
 }
 
+export interface TaskSummary {
+  task_id: string;
+  status: "pending" | "running" | "succeeded" | "failed";
+  created_at: string;
+  result?: RetroInferenceResult;
+  error?: unknown;
+}
+
+export interface EditToolInfo {
+  id: string;
+  balance_cost: number;
+  credit_cost: number;
+  is_free: boolean;
+  max_input_size?: number;
+  /** API clients use these; the older `fields` describes the web canvas UI. */
+  api_fields?: Array<{ name?: string }>;
+}
+
 interface TaskResponse {
   status: "pending" | "running" | "succeeded" | "failed";
   result?: RetroInferenceResult;
@@ -301,9 +319,35 @@ export class RetroDiffusionClient {
     );
   }
 
-  /** Recent jobs, for recovering a submission whose response was lost. */
-  listTasks(limit = 20): Promise<{ tasks?: Array<Record<string, unknown>> }> {
-    return this.request(`/inferences/tasks?limit=${limit}`);
+  /**
+   * Recent async jobs, newest first — the recovery path for a lost submission.
+   *
+   * RD's own `11_recover_async_tasks.py` is explicit about why this exists: if the
+   * response carrying the `task_id` never arrives, the job was still accepted **and
+   * charged**, so resubmitting pays twice. Find it here instead.
+   */
+  async listTasks(
+    limit = 20,
+    status?: "pending" | "running" | "succeeded" | "failed",
+  ): Promise<TaskSummary[]> {
+    const clamped = Math.max(1, Math.min(limit, 100));
+    const query = new URLSearchParams({ limit: String(clamped) });
+    if (status) query.set("status", status);
+    const body = await this.request<{ tasks?: TaskSummary[] }>(
+      `/inferences/tasks?${query}`,
+    );
+    return body.tasks ?? [];
+  }
+
+  /**
+   * The canvas edit tools, with live pricing. No key required.
+   *
+   * Worth calling rather than hardcoding: it is the authority on which tools are free,
+   * and the whole ingestion chain this project depends on — downscale, palette lock,
+   * pixel correction — is free only because that catalogue says so.
+   */
+  editTools(): Promise<EditToolInfo[]> {
+    return this.request("/edit/tools");
   }
 
   async poll(
