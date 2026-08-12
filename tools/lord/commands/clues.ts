@@ -63,7 +63,16 @@ export async function cluesCommand(
     Math.min(pro ? 4 : 16, Number(flags.candidates ?? (pro ? 4 : 2))),
   );
   const detailSize = pro ? 128 : 96;
-  await client.assertAvailableStyle(style);
+  // Validated against the live catalogue rather than a model whitelist, so a bad size
+  // or batch is a local error instead of a paid one.
+  await client.assertRequest({
+    prompt: "",
+    prompt_style: style,
+    width: detailSize,
+    height: detailSize,
+    num_images: candidateCount,
+    seed: 0,
+  });
 
   heading(`Retro clues — ${draft.title}`);
   const selectedClues = flags.clue

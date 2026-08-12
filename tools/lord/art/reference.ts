@@ -36,7 +36,7 @@ import type { StyleProfile } from "../../../src/shared/art/style";
 // PNG decode — the mirror of `png.ts`
 // ---------------------------------------------------------------------------
 
-interface DecodedImage {
+export interface DecodedImage {
   width: number;
   height: number;
   /** RGBA, four bytes per pixel. */
