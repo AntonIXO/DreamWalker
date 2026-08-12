@@ -9,6 +9,7 @@ import type {
 } from "../shared/ai";
 import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
+import { normaliseAnthropicBaseURL } from "./config";
 
 const root = process.cwd();
 const port = Number(process.env.DREAMWALKER_API_PORT ?? 8080);
@@ -17,7 +18,10 @@ const codexPath = process.env.DREAMWALKER_CODEX_PATH ?? "codex";
 const codexHome = resolve(
   process.env.DREAMWALKER_CODEX_HOME ?? `${root}/.dreamwalker/codex-home`,
 );
-const anthropicBaseURL = process.env.ANTHROPIC_BASE_URL?.trim();
+const configuredAnthropicBaseURL = process.env.ANTHROPIC_BASE_URL?.trim();
+const anthropicBaseURL = configuredAnthropicBaseURL
+  ? normaliseAnthropicBaseURL(configuredAnthropicBaseURL)
+  : undefined;
 const anthropicAuthToken = process.env.ANTHROPIC_AUTH_TOKEN?.trim();
 const anthropicModel = process.env.ANTHROPIC_MODEL?.trim();
 const anthropic =
@@ -88,20 +92,32 @@ function streaming<T>(
   run: (emitPartial: (reply: string) => void) => Promise<T>,
 ): Response {
   const encoder = new TextEncoder();
+  let open = true;
   const body = new ReadableStream<Uint8Array>({
     start(controller) {
-      let open = true;
       const send = (event: AiStreamEvent<T>) => {
         if (!open) return;
-        controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
+        try {
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
+        } catch {
+          open = false;
+        }
       };
       void run((reply) => send({ type: "partial", reply }))
         .then((value) => send({ type: "result", value }))
         .catch((error) => send(errorEvent(error)))
         .finally(() => {
+          if (!open) return;
           open = false;
-          controller.close();
+          try {
+            controller.close();
+          } catch {
+            // The client or Bun's HTTP layer may already have closed the body.
+          }
         });
+    },
+    cancel() {
+      open = false;
     },
   });
   return new Response(body, {
@@ -136,7 +152,10 @@ function accountError(error: unknown): Response {
   );
 }
 
-async function api(request: Request, pathname: string): Promise<Response | null> {
+async function api(
+  request: Request,
+  pathname: string,
+): Promise<Response | null> {
   if (pathname === "/api/health" && request.method === "GET") {
     return json({
       ok: true,
@@ -146,7 +165,8 @@ async function api(request: Request, pathname: string): Promise<Response | null>
   }
 
   if (pathname === "/api/codex/account" && request.method === "GET") {
-    if (agents.providerMode === "anthropic") return json(agents.connectionStatus());
+    if (agents.providerMode === "anthropic")
+      return json(agents.connectionStatus());
     const snapshot = account.snapshot();
     return json(
       snapshot.state === "connected" || snapshot.state === "incompatible"
@@ -196,17 +216,19 @@ async function api(request: Request, pathname: string): Promise<Response | null>
   }
 
   if (pathname === "/api/ai/dialogue" && request.method === "POST") {
-    return aiRoute<DialogueRequestPayload, Awaited<ReturnType<typeof agents.dialogue>>>(
-      request,
-      (payload, signal, emit) => agents.dialogue(payload, signal, emit),
+    return aiRoute<
+      DialogueRequestPayload,
+      Awaited<ReturnType<typeof agents.dialogue>>
+    >(request, (payload, signal, emit) =>
+      agents.dialogue(payload, signal, emit),
     );
   }
 
   if (pathname === "/api/ai/examine" && request.method === "POST") {
-    return aiRoute<ExamineRequestPayload, Awaited<ReturnType<typeof agents.examine>>>(
-      request,
-      (payload, signal) => agents.examine(payload, signal),
-    );
+    return aiRoute<
+      ExamineRequestPayload,
+      Awaited<ReturnType<typeof agents.examine>>
+    >(request, (payload, signal) => agents.examine(payload, signal));
   }
 
   if (pathname === "/api/ai/cycle-exit" && request.method === "POST") {
@@ -217,10 +239,10 @@ async function api(request: Request, pathname: string): Promise<Response | null>
   }
 
   if (pathname === "/api/ai/finale" && request.method === "POST") {
-    return aiRoute<FinaleRequestPayload, Awaited<ReturnType<typeof agents.judge>>>(
-      request,
-      (payload, signal) => agents.judge(payload, signal),
-    );
+    return aiRoute<
+      FinaleRequestPayload,
+      Awaited<ReturnType<typeof agents.judge>>
+    >(request, (payload, signal) => agents.judge(payload, signal));
   }
 
   if (pathname.startsWith("/api/")) return json({ error: "not found" }, 404);
@@ -244,6 +266,7 @@ async function staticFile(pathname: string): Promise<Response> {
 
 const server = Bun.serve({
   port,
+  idleTimeout: 180,
   async fetch(request) {
     const url = new URL(request.url);
     const response = await api(request, url.pathname);

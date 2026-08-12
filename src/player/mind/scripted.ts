@@ -17,12 +17,22 @@
 
 import { NodeType } from "../../shared/dream";
 import { makeRng } from "../../shared/rng";
-import type { CycleExitResult, ExamineResult, FinaleResult } from "../../shared/ai";
+import type {
+  CycleExitResult,
+  ExamineResult,
+  FinaleResult,
+} from "../../shared/ai";
 import { TERRAIN_NAMES } from "../../shared/map-patch";
 import type { MapPatch } from "../game/patch";
 import type { WorldState } from "../game/world";
 import type { Observation } from "./observation";
-import type { DreamMind, ExamineRequest, Tell, TurnRequest, TurnResponse } from "./types";
+import type {
+  DreamMind,
+  ExamineRequest,
+  Tell,
+  TurnRequest,
+  TurnResponse,
+} from "./types";
 
 /**
  * Words that make a question direct. §3's trade: precision buys information and costs
@@ -285,7 +295,7 @@ export class ScriptedMind implements DreamMind {
     return { patches, sleeperSummary: "Сон запомнил маршрут санитара." };
   }
 
-  async judge(_diagnosis: string): Promise<FinaleResult> {
+  async judge(): Promise<FinaleResult> {
     return {
       verdict: "miss",
       reply: "Без подключённого разума сон не решается вынести приговор.",

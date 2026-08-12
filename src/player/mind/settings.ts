@@ -68,6 +68,7 @@ export function describeMind(settings: MindSettings): string {
     return `${settings.model} · ${settings.effort} · ${settings.provider}`;
   }
   if (settings.state === "authorizing") return "ожидает подтверждения";
-  if (settings.state === "incompatible") return settings.message ?? "модель недоступна";
+  if (settings.state === "incompatible")
+    return settings.message ?? "модель недоступна";
   return "сон отвечает сам, без модели";
 }

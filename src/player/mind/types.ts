@@ -24,9 +24,9 @@ import type {
 import type { Observation } from "./observation";
 
 /**
- * §2 — the one immutable line, written by the Lord before play. The player never gets
- * the plaintext and neither does the runtime: only the hash ships, so a finale judge can
- * check an answer without the answer having been sitting in the browser all along.
+ * §2 — the one immutable line, written by the Lord before play. The browser never gets
+ * the plaintext: only the hash ships in the artifact. The server-side finale judge is the
+ * sole runtime component allowed to load the sealed local file.
  */
 export interface SealedSecret {
   hash: string;

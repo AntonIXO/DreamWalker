@@ -6,8 +6,9 @@
  * rhythm rather than a punishment, and a dream that repeats is clinically the right
  * thing for a mind circling a trauma.
  *
- * What survives a reset: the journal. What does not: the world, the figures, where the
- * hooks ended up, and everything the sleeper worked out about you.
+ * What survives a reset: the journal, the sanitar's remaining memories, and the sleeper's
+ * compact model of the intruder. What does not: the world, figure conversations, and
+ * where the hooks ended up.
  */
 
 import type { DreamArtifact } from "../../shared/dream";
@@ -110,6 +111,12 @@ export class Cycle {
   restart(): void {
     this.index++;
     this.remainingMs = this.artifact.cycle.durationMs;
+  }
+
+  /** §4: burn one irreplaceable memory to buy two more minutes in this cycle. */
+  extend(milliseconds: number): void {
+    if (!Number.isFinite(milliseconds) || milliseconds <= 0) return;
+    this.remainingMs += milliseconds;
   }
 }
 

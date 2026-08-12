@@ -146,7 +146,7 @@ export class DebugOverlay {
       ["doors", `${this.world.doors.length}, ${sealed} sealed`],
       ["hooks held", `${held}/${this.world.artifact.shards.length}`],
       ["visited", `${this.world.visited.size}/${this.world.rooms.length}`],
-      ["next beat", `${this.heartbeat.secondsUntilNextBeat.toFixed(0)}s`],
+      ["mind wakes", "cycle exit"],
       ["beat budget", String(this.heartbeat.budgetRemaining)],
       ["key/lock ok", worst],
     ];

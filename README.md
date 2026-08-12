@@ -6,20 +6,21 @@ secret. The sleeper does not want it found — and **knows you are there**.
 Design document: [`dream-walker-concept.md`](dream-walker-concept.md). Section numbers
 throughout the code refer to it.
 
-This repository is the **technical foundation**: the world editor, the artifact format,
-the player, and the heartbeat. There is no AI in it yet — every place a model will go has
-a typed seam and an offline stand-in, so the whole thing runs and is tunable today.
+This repository contains the world editor, artifact format, PixiJS player, and the live
+sleeping mind. The mind runs through AI SDK 6 with a deterministic `ScriptedMind`
+fallback, so the game remains playable when inference is unavailable.
 
 ## Two programs
 
 The concept's structure is not one app but two, and they meet at a file on disk.
 
-**`lord` — the world editor.** The Lord is a *person*, not a seed (§2, §7.4). They write
+**`lord` — the world editor.** The Lord is a _person_, not a seed (§2, §7.4). They write
 and seal the secret, curate a starting layout, choose the art, place the figures, and bake
 a dream artifact. Runs offline, on the author's machine, once.
 
-**The player — the web game.** Loads one artifact and plays it. It generates nothing. One
-server, one dream, one secret, one playthrough (§8).
+**The player and game server.** The browser loads one immutable artifact; the Bun server
+owns inference, OAuth state, and the plaintext secret used only by the finale judge. The
+model generates dialogue and closed `MapPatch` objects, never a replacement artifact.
 
 ```
 bun install
@@ -33,14 +34,16 @@ bun run lord build first-room    # validate and publish the artifact
 bun run lord play first-room     # build, then serve it at localhost:8080
 ```
 
+For normal development, run `bun run dev`. It starts Vite on `:8080` and the Bun API on
+`:8081`. Run `bun run build && bun run start` for the production server.
+
 `bun run lord status` shows what is done and what is not. Every command also takes flags
 (`--title`, `--seed`, `--yes`, …) so the whole flow scripts without a human.
 
 ### Playing
 
-`WASD`/arrows to walk, `E` to speak or examine, `Esc` to step away, `H` for the controls,
-`F1` for the debug overlay, and alongside it `B` to force a heartbeat and `K` to grant
-every key.
+`WASD`/arrows to walk, `E` to speak or examine, `M` to spend a memory for two minutes,
+`Esc` to step away, and `H` for controls. `F1`, `B`, and `K` are debug controls.
 
 ## What is where
 
@@ -52,6 +55,7 @@ tools/lord/        the CLI. worldgen/ is the map generator, art/ the tile pipeli
                    term/ the terminal UI including the truecolor pixel preview.
 src/shared/        the artifact format and tile vocabulary, read by both sides.
 src/player/        the web game: render/, game/, ui/, mind/.
+src/server/        OAuth/account RPC, AI agents, API, and static production server.
 ```
 
 ## How the world is made
@@ -63,9 +67,9 @@ do it). A mission graph is grown from `start → end` by grammar rules — `addK
 `addPuzzle`, `addLever`, `makeLink` and friends — within budgets set in
 `tools/lord/worldgen/recipe.ts`, then laid onto a lattice and routed with A*.
 
-Node types are read in the dream's own terms: a *key* is leverage somebody holds, a *lock*
-is a threshold the dream refuses you, a *puzzle* is something only the world will give up,
-a *lever* is a way round the sleeper forgot to close.
+Node types are read in the dream's own terms: a _key_ is leverage somebody holds, a _lock_
+is a threshold the dream refuses you, a _puzzle_ is something only the world will give up,
+a _lever_ is a way round the sleeper forgot to close.
 
 Every rule application is validated and rolled back if it would make the dream
 unsolvable, so what the Lord is offered is always crossable. There is no solver beyond
@@ -73,19 +77,15 @@ that, on purpose (§2): the person at the keyboard decides whether a map is any 
 
 ## The heartbeat
 
-A timer wakes the sleeping mind while you are inside the dream and lets it change things
-(§5, §6). Two rules keep that from being noise:
+The sleeping mind plans its defence when a cycle ends (§5, §6), not on a wall-clock
+interval. The outgoing cycle is summarized for the model, the artifact is restored in
+place, and the returned patch plan is applied to the fresh cycle. Figures forget their
+conversation; the sanitar's journal and the sleeper's compact understanding persist.
 
-- **It never patches the room you are standing in.** Ground that moves under your feet
-  reads as a bug; ground that moved while you were away reads as a threat.
-- **Every change goes through `applyPatch`,** which enforces the invariant §6 sets out:
-  *the world always leaves a path, but never a cheaper one than the one it destroyed.*
-  Sealing a route that would strand a room is refused, with a reason you can read in the
-  debug log. In the sample dream, 3 of 20 doors are sealable — exactly its redundant
-  loops.
-
-Cycles are Majora's: the timer runs out, the dream restarts from the artifact, the figures
-forget, and the journal in `localStorage` does not.
+Every model change is a typed `MapPatch`. The server discards unknown ids, caps the plan,
+and the heartbeat refuses visible geometry. `applyPatch` owns all tile writes and keeps
+the world structurally coherent, but deliberately does not run a solvability solver: a
+defending dream is allowed to make a later cycle impossible, as §6 specifies.
 
 ## Art
 
@@ -104,40 +104,62 @@ Today the candidates are drawn procedurally by
 `tools/lord/art/candidates.ts`. Swapping in Retro Diffusion replaces the body of one
 function and nothing else; it is author-time only, never runtime.
 
-## The seams where AI goes
+## AI runtime
 
-`src/player/mind/types.ts` is the contract:
+`src/server/agent-runtime.ts` contains four schema-validated agents:
 
-- `turn()` — a figure answers you, and lets slip that it noticed something specific about
-  *how* you asked. A tell is never a meter; it quotes your own words back (§3).
-- `mutate()` — the heartbeat's entry point.
+- dialogue streams a figure's answer, may yield only that figure's shard, and enforces
+  that every tell quotes an exact substring of the player's current words;
+- examine is the safe, slow channel — things do not suspect;
+- cycle exit compresses sleeper memory and proposes only the closed patch vocabulary;
+- finale compares the player's diagnosis with the sealed line by meaning. It is the only
+  agent that sees plaintext, and the server reveals it only after `match`.
 
-`ScriptedMind` implements all of it offline and deterministically. Its `mutate` is real:
-lean on a door and it gets sealed, keep visiting a figure and they are gone next time. So
-the heartbeat is playable and tunable before a single model call exists.
+`RemoteMind` keeps bounded per-figure transcripts, persistent discovered shards, sleeper
+tells, and exactly three irreplaceable player memories. A memory can be offered in a
+conversation or burned with `M` for `+2:00`. Any failed call falls back per action to
+`ScriptedMind`; the Pixi ticker keeps rendering while only simulation is paused.
 
-The §3 fork is already demonstrable in the sample dream. Ask *"что случилось в
-котельной"* and you are given a hook **and** challenged about the word you used; ask
-*"наверное тут просто тихо"* and you are safe and learn nothing.
+### Codex OAuth (default)
+
+Install the official `codex` CLI, start the game, and choose “Подключить ChatGPT”. The
+server asks `codex app-server` for a device code; the player opens the verification URL
+and authorizes it. Inference then runs through `ai-sdk-provider-codex-app-server` using
+`gpt-5.6-luna`, `xhigh`, stateless threads, read-only sandbox, and the user's Codex plan
+limits. No OpenAI API key is requested or stored by the game.
+
+OAuth state lives under `.dreamwalker/codex-home` by default. Override the executable or
+state directory with `DREAMWALKER_CODEX_PATH` and `DREAMWALKER_CODEX_HOME`.
+
+### Anthropic Messages-compatible provider
+
+Set all three variables to bypass Codex OAuth:
+
+```bash
+ANTHROPIC_BASE_URL=http://proxy.example/anthropic \
+ANTHROPIC_AUTH_TOKEN=... \
+ANTHROPIC_MODEL=your-model \
+bun run start
+```
+
+The server normalizes the base URL to `/v1`, sends the token as bearer auth, and accepts
+JSON-in-text compatibility responses while still validating every result with Zod. The
+token remains server-side and is never bundled by Vite.
 
 ## Status
 
-Working: the Lord CLI end to end, the artifact format and its validator, mission-graph and
-space generation, the indexed-PNG art pipeline with terminal curation, the player
-(tilemap, room-snap camera, walking character, collision, door gating), the patch system
-and its invariant, the heartbeat, cycles and the journal, the dialogue panel, the debug
-overlay.
+Working: the Lord CLI end to end, artifact validator, world generation, indexed-PNG art
+pipeline, PixiJS player, typed runtime patches, AI dialogue/examination/cycle/finale,
+Codex device OAuth, an Anthropic-compatible provider, persistent memory economy, journal,
+and deterministic offline fallback.
 
-Not built, by design: Retro Diffusion calls, any model inference, Codex OAuth, the memory
-economy, federation, and the finale judge.
+Not built: Retro Diffusion calls and multi-server dream federation (§8).
 
-## Notes for later
+## Verification
 
-- The browser-hostable path for ChatGPT/Codex auth is the **device-code** flow, not the
-  loopback redirect — a hosted server cannot claim `http://localhost:<port>/auth/callback`.
-  Worth stating once: the Codex CLI's `client_id` is the CLI's, and routing a game's
-  inference through it is very likely outside OpenAI's terms. The seam is therefore
-  provider-shaped, and a plain BYOK key is the other implementation.
-- Never give the Retro Diffusion key a `VITE_` prefix. Vite inlines `VITE_*` into the
-  client bundle, which would publish it to every player. It is a CLI-side variable; see
-  `.env.example`.
+`bun test` covers provider URL normalization, cycle extension, persistent/spent memory,
+and patch/reset behavior. `bun run build` performs the full typecheck and Vite build;
+`bun run lint` includes Prettier enforcement.
+
+Never give a runtime credential a `VITE_` prefix. Vite inlines `VITE_*` into the client
+bundle. See `.env.example` for the server-only variables.

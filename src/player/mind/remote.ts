@@ -69,7 +69,8 @@ async function streamRequest<T>(
     body: JSON.stringify(payload),
     signal,
   });
-  if (!response.body) throw new RemoteMindError("internal", "Сон не вернул поток.");
+  if (!response.body)
+    throw new RemoteMindError("internal", "Сон не вернул поток.");
 
   const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
   let pending = "";
@@ -139,8 +140,10 @@ export class RemoteMind implements DreamMind {
   }
 
   private failed(error: unknown): boolean {
-    if (error instanceof DOMException && error.name === "AbortError") return false;
-    if (error instanceof RemoteMindError && error.code === "aborted") return false;
+    if (error instanceof DOMException && error.name === "AbortError")
+      return false;
+    if (error instanceof RemoteMindError && error.code === "aborted")
+      return false;
     this.failures++;
     console.warn("[mind] remote call fell back to ScriptedMind:", error);
     return true;
@@ -176,10 +179,7 @@ export class RemoteMind implements DreamMind {
         { speaker: "sanitar", text: request.utterance },
         { speaker: "figure", text: result.reply },
       );
-      this.transcripts.set(
-        request.figureId,
-        history.slice(-TRANSCRIPT_LINES),
-      );
+      this.transcripts.set(request.figureId, history.slice(-TRANSCRIPT_LINES));
       if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
       if (result.tell) {
         this.memory.addTell(
@@ -211,11 +211,9 @@ export class RemoteMind implements DreamMind {
       world: snapshot(this.world),
     };
     try {
-      const result = await streamRequest<Awaited<ReturnType<DreamMind["examine"]>>>(
-        "/api/ai/examine",
-        payload,
-        controller.signal,
-      );
+      const result = await streamRequest<
+        Awaited<ReturnType<DreamMind["examine"]>>
+      >("/api/ai/examine", payload, controller.signal);
       if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
       return result;
     } catch (error) {
@@ -238,11 +236,9 @@ export class RemoteMind implements DreamMind {
       world: snapshot(this.world),
     };
     try {
-      const result = await streamRequest<Awaited<ReturnType<DreamMind["mutate"]>>>(
-        "/api/ai/cycle-exit",
-        payload,
-        controller.signal,
-      );
+      const result = await streamRequest<
+        Awaited<ReturnType<DreamMind["mutate"]>>
+      >("/api/ai/cycle-exit", payload, controller.signal);
       this.memory.replaceSleeperSummary(result.sleeperSummary);
       return result;
     } catch (error) {

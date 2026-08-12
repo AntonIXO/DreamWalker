@@ -19,14 +19,10 @@ import type { DreamMind } from "./types";
 export function createMind(
   world: WorldState,
   context: RemoteMindContext,
+  memory = new MindMemory(world.artifact.slug),
 ): DreamMind {
   const scripted = new ScriptedMind(world);
-  return new RemoteMind(
-    world,
-    new MindMemory(world.artifact.slug),
-    context,
-    scripted,
-  );
+  return new RemoteMind(world, memory, context, scripted);
 }
 
 /** A cycle reset clears figure transcripts; the sleeper's summary survives (§5). */

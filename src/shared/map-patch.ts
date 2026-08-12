@@ -42,8 +42,8 @@ export type MapPatch =
    * хозяин".
    *
    * The only patch that can call for art the Lord never baked, which is what
-   * `player/render/foundry.ts` exists for. Still refused, like everything else, if it
-   * would leave the dream uncrossable.
+   * `player/render/foundry.ts` exists for. Runtime structural checks keep it inside a
+   * known room; reachability remains the sleeper's concern, not a solver's.
    */
   | {
       kind: "growTerrain";

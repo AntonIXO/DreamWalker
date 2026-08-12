@@ -24,7 +24,12 @@ import { BufferImageSource, Rectangle, Texture } from "pixi.js";
 import { autotileOf, frameNamesFor } from "../../shared/autotile";
 import type { DreamArtifact, Palette } from "../../shared/dream";
 import type { StyleProfile } from "../../shared/art/style";
-import { drawBlobSet, drawEdgeSet, drawPlain, TILE_PX } from "../../shared/art/terrain";
+import {
+  drawBlobSet,
+  drawEdgeSet,
+  drawPlain,
+  TILE_PX,
+} from "../../shared/art/terrain";
 import { TRANSPARENT, type Raster } from "../../shared/art/raster";
 import type { AtlasTextures } from "./atlasTextures";
 
@@ -39,11 +44,7 @@ import type { AtlasTextures } from "./atlasTextures";
  */
 export interface TileSource {
   readonly name: string;
-  frames(
-    role: string,
-    palette: Palette,
-    style: StyleProfile,
-  ): Raster[];
+  frames(role: string, palette: Palette, style: StyleProfile): Raster[];
 }
 
 export const proceduralTiles: TileSource = {

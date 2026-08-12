@@ -17,13 +17,7 @@ import {
   type TerrainName,
 } from "../../shared/map-patch";
 import type { DoorTypeName } from "../../shared/tilecodes";
-import {
-  Tile,
-  doorTile,
-  isDoorTile,
-  isFloorTile,
-  isLedgeTile,
-} from "../../shared/tilecodes";
+import { Tile, doorTile, isFloorTile } from "../../shared/tilecodes";
 import { makeRng } from "../../shared/rng";
 import { buildDoorIndex, doorTiles, type WorldState } from "./world";
 
@@ -337,71 +331,11 @@ function growTerrain(
 
   if (before.length === 0) return refuse("nothing there to change");
 
-  if (!stillCrossable(world)) {
-    for (const { index, tile: original } of before) world.tiles[index] = original;
-    return refuse("would cut the dream in half");
-  }
-
   return {
     ok: true,
     affectedRooms: [roomId],
     note: "Что-то выросло там, где ничего не было.",
   };
-}
-
-/**
- * Can the sanitar still walk from where they arrive to everywhere that matters?
- *
- * Walked over tiles rather than over the mission graph, because terrain can wall a place
- * off without touching a single gate — which is precisely the failure `growTerrain` can
- * cause and `sealDoor` cannot.
- */
-function stillCrossable(world: WorldState): boolean {
-  const { spawn } = world.artifact.map;
-  const seen = new Uint8Array(world.tiles.length);
-  const start = spawn.y * world.width + spawn.x;
-  const stack = [start];
-  seen[start] = 1;
-
-  const passable = (index: number): boolean => {
-    const tile = world.tiles[index]!;
-    return isFloorTile(tile) || isDoorTile(tile) || isLedgeTile(tile);
-  };
-
-  while (stack.length > 0) {
-    const current = stack.pop()!;
-    const x = current % world.width;
-    const y = Math.floor(current / world.width);
-    const push = (index: number): void => {
-      if (seen[index] === 1 || !passable(index)) return;
-      seen[index] = 1;
-      stack.push(index);
-    };
-    if (x > 0) push(current - 1);
-    if (x < world.width - 1) push(current + 1);
-    if (y > 0) push(current - world.width);
-    if (y < world.height - 1) push(current + world.width);
-
-    const warp = world.warpAt.get(`${x},${y}`);
-    if (warp) {
-      const through = warp.toY * world.width + warp.toX;
-      if (seen[through] !== 1) {
-        seen[through] = 1;
-        stack.push(through);
-      }
-    }
-  }
-
-  return world.rooms
-    .filter((room) => room.kind === "room" && room.region !== "interior")
-    .every((room) => {
-      for (let y = room.rect.y; y < room.rect.y + room.rect.h; y++) {
-        for (let x = room.rect.x; x < room.rect.x + room.rect.w; x++) {
-          if (seen[y * world.width + x] === 1) return true;
-        }
-      }
-      return false;
-    });
 }
 
 let retileSalt = 0;

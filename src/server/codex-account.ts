@@ -145,7 +145,9 @@ export class CodexAccountProcess {
 
     child.on("exit", (code, signal) => {
       if (this.options.verbose) {
-        console.error(`[codex-account] exited (${code ?? signal ?? "unknown"})`);
+        console.error(
+          `[codex-account] exited (${code ?? signal ?? "unknown"})`,
+        );
       }
       this.closePending(new Error("Codex account process closed"));
       this.process = null;
@@ -277,8 +279,7 @@ export class CodexAccountProcess {
 
       this.status = {
         ...EMPTY_STATUS(),
-        state:
-          modelAvailable && effortAvailable ? "connected" : "incompatible",
+        state: modelAvailable && effortAvailable ? "connected" : "incompatible",
         email: account.account.email ?? null,
         planType: account.account.planType ?? null,
         modelAvailable,
@@ -298,7 +299,10 @@ export class CodexAccountProcess {
   }
 
   private async refreshRateLimits(): Promise<void> {
-    if (this.status.state !== "connected" && this.status.state !== "incompatible") {
+    if (
+      this.status.state !== "connected" &&
+      this.status.state !== "incompatible"
+    ) {
       return;
     }
     try {

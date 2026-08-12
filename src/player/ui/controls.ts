@@ -26,6 +26,7 @@ const PLAYING: Row[] = [
   { key: "WASD · ←↑↓→", what: "идти" },
   bound(Action.INTERACT, "заговорить, посмотреть"),
   bound(Action.CANCEL, "отойти, закрыть"),
+  bound(Action.MEMORIES, "воспоминания, купить время"),
   bound(Action.HELP, "это окно"),
 ];
 

@@ -26,6 +26,7 @@ function limitLine(settings: MindSettings): string {
 
 export class ConnectPanel {
   private readonly root: HTMLElement;
+  private readonly descriptionEl: HTMLElement;
   private readonly statusEl: HTMLElement;
   private readonly loginBox: HTMLElement;
   private readonly loginButton: HTMLButtonElement;
@@ -44,7 +45,7 @@ export class ConnectPanel {
     this.root.hidden = true;
     this.root.innerHTML = `
       <h2>Разум сна</h2>
-      <p>
+      <p class="connect-description">
         Подключение использует лимиты твоего плана ChatGPT через Codex OAuth. Игра
         покажет одноразовый код; API-ключ не нужен и не принимается.
       </p>
@@ -64,6 +65,7 @@ export class ConnectPanel {
     `;
     parent.appendChild(this.root);
 
+    this.descriptionEl = this.root.querySelector(".connect-description")!;
     this.statusEl = this.root.querySelector(".connect-status")!;
     this.loginBox = this.root.querySelector(".connect-login")!;
     this.loginButton = this.root.querySelector(".connect-start")!;
@@ -92,6 +94,9 @@ export class ConnectPanel {
     const account = this.root.querySelector<HTMLElement>(".connect-account")!;
     const connected = this.settings.state === "connected";
     const anthropic = this.settings.provider === "anthropic";
+    this.descriptionEl.textContent = anthropic
+      ? "Разум этого сна подключён владельцем сервера через Anthropic-compatible endpoint. Ключ остаётся на сервере."
+      : "Подключение использует лимиты твоего плана ChatGPT через Codex OAuth. Игра покажет одноразовый код; API-ключ не нужен и не принимается.";
     account.textContent = connected
       ? [
           this.settings.email,
@@ -101,7 +106,8 @@ export class ConnectPanel {
         ]
           .filter(Boolean)
           .join("\n")
-      : this.settings.message ?? "Модель не подключена; работает сценарный сон.";
+      : (this.settings.message ??
+        "Модель не подключена; работает сценарный сон.");
     account.style.whiteSpace = "pre-line";
 
     this.loginButton.hidden = connected || anthropic;

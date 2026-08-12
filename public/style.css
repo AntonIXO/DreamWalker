@@ -242,6 +242,26 @@ body {
     cursor: default;
 }
 
+.dialogue-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.dialogue-memory {
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    font: inherit;
+    font-size: 0.6875rem;
+    color: var(--ink-dim);
+    background: #0e0e12;
+    border: 1px solid var(--edge);
+}
+
+.said-by-them.memory {
+    color: #9aa7d8;
+}
+
 .dialogue-hint {
     font-size: 0.6875rem;
     color: var(--ink-dim);
@@ -444,7 +464,8 @@ body {
 }
 
 .panel input,
-.panel select {
+.panel select,
+.panel textarea {
     width: 100%;
     padding: 0.5rem 0.7rem;
     font: inherit;
@@ -457,8 +478,60 @@ body {
 }
 
 .panel input:focus,
-.panel select:focus {
+.panel select:focus,
+.panel textarea:focus {
     border-color: var(--panel-focus);
+}
+
+.panel textarea {
+    resize: vertical;
+}
+
+.memories-wallet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.memory-purchase {
+    width: 100%;
+    text-align: left;
+    line-height: 1.45;
+}
+
+.connect-account {
+    padding: 0.65rem;
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--ink);
+    background: #0e0e12;
+    border: 1px solid var(--edge);
+}
+
+.connect-login {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.connect-login[hidden] {
+    display: none;
+}
+
+.connect-url {
+    overflow-wrap: anywhere;
+    color: #9aa7d8;
+    font-size: 0.75rem;
+}
+
+.connect-code {
+    align-self: flex-start;
+    font-size: 1rem !important;
+    letter-spacing: 0.14em;
+}
+
+.finale-reply {
+    color: var(--ink) !important;
 }
 
 .panel input::placeholder {

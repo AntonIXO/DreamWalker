@@ -2,7 +2,11 @@ import { spawn, type ChildProcess } from "node:child_process";
 
 const children: ChildProcess[] = [];
 
-function launch(command: string, args: string[], env?: NodeJS.ProcessEnv): void {
+function launch(
+  command: string,
+  args: string[],
+  env?: NodeJS.ProcessEnv,
+): void {
   const child = spawn(command, args, {
     cwd: process.cwd(),
     stdio: "inherit",

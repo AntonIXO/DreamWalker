@@ -33,7 +33,9 @@ export class MindMemory {
       const parsed = JSON.parse(raw) as Partial<StoredMindState>;
       return {
         knownShardIds: Array.isArray(parsed.knownShardIds)
-          ? parsed.knownShardIds.filter((id): id is string => typeof id === "string")
+          ? parsed.knownShardIds.filter(
+              (id): id is string => typeof id === "string",
+            )
           : [],
         sleeper: {
           summary:
@@ -47,7 +49,8 @@ export class MindMemory {
         memories: Array.isArray(parsed.memories)
           ? parsed.memories.filter(
               (memory): memory is DreamMemory =>
-                typeof memory?.id === "string" && typeof memory.text === "string",
+                typeof memory?.id === "string" &&
+                typeof memory.text === "string",
             )
           : [],
       };
@@ -102,7 +105,10 @@ export class MindMemory {
 
   memory(id: string | null | undefined): DreamMemory | null {
     if (!id) return null;
-    return this.state.memories.find((memory) => memory.id === id && !memory.spent) ?? null;
+    return (
+      this.state.memories.find((memory) => memory.id === id && !memory.spent) ??
+      null
+    );
   }
 
   spendMemory(id: string): boolean {

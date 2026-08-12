@@ -174,7 +174,14 @@ export class DialoguePanel {
 
     if (response.memoryEffect) {
       this.line(response.memoryEffect.voiced, "said-by-them memory");
-      this.callbacks.onMemorySpent(response.memoryEffect.memoryId);
+    }
+    if (
+      offeredMemoryId &&
+      !this.mind
+        .availableMemories()
+        .some((memory) => memory.id === offeredMemoryId)
+    ) {
+      this.callbacks.onMemorySpent(offeredMemoryId);
     }
 
     if (response.resonance) {

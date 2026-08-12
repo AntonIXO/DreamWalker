@@ -157,8 +157,8 @@ export function resetWorld(world: WorldState): void {
     })),
   );
 
-  // The figures forget. So does the sleeper. The player's journal is kept elsewhere,
-  // and is the only thing that carries over.
+  // The live world and its figures forget. The journal and the sleeper's compact model
+  // live outside WorldState and deliberately survive (§5).
   world.keysHeld.clear();
   world.leversPulled.clear();
   world.puzzlesSolved.clear();

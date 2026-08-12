@@ -13,11 +13,7 @@ export interface CodexRateLimitWindow {
 export interface CodexAccountStatus {
   provider: "codex" | "anthropic";
   state:
-    | "disconnected"
-    | "authorizing"
-    | "connected"
-    | "incompatible"
-    | "error";
+    "disconnected" | "authorizing" | "connected" | "incompatible" | "error";
   email: string | null;
   planType: string | null;
   model: string;

@@ -20,10 +20,7 @@ export type ViewportSource = () => Rect;
 
 function overlaps(a: Rect, b: Rect): boolean {
   return (
-    a.x < b.x + b.w &&
-    a.x + a.w > b.x &&
-    a.y < b.y + b.h &&
-    a.y + a.h > b.y
+    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
   );
 }
 
@@ -62,17 +59,8 @@ export class Heartbeat {
     this.listeners.push(listener);
   }
 
-  /** Kept for the debug overlay; normal beats are tied to cycle exit, not a timer. */
-  get secondsUntilNextBeat(): number {
-    return 0;
-  }
-
   get budgetRemaining(): number {
     return Math.max(0, this.config.callBudgetPerCycle - this.callsThisCycle);
-  }
-
-  update(_deltaSeconds: number): void {
-    // Intentionally empty. Revision 2 moved the heartbeat to cycle exit.
   }
 
   /** Ask the sleeper what the freshly reset next cycle should look like. */
@@ -102,7 +90,9 @@ export class Heartbeat {
     this.callsThisCycle++;
     this.observations.noteBeat();
     try {
-      const plan = await this.mind.mutate(this.observations.snapshot(this.world));
+      const plan = await this.mind.mutate(
+        this.observations.snapshot(this.world),
+      );
       return this.apply(plan.patches, true);
     } finally {
       this.running = false;
@@ -113,7 +103,10 @@ export class Heartbeat {
     this.callsThisCycle = 0;
   }
 
-  private apply(patches: readonly MapPatch[], protectViewport: boolean): BeatOutcome {
+  private apply(
+    patches: readonly MapPatch[],
+    protectViewport: boolean,
+  ): BeatOutcome {
     const observation = this.observations.snapshot(this.world);
     const view = this.viewport();
     const entries: BeatEntry[] = [];

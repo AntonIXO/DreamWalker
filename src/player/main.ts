@@ -26,7 +26,7 @@ import { TilemapView } from "./render/tilemap";
 import { ActorLayer, WalkerSprite } from "./render/walkerView";
 import { Cycle, Journal } from "./game/cycle";
 import { Action, Input } from "./game/input";
-import { examine, findTarget } from "./game/interact";
+import { findTarget } from "./game/interact";
 import {
   createPlayer,
   playerTile,
@@ -44,11 +44,14 @@ import {
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
+import { MindMemory } from "./mind/memory";
 import { loadMindSettings } from "./mind/settings";
 import { ConnectPanel } from "./ui/connect";
 import { ControlsPanel } from "./ui/controls";
 import { DialoguePanel } from "./ui/dialogue";
 import { Hud } from "./ui/hud";
+import { FinalePanel } from "./ui/finale";
+import { MemoryPanel } from "./ui/memories";
 import { StartMenu } from "./ui/menu";
 
 const DREAM_URL = "/dream";
@@ -161,14 +164,19 @@ async function boot(): Promise<void> {
 
   const cycle = new Cycle(artifact);
   const journal = new Journal(artifact.slug);
+  const mindMemory = new MindMemory(artifact.slug);
   const hud = new Hud(uiLayer);
 
   const observations = new ObservationLog();
-  // The mind is chosen once, at boot, from what the player configured. Changing the key
-  // mid-dream would mean two different minds having defended the same cycle, so the
-  // connection panel takes effect on the next load and says so.
-  const mindSettings = loadMindSettings();
-  const mind = createMind(world, mindSettings);
+  const mindSettings = await loadMindSettings();
+  const mind = createMind(
+    world,
+    {
+      cycleNumber: () => cycle.number,
+      journal: () => journal.all().map((entry) => entry.text),
+    },
+    mindMemory,
+  );
   const heartbeat = new Heartbeat(
     world,
     mind,
@@ -178,6 +186,13 @@ async function boot(): Promise<void> {
     // enforced: the sleeper may rearrange anything the player cannot currently see.
     () => camera.visibleTiles(),
   );
+
+  const noteShard = (shardId: string): void => {
+    mindMemory.learnShard(shardId);
+    observations.noteLearned(shardId);
+    const shard = artifact.shards.find((candidate) => candidate.id === shardId);
+    if (shard) journal.add(cycle.number, shard.hint);
+  };
 
   const dialogue = new DialoguePanel(uiLayer, mind, {
     onOpen: (figure) => {
@@ -189,10 +204,13 @@ async function boot(): Promise<void> {
       // §3: a tell is only useful if the player can go back and see what caused it.
       journal.add(cycle.number, `Тебя переспросили про «${quoted}».`);
     },
-    onShard: (shardId) => {
-      observations.noteLearned(shardId);
-      const shard = artifact.shards.find((s) => s.id === shardId);
-      if (shard) journal.add(cycle.number, shard.hint);
+    onShard: noteShard,
+    onMemorySpent: () => {
+      journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
+    },
+    onResonance: (declaration) => {
+      dialogue.close();
+      finale.openResonance(declaration);
     },
   });
 
@@ -206,15 +224,40 @@ async function boot(): Promise<void> {
   const input = new Input();
   input.attach();
 
+  const finale = new FinalePanel(uiLayer, mind, {
+    onOpen: () => input.setCaptured(true),
+    onClose: () => input.setCaptured(false),
+    onEnded: (kind) => {
+      input.setCaptured(true);
+      journal.add(
+        cycle.number,
+        kind === "match"
+          ? "Ты назвал тайну сна."
+          : kind === "walk-away"
+            ? "Ты ушёл, не забрав тайну."
+            : "Фигура назвала тебя чужим.",
+      );
+    },
+  });
+
   const connect = new ConnectPanel(uiLayer, {
     onChange: (settings) => menu.setMind(settings),
     onClose: () => menu.setVisible(true),
   });
+  const beginDream = (): void => {
+    menu.close();
+    controls.close();
+    connect.close();
+    memories.close();
+  };
   const menu: StartMenu = new StartMenu(uiLayer, artifact, {
     onStart: () => {
-      menu.close();
-      controls.close();
-      connect.close();
+      if (!mindMemory.hasInitialMemories) {
+        menu.setVisible(false);
+        memories.open();
+        return;
+      }
+      beginDream();
     },
     // Panels open *over* the menu, one at a time. Two absolutely-positioned things in the
     // middle of the screen do not layer, they collide.
@@ -225,6 +268,20 @@ async function boot(): Promise<void> {
     onConnect: () => {
       menu.setVisible(false);
       connect.open();
+    },
+  });
+  const memories = new MemoryPanel(uiLayer, mindMemory, {
+    onReady: beginDream,
+    onClose: (wasOnboarding) => {
+      if (wasOnboarding) menu.setVisible(true);
+      else input.setCaptured(false);
+    },
+    onTimeBought: (memoryText) => {
+      cycle.extend(120_000);
+      journal.add(
+        cycle.number,
+        `Ты сжёг воспоминание «${memoryText}», чтобы удержать сон.`,
+      );
     },
   });
   menu.setMind(mindSettings);
@@ -257,10 +314,10 @@ async function boot(): Promise<void> {
     if (restarting) return;
     restarting = true;
     try {
-      // §5: on the way out, the sleeper spends a moment working out what you found.
-      await heartbeat.beatOnCycleExit();
-
+      // The outgoing cycle is evidence; its plan belongs to the freshly reset next one.
+      const plan = await heartbeat.planCycleExit();
       resetWorld(world);
+      heartbeat.applyCyclePlan(plan);
       observations.reset();
       heartbeat.resetCycle();
       forgetCycle(mind);
@@ -290,6 +347,10 @@ async function boot(): Promise<void> {
     camera,
     cycle,
     journal,
+    mind,
+    mindMemory,
+    dialogue,
+    finale,
     tilemap,
     atlas,
     restartCycle,
@@ -318,7 +379,7 @@ async function boot(): Promise<void> {
     // The menu is the only thing that stops time. §5 makes the countdown the pressure the
     // whole game runs on, so it may not tick down while the player is reading a panel.
     if (menu.isOpen) {
-      const overlaid = connect.isOpen || controls.isOpen;
+      const overlaid = connect.isOpen || controls.isOpen || memories.isOpen;
       if (input.consume(Action.HELP) && !connect.isOpen) {
         controls.toggle();
         menu.setVisible(!controls.isOpen);
@@ -326,6 +387,7 @@ async function boot(): Promise<void> {
       if (input.consume(Action.CANCEL) && overlaid) {
         connect.close();
         controls.close();
+        memories.close();
         menu.setVisible(true);
       }
       camera.update(delta);
@@ -335,10 +397,14 @@ async function boot(): Promise<void> {
 
     // Anything that has taken over the screen also takes the sanitar's feet. Reading the
     // controls should not walk you into a wall.
-    const held = dialogue.isOpen || controls.isOpen;
+    const held =
+      dialogue.isOpen || controls.isOpen || memories.isOpen || finale.isOpen;
+    // Pixi's ticker and renderer stay alive. Only the game clock is paused while network
+    // latency, a cycle transition, or the finale owns the simulation.
+    const simulationPaused = mind.waiting || restarting || finale.isOpen;
     hud.setMuted(held);
 
-    if (!held) {
+    if (!held && !simulationPaused) {
       updatePlayer(player, world, input.axis(), delta);
       if (player.refusedDoorId) observations.noteRefusal(player.refusedDoorId);
     }
@@ -346,13 +412,14 @@ async function boot(): Promise<void> {
     const tile = playerTile(player, world);
     const room = roomAt(world, tile.x, tile.y);
     if (room) world.visited.add(room.id);
-    observations.tick(delta, room?.id ?? null);
+    if (!simulationPaused) observations.tick(delta, room?.id ?? null);
 
     // Stepping onto a doorway puts you somewhere else on the same grid. A hard cut, the
     // way a Game Boy doorway works — panning across the gap between a town and the room
     // behind its front door would show the seam that the single-grid trick relies on
     // nobody seeing.
-    const warp = held ? null : warpAtTile(world, tile.x, tile.y);
+    const warp =
+      held || simulationPaused ? null : warpAtTile(world, tile.x, tile.y);
     if (warp && warp.id !== lastWarpId) {
       lastWarpId = warp.id;
       player.x = warp.toX * world.tileSize + world.tileSize / 2;
@@ -396,11 +463,20 @@ async function boot(): Promise<void> {
     // --- one-shot actions
     if (input.consume(Action.DEBUG)) debug.toggle();
     if (input.consume(Action.HELP)) controls.toggle();
+    if (input.consume(Action.MEMORIES)) {
+      if (memories.isOpen) memories.close();
+      else {
+        input.setCaptured(true);
+        memories.open();
+      }
+    }
 
     // Escape peels one layer at a time, outermost first, so it never closes a
     // conversation the player only meant to look away from.
     if (input.consume(Action.CANCEL)) {
       if (controls.isOpen) controls.close();
+      else if (memories.isOpen) memories.close();
+      else if (finale.isOpen) finale.close();
       else dialogue.close();
     }
 
@@ -418,22 +494,29 @@ async function boot(): Promise<void> {
       hud.whisper("Двери больше не спорят. (отладка)");
     }
 
-    const target = held ? null : findTarget(world, player);
-    prompt = target?.prompt ?? null;
+    const target = held || simulationPaused ? null : findTarget(world, player);
+    const atFinale = room?.id === artifact.map.graph.endId;
+    prompt = target?.prompt ?? (atFinale ? "сердце сна — назвать тайну" : null);
 
-    if (target && input.consume(Action.INTERACT)) {
-      if (target.kind === "figure") {
+    if (!simulationPaused && input.consume(Action.INTERACT)) {
+      if (target?.kind === "figure") {
         dialogue.open(target.figure);
-      } else if (target.kind === "world") {
-        hud.whisper(examine(world, target.x, target.y), 4);
-      } else {
+      } else if (target?.kind === "world") {
+        void mind
+          .examine({ x: target.x, y: target.y, roomId: room?.id ?? null })
+          .then((result) => {
+            hud.whisper(result.reply, 5);
+            if (result.yieldedShardId) noteShard(result.yieldedShardId);
+          });
+      } else if (target) {
         hud.whisper(target.prompt, 3);
+      } else if (atFinale) {
+        finale.open();
       }
     }
 
     // --- time
-    if (cycle.update(delta)) void restartCycle();
-    heartbeat.update(delta);
+    if (!simulationPaused && cycle.update(delta)) void restartCycle();
     shiver.update(delta);
     camera.update(delta);
 
