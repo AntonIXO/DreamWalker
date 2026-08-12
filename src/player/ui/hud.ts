@@ -86,6 +86,11 @@ export class Hud {
     }
   }
 
+  /** Hide the cycle chrome while the sanitar is still in the procedure room. */
+  setLobbyMode(on: boolean): void {
+    this.root.classList.toggle("lobby-mode", on);
+  }
+
   destroy(): void {
     this.root.remove();
   }

@@ -39,7 +39,7 @@ export class MemoryPanel {
               <textarea maxlength="240" rows="2"></textarea></label>`,
           )
           .join("")}
-        <button class="memories-save" type="button">Войти с этим</button>
+        <button class="memories-save" type="button">Взять с собой</button>
       </div>
       <div class="memories-wallet" hidden>
         <h2>Заплатить собой</h2>

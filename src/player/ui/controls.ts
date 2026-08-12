@@ -28,6 +28,7 @@ const PLAYING: Row[] = [
   bound(Action.CANCEL, "отойти, закрыть"),
   bound(Action.MEMORIES, "воспоминания, купить время"),
   bound(Action.JOURNAL, "журнал людей"),
+  bound(Action.WORDS, "блокнот шести слов"),
   bound(Action.HELP, "это окно"),
 ];
 
@@ -81,7 +82,7 @@ export class ControlsPanel {
       <h3>Служебное</h3>
       <div class="keys dim">${rowsHtml(DEBUG)}</div>
       <div class="row">
-        <button class="controls-close ghost end" type="button">Закрыть</button>
+        <button class="controls-close ghost end" type="button">Отойти</button>
       </div>
     `;
     parent.appendChild(this.root);

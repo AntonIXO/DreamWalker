@@ -60,7 +60,7 @@ export class ConnectPanel {
         <button class="connect-start" type="button">Подключить ChatGPT</button>
         <button class="connect-cancel ghost" type="button" hidden>Отменить код</button>
         <button class="connect-logout ghost" type="button" hidden>Отключить</button>
-        <button class="connect-close ghost" type="button">Назад</button>
+        <button class="connect-close ghost" type="button">Отойти</button>
       </div>
     `;
     parent.appendChild(this.root);
@@ -185,6 +185,10 @@ export class ConnectPanel {
     } catch (error) {
       this.say(error instanceof Error ? error.message : String(error), "bad");
     }
+  }
+
+  get current(): MindSettings {
+    return this.settings;
   }
 
   get isOpen(): boolean {

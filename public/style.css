@@ -6,6 +6,8 @@
     --ground: #07070a;
     --edge: #1b1a20;
     --warn: #b8564f;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 * {
@@ -31,8 +33,16 @@ body {
     height: 100%;
 }
 
+#pixi-container {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+}
+
 #pixi-container canvas {
     display: block;
+    image-rendering: pixelated;
 }
 
 /* UI sits above the canvas but must not eat input unless a panel is open. */
@@ -143,6 +153,278 @@ body {
     opacity: 1;
 }
 
+.hud.lobby-mode .hud-top {
+    display: none;
+}
+
+.lobby-chrome {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.lobby-hint,
+.lobby-prompt {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(46ch, 80vw);
+    padding: 0.45rem 0.8rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--ink);
+    background: rgba(8, 8, 11, 0.82);
+    border: 1px solid var(--edge);
+}
+
+.lobby-hint {
+    bottom: 4.6rem;
+    font-size: 0.75rem;
+    color: var(--ink-dim);
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.lobby-hint.visible {
+    opacity: 1;
+}
+
+.lobby-prompt[hidden] {
+    display: none;
+}
+
+.lobby-prompt {
+    bottom: 2.2rem;
+}
+
+.inspect-category {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+}
+
+.inspect-body {
+    white-space: pre-line;
+}
+
+.dream-enter {
+    position: absolute;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.dream-enter[hidden] {
+    display: none;
+}
+
+.dream-enter-bands,
+.dream-enter-outline {
+    position: absolute;
+    opacity: 0;
+}
+
+.dream-enter-bands {
+    inset: -10%;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(243, 246, 246, 0.2) 0 5px,
+        transparent 5px 12px
+    );
+}
+
+.dream-enter-outline {
+    inset: 10px;
+    border: 2px solid rgba(243, 246, 246, 0.75);
+    box-shadow: 0 0 0 2px rgba(13, 1, 2, 0.85);
+}
+
+.dream-enter.playing .dream-enter-bands {
+    animation: dream-enter-shift 220ms steps(4, end);
+}
+
+.dream-enter.playing .dream-enter-outline {
+    animation: dream-enter-outline 220ms linear;
+}
+
+.dream-enter.playing.reduced .dream-enter-bands,
+.dream-enter.playing.reduced .dream-enter-outline {
+    animation-name: dream-enter-fade;
+}
+
+@keyframes dream-enter-shift {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0.9;
+    }
+    40% {
+        transform: translate(-7px, 3px);
+        opacity: 1;
+    }
+    70% {
+        transform: translate(6px, -2px);
+        opacity: 0.75;
+    }
+    100% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+}
+
+@keyframes dream-enter-outline {
+    0%,
+    55% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes dream-enter-fade {
+    0% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lobby-hint {
+        transition: opacity 180ms ease;
+    }
+
+    .dream-enter-bands,
+    .dream-enter-outline {
+        transform: none;
+    }
+}
+
+/* A model turn can legitimately take a minute. Keep this out of the fiction and above
+   every panel: its job is to distinguish live inference from a frozen game. */
+.model-thinking {
+    position: absolute;
+    top: 3.25rem;
+    right: 1rem;
+    z-index: 90;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.7rem;
+    width: min(24rem, calc(100vw - 2rem));
+    padding: 0.65rem 0.75rem;
+    color: var(--ink);
+    background: rgba(8, 8, 12, 0.94);
+    border: 1px solid #34313f;
+    box-shadow: 0 0.75rem 2.5rem rgba(0, 0, 0, 0.42);
+    pointer-events: none !important;
+    opacity: 0;
+    transform: translateY(-25%) scale(0.97);
+    transition:
+        opacity 180ms var(--ease-out),
+        transform 180ms var(--ease-out);
+}
+
+.model-thinking[hidden] {
+    display: none;
+}
+
+.model-thinking.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.model-thinking-mark {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    height: 1rem;
+}
+
+.model-thinking-mark i {
+    display: block;
+    width: 0.28rem;
+    height: 0.28rem;
+    background: var(--ink);
+    animation: model-thinking-wave 1.2s var(--ease-in-out) infinite;
+}
+
+.model-thinking-mark i:nth-child(2) {
+    animation-delay: 120ms;
+}
+
+.model-thinking-mark i:nth-child(3) {
+    animation-delay: 240ms;
+}
+
+@keyframes model-thinking-wave {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-0.25rem);
+    }
+}
+
+.model-thinking-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.16rem;
+}
+
+.model-thinking-copy strong {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.model-thinking-detail,
+.model-thinking-elapsed {
+    font-size: 0.6875rem;
+    color: var(--ink-dim);
+}
+
+.model-thinking-detail {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.model-thinking-elapsed {
+    font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .model-thinking {
+        transform: none;
+        transition: opacity 180ms var(--ease-out);
+    }
+
+    .model-thinking.visible {
+        transform: none;
+    }
+
+    .model-thinking-mark i {
+        animation-name: model-thinking-fade;
+    }
+}
+
+@keyframes model-thinking-fade {
+    0%, 60%, 100% { opacity: 0.3; }
+    30% { opacity: 1; }
+}
+
 /* ----------------------------------------------------------- Dialogue
    Free text, because the wording is the game (§3). */
 
@@ -151,13 +433,13 @@ body {
     left: 50%;
     bottom: 1.5rem;
     transform: translateX(-50%);
-    width: min(58ch, 92vw);
+    width: min(52rem, 92vw);
     padding: 0.9rem 1rem;
     background: rgba(8, 8, 11, 0.94);
     border: 1px solid var(--edge);
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 0.9rem;
 }
 
 .dialogue[hidden] {
@@ -169,6 +451,33 @@ body {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-dim);
+}
+
+.dialogue-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.dialogue-portrait {
+    align-self: start;
+    width: 8rem;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #0e0e13;
+    border: 1px solid var(--edge);
+}
+
+.dialogue-portrait > div {
+    width: 8rem;
+    height: 8rem;
+    display: grid;
+    place-items: center;
+    color: var(--ink-dim);
+    font-size: 2rem;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
 }
 
 .dialogue-log {
@@ -201,7 +510,7 @@ body {
    time is part of the fiction; a loading indicator is not. */
 .said-by-them.pending {
     color: var(--ink-dim);
-    animation: dialogue-pending 1.4s ease-in-out infinite;
+    animation: dialogue-pending 1.4s var(--ease-in-out) infinite;
 }
 
 @keyframes dialogue-pending {
@@ -257,6 +566,19 @@ body {
     color: var(--ink-dim);
 }
 
+@media (max-width: 34rem) {
+    .dialogue {
+        grid-template-columns: 4rem minmax(0, 1fr);
+        bottom: 0.5rem;
+    }
+
+    .dialogue-portrait,
+    .dialogue-portrait > div {
+        width: 4rem;
+        height: 4rem;
+    }
+}
+
 /* -------------------------------------------------------------- Panels
    One vocabulary for the three things that cover the dream: the start menu,
    the controls, and the connection form.
@@ -309,6 +631,114 @@ body {
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink);
+}
+
+.system-label,
+.word-observed {
+    font-size: 0.625rem;
+    line-height: 1.2;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+}
+
+.panel-title-row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.panel-title-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.panel-title-row h2 {
+    border: 0;
+    padding: 0;
+}
+
+.dim {
+    color: var(--ink-dim) !important;
+}
+
+.word-notebook-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
+.word-hypothesis,
+.mnemonic-slot {
+    display: grid;
+    grid-template-columns: 1.8rem minmax(0, 1fr);
+    align-items: center;
+    min-height: 2.6rem;
+    border: 1px solid var(--panel-line);
+    background: #07070b;
+}
+
+.word-hypothesis > span,
+.mnemonic-slot > span {
+    text-align: center;
+    color: var(--ink-dim);
+    font-size: 0.6875rem;
+}
+
+.word-hypothesis input,
+.mnemonic-slot input {
+    border: 0;
+}
+
+.mnemonic-slots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.mnemonic-slot strong {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.mnemonic-slot.known {
+    background: #111116;
+}
+
+.clue-art {
+    position: relative;
+    align-self: center;
+    width: min(24rem, 70vw);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--panel-line);
+    background: #07070b;
+}
+
+.clue-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.clue-placeholder {
+    white-space: pre-line;
+    text-align: center;
+    font-size: 0.6875rem;
+    line-height: 1.8;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+}
+
+.clue-observation {
+    color: var(--ink) !important;
 }
 
 .panel h3 {
