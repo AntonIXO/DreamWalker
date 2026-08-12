@@ -117,6 +117,7 @@ export class ScriptedMind implements DreamMind {
         resonance: null,
         figureMemorySummary: "",
         journalEntry: null,
+        portraitState: "neutral",
       };
     }
 
@@ -144,7 +145,7 @@ export class ScriptedMind implements DreamMind {
       reply =
         `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(WARM)} ${shard?.hint ?? ""}`
           .trim()
-          .slice(0, 240);
+          .slice(0, 180);
     } else if (hit) {
       reply = `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(DEFLECTIONS)}`;
     } else if (hedged) {
@@ -166,6 +167,13 @@ export class ScriptedMind implements DreamMind {
       journalEntry: yielded
         ? `${figure.name} проговорился о важной детали.`
         : null,
+      portraitState: hit
+        ? this.turnCount >= 4
+          ? "knows"
+          : "wary"
+        : hedged
+          ? "interested"
+          : "neutral",
     };
   }
 
@@ -177,7 +185,14 @@ export class ScriptedMind implements DreamMind {
       "Здесь чего-то не хватает, и непонятно чего.",
     ];
     const hash = ((request.x * 73856093) ^ (request.y * 19349663)) >>> 0;
-    return { reply: lines[hash % lines.length]!, yieldedShardId: null };
+    const interest = this.world.interests.find(
+      (candidate) => candidate.id === request.interestId,
+    );
+    return {
+      reply: interest?.sensorySeed ?? lines[hash % lines.length]!,
+      yieldedShardId: null,
+      clueObservedId: interest?.clueId ?? null,
+    };
   }
 
   // --- the heartbeat -----------------------------------------------------
@@ -305,11 +320,26 @@ export class ScriptedMind implements DreamMind {
     return { patches, sleeperSummary: "Сон запомнил маршрут санитара." };
   }
 
-  async judge(): Promise<FinaleResult> {
-    return {
-      verdict: "miss",
-      reply: "Без подключённого разума сон не решается вынести приговор.",
-    };
+  async judge(words: string[]): Promise<FinaleResult> {
+    const phrase = words
+      .map((word) => word.normalize("NFKD").trim().toLowerCase())
+      .join(" ");
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(phrase),
+    );
+    const hash = [...new Uint8Array(digest)]
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+    return hash === this.world.artifact.content.mnemonic.hash
+      ? {
+          verdict: "match",
+          reply: "Шесть слов встали на места. Аппарат забирает ключ из сна.",
+        }
+      : {
+          verdict: "miss",
+          reply: "Фраза не открыла кошелёк. Сон не говорит, где ошибка.",
+        };
   }
 
   availableMemories(): readonly [] {

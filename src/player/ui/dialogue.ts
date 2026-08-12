@@ -12,6 +12,9 @@
 
 import type { FigureState } from "../game/world";
 import type { DreamMind, TurnResponse } from "../mind/types";
+import type { DreamArtifact } from "../../shared/dream";
+import type { AtlasTextures } from "../render/atlasTextures";
+import type { ModelThinkingIndicator } from "./modelThinking";
 
 export interface DialogueCallbacks {
   onOpen(figure: FigureState): void;
@@ -26,6 +29,7 @@ export interface DialogueCallbacks {
 export class DialoguePanel {
   private readonly root: HTMLElement;
   private readonly nameEl: HTMLElement;
+  private readonly portraitEl: HTMLElement;
   private readonly logEl: HTMLElement;
   private readonly inputEl: HTMLInputElement;
   private readonly memoryEl: HTMLSelectElement;
@@ -35,26 +39,33 @@ export class DialoguePanel {
   constructor(
     parent: HTMLElement,
     private readonly mind: DreamMind,
+    private readonly thinking: ModelThinkingIndicator,
+    private readonly artifact: DreamArtifact,
+    private readonly atlas: AtlasTextures,
     private readonly callbacks: DialogueCallbacks,
   ) {
     this.root = document.createElement("div");
     this.root.className = "dialogue";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <div class="dialogue-name"></div>
-      <div class="dialogue-log"></div>
-      <form class="dialogue-form">
-        <input class="dialogue-input" type="text" autocomplete="off" spellcheck="false"
-               placeholder="что ты скажешь" maxlength="240" />
-        <select class="dialogue-memory" aria-label="Предложить воспоминание">
-          <option value="">не отдавать воспоминание</option>
-        </select>
-      </form>
-      <div class="dialogue-hint">Esc — отойти</div>
+      <div class="dialogue-portrait" aria-hidden="true"><div></div></div>
+      <div class="dialogue-copy">
+        <div class="dialogue-name"></div>
+        <div class="dialogue-log"></div>
+        <form class="dialogue-form">
+          <input class="dialogue-input" type="text" autocomplete="off" spellcheck="false"
+                 placeholder="что ты скажешь" maxlength="240" />
+          <select class="dialogue-memory" aria-label="Предложить воспоминание">
+            <option value="">не отдавать воспоминание</option>
+          </select>
+        </form>
+        <div class="dialogue-hint">Esc — отойти</div>
+      </div>
     `;
     parent.appendChild(this.root);
 
     this.nameEl = this.root.querySelector(".dialogue-name")!;
+    this.portraitEl = this.root.querySelector(".dialogue-portrait > div")!;
     this.logEl = this.root.querySelector(".dialogue-log")!;
     this.inputEl = this.root.querySelector(".dialogue-input")!;
     this.memoryEl = this.root.querySelector(".dialogue-memory")!;
@@ -94,6 +105,7 @@ export class DialoguePanel {
     this.figure = figure;
     this.root.hidden = false;
     this.nameEl.textContent = figure.name;
+    this.renderPortrait();
     this.logEl.replaceChildren();
     for (const line of this.mind.conversation(figure.id)) {
       this.line(
@@ -105,6 +117,28 @@ export class DialoguePanel {
     this.inputEl.value = "";
     this.inputEl.focus();
     this.callbacks.onOpen(figure);
+  }
+
+  private renderPortrait(): void {
+    const figure = this.figure;
+    if (!figure) return;
+    const character = this.artifact.content.characters.find(
+      (candidate) => candidate.id === figure.id,
+    );
+    const frameName = character?.portraits[figure.portraitState];
+    const frame = frameName ? this.atlas.manifest.frames[frameName] : undefined;
+    if (!frame) {
+      this.portraitEl.removeAttribute("style");
+      this.portraitEl.textContent = figure.name.slice(0, 1);
+      return;
+    }
+    const scale = 128 / frame.w;
+    this.portraitEl.textContent = "";
+    Object.assign(this.portraitEl.style, {
+      backgroundImage: `url(${JSON.stringify(this.atlas.imageUrl)})`,
+      backgroundPosition: `${-frame.x * scale}px ${-frame.y * scale}px`,
+      backgroundSize: `${this.atlas.sheetWidth * scale}px ${this.atlas.sheetHeight * scale}px`,
+    });
   }
 
   close(): void {
@@ -144,12 +178,16 @@ export class DialoguePanel {
 
     let response: TurnResponse;
     try {
-      response = await this.mind.turn(
-        { figureId: figure.id, utterance, offeredMemoryId },
-        (partial) => {
-          if (this.figure !== figure) return;
-          pending.textContent = partial || "…";
-        },
+      response = await this.thinking.run(
+        `Продумывает ответ: ${figure.name}`,
+        () =>
+          this.mind.turn(
+            { figureId: figure.id, utterance, offeredMemoryId },
+            (partial) => {
+              if (this.figure !== figure) return;
+              pending.textContent = partial || "…";
+            },
+          ),
       );
     } catch (error) {
       pending.className = "said-by-them";
@@ -172,6 +210,8 @@ export class DialoguePanel {
 
     pending.textContent = response.reply;
     pending.className = "said-by-them";
+    figure.portraitState = response.portraitState;
+    this.renderPortrait();
 
     // A tell is already woven into the reply. Keeping it as metadata makes the cause
     // journalable without producing the unexplained yellow second sentence the old UI did.

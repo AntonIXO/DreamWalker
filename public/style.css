@@ -163,6 +163,32 @@ body {
     pointer-events: none;
 }
 
+.lobby-stamp {
+    position: absolute;
+    top: 1.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(46ch, calc(100vw - 2rem));
+    text-align: center;
+}
+
+.lobby-stamp-mark {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--ink-dim);
+}
+
+.lobby-slogan {
+    margin: 0.4rem 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+}
+
 .lobby-hint,
 .lobby-prompt {
     position: absolute;

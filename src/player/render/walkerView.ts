@@ -9,7 +9,7 @@
 import { Container, Sprite, type Texture } from "pixi.js";
 
 import type { AtlasTextures } from "./atlasTextures";
-import type { FigureState } from "../game/world";
+import type { FigureState, InterestState } from "../game/world";
 
 export type Direction = "n" | "e" | "s" | "w";
 
@@ -91,8 +91,12 @@ export class ActorLayer {
     cullableChildren: false,
   });
   private readonly figures = new Map<string, WalkerSprite>();
+  private readonly clues = new Map<string, Sprite>();
 
-  constructor(private readonly atlas: AtlasTextures) {}
+  constructor(
+    private readonly atlas: AtlasTextures,
+    private readonly clueTextures: ReadonlyMap<string, Texture> = new Map(),
+  ) {}
 
   add(walker: WalkerSprite): void {
     this.root.addChild(walker.sprite);
@@ -125,9 +129,41 @@ export class ActorLayer {
     }
   }
 
+  /** RD clue PNGs sit above the generic prop tile and move with heartbeat patches. */
+  syncInterests(interests: readonly InterestState[], tileSize: number): void {
+    const seen = new Set<string>();
+    for (const interest of interests) {
+      if (!interest.clueId) continue;
+      const texture = this.clueTextures.get(interest.clueId);
+      if (!texture) continue;
+      seen.add(interest.id);
+      let sprite = this.clues.get(interest.id);
+      if (!sprite) {
+        sprite = new Sprite({
+          texture,
+          anchor: { x: 0.5, y: 0.82 },
+          roundPixels: true,
+          eventMode: "none",
+        });
+        this.clues.set(interest.id, sprite);
+        this.root.addChild(sprite);
+      }
+      sprite.x = interest.x * tileSize + tileSize / 2;
+      sprite.y = interest.y * tileSize + tileSize;
+      sprite.zIndex = sprite.y - 1;
+    }
+    for (const [id, sprite] of this.clues) {
+      if (seen.has(id)) continue;
+      sprite.destroy();
+      this.clues.delete(id);
+    }
+  }
+
   destroy(): void {
     for (const walker of this.figures.values()) walker.destroy();
     this.figures.clear();
+    for (const sprite of this.clues.values()) sprite.destroy();
+    this.clues.clear();
     this.root.destroy({ children: true });
   }
 }

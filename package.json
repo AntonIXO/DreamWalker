@@ -17,6 +17,7 @@
     "@ai-sdk/anthropic": "^3",
     "ai": "^6",
     "ai-sdk-provider-codex-app-server": "1.1.7",
+    "bip39": "^3.1.0",
     "pixi.js": "^8.8.1",
     "zod": "^4"
   },

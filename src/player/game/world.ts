@@ -31,11 +31,15 @@ import type {
   FigureAgenda,
   InterestSeed,
 } from "../../shared/ai";
+import type { PortraitState } from "../../shared/content";
+import type { ChamberDefinition } from "../../shared/content";
 
 export interface FigureState extends FigurePlacement {
   facing: "n" | "e" | "s" | "w";
   /** Bumped when the heartbeat moves them, so the view knows to re-place the sprite. */
   revision: number;
+  personality: string;
+  portraitState: PortraitState;
   role: string;
   voice: string;
   desire: string;
@@ -72,6 +76,9 @@ export interface WorldState {
   readonly roomById: Map<string, Room>;
   /** tile index -> position in `rooms`, or -1 outside every cell. */
   readonly roomIndex: Int16Array;
+  /** Authored room cards currently occupying physical map slots. */
+  chamberByRoomId: Map<string, ChamberDefinition>;
+  baseChamberByRoomId: Map<string, ChamberDefinition>;
 
   doors: Door[];
   /** "x,y" for every tile of a gate -> the gate. Rebuilt whenever doors move. */
@@ -141,6 +148,11 @@ export function createWorld(artifact: DreamArtifact): WorldState {
 
   const tiles = decodeTiles(map.tiles, map.width * map.height);
   const figures = artifact.figures.map((figure) => makeFigureState(figure));
+  const chamberByRoomId = assignChambers(artifact, rooms);
+  for (const [roomId, chamber] of chamberByRoomId) {
+    const room = rooms.find((candidate) => candidate.id === roomId);
+    if (room) room.name = chamber.name;
+  }
   return {
     artifact,
     width: map.width,
@@ -151,6 +163,8 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     rooms,
     roomById: new Map(rooms.map((room) => [room.id, room])),
     roomIndex: indexRooms(rooms, map.width, map.height),
+    chamberByRoomId,
+    baseChamberByRoomId: new Map(chamberByRoomId),
     doors,
     doorAt: buildDoorIndex(doors),
     warpAt: new Map(map.warps.map((warp) => [key(warp.x, warp.y), warp])),
@@ -167,11 +181,34 @@ export function createWorld(artifact: DreamArtifact): WorldState {
   };
 }
 
+function assignChambers(
+  artifact: DreamArtifact,
+  rooms: Room[],
+): Map<string, ChamberDefinition> {
+  const assigned = new Map<string, ChamberDefinition>();
+  const slots = rooms.filter((room) => room.kind === "room");
+  for (const chamber of artifact.content.chambers.slice(
+    0,
+    artifact.content.activeChamberCount,
+  )) {
+    const room = slots.find(
+      (candidate) =>
+        !assigned.has(candidate.id) &&
+        (chamber.eligibleRoomIds.length === 0 ||
+          chamber.eligibleRoomIds.includes(candidate.id)),
+    );
+    if (room) assigned.set(room.id, chamber);
+  }
+  return assigned;
+}
+
 function makeFigureState(figure: FigurePlacement): FigureState {
   return {
     ...figure,
     facing: "s",
     revision: 0,
+    personality: "Держится за привычный порядок.",
+    portraitState: "neutral",
     role: "часть этого сна",
     voice: "говорит просто и настороженно",
     desire: "сохранить привычный порядок",
@@ -211,6 +248,12 @@ export function resetWorld(world: WorldState): void {
   const { map } = world.artifact;
 
   world.tiles = world.baseTiles.slice();
+  world.chamberByRoomId = new Map(world.baseChamberByRoomId);
+  for (const room of world.rooms) {
+    const authored = map.rooms.find((candidate) => candidate.id === room.id);
+    room.name =
+      world.chamberByRoomId.get(room.id)?.name ?? authored?.name ?? room.name;
+  }
 
   world.doors.length = 0;
   world.doors.push(...map.doors.map((door) => ({ ...door })));

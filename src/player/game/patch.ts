@@ -102,6 +102,8 @@ function profileState(
     holdsShardId: profile.holdsShardId,
     facing: "s",
     revision: 0,
+    personality: profile.personality,
+    portraitState: "neutral",
     role: profile.role,
     voice: profile.voice,
     desire: profile.desire,
@@ -479,6 +481,15 @@ function swapRooms(world: WorldState, aId: string, bId: string): PatchResult {
   if (a.rect.w !== b.rect.w || a.rect.h !== b.rect.h)
     return refuse("rooms are different sizes");
   if (aId === bId) return refuse("no change");
+  const aChamber = world.chamberByRoomId.get(aId);
+  const bChamber = world.chamberByRoomId.get(bId);
+  const allowedAt = (roomId: string, chamber: typeof aChamber): boolean =>
+    !chamber ||
+    chamber.eligibleRoomIds.length === 0 ||
+    chamber.eligibleRoomIds.includes(roomId);
+  if (!allowedAt(bId, aChamber) || !allowedAt(aId, bChamber)) {
+    return refuse("an authored chamber is not eligible for that slot");
+  }
 
   // Interiors only. The wall ring and every doorway in it stay where they are, so the
   // mission graph is untouched and connectivity cannot break — what changes is what you
@@ -510,6 +521,15 @@ function swapRooms(world: WorldState, aId: string, bId: string): PatchResult {
     interest.y = to.rect.y + (interest.y - from.rect.y);
     interest.roomId = to.id;
   }
+
+  if (aChamber) world.chamberByRoomId.set(bId, aChamber);
+  else world.chamberByRoomId.delete(bId);
+  if (bChamber) world.chamberByRoomId.set(aId, bChamber);
+  else world.chamberByRoomId.delete(aId);
+  const authoredA = world.artifact.map.rooms.find((room) => room.id === aId);
+  const authoredB = world.artifact.map.rooms.find((room) => room.id === bId);
+  a.name = bChamber?.name ?? authoredA?.name ?? a.name;
+  b.name = aChamber?.name ?? authoredB?.name ?? b.name;
 
   return {
     ok: true,

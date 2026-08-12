@@ -26,6 +26,11 @@ import {
   type Palette,
   type Shard,
 } from "../../src/shared/dream";
+import {
+  fallbackPortraits,
+  type CharacterDefinition,
+  type DreamContent,
+} from "../../src/shared/content";
 import { defaultStyle, type StyleProfile } from "../../src/shared/art/style";
 
 export const REPO_ROOT = resolve(
@@ -67,6 +72,7 @@ export interface DreamDraft {
   /** Null until `lord layout` has been accepted. */
   map: DreamMap | null;
   figures: FigurePlacement[];
+  content: DreamContent;
   cycle: CycleConfig;
   heartbeat: HeartbeatConfig;
   atlas: string;
@@ -152,8 +158,94 @@ export async function loadDraft(slug: string): Promise<DreamDraft> {
 function migrate(draft: DreamDraft): DreamDraft {
   if (!draft.style) draft.style = defaultStyle(draft.palette.colors.length);
   draft.provenance.reference ??= null;
+  draft.content ??= fallbackContent(draft);
   draft.format = DREAM_FORMAT_VERSION;
   return draft;
+}
+
+const PLACEHOLDER_SLOTS: Array<string | null> = [
+  "abandon",
+  null,
+  "abandon",
+  null,
+  "abandon",
+  null,
+  "abandon",
+  null,
+  "abandon",
+  null,
+  "abandon",
+  null,
+];
+
+function characterFromPlacement(figure: FigurePlacement): CharacterDefinition {
+  return {
+    id: figure.id,
+    name: figure.name,
+    archetypeId: figure.archetypeId,
+    personality:
+      "Держится за привычный порядок и замечает слишком ясные вопросы.",
+    role: "часть больничного сна",
+    voice: "говорит коротко и бытово",
+    desire: "чтобы смена закончилась без происшествий",
+    fear: "понять, что рядом находится чужой",
+    taboo: "не обсуждает то, что лежит за пределами сна",
+    initialActivity: "занят привычным делом",
+    portraits: fallbackPortraits(figure.archetypeId),
+  };
+}
+
+/** A usable migration/default; `lord content` writes the same records as separate files. */
+export function fallbackContent(
+  draft: Pick<DreamDraft, "map" | "figures" | "secretHash">,
+): DreamContent {
+  const rooms =
+    draft.map?.rooms.filter((room) => room.kind === "room").slice(0, 12) ?? [];
+  return {
+    characters: draft.figures.map(characterFromPlacement),
+    chambers: rooms.map((room, index) => ({
+      id: `chamber-${room.id}`,
+      name: room.name,
+      description:
+        "Временная авторская камера. Замените описание в content/rooms.",
+      atmosphere: "Светло, клинически и неуместно подробно.",
+      personality:
+        "Комната притворяется обычным местом, но материалы не сходятся.",
+      tags: [room.region, index < 6 ? "clue-compatible" : "ambient"],
+      eligibleRoomIds: [room.id],
+      unique: true,
+      graphics: {
+        floorRole: room.region === "interior" ? "floor" : "grass",
+        wallRole: room.region === "interior" ? "wall" : "tree",
+        propRole: "prop",
+        backdropFrame: null,
+        backdropImage: null,
+        glitchPreset: index % 3 === 0 ? "split" : "double-edge",
+      },
+      anchors: [
+        { id: `${room.id}-figure`, kind: "figure", x: 0.48, y: 0.55 },
+        { id: `${room.id}-object`, kind: "object", x: 0.68, y: 0.58 },
+        { id: `${room.id}-clue`, kind: "clue", x: 0.3, y: 0.62 },
+      ],
+    })),
+    clues: Array.from({ length: 6 }, (_, index) => ({
+      id: `clue-${index + 1}`,
+      sensorySeed:
+        "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+      placementTags: ["clue-compatible"],
+      worldFrame: "prop",
+      detailFrame: "prop",
+      worldImage: null,
+      detailImage: null,
+      marker: "бирюзовый шов с одной песочной точкой",
+    })),
+    mnemonic: {
+      hash: draft.secretHash ?? "0".repeat(64),
+      wordlist: "english",
+      knownSlots: PLACEHOLDER_SLOTS,
+    },
+    activeChamberCount: Math.max(1, Math.min(8, rooms.length || 1)),
+  };
 }
 
 export async function saveDraft(draft: DreamDraft): Promise<void> {
@@ -203,6 +295,8 @@ export interface DraftStatus {
   hasMap: boolean;
   hasArt: boolean;
   hasFigures: boolean;
+  hasContent: boolean;
+  hasMnemonic: boolean;
   missing: string[];
 }
 
@@ -211,12 +305,31 @@ export async function statusOf(draft: DreamDraft): Promise<DraftStatus> {
   const hasMap = Boolean(draft.map);
   const hasArt = await exists(join(dreamDir(draft.slug), "atlas.json"));
   const hasFigures = draft.figures.length > 0;
+  const hasContent =
+    draft.content.chambers.length > 0 &&
+    draft.content.characters.length === draft.figures.length &&
+    draft.content.clues.length === 6;
+  const hasMnemonic =
+    draft.content.mnemonic.hash !== "0".repeat(64) &&
+    draft.content.mnemonic.knownSlots.length === 12 &&
+    draft.content.mnemonic.knownSlots.filter((slot) => slot === null).length ===
+      6;
 
   const missing: string[] = [];
   if (!hasSecret) missing.push(`lord secret ${draft.slug}`);
   if (!hasMap) missing.push(`lord layout ${draft.slug}`);
   if (!hasArt) missing.push(`lord art ${draft.slug}`);
   if (!hasFigures) missing.push(`lord figures ${draft.slug}`);
+  if (!hasContent) missing.push(`lord content ${draft.slug}`);
+  if (!hasMnemonic) missing.push(`lord mnemonic ${draft.slug}`);
 
-  return { hasSecret, hasMap, hasArt, hasFigures, missing };
+  return {
+    hasSecret,
+    hasMap,
+    hasArt,
+    hasFigures,
+    hasContent,
+    hasMnemonic,
+    missing,
+  };
 }

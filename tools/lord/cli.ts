@@ -11,6 +11,8 @@
  *   bun run lord layout <slug>
  *   bun run lord art <slug>
  *   bun run lord figures <slug>
+ *   bun run lord content <slug>
+ *   bun run lord mnemonic <slug>
  *   bun run lord build <slug>
  *   bun run lord play <slug>
  *   bun run lord list
@@ -73,6 +75,9 @@ function usage(): void {
   ${color.bold("layout")}  <slug>   generate a starting map, reroll until it is right, accept
   ${color.bold("art")}     <slug>   pick one of four candidates per tile, bake the atlas
   ${color.bold("figures")} <slug>   place the figures of the dream and hand them hooks
+  ${color.bold("content")} <slug>   scaffold editable room graphics and character personalities
+  ${color.bold("mnemonic")} <slug>  create a safe 12-word phrase with six hidden slots
+  ${color.bold("clues")}   <slug>   estimate or generate six Retro Diffusion clue objects
   ${color.bold("build")}   <slug>   validate and write the artifact the player loads
   ${color.bold("play")}    <slug>   build, then start the dev server on it
   ${color.bold("status")}  <slug>   what is done and what is not
@@ -120,6 +125,12 @@ async function statusCommand(slug: string | undefined): Promise<void> {
     console.log(
       `  ${mark(status.hasFigures)} figures   ${color.grey(`${draft.figures.length} placed`)}`,
     );
+    console.log(
+      `  ${mark(status.hasContent)} content   ${color.grey(`${draft.content.chambers.length} rooms · ${draft.content.characters.length} personalities`)}`,
+    );
+    console.log(
+      `  ${mark(status.hasMnemonic)} mnemonic  ${color.grey(status.hasMnemonic ? "6 known + 6 hidden" : "not sealed")}`,
+    );
 
     if (status.missing.length > 0) {
       console.log();
@@ -164,6 +175,18 @@ async function main(): Promise<void> {
     case "figures": {
       const { figuresCommand } = await import("./commands/figures");
       return figuresCommand(target, flags);
+    }
+    case "content": {
+      const { contentCommand } = await import("./commands/content");
+      return contentCommand(target, flags);
+    }
+    case "mnemonic": {
+      const { mnemonicCommand } = await import("./commands/mnemonic");
+      return mnemonicCommand(target, flags);
+    }
+    case "clues": {
+      const { cluesCommand } = await import("./commands/clues");
+      return cluesCommand(target, flags);
     }
     case "build": {
       const { buildCommand } = await import("./commands/build");

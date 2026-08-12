@@ -44,6 +44,8 @@ function snapshot(world: WorldState): WorldSnapshot {
       id: room.id,
       name: room.name,
       kind: room.kind,
+      chamberId: world.chamberByRoomId.get(room.id)?.id ?? null,
+      personality: world.chamberByRoomId.get(room.id)?.personality ?? null,
     })),
     doors: world.doors.map((door) => ({
       id: door.id,
@@ -57,6 +59,7 @@ function snapshot(world: WorldState): WorldSnapshot {
       roomId: figure.roomId,
       holdsShardId: figure.holdsShardId,
       role: figure.role,
+      personality: figure.personality,
       activity: figure.activity,
     })),
     interests: world.interests.map((interest) => ({
@@ -65,6 +68,7 @@ function snapshot(world: WorldState): WorldSnapshot {
       roomId: interest.roomId,
       sensorySeed: interest.sensorySeed,
       holdsShardId: interest.holdsShardId,
+      clueId: interest.clueId,
     })),
   };
 }
@@ -301,13 +305,11 @@ export class RemoteMind implements DreamMind {
     }
   }
 
-  async judge(diagnosis: string) {
+  async judge(words: string[]) {
     const controller = this.controller();
     const payload: FinaleRequestPayload = {
       slug: this.world.artifact.slug,
-      diagnosis,
-      knownShardIds: [...this.memory.knownShardIds],
-      journal: this.context.journal(),
+      words,
     };
     try {
       return await streamRequest<Awaited<ReturnType<DreamMind["judge"]>>>(
@@ -317,7 +319,7 @@ export class RemoteMind implements DreamMind {
       );
     } catch (error) {
       if (!this.failed(error)) throw error;
-      return this.fallback.judge(diagnosis);
+      return this.fallback.judge(words);
     } finally {
       this.finish(controller);
     }

@@ -30,6 +30,7 @@ import {
   draftExists,
   isValidSlug,
   saveDraft,
+  fallbackContent,
   type DreamDraft,
 } from "../project";
 import {
@@ -202,6 +203,7 @@ export async function initCommand(
     style,
     map: null,
     figures: [],
+    content: fallbackContent({ map: null, figures: [], secretHash: null }),
     cycle: { ...DEFAULT_CYCLE },
     heartbeat: {
       ...DEFAULT_HEARTBEAT,

@@ -9,16 +9,21 @@ export class LobbyPrompt {
   private hintUntil = 8;
   private hinted = false;
 
-  constructor(parent: HTMLElement, hint: string) {
+  constructor(parent: HTMLElement, hint: string, slogan = "") {
     this.root = document.createElement("div");
     this.root.className = "lobby-chrome";
     this.root.innerHTML = `
+      <div class="lobby-stamp">
+        <span class="lobby-stamp-mark">DREAM WALKER</span>
+        <p class="lobby-slogan"></p>
+      </div>
       <div class="lobby-hint"></div>
       <div class="lobby-prompt" hidden></div>
     `;
     parent.appendChild(this.root);
     this.hintEl = this.root.querySelector(".lobby-hint")!;
     this.promptEl = this.root.querySelector(".lobby-prompt")!;
+    this.root.querySelector(".lobby-slogan")!.textContent = slogan;
     this.hintEl.textContent = hint;
     this.hintEl.classList.add("visible");
   }

@@ -30,6 +30,10 @@ bun run lord secret first-room   # the one immutable line; seed the hooks
 bun run lord layout first-room   # generate a map, [r]eroll until it is right, [a]ccept
 bun run lord art first-room      # four candidates per tile, press 1-4
 bun run lord figures first-room  # place the figures, hand them hooks
+bun run lord content first-room  # create editable room/character/clue cards
+bun run lord mnemonic first-room # seal a dummy BIP39 flag: 6 public + 6 hidden slots
+bun run lord clues first-room --check-cost # free Retro Diffusion estimate
+bun run lord clues first-room --yes        # generate wordless clue objects
 bun run lord build first-room    # validate and publish the artifact
 bun run lord play first-room     # build, then serve it at localhost:8080
 ```
@@ -42,8 +46,8 @@ For normal development, run `bun run dev`. It starts Vite on `:8080` and the Bun
 
 ### Playing
 
-`WASD`/arrows to walk, `E` to speak or examine, `J` for the people journal, `M` to spend
-a memory for two minutes, `Esc` to step away, and `H` for controls. `F1`, `B`, and `K`
+`WASD`/arrows to walk, `E` to speak or examine, `J` for the people journal, `N` for the
+six-word notebook, `M` to spend a memory for two minutes, `Esc` to step away, and `H` for controls. `F1`, `B`, and `K`
 are debug controls.
 
 ## What is where
@@ -52,6 +56,9 @@ are debug controls.
 dreams/<slug>/     the authored dream. draft.json is the authoring state; dream.json,
                    atlas.png and atlas.json are the build output. secret.local.txt holds
                    the plaintext secret and is gitignored — it never ships.
+                   content/rooms/*.json contains room prose + graphics; content/characters/
+                   contains personality + portrait states; content/clues/ contains public
+                   clue cards. mnemonic.local.json is the private clue-to-word map.
 tools/lord/        the CLI. worldgen/ is the map generator, art/ the tile pipeline,
                    term/ the terminal UI including the truecolor pixel preview.
 src/shared/        the artifact format and tile vocabulary, read by both sides.
@@ -88,6 +95,34 @@ and the heartbeat refuses visible geometry. `applyPatch` owns all tile writes an
 the world structurally coherent, but deliberately does not run a solvability solver: a
 defending dream is allowed to make a later cycle impossible, as §6 specifies.
 
+## Authoring rooms and characters
+
+`lord content <slug>` creates the content skeleton without overwriting existing cards.
+The checked-in files are deliberately plain JSON so an author can write them directly:
+
+- `content/rooms/*.json` — room name, description, atmosphere, personality, tags,
+  compatible physical room ids, graphics roles, optional backdrop PNG, glitch preset,
+  and normalized figure/object/clue anchors;
+- `content/characters/*.json` — the exact figure id, name, personality, role, voice,
+  desire, fear, taboo, initial activity, and four suspicion portrait frame names;
+- `content/settings.json` — how many cards from the larger room catalog are active;
+- `content/clues/*.json` — only public sensory direction and generated image paths.
+
+The model receives this catalog and current assignments. It may move existing figures,
+props and equally-sized room cards, but the server rejects unknown ids; it cannot invent a
+new personality or room. `lord build` validates every figure id, room id, atlas role,
+portrait frame and clue image reference before publishing format v3.
+
+For a full-room PNG, put the source at
+`dreams/<slug>/content/assets/rooms/<name>.png` and set the card to
+`"backdropImage": "assets/rooms/<name>.png"`. The player draws it inside the structural
+wall ring, above placeholder tiles and below figures; collision and door geometry stay
+authored by the map.
+
+The renderer uses a fixed 640×360 logical frame and nearest-neighbour integer enlargement.
+Current generated map tiles remain 16×16 foundation art; final human room art can be added
+through each room card without changing AI contracts or the physical map.
+
 ## Art
 
 The palette is fixed at the level of the dream — twelve to sixteen colours, chosen once
@@ -101,24 +136,32 @@ concept's whole answer to slop (§7.4), and it is the part that does not change 
 candidate generator does. Characters are palette-swapped silhouettes with a two-frame walk
 (§7.2, §7.3) — no generated animation, ever.
 
-Today the candidates are drawn procedurally by
-`tools/lord/art/candidates.ts`. Swapping in Retro Diffusion replaces the body of one
-function and nothing else; it is author-time only, never runtime.
+Terrain candidates are still drawn procedurally by `tools/lord/art/candidates.ts`.
+Mnemonic clue objects use Retro Diffusion at author time through `lord clues`: the command
+checks live style limits, performs a free cost estimate, submits async jobs with retry and
+backoff, then runs a 32×32 downscale, palette conversion and pixel correction. Only the
+chosen PNGs ship. Runtime never calls an image model.
+
+The public artifact contains no answer text. It carries six known BIP39 positions, six
+empty positions and the SHA-256 commitment. Six generated objects encode the hidden nouns
+semantically; the player writes hypotheses manually, and the exact ordered 12-word phrase
+is validated only at the finale. The phrase is a dummy game flag and must never hold funds.
 
 ## AI runtime
 
-`src/server/agent-runtime.ts` contains five schema-validated agents:
+`src/server/agent-runtime.ts` contains four schema-validated model agents and one exact
+server-side judge:
 
-- inhabit turns the Lord's sparse hooks into cached profiles, three-phase schedules,
-  room moods, and safe world interests without seeing the sealed secret;
+- inhabit installs the six authored personalities, authored clue interests, room moods,
+  and safe ambient interests without seeing the sealed mnemonic;
 - dialogue streams a figure's answer, may yield only that figure's shard, and enforces
   that every tell quotes an exact substring of the player's current words inside one
   short visible reply;
 - examine is the safe, slow channel — things do not suspect, and a thing may yield only
   the shard assigned to that exact world interest;
 - cycle exit compresses sleeper memory and proposes only the closed patch vocabulary;
-- finale compares the player's diagnosis with the sealed line by meaning. It is the only
-  agent that sees plaintext, and the server reveals it only after `match`.
+- finale is not generative: it normalizes twelve words, validates the English BIP39
+  checksum and compares the SHA-256 commitment exactly. A miss never reveals the answer.
 
 `RemoteMind` keeps the last six lines and a compact summary per figure for the current
 cycle, plus persistent discovered shards, sleeper
@@ -127,8 +170,8 @@ conversation or burned with `M` for `+2:00`. Any failed call falls back per acti
 `ScriptedMind`; the Pixi ticker keeps rendering while only simulation is paused.
 
 Generated population is cached under `.dreamwalker/runtime/`, keyed by dream slug and
-sealed-secret hash. A disconnected first run receives a deterministic 15-person/24-interest
-fallback rather than an empty map; a later authenticated run can replace it with AI output.
+sealed-secret hash. A disconnected first run receives a deterministic population made
+from the same six authored character cards rather than an empty map.
 
 ### Codex OAuth (default)
 
@@ -143,12 +186,13 @@ state directory with `DREAMWALKER_CODEX_PATH` and `DREAMWALKER_CODEX_HOME`.
 
 ### Anthropic Messages-compatible provider
 
-Set all three variables to bypass Codex OAuth:
+Set the proxy URL and token to bypass Codex OAuth. The model defaults to
+`gemini-3.6-flash-high` and remains overridable:
 
 ```bash
 ANTHROPIC_BASE_URL=http://proxy.example/anthropic \
 ANTHROPIC_AUTH_TOKEN=... \
-ANTHROPIC_MODEL=your-model \
+ANTHROPIC_MODEL=gemini-3.6-flash-high \
 bun run start
 ```
 
@@ -163,7 +207,7 @@ pipeline, PixiJS player, typed runtime patches, AI population/dialogue/examinati
 Codex device OAuth, an Anthropic-compatible provider, persistent memory economy, journal,
 and deterministic offline fallback.
 
-Not built: Retro Diffusion calls and multi-server dream federation (§8).
+Not built: final human-painted room/portrait atlases and multi-server dream federation.
 
 ## Verification
 

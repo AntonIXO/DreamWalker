@@ -1,0 +1,43 @@
+{
+  "id": "chamber-lever1",
+  "name": "Озеро",
+  "description": "Временная авторская камера. Замените описание в content/rooms.",
+  "atmosphere": "Светло, клинически и неуместно подробно.",
+  "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+  "tags": [
+    "landmark",
+    "clue-compatible"
+  ],
+  "eligibleRoomIds": [
+    "lever1"
+  ],
+  "unique": true,
+  "graphics": {
+    "floorRole": "grass",
+    "wallRole": "tree",
+    "propRole": "prop",
+    "backdropFrame": null,
+    "backdropImage": null,
+    "glitchPreset": "double-edge"
+  },
+  "anchors": [
+    {
+      "id": "lever1-figure",
+      "kind": "figure",
+      "x": 0.48,
+      "y": 0.55
+    },
+    {
+      "id": "lever1-object",
+      "kind": "object",
+      "x": 0.68,
+      "y": 0.58
+    },
+    {
+      "id": "lever1-clue",
+      "kind": "clue",
+      "x": 0.3,
+      "y": 0.62
+    }
+  ]
+}

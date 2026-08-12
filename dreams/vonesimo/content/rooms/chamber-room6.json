@@ -1,0 +1,43 @@
+{
+  "id": "chamber-room6",
+  "name": "Посёлок 2",
+  "description": "Временная авторская камера. Замените описание в content/rooms.",
+  "atmosphere": "Светло, клинически и неуместно подробно.",
+  "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+  "tags": [
+    "town",
+    "ambient"
+  ],
+  "eligibleRoomIds": [
+    "room6"
+  ],
+  "unique": true,
+  "graphics": {
+    "floorRole": "grass",
+    "wallRole": "tree",
+    "propRole": "prop",
+    "backdropFrame": null,
+    "backdropImage": null,
+    "glitchPreset": "double-edge"
+  },
+  "anchors": [
+    {
+      "id": "room6-figure",
+      "kind": "figure",
+      "x": 0.48,
+      "y": 0.55
+    },
+    {
+      "id": "room6-object",
+      "kind": "object",
+      "x": 0.68,
+      "y": 0.58
+    },
+    {
+      "id": "room6-clue",
+      "kind": "clue",
+      "x": 0.3,
+      "y": 0.62
+    }
+  ]
+}

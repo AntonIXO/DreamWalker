@@ -11,8 +11,16 @@
  * line the whole dream is about (§2).
  */
 
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import {
+  access,
+  copyFile,
+  cp,
+  mkdir,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import { dirname, join } from "node:path";
 
 import {
   DREAM_FORMAT_VERSION,
@@ -21,6 +29,7 @@ import {
   type DreamArtifact,
 } from "../../../src/shared/dream";
 import { PUBLIC_DREAM_DIR, dreamDir, loadDraft, statusOf } from "../project";
+import { loadContentFiles } from "../content/files";
 import { color, heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
 
@@ -49,6 +58,7 @@ export async function buildCommand(
   const manifest = validateAtlasManifest(
     JSON.parse(await readFile(join(dir, "atlas.json"), "utf8")),
   );
+  draft.content = await loadContentFiles(draft);
 
   const missingRoles: string[] = [];
   for (const room of draft.map.rooms) void room;
@@ -56,6 +66,65 @@ export async function buildCommand(
     const prefix = `figure_${figure.archetypeId}`;
     if (!Object.keys(manifest.frames).some((name) => name.startsWith(prefix))) {
       missingRoles.push(prefix);
+    }
+  }
+  for (const character of draft.content.characters) {
+    for (const [state, frame] of Object.entries(character.portraits)) {
+      if (!(frame in manifest.frames)) {
+        throw new Error(
+          `character ${character.id} portrait ${state} names missing frame ${frame}`,
+        );
+      }
+    }
+  }
+  for (const clue of draft.content.clues) {
+    for (const frame of [clue.worldFrame, clue.detailFrame]) {
+      if (!(frame in manifest.frames)) {
+        throw new Error(`clue ${clue.id} names missing frame ${frame}`);
+      }
+    }
+    for (const image of [clue.worldImage, clue.detailImage]) {
+      if (!image) continue;
+      if (!image.startsWith("assets/") || image.includes("..")) {
+        throw new Error(`clue ${clue.id} image must be inside assets/`);
+      }
+      try {
+        await access(
+          join(dir, "content", "generated", image.slice("assets/".length)),
+        );
+      } catch {
+        throw new Error(`clue ${clue.id} source is missing: content/${image}`);
+      }
+    }
+  }
+  for (const chamber of draft.content.chambers) {
+    for (const role of [
+      chamber.graphics.floorRole,
+      chamber.graphics.wallRole,
+      chamber.graphics.propRole,
+    ]) {
+      if (!(role in manifest.roleFrames)) {
+        throw new Error(
+          `chamber ${chamber.id} names missing atlas role ${role}`,
+        );
+      }
+    }
+    const backdrop = chamber.graphics.backdropImage;
+    if (backdrop) {
+      if (!backdrop.startsWith("assets/") || backdrop.includes("..")) {
+        throw new Error(
+          `chamber ${chamber.id} backdropImage must be inside published assets/`,
+        );
+      }
+      try {
+        await access(
+          join(dir, "content", "assets", backdrop.slice("assets/".length)),
+        );
+      } catch {
+        throw new Error(
+          `chamber ${chamber.id} backdrop source is missing: content/${backdrop}`,
+        );
+      }
     }
   }
   if (missingRoles.length > 0) {
@@ -76,6 +145,7 @@ export async function buildCommand(
     style: draft.style,
     map: draft.map,
     figures: draft.figures,
+    content: draft.content,
     cycle: draft.cycle,
     heartbeat: draft.heartbeat,
     atlas: draft.atlas,
@@ -94,10 +164,32 @@ export async function buildCommand(
 
   await writeFile(join(dir, "dream.json"), `${serialised}\n`, "utf8");
 
+  // Derived output only. Recreate it so obsolete RD candidates or renamed assets cannot
+  // remain publicly reachable after an author changes a card.
+  await rm(PUBLIC_DREAM_DIR, { recursive: true, force: true });
   await mkdir(PUBLIC_DREAM_DIR, { recursive: true });
   await copyFile(join(dir, "dream.json"), join(PUBLIC_DREAM_DIR, "dream.json"));
   await copyFile(join(dir, "atlas.json"), join(PUBLIC_DREAM_DIR, "atlas.json"));
   await copyFile(join(dir, "atlas.png"), join(PUBLIC_DREAM_DIR, "atlas.png"));
+  for (const clue of draft.content.clues) {
+    for (const image of [clue.worldImage, clue.detailImage]) {
+      if (!image) continue;
+      const relative = image.slice("assets/".length);
+      const target = join(PUBLIC_DREAM_DIR, image);
+      await mkdir(dirname(target), { recursive: true });
+      await copyFile(join(dir, "content", "generated", relative), target);
+    }
+  }
+  const authoredAssets = join(dir, "content", "assets");
+  try {
+    await access(authoredAssets);
+    await cp(authoredAssets, join(PUBLIC_DREAM_DIR, "assets"), {
+      recursive: true,
+      force: true,
+    });
+  } catch {
+    // Room PNGs are optional while the author is still using atlas roles.
+  }
 
   const sizeKb = (serialised.length / 1024).toFixed(1);
   console.log();

@@ -10,7 +10,7 @@ import type {
 } from "../shared/ai";
 import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
-import { normaliseAnthropicBaseURL } from "./config";
+import { DEFAULT_ANTHROPIC_MODEL, normaliseAnthropicBaseURL } from "./config";
 
 const root = process.cwd();
 const port = Number(process.env.DREAMWALKER_API_PORT ?? 8080);
@@ -24,7 +24,8 @@ const anthropicBaseURL = configuredAnthropicBaseURL
   ? normaliseAnthropicBaseURL(configuredAnthropicBaseURL)
   : undefined;
 const anthropicAuthToken = process.env.ANTHROPIC_AUTH_TOKEN?.trim();
-const anthropicModel = process.env.ANTHROPIC_MODEL?.trim();
+const anthropicModel =
+  process.env.ANTHROPIC_MODEL?.trim() || DEFAULT_ANTHROPIC_MODEL;
 const anthropic =
   anthropicBaseURL && anthropicAuthToken && anthropicModel
     ? {

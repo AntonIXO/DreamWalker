@@ -10,9 +10,10 @@
  */
 
 import type { StyleProfile } from "./art/style";
+import type { DreamContent } from "./content";
 import type { DoorTypeName } from "./tilecodes";
 
-export const DREAM_FORMAT_VERSION = 2;
+export const DREAM_FORMAT_VERSION = 3;
 
 // ---------------------------------------------------------------------------
 // Mission graph — Dormans' abstract structure, kept alongside the space it became
@@ -263,6 +264,8 @@ export interface DreamArtifact {
   style: StyleProfile;
   map: DreamMap;
   figures: FigurePlacement[];
+  /** Human-authored room, personality and mnemonic records. */
+  content: DreamContent;
   cycle: CycleConfig;
   heartbeat: HeartbeatConfig;
   /** Path to the atlas manifest, relative to the artifact directory. */
@@ -372,6 +375,11 @@ function num(value: unknown, path: string): number {
 
 function arr(value: unknown, path: string): unknown[] {
   if (!Array.isArray(value)) fail(path, "expected an array");
+  return value;
+}
+
+function bool(value: unknown, path: string): boolean {
+  if (typeof value !== "boolean") fail(path, "expected a boolean");
   return value;
 }
 
@@ -561,9 +569,13 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     str(shard.hint, `dream.shards[${i}].hint`);
   });
 
+  const figureIds = new Set<string>();
   arr(root.figures, "dream.figures").forEach((f, i) => {
     const figure = obj(f, `dream.figures[${i}]`);
-    str(figure.id, `dream.figures[${i}].id`);
+    const figureId = str(figure.id, `dream.figures[${i}].id`);
+    if (figureIds.has(figureId))
+      fail(`dream.figures[${i}].id`, `duplicate figure id ${figureId}`);
+    figureIds.add(figureId);
     const roomId = str(figure.roomId, `dream.figures[${i}].roomId`);
     if (!roomIds.has(roomId))
       fail(`dream.figures[${i}].roomId`, `no room ${roomId}`);
@@ -572,6 +584,195 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
       fail(`dream.figures[${i}].holdsShardId`, `no shard ${String(holds)}`);
     }
   });
+
+  // --- author-editable chambers, personalities and the public mnemonic half
+  const content = obj(root.content, "dream.content");
+  const mnemonic = obj(content.mnemonic, "dream.content.mnemonic");
+  const mnemonicHash = str(mnemonic.hash, "dream.content.mnemonic.hash");
+  if (!/^[0-9a-f]{64}$/i.test(mnemonicHash)) {
+    fail("dream.content.mnemonic.hash", "expected a SHA-256 hex digest");
+  }
+  if (str(mnemonic.wordlist, "dream.content.mnemonic.wordlist") !== "english") {
+    fail(
+      "dream.content.mnemonic.wordlist",
+      "MVP supports the English BIP39 list",
+    );
+  }
+  const knownSlots = arr(
+    mnemonic.knownSlots,
+    "dream.content.mnemonic.knownSlots",
+  );
+  if (knownSlots.length !== 12)
+    fail("dream.content.mnemonic.knownSlots", "expected exactly 12 slots");
+  let hiddenSlots = 0;
+  knownSlots.forEach((slot, i) => {
+    if (slot === null) hiddenSlots++;
+    else str(slot, `dream.content.mnemonic.knownSlots[${i}]`);
+  });
+  if (hiddenSlots !== 6)
+    fail(
+      "dream.content.mnemonic.knownSlots",
+      "expected exactly six hidden slots",
+    );
+
+  const characterIds = new Set<string>();
+  arr(content.characters, "dream.content.characters").forEach((entry, i) => {
+    const character = obj(entry, `dream.content.characters[${i}]`);
+    const id = str(character.id, `dream.content.characters[${i}].id`);
+    if (characterIds.has(id))
+      fail(`dream.content.characters[${i}].id`, `duplicate character ${id}`);
+    characterIds.add(id);
+    if (!figureIds.has(id))
+      fail(`dream.content.characters[${i}].id`, `no figure placement ${id}`);
+    for (const field of [
+      "name",
+      "archetypeId",
+      "personality",
+      "role",
+      "voice",
+      "desire",
+      "fear",
+      "taboo",
+      "initialActivity",
+    ] as const) {
+      str(character[field], `dream.content.characters[${i}].${field}`);
+    }
+    const portraits = obj(
+      character.portraits,
+      `dream.content.characters[${i}].portraits`,
+    );
+    for (const state of ["neutral", "interested", "wary", "knows"] as const) {
+      str(
+        portraits[state],
+        `dream.content.characters[${i}].portraits.${state}`,
+      );
+    }
+  });
+  if (characterIds.size !== figureIds.size) {
+    fail(
+      "dream.content.characters",
+      "every figure placement needs one character definition",
+    );
+  }
+
+  const chamberIds = new Set<string>();
+  arr(content.chambers, "dream.content.chambers").forEach((entry, i) => {
+    const chamber = obj(entry, `dream.content.chambers[${i}]`);
+    const id = str(chamber.id, `dream.content.chambers[${i}].id`);
+    if (chamberIds.has(id))
+      fail(`dream.content.chambers[${i}].id`, `duplicate chamber ${id}`);
+    chamberIds.add(id);
+    for (const field of [
+      "name",
+      "description",
+      "atmosphere",
+      "personality",
+    ] as const) {
+      str(chamber[field], `dream.content.chambers[${i}].${field}`);
+    }
+    bool(chamber.unique, `dream.content.chambers[${i}].unique`);
+    arr(chamber.tags, `dream.content.chambers[${i}].tags`).forEach((tag, j) =>
+      str(tag, `dream.content.chambers[${i}].tags[${j}]`),
+    );
+    arr(
+      chamber.eligibleRoomIds,
+      `dream.content.chambers[${i}].eligibleRoomIds`,
+    ).forEach((roomId, j) => {
+      const value = str(
+        roomId,
+        `dream.content.chambers[${i}].eligibleRoomIds[${j}]`,
+      );
+      if (!roomIds.has(value))
+        fail(
+          `dream.content.chambers[${i}].eligibleRoomIds[${j}]`,
+          `no room ${value}`,
+        );
+    });
+    const graphics = obj(
+      chamber.graphics,
+      `dream.content.chambers[${i}].graphics`,
+    );
+    for (const role of [
+      "floorRole",
+      "wallRole",
+      "propRole",
+      "glitchPreset",
+    ] as const) {
+      str(graphics[role], `dream.content.chambers[${i}].graphics.${role}`);
+    }
+    if (graphics.backdropFrame !== null)
+      str(
+        graphics.backdropFrame,
+        `dream.content.chambers[${i}].graphics.backdropFrame`,
+      );
+    if (graphics.backdropImage !== null && graphics.backdropImage !== undefined)
+      str(
+        graphics.backdropImage,
+        `dream.content.chambers[${i}].graphics.backdropImage`,
+      );
+    arr(chamber.anchors, `dream.content.chambers[${i}].anchors`).forEach(
+      (anchorEntry, j) => {
+        const anchor = obj(
+          anchorEntry,
+          `dream.content.chambers[${i}].anchors[${j}]`,
+        );
+        str(anchor.id, `dream.content.chambers[${i}].anchors[${j}].id`);
+        str(anchor.kind, `dream.content.chambers[${i}].anchors[${j}].kind`);
+        const ax = num(
+          anchor.x,
+          `dream.content.chambers[${i}].anchors[${j}].x`,
+        );
+        const ay = num(
+          anchor.y,
+          `dream.content.chambers[${i}].anchors[${j}].y`,
+        );
+        if (ax < 0 || ax > 1 || ay < 0 || ay > 1)
+          fail(
+            `dream.content.chambers[${i}].anchors[${j}]`,
+            "normalised coordinates must be inside 0..1",
+          );
+      },
+    );
+  });
+  if (chamberIds.size === 0)
+    fail(
+      "dream.content.chambers",
+      "a dream needs at least one authored chamber",
+    );
+
+  const clueIds = new Set<string>();
+  arr(content.clues, "dream.content.clues").forEach((entry, i) => {
+    const clue = obj(entry, `dream.content.clues[${i}]`);
+    const id = str(clue.id, `dream.content.clues[${i}].id`);
+    if (clueIds.has(id))
+      fail(`dream.content.clues[${i}].id`, `duplicate clue ${id}`);
+    clueIds.add(id);
+    for (const field of [
+      "sensorySeed",
+      "worldFrame",
+      "detailFrame",
+      "marker",
+    ] as const) {
+      str(clue[field], `dream.content.clues[${i}].${field}`);
+    }
+    for (const field of ["worldImage", "detailImage"] as const) {
+      if (clue[field] !== null && clue[field] !== undefined)
+        str(clue[field], `dream.content.clues[${i}].${field}`);
+    }
+    arr(clue.placementTags, `dream.content.clues[${i}].placementTags`).forEach(
+      (tag, j) => str(tag, `dream.content.clues[${i}].placementTags[${j}]`),
+    );
+  });
+  if (clueIds.size !== 6)
+    fail("dream.content.clues", "the MVP requires exactly six clue objects");
+
+  const activeChamberCount = num(
+    content.activeChamberCount,
+    "dream.content.activeChamberCount",
+  );
+  if (activeChamberCount < 1 || activeChamberCount > chamberIds.size) {
+    fail("dream.content.activeChamberCount", `expected 1..${chamberIds.size}`);
+  }
 
   // --- timings
   const cycle = obj(root.cycle, "dream.cycle");

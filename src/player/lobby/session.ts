@@ -51,7 +51,11 @@ export class LobbySession {
     this.scene.actorLayer.addChild(this.sprite.sprite);
     this.sprite.update(this.walker.x, this.walker.y, this.walker.facing, 0);
 
-    this.prompt = new LobbyPrompt(parent, this.definition.copy.hint ?? "");
+    this.prompt = new LobbyPrompt(
+      parent,
+      this.definition.copy.hint ?? "",
+      this.definition.copy.slogan ?? "",
+    );
     this.inspect = new InspectPanel(parent, {
       onClose: () => {
         this.held = false;

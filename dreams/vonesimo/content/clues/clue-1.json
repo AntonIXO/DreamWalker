@@ -1,0 +1,12 @@
+{
+  "id": "clue-1",
+  "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+  "placementTags": [
+    "clue-compatible"
+  ],
+  "worldFrame": "prop",
+  "detailFrame": "prop",
+  "worldImage": "assets/clues/clue-1/world.png",
+  "detailImage": "assets/clues/clue-1/detail.png",
+  "marker": "бирюзовый шов с одной песочной точкой"
+}

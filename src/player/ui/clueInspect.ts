@@ -6,7 +6,10 @@ export class ClueInspectPanel {
   private readonly placeholder: HTMLElement;
   private readonly observation: HTMLElement;
 
-  constructor(parent: HTMLElement, private readonly onClose: () => void) {
+  constructor(
+    parent: HTMLElement,
+    private readonly onClose: () => void,
+  ) {
     this.root = document.createElement("div");
     this.root.className = "panel clue-inspect";
     this.root.hidden = true;
@@ -30,7 +33,9 @@ export class ClueInspectPanel {
       this.image.hidden = true;
       this.placeholder.hidden = false;
     });
-    this.root.querySelector("button")!.addEventListener("click", () => this.close());
+    this.root
+      .querySelector("button")!
+      .addEventListener("click", () => this.close());
   }
 
   get isOpen(): boolean {

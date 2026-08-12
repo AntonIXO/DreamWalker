@@ -6,7 +6,7 @@
  * pick sixteen hex codes, ask them for a picture they like and measure it.
  *
  * The measurement method is decided by what the reference actually is. Pixel art is
- * already palettised — `assets/ВоНеСиМо.png` has forty-six unique colours and not one
+ * already palettised — the patient reference has forty-six unique colours and not one
  * anti-aliased pixel — so the honest reduction is an **exact histogram**, and the usual
  * quantisers are wrong here: median cut and k-means both invent centroid colours by
  * averaging, and an averaged violet is a colour the artist never used. Where clustering is
@@ -421,7 +421,7 @@ function nearestPaletteIndex(target: Oklab, palette: readonly Oklab[]): number {
  * lightness — which is what dithering is, and what distinguishes it from an edge.
  *
  * A near-zero result is a real answer, not a broken detector: plenty of good pixel art
- * shades in flat bands and never dithers at all. `assets/ВоНеСиМо.png` measures 0.0001,
+ * shades in flat bands and never dithers at all. The patient reference measures 0.0001,
  * and generated tiles for that dream should therefore be flat too. Do not "fix" this by
  * putting a floor under it — that would impose a texture the reference does not have,
  * which is precisely the seam §7.1 exists to avoid.

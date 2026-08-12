@@ -15,6 +15,10 @@ dist-ssr
 
 # The sealed secret never leaves the Lord's machine. dream.json keeps only its hash.
 dreams/*/secret.local.txt
+dreams/*/mnemonic.local.json
+# Four-up RD curation sheets are reproducible scratch data; only chosen detail/world art
+# is committed and published.
+dreams/*/content/generated/**/candidate-*.png
 
 # The built artifact the player fetches — regenerate with `bun run lord build <slug>`
 public/dream

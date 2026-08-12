@@ -45,7 +45,9 @@ export class WordNotebookPanel {
       grid.appendChild(label);
       return input;
     });
-    this.root.querySelector("button")!.addEventListener("click", () => this.close());
+    this.root
+      .querySelector("button")!
+      .addEventListener("click", () => this.close());
   }
 
   get isOpen(): boolean {

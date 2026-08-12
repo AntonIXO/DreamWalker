@@ -26,7 +26,7 @@ import {
 } from "../../shared/autotile";
 import { TILE_ROLE, Tile } from "../../shared/tilecodes";
 import type { Rect } from "../../shared/dream";
-import { tileAt, type WorldState } from "../game/world";
+import { roomAt, tileAt, type WorldState } from "../game/world";
 import { variantFor, type AtlasTextures } from "./atlasTextures";
 
 /** Tiles per chunk. 16 keeps a chunk near a screen quarter at the usual zoom. */
@@ -88,8 +88,22 @@ export class TilemapView {
    * the Lord never baked.
    */
   private textureFor(x: number, y: number, tile: number): Texture | null {
-    const role = TILE_ROLE[tile];
+    let role = TILE_ROLE[tile];
     if (!role) return null;
+
+    const room = roomAt(this.world, x, y);
+    const graphics = room
+      ? this.world.chamberByRoomId.get(room.id)?.graphics
+      : undefined;
+    if (graphics) {
+      if (["floor", "floorAlt", "grass", "sand"].includes(role)) {
+        role = graphics.floorRole;
+      } else if (["wall", "wallFace", "tree"].includes(role)) {
+        role = graphics.wallRole;
+      } else if (["prop", "propSolid"].includes(role)) {
+        role = graphics.propRole;
+      }
+    }
 
     const frames = this.atlas.roles.get(role);
     if (!frames || frames.length === 0) return null;

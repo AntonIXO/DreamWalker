@@ -5,6 +5,7 @@ import type { DreamPopulation } from "../../shared/ai";
 import { Tile } from "../../shared/tilecodes";
 import { applyPatch, installPopulation } from "./patch";
 import { createWorld, resetWorld } from "./world";
+import { ScriptedMind } from "../mind/scripted";
 
 describe("runtime dream patches", () => {
   test("the sleeper may seal authored routes and reset restores them", async () => {
@@ -47,6 +48,7 @@ describe("runtime dream patches", () => {
           archetypeId: authored.archetypeId,
           homeRoomId: authored.roomId,
           role: "дежурная",
+          personality: "считает порядок единственной защитой",
           voice: "тихо",
           desire: "закончить обход",
           fear: "стука",
@@ -71,6 +73,7 @@ describe("runtime dream patches", () => {
           sensorySeed: "Спинка ещё тёплая.",
           solid: true,
           holdsShardId: artifact.shards[0]?.id ?? null,
+          clueId: null,
         },
       ],
     };
@@ -101,5 +104,61 @@ describe("runtime dream patches", () => {
     expect(world.tiles[placed.y * world.width + placed.x]).toBe(
       Tile.PROP_SOLID,
     );
+  });
+
+  test("room cards only swap between author-approved slots", async () => {
+    const artifact = validateDreamArtifact(
+      await Bun.file("dreams/vonesimo/dream.json").json(),
+    );
+    const world = createWorld(artifact);
+    const entries = [...world.chamberByRoomId.entries()];
+    const [aId, aChamber] = entries[0]!;
+    const [bId, bChamber] = entries.find(
+      ([id]) =>
+        id !== aId &&
+        world.roomById.get(id)?.rect.w === world.roomById.get(aId)?.rect.w,
+    )!;
+    expect(
+      applyPatch(world, {
+        kind: "swapRooms",
+        aRoomId: aId,
+        bRoomId: bId,
+        reason: "test refusal",
+      }).ok,
+    ).toBe(false);
+
+    aChamber.eligibleRoomIds.push(bId);
+    bChamber.eligibleRoomIds.push(aId);
+    expect(
+      applyPatch(world, {
+        kind: "swapRooms",
+        aRoomId: aId,
+        bRoomId: bId,
+        reason: "test authored shuffle",
+      }).ok,
+    ).toBe(true);
+    expect(world.chamberByRoomId.get(aId)?.id).toBe(bChamber.id);
+    expect(world.chamberByRoomId.get(bId)?.id).toBe(aChamber.id);
+  });
+
+  test("offline finale requires the exact ordered commitment", async () => {
+    const artifact = validateDreamArtifact(
+      await Bun.file("dreams/vonesimo/dream.json").json(),
+    );
+    const words =
+      "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about".split(
+        " ",
+      );
+    const phrase = words.join(" ");
+    artifact.content.mnemonic.hash = new Bun.CryptoHasher("sha256")
+      .update(phrase)
+      .digest("hex");
+    const mind = new ScriptedMind(createWorld(artifact));
+    await expect(mind.judge(words)).resolves.toMatchObject({
+      verdict: "match",
+    });
+    const wrong = [...words];
+    [wrong[0], wrong[1]] = ["about", "abandon"];
+    await expect(mind.judge(wrong)).resolves.toMatchObject({ verdict: "miss" });
   });
 });

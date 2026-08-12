@@ -44,6 +44,7 @@ export type MapPatch =
         sensorySeed: string;
         solid: boolean;
         holdsShardId: string | null;
+        clueId: string | null;
       };
       reason: string;
     }

@@ -18,7 +18,8 @@ import {
 
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import { REQUIRED_TILE_ROLES, TILE_ROLE } from "../shared/tilecodes";
-import { loadAtlas } from "./render/atlasTextures";
+import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
+import { ChamberBackdropLayer } from "./render/chamberBackdrops";
 import { TileFoundry } from "./render/foundry";
 import { Camera, DEFAULT_CAMERA, outdoorHeight } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
@@ -119,6 +120,20 @@ async function loadArtifact(): Promise<DreamArtifact> {
 async function boot(): Promise<void> {
   const artifact = await loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
+  const clueTextures = await loadExternalTextures(
+    DREAM_URL,
+    artifact.content.clues.flatMap((clue) =>
+      clue.worldImage ? [{ id: clue.id, path: clue.worldImage }] : [],
+    ),
+  );
+  const backdropTextures = await loadExternalTextures(
+    DREAM_URL,
+    artifact.content.chambers.flatMap((chamber) =>
+      chamber.graphics.backdropImage
+        ? [{ id: chamber.id, path: chamber.graphics.backdropImage }]
+        : [],
+    ),
+  );
 
   const world = createWorld(artifact);
   const background =
@@ -191,7 +206,10 @@ async function boot(): Promise<void> {
   worldRoot.addChild(tilemap.root);
   await app.renderer.prepare.upload(tilemap.root);
 
-  const actors = new ActorLayer(atlas);
+  const chamberBackdrops = new ChamberBackdropLayer(world, backdropTextures);
+  worldRoot.addChild(chamberBackdrops.root);
+
+  const actors = new ActorLayer(atlas, clueTextures);
   worldRoot.addChild(actors.root);
 
   /**
@@ -368,6 +386,7 @@ async function boot(): Promise<void> {
         tilemap.refreshAll();
         await app.renderer.prepare.upload(tilemap.root);
         actors.syncFigures(world.figures, world.tileSize);
+        actors.syncInterests(world.interests, world.tileSize);
         populationInstalled = true;
       }
       controls.close();
@@ -442,6 +461,7 @@ async function boot(): Promise<void> {
     // redraw, or the new ground appears as a hole (§6, "разум подкинул — он тут хозяин").
     foundry.ensureAll(rolesIn(world, outcome.affectedRooms));
     tilemap.refreshRooms(outcome.affectedRooms);
+    chamberBackdrops.sync();
     shiver.trigger(Math.min(1, outcome.affectedRooms.length / 2));
     for (const note of outcome.notes) journal.add(cycle.number, note);
     if (outcome.notes.length > 0) hud.whisper(outcome.notes[0]!);
@@ -475,6 +495,7 @@ async function boot(): Promise<void> {
       worldRoot.mask = null;
       roomMask.clear();
       tilemap.refreshAll();
+      chamberBackdrops.sync();
       await app.renderer.prepare.upload(tilemap.root);
 
       cycle.restart();
@@ -507,6 +528,7 @@ async function boot(): Promise<void> {
     dialogue,
     finale,
     tilemap,
+    chamberBackdrops,
     atlas,
     lobby,
     get phase(): AppPhase {
@@ -750,6 +772,7 @@ async function boot(): Promise<void> {
     // --- draw
     playerSprite.update(player.x, player.y, player.facing, walkFrame(player));
     actors.syncFigures(world.figures, world.tileSize);
+    actors.syncInterests(world.interests, world.tileSize);
 
     hud.update(
       {

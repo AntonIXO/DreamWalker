@@ -1,5 +1,5 @@
 {
-  "format": 2,
+  "format": 3,
   "slug": "vonesimo",
   "title": "ВоНеСиМо",
   "genreContract": "Сон, где всё живое смотрит одним глазом",
@@ -9,7 +9,7 @@
     "глаз",
     "пыльца"
   ],
-  "secretHash": "98675643aabf4c843ee99760bdb5e3ceb16c12d908612d6182b5f479aaddde19",
+  "secretHash": "ea0fac9ef2f55c596c7f37d5480ffd235f5aa5fb8bf69913f2f5dcc1fa2070ea",
   "shards": [
     {
       "id": "shard1",
@@ -1897,6 +1897,729 @@
       "prop": 0,
       "propSolid": 0
     },
-    "reference": "assets/ВоНеСиМо.png"
+    "reference": "assets/ВоНеСиМо-patient.png"
+  },
+  "content": {
+    "characters": [
+      {
+        "id": "figure1",
+        "name": "Санитарка",
+        "archetypeId": "orderly",
+        "personality": "Держится за привычный порядок и замечает слишком ясные вопросы.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась без происшествий",
+        "fear": "понять, что рядом находится чужой",
+        "taboo": "не обсуждает то, что лежит за пределами сна",
+        "initialActivity": "занят привычным делом",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        }
+      },
+      {
+        "id": "figure2",
+        "name": "Соседка",
+        "archetypeId": "visitor",
+        "personality": "Держится за привычный порядок и замечает слишком ясные вопросы.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась без происшествий",
+        "fear": "понять, что рядом находится чужой",
+        "taboo": "не обсуждает то, что лежит за пределами сна",
+        "initialActivity": "занят привычным делом",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        }
+      },
+      {
+        "id": "figure3",
+        "name": "Кто-то в очереди",
+        "archetypeId": "child",
+        "personality": "Держится за привычный порядок и замечает слишком ясные вопросы.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась без происшествий",
+        "fear": "понять, что рядом находится чужой",
+        "taboo": "не обсуждает то, что лежит за пределами сна",
+        "initialActivity": "занят привычным делом",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        }
+      },
+      {
+        "id": "figure4",
+        "name": "Дежурный",
+        "archetypeId": "watcher",
+        "personality": "Держится за привычный порядок и замечает слишком ясные вопросы.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась без происшествий",
+        "fear": "понять, что рядом находится чужой",
+        "taboo": "не обсуждает то, что лежит за пределами сна",
+        "initialActivity": "занят привычным делом",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        }
+      },
+      {
+        "id": "figure5",
+        "name": "Женщина у окна",
+        "archetypeId": "orderly",
+        "personality": "Держится за привычный порядок и замечает слишком ясные вопросы.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась без происшествий",
+        "fear": "понять, что рядом находится чужой",
+        "taboo": "не обсуждает то, что лежит за пределами сна",
+        "initialActivity": "занят привычным делом",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        }
+      },
+      {
+        "id": "figure6",
+        "name": "Человек в халате",
+        "archetypeId": "visitor",
+        "personality": "Держится за привычный порядок и замечает слишком ясные вопросы.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась без происшествий",
+        "fear": "понять, что рядом находится чужой",
+        "taboo": "не обсуждает то, что лежит за пределами сна",
+        "initialActivity": "занят привычным делом",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        }
+      }
+    ],
+    "chambers": [
+      {
+        "id": "chamber-key1",
+        "name": "Двор",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "town",
+          "clue-compatible"
+        ],
+        "eligibleRoomIds": [
+          "key1"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "split"
+        },
+        "anchors": [
+          {
+            "id": "key1-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "key1-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "key1-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-key2",
+        "name": "Станция",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "town",
+          "ambient"
+        ],
+        "eligibleRoomIds": [
+          "key2"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "key2-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "key2-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "key2-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-lever1",
+        "name": "Озеро",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "landmark",
+          "clue-compatible"
+        ],
+        "eligibleRoomIds": [
+          "lever1"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "lever1-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "lever1-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "lever1-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-lock1",
+        "name": "Поле",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "wild",
+          "ambient"
+        ],
+        "eligibleRoomIds": [
+          "lock1"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "lock1-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "lock1-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "lock1-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-puzzle2",
+        "name": "Роща",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "landmark",
+          "ambient"
+        ],
+        "eligibleRoomIds": [
+          "puzzle2"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "split"
+        },
+        "anchors": [
+          {
+            "id": "puzzle2-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "puzzle2-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "puzzle2-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-room1",
+        "name": "Луг",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "wild",
+          "ambient"
+        ],
+        "eligibleRoomIds": [
+          "room1"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "room1-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "room1-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "room1-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-room3",
+        "name": "Посёлок",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "town",
+          "clue-compatible"
+        ],
+        "eligibleRoomIds": [
+          "room3"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "room3-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "room3-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "room3-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-room4",
+        "name": "Развалины",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "landmark",
+          "clue-compatible"
+        ],
+        "eligibleRoomIds": [
+          "room4"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "room4-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "room4-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "room4-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-room5",
+        "name": "Слобода",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "town",
+          "clue-compatible"
+        ],
+        "eligibleRoomIds": [
+          "room5"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "room5-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "room5-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "room5-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-room6",
+        "name": "Посёлок 2",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "town",
+          "ambient"
+        ],
+        "eligibleRoomIds": [
+          "room6"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "double-edge"
+        },
+        "anchors": [
+          {
+            "id": "room6-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "room6-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "room6-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-room8",
+        "name": "Пустошь",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "wild",
+          "ambient"
+        ],
+        "eligibleRoomIds": [
+          "room8"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "split"
+        },
+        "anchors": [
+          {
+            "id": "room8-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "room8-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "room8-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      },
+      {
+        "id": "chamber-start",
+        "name": "Дом",
+        "description": "Временная авторская камера. Замените описание в content/rooms.",
+        "atmosphere": "Светло, клинически и неуместно подробно.",
+        "personality": "Комната притворяется обычным местом, но материалы не сходятся.",
+        "tags": [
+          "town",
+          "clue-compatible"
+        ],
+        "eligibleRoomIds": [
+          "start"
+        ],
+        "unique": true,
+        "graphics": {
+          "floorRole": "grass",
+          "wallRole": "tree",
+          "propRole": "prop",
+          "backdropFrame": null,
+          "backdropImage": null,
+          "glitchPreset": "split"
+        },
+        "anchors": [
+          {
+            "id": "start-figure",
+            "kind": "figure",
+            "x": 0.48,
+            "y": 0.55
+          },
+          {
+            "id": "start-object",
+            "kind": "object",
+            "x": 0.68,
+            "y": 0.58
+          },
+          {
+            "id": "start-clue",
+            "kind": "clue",
+            "x": 0.3,
+            "y": 0.62
+          }
+        ]
+      }
+    ],
+    "clues": [
+      {
+        "id": "clue-1",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": "assets/clues/clue-1/world.png",
+        "detailImage": "assets/clues/clue-1/detail.png",
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-2",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": "assets/clues/clue-2/world.png",
+        "detailImage": "assets/clues/clue-2/detail.png",
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-3",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": "assets/clues/clue-3/world.png",
+        "detailImage": "assets/clues/clue-3/detail.png",
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-4",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": "assets/clues/clue-4/world.png",
+        "detailImage": "assets/clues/clue-4/detail.png",
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-5",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": "assets/clues/clue-5/world.png",
+        "detailImage": "assets/clues/clue-5/detail.png",
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-6",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": "assets/clues/clue-6/world.png",
+        "detailImage": "assets/clues/clue-6/detail.png",
+        "marker": "бирюзовый шов с одной песочной точкой"
+      }
+    ],
+    "mnemonic": {
+      "hash": "ea0fac9ef2f55c596c7f37d5480ffd235f5aa5fb8bf69913f2f5dcc1fa2070ea",
+      "wordlist": "english",
+      "knownSlots": [
+        "total",
+        null,
+        null,
+        "hover",
+        "phrase",
+        null,
+        "hidden",
+        "dilemma",
+        null,
+        null,
+        null,
+        "square"
+      ]
+    },
+    "activeChamberCount": 8
   }
 }

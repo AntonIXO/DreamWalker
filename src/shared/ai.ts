@@ -1,4 +1,5 @@
 import type { MapPatch } from "./map-patch";
+import type { PortraitState } from "./content";
 
 /** The one Codex configuration this game is designed and tuned against. */
 export const DREAM_MODEL = "gpt-5.6-luna";
@@ -68,6 +69,7 @@ export interface FigureProfile {
   archetypeId: string;
   homeRoomId: string;
   role: string;
+  personality: string;
   voice: string;
   desire: string;
   fear: string;
@@ -84,6 +86,8 @@ export interface InterestSeed {
   sensorySeed: string;
   solid: boolean;
   holdsShardId: string | null;
+  /** A semantic picture puzzle. The target word is never part of the artifact. */
+  clueId: string | null;
 }
 
 export interface DreamPopulation {
@@ -103,7 +107,13 @@ export interface FigureMemory {
 }
 
 export interface WorldSnapshot {
-  rooms: Array<{ id: string; name: string; kind: "room" | "connector" }>;
+  rooms: Array<{
+    id: string;
+    name: string;
+    kind: "room" | "connector";
+    chamberId: string | null;
+    personality: string | null;
+  }>;
   doors: Array<{
     id: string;
     type: string;
@@ -116,6 +126,7 @@ export interface WorldSnapshot {
     roomId: string;
     holdsShardId: string | null;
     role: string;
+    personality: string;
     activity: string;
   }>;
   interests: Array<{
@@ -124,6 +135,7 @@ export interface WorldSnapshot {
     roomId: string;
     sensorySeed: string;
     holdsShardId: string | null;
+    clueId: string | null;
   }>;
 }
 
@@ -155,6 +167,7 @@ export interface DialogueResult {
   resonance: { declaration: string } | null;
   figureMemorySummary: string;
   journalEntry: string | null;
+  portraitState: PortraitState;
 }
 
 export interface ExamineRequestPayload {
@@ -171,6 +184,7 @@ export interface ExamineRequestPayload {
 export interface ExamineResult {
   reply: string;
   yieldedShardId: string | null;
+  clueObservedId: string | null;
 }
 
 export interface CycleExitRequestPayload {
@@ -201,15 +215,12 @@ export interface CycleExitResult {
 
 export interface FinaleRequestPayload {
   slug: string;
-  diagnosis: string;
-  knownShardIds: string[];
-  journal: string[];
+  words: string[];
 }
 
 export interface FinaleResult {
-  verdict: "match" | "near" | "miss";
+  verdict: "match" | "miss";
   reply: string;
-  reveal?: string;
 }
 
 export type AiErrorCode =

@@ -82,7 +82,7 @@ export interface DreamMind {
    */
   mutate(observation: Observation): Promise<CycleExitResult>;
 
-  judge(diagnosis: string): Promise<FinaleResult>;
+  judge(words: string[]): Promise<FinaleResult>;
   availableMemories(): readonly DreamMemory[];
   conversation(figureId: string): readonly FigureTranscriptLine[];
   forgetFigures(): void;

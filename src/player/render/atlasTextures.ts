@@ -16,6 +16,10 @@ import { validateAtlasManifest, type AtlasManifest } from "../../shared/dream";
 
 export interface AtlasTextures {
   manifest: AtlasManifest;
+  /** Public sheet URL and dimensions, also used by DOM portrait crops. */
+  imageUrl: string;
+  sheetWidth: number;
+  sheetHeight: number;
   /** Frame name -> texture. */
   frames: Map<string, Texture>;
   /** Role -> textures, in the order the manifest listed them. */
@@ -71,7 +75,15 @@ export async function loadAtlas(baseUrl: string): Promise<AtlasTextures> {
     roles.set(role, list);
   }
 
-  return { manifest, frames, roles, tileSize: manifest.tileSize };
+  return {
+    manifest,
+    imageUrl: `${baseUrl}/${manifest.image}`,
+    sheetWidth: sheet.source.width,
+    sheetHeight: sheet.source.height,
+    frames,
+    roles,
+    tileSize: manifest.tileSize,
+  };
 }
 
 /**
@@ -83,4 +95,24 @@ export function variantFor(textures: Texture[], x: number, y: number): Texture {
   if (textures.length === 1) return textures[0]!;
   const hash = ((x * 73856093) ^ (y * 19349663)) >>> 0;
   return textures[hash % textures.length]!;
+}
+
+/** Load optional author-time PNGs without adding them to the indexed terrain atlas. */
+export async function loadExternalTextures(
+  baseUrl: string,
+  sources: Array<{ id: string; path: string }>,
+): Promise<Map<string, Texture>> {
+  const textures = new Map<string, Texture>();
+  await Promise.all(
+    sources.map(async ({ id, path }) => {
+      const texture: Texture = await Assets.load({
+        src: `${baseUrl}/${path}`,
+        alias: `dream-external:${id}`,
+        data: { scaleMode: "nearest" },
+      });
+      texture.source.scaleMode = "nearest";
+      textures.set(id, texture);
+    }),
+  );
+  return textures;
 }

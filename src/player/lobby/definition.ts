@@ -96,6 +96,7 @@ export const LOBBY_DEFINITION: LobbyDefinition = {
   ],
   copy: {
     roomName: "Процедурная 3",
+    slogan: "В дурке кто первый надел халат, тот и санитар!",
     hint: "WASD — ходить. E — подойти и взять.",
     plaque: "DREAM WALKER",
     "terminal.prompt": "подключить",
