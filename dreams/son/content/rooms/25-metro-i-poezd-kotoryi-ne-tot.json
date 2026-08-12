@@ -1,0 +1,145 @@
+{
+  "id": "25-metro-i-poezd-kotoryi-ne-tot",
+  "name": "МЕТРО И ПОЕЗД, КОТОРЫЙ НЕ ТОТ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
+      "kind": "link",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "табло с расписанием, где номера меняются",
+      "link": {
+        "to": "room",
+        "roomId": "m4-razvilka-gde-ty-ostalsia",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
+      "kind": "look",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "korobka-s-golosom",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "коробка с голосом",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "chuzhie-sumki-na-platforme",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "чужие сумки на платформе",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "25-metro-i-poezd-kotoryi-ne-tot--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": -3,
+    "y": 4
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(−3, +4)"
+  },
+  "meta": null,
+  "description": "Тебя высадили из поезда. Ты качаешь Tor, чтобы купить закладку, потом передумываешь, потом снова думаешь. На платформе толпа людей, которых кинул крипто-бро из TON. Они ждут его поезд из Москвы. Поезд приходит. Его там нет. **Надо было ждать другой поезд.** И вот они стоят на платформе, человек сорок, каждый со своей суммой, и им сообщили, что поезд был не тот. Не «он не приехал» — а **вы ждали не то**. Разница принципиальная и она разъедает.",
+  "atmosphere": "(−3, +4)",
+  "personality": "поезд проходит **не останавливаясь**, три раза подряд, с интервалом 40 секунд; толпа поворачивает головы синхронно; на табло время идёт назад в одной строке",
+  "tags": [],
+  "copy": {
+    "animations": "поезд проходит **не останавливаясь**, три раза подряд, с интервалом 40 секунд; толпа поворачивает головы синхронно; на табло время идёт назад в одной строке",
+    "sound": "объявления диктора, слова сливаются, интонация штатная; грохот прохода состава; гул платформы. Референс: тот самый звук метро, записанный слишком близко к рельсу"
+  }
+}

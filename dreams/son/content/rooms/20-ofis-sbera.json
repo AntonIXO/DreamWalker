@@ -1,0 +1,159 @@
+{
+  "id": "20-ofis-sbera",
+  "name": "ОФИС СБЕРА",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "elt-s-morrowind",
+      "kind": "link",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "ЭЛТ с Morrowind",
+      "link": {
+        "to": "room",
+        "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "shirokii-monitor-s-chem-to-korporativnym",
+      "kind": "look",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "широкий монитор с чем-то корпоративным",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "beidzhi-na-shnurkah",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "бейджи на шнурках",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "lift",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "лифт",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "zakrytaia-dver-v-konce-koridora",
+      "kind": "look",
+      "x": 13,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "закрытая дверь в конце коридора",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "20-ofis-sbera--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": 2,
+    "y": -2
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(+2, −2)"
+  },
+  "meta": null,
+  "description": "Опенспейс, брендинг, стеклянные переговорки с именами. Ты выходишь из туалета, и она **тоже тебя замечает** — и сразу идёт к лифту. Ты поднимаешься на тот же этаж. Она заходит в комнату. Напротив — комната с компьютерами. Там Матвей. Там широченный монитор. И там же, рядом, **ЭЛТ-монитор, на котором запущен Morrowind**. Кинескоп гудит на 15 килогерц, картинка чуть выгнута, Балмора грузится квадратами.",
+  "atmosphere": "(+2, −2)",
+  "personality": "на ЭЛТ **идёт настоящий геймплей** — персонаж стоит в Балморе, камера чуть покачивается, как будто кто-то держит стик; строчная развёртка мерцает; двери лифта открываются на этаж позже вызова",
+  "tags": [],
+  "copy": {
+    "animations": "на ЭЛТ **идёт настоящий геймплей** — персонаж стоит в Балморе, камера чуть покачивается, как будто кто-то держит стик; строчная развёртка мерцает; двери лифта открываются на этаж позже вызова",
+    "sound": "пятнадцатикилогерцовый писк строчной развёртки (те, кто слышит, услышат, остальные почувствуют); кондиционер; **музыка Morrowind, доносящаяся тихо** — Джереми Соул через динамик кинескопа, самый безжалостный ностальгический удар из доступных"
+  }
+}

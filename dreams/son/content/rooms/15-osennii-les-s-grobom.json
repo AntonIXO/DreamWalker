@@ -1,0 +1,149 @@
+{
+  "id": "15-osennii-les-s-grobom",
+  "name": "ОСЕННИЙ ЛЕС С ГРОБОМ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "grob",
+      "kind": "link",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "гроб",
+      "link": {
+        "to": "room",
+        "roomId": "10-komnata-s-grobami",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
+      "kind": "link",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "пирамида-туалет с советским кафелем внутри",
+      "link": {
+        "to": "room",
+        "roomId": "07-bassein-i-odnostoronnii-lift",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "listia-shurshaschie-ne-v-takt-shagam",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "листья, шуршащие не в такт шагам",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "fotografiia-klassnogo-rukovoditelia-lica",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "фотография классного руководителя, лица не разобрать",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "15-osennii-les-s-grobom--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": -1,
+    "y": 2
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(−1, +2). Смешно и невыносимо одновременно"
+  },
+  "meta": null,
+  "description": "Вы несёте классного руководителя в гробу. Не того классного руководителя, который Лариса Александровна, а другого, и на процессии присутствуют Лариса Александровна и мама, и это никого не смущает. Несёте **как негры в меме** — с приплясом, с подбросом, с той самой хореографией. Осень, листья, всё жёлто-красное и мокрое. Мама говорит: «В Европе школьники в игры играют больше, чем у нас!» — и уходит писать в туалет ацтеков. Туалет ацтеков — это пирамида. Внутри пирамиды советский интерьер. Похоже на бассейн.",
+  "atmosphere": "(−1, +2). Смешно и невыносимо одновременно",
+  "personality": "процессия **приплясывает**, шаг с подбросом, зациклено; гроб покачивается; листья падают снизу вверх в одном углу кадра, если приглядеться",
+  "tags": [],
+  "copy": {
+    "animations": "процессия **приплясывает**, шаг с подбросом, зациклено; гроб покачивается; листья падают снизу вверх в одном углу кадра, если приглядеться",
+    "sound": "та самая труба из мема, но замедленная в четыре раза и пропущенная через ревер, до состояния, где мелодия почти не узнаётся — узнавание должно приходить на третьей секунде и бить под дых"
+  }
+}

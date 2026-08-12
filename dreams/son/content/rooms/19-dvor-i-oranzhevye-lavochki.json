@@ -1,0 +1,145 @@
+{
+  "id": "19-dvor-i-oranzhevye-lavochki",
+  "name": "ДВОР И ОРАНЖЕВЫЕ ЛАВОЧКИ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "oranzhevye-lavochki",
+      "kind": "look",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "оранжевые лавочки",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "podezdnaia-dver-s-domofonom",
+      "kind": "look",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "подъездная дверь с домофоном",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "butylka-riadom-s-turyshevym-ne-pervaia",
+      "kind": "link",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "бутылка рядом с Турышевым, не первая",
+      "link": {
+        "to": "room",
+        "roomId": "m4-razvilka-gde-ty-ostalsia",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "urna-nabitaia-akkuratno",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "урна, набитая аккуратно",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "19-dvor-i-oranzhevye-lavochki--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": 1,
+    "y": -4
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции"
+  },
+  "meta": null,
+  "description": "Территорию облагородили. Положили плитку, поставили лавочки — **оранжевые**, новые, ещё пахнущие краской. Турышев сидит на своей, у подъезда, как сидел всегда и как будет сидеть. Это единственное место во всём сне, где на тебя никто не нападёт. И именно поэтому здесь хуже всего. Потому что безопасность в этой географии — не отсутствие угрозы, а **отложенная угроза**, и ты сидишь на новой оранжевой лавочке и ждёшь, когда закончится этот кусок.",
+  "atmosphere": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции",
+  "personality": "ничего не происходит. Специально. **Единственная комната без фоновых анимаций**, кроме дыхания персонажей — и это читается как неправильность",
+  "tags": [],
+  "copy": {
+    "animations": "ничего не происходит. Специально. **Единственная комната без фоновых анимаций**, кроме дыхания персонажей — и это читается как неправильность",
+    "sound": "двор днём, дети где-то далеко, машина заводится через дом; **ни одного тревожного слоя** — и от чистоты микса становится не по себе"
+  }
+}

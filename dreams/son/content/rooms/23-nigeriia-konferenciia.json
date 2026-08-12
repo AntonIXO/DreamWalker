@@ -1,0 +1,145 @@
+{
+  "id": "23-nigeriia-konferenciia",
+  "name": "НИГЕРИЯ. КОНФЕРЕНЦИЯ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "kolonny",
+      "kind": "look",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "колонны",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "vr-shlemy-na-stoikah",
+      "kind": "link",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "VR-шлемы на стойках",
+      "link": {
+        "to": "room",
+        "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "beidzh-konferencii-s-nechitaemym-nazvani",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "бейдж конференции с нечитаемым названием",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "отель, у которого внутренний объём меньше внешнего",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "23-nigeriia-konferenciia--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": 1,
+    "y": 2
+  },
+  "revisit": {
+    "escalates": false,
+    "note": null
+  },
+  "meta": null,
+  "description": "От Питера пара часов на Сапсане, что абсолютно нормально, потому что в другом сне ты дошёл пешком из Люблино до Токио. География тут не работает и не притворяется. Здание построено в Советском Союзе, в необычном стиле, с колоннами. Рядом отель, который **в плане спроектирован как большой, а по факту маленький** — и это не ошибка описания, это свойство постройки. Внутри конференция: не настолько кринжовая, как AIJ, но и не NeurIPS. Люди стоят в VR-шлемах. Ты идёшь гулять по старому коридору. В подворотне сидят торчки. Как в киберпанке.",
+  "atmosphere": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа",
+  "personality": "люди в шлемах **водят руками в пустоте** синхронно, все одинаково; торчки в подворотне двигаются на 0.7 скорости; тень от колонн падает не в ту сторону",
+  "tags": [],
+  "copy": {
+    "animations": "люди в шлемах **водят руками в пустоте** синхронно, все одинаково; торчки в подворотне двигаются на 0.7 скорости; тень от колонн падает не в ту сторону",
+    "sound": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа"
+  }
+}

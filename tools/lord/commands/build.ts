@@ -134,6 +134,15 @@ export async function buildCommand(
       }
     }
   }
+  const artless = draft.rooms.filter(
+    (room) => room.kind === "meta" && !room.graphics.backdropImage,
+  );
+  for (const room of artless) {
+    warn(
+      `${room.id} is a meta-space with no picture — run \`lord meta ${slug}\``,
+    );
+  }
+
   if (missingRoles.length > 0) {
     throw new Error(
       `the atlas has no frames for ${[...new Set(missingRoles)].join(", ")} — re-run \`lord art ${slug}\``,

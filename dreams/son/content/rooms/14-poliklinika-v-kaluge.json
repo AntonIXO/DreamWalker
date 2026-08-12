@@ -1,0 +1,145 @@
+{
+  "id": "14-poliklinika-v-kaluge",
+  "name": "ПОЛИКЛИНИКА В КАЛУГЕ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "vydrannyi-zub",
+      "kind": "look",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "выдранный зуб",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "iaschik-s-kapibarami-i-kotom",
+      "kind": "link",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "ящик с капибарами и котом",
+      "link": {
+        "to": "room",
+        "roomId": "06-kanava-garazhi-podvorotni",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "kreslo",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "кресло",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "велосипедисты, проезжающие сквозь коридор",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "14-poliklinika-v-kaluge--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": -2,
+    "y": 1
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(−2, +1)"
+  },
+  "meta": null,
+  "description": "Тебе выдирают зуб. Обычная процедура, обычный кабинет, обычный запах гвоздики и крови. В ящике стола — **две маленькие капибары и кот**. Кот играет с ними лапой. Никто это не комментирует. Папа говорит, что это лучшая поликлиника, потому что тут лечатся все его знакомые спортсмены, когда падают на жопу. И добавляет, с абсолютной интонацией отца, передающего сыну важное: «А ты сам знаешь, что жопа — это важно». Навстречу едут велосипедисты. В коридоре. Много.",
+  "atmosphere": "(−2, +1)",
+  "personality": "кот трогает капибару лапой каждые 3 секунды, бесконечно; капибары не реагируют; зуб в лотке **подрагивает**, когда на него не смотрят",
+  "tags": [],
+  "copy": {
+    "animations": "кот трогает капибару лапой каждые 3 секунды, бесконечно; капибары не реагируют; зуб в лотке **подрагивает**, когда на него не смотрят",
+    "sound": "бормашина, длинная, никогда не заканчивающаяся; звонки велосипедов, приближающиеся по коридору; папин голос, чуть громче, чем позволяет помещение"
+  }
+}

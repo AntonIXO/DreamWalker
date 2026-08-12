@@ -468,10 +468,7 @@ function validateRoomShape(
       `expected "cells" or "screen", got ${fit}`,
     );
   }
-  const backdrop = optionalStr(
-    graphics.backdropImage,
-    `${path}.graphics.backdropImage`,
-  );
+  optionalStr(graphics.backdropImage, `${path}.graphics.backdropImage`);
 
   const camera = str(room.camera, `${path}.camera`);
   if (camera !== "frame" && camera !== "follow") {
@@ -508,8 +505,14 @@ function validateRoomShape(
     if (doorIds.size > 0) {
       fail(`${path}.doors`, "a meta-space has no doors — you leave on a timer");
     }
-    if (backdrop === null) {
-      fail(`${path}.graphics.backdropImage`, "a meta-space is one picture");
+    // A meta-space *is* one picture — but the art arrives after the rooms are drawn, and
+    // a schema that refuses to load an un-arted dream makes the game unbuildable for the
+    // whole of authoring. `lord build` warns about the missing picture instead.
+    if (fit !== "screen") {
+      fail(
+        `${path}.graphics.backdropFit`,
+        'a meta-space bleeds to the whole frame — expected "screen"',
+      );
     }
   } else if (room.meta !== null && room.meta !== undefined) {
     fail(`${path}.meta`, "only a meta-space carries a meta config");

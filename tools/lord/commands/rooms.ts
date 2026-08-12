@@ -172,6 +172,64 @@ export async function roomsCommand(
     ok(`${written} room file(s) written to dreams/${slug}/content/rooms/`);
   }
 
+  if (flags.wire) {
+    // §2 — «ОТЕЛЬ … Лучший кандидат на центральную комнату». The bible's Линк bullets
+    // are one-way and sparse on purpose, so a playable dream needs a spine as well: a
+    // door from the hub to every place, and one back. Links stay the interesting
+    // connections; doors are the ones you can walk.
+    const rooms = await loadRoomFiles(slug);
+    const hubId = String(flags.wire);
+    const hub = rooms.find((room) => room.id === hubId);
+    if (!hub) throw new Error(`no room ${hubId} to wire through`);
+    const dir = join(dreamDir(slug), "content", "rooms");
+    let wired = 0;
+    for (const room of rooms) {
+      // A meta-space has no doors — «выход не ищется, он случается».
+      if (room.kind === "meta" || room.id === hub.id) continue;
+      const backId = `${room.id}--to-hub`;
+      if (!room.doors.some((door) => door.id === backId)) {
+        room.doors.push({
+          id: backId,
+          x: Math.floor(room.width / 2),
+          y: room.height - 1,
+          w: 2,
+          h: 1,
+          toRoomId: hub.id,
+          toEntryId: "default",
+          type: "open",
+          keyId: null,
+          prompt: null,
+        });
+        await writeFile(
+          join(dir, `${room.id}.json`),
+          `${JSON.stringify(room, null, 2)}\n`,
+        );
+        wired++;
+      }
+      const outId = `hub--to-${room.id}`;
+      if (!hub.doors.some((door) => door.id === outId)) {
+        const index = hub.doors.length;
+        hub.doors.push({
+          id: outId,
+          x: 1 + (index % (hub.width - 2)),
+          y: 1,
+          w: 1,
+          h: 1,
+          toRoomId: room.id,
+          toEntryId: "default",
+          type: "open",
+          keyId: null,
+          prompt: null,
+        });
+      }
+    }
+    await writeFile(
+      join(dir, `${hub.id}.json`),
+      `${JSON.stringify(hub, null, 2)}\n`,
+    );
+    ok(`wired ${wired} rooms through ${hub.id}`);
+  }
+
   draft.rooms = await loadRoomFiles(slug);
   const settings = await loadRoomSettings(slug);
   draft.spawn = settings.spawn ?? draft.spawn;

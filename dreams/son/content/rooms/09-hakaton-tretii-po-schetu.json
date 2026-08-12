@@ -1,0 +1,159 @@
+{
+  "id": "09-hakaton-tretii-po-schetu",
+  "name": "ХАКАТОН (ТРЕТИЙ ПО СЧЁТУ)",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "noutbuki-s-prodavlennymi-ekranami",
+      "kind": "look",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "ноутбуки с продавленными экранами",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "odinakovye-naushniki",
+      "kind": "look",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "одинаковые наушники",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
+      "kind": "link",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
+      "link": {
+        "to": "room",
+        "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "rozovyi-gashish-v-vitrine",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "розовый гашиш в витрине",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
+      "kind": "look",
+      "x": 13,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "пять тысяч наличными, которые уже отдал",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "09-hakaton-tretii-po-schetu--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": 3,
+    "y": 3
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "Единственная честно Upper Dynamic комната. Пользуйся"
+  },
+  "meta": null,
+  "description": "Те же люди. Ты точно знаешь, что те же, ты их узнаёшь всех до единого — и не можешь вспомнить **ни одного имени, ни одного места, где вы виделись**. Они здороваются. Ты здороваешься. Все всё понимают. Где-то за шесть часов вы что-то запрогали. Что-то реально крутое, ты помнишь ощущение, помнишь как оно работало, помнишь чувство «вот это мы даём» — а что именно, не помнишь. Оно осталось на другой стороне. На выходе из зала — магазин гашиша, розового, и продавщица очень убедительно объясняет, какой у них класс.",
+  "atmosphere": "Единственная честно Upper Dynamic комната. Пользуйся",
+  "personality": "прогресс-бар, который идёт назад, если смотреть больше пяти секунд; люди хлопают **асинхронно**, каждый в своём темпе; экран демо-стенда показывает твоё же лицо с задержкой в кадр",
+  "tags": [],
+  "copy": {
+    "animations": "прогресс-бар, который идёт назад, если смотреть больше пяти секунд; люди хлопают **асинхронно**, каждый в своём темпе; экран демо-стенда показывает твоё же лицо с задержкой в кадр",
+    "sound": "гул из трёхсот разговоров, ни одного разборчивого; кулеры; чей-то доклад через плохой микрофон с клиппингом на согласных"
+  }
+}

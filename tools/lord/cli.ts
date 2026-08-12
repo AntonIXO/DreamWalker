@@ -72,7 +72,8 @@ function usage(): void {
   console.log(`
   ${color.bold("init")}    <slug>   create a dream: title, genre contract, style words, palette
   ${color.bold("secret")}  <slug>   write and seal the immutable line, seed the hooks
-  ${color.bold("rooms")}   <slug>   scaffold and check the authored rooms
+  ${color.bold("import")}  <slug>   read dream-walker-new/ into room and character cards
+  ${color.bold("rooms")}   <slug>   list and check the authored rooms
   ${color.bold("art")}     <slug>   pick one of four candidates per tile, bake the atlas
   ${color.bold("figures")} <slug>   place the figures of the dream and hand them hooks
   ${color.bold("content")} <slug>   scaffold editable room graphics and character personalities
@@ -164,6 +165,10 @@ async function main(): Promise<void> {
     case "secret": {
       const { secretCommand } = await import("./commands/secret");
       return secretCommand(target, flags);
+    }
+    case "import": {
+      const { importCommand } = await import("./commands/import");
+      return importCommand(target ?? null, flags);
     }
     case "rooms": {
       const { roomsCommand } = await import("./commands/rooms");

@@ -1,0 +1,26 @@
+{
+  "id": "kirill",
+  "name": "КИРИЛЛ",
+  "archetypeId": "visitor",
+  "personality": "Фигура этого сна.",
+  "role": "фигура сна",
+  "voice": "говорит коротко и бытово",
+  "desire": "чтобы его оставили в покое",
+  "fear": "что собеседник не отсюда",
+  "taboo": "не говорит о том, чего здесь знать неоткуда",
+  "initialActivity": "занят своим",
+  "portraits": {
+    "neutral": "figure_visitor_s_0",
+    "interested": "figure_visitor_s_0",
+    "wary": "figure_visitor_s_0",
+    "knows": "figure_visitor_s_0"
+  },
+  "portraitImages": null,
+  "spriteSheet": null,
+  "soulPath": "souls/kirill.md",
+  "tonus": {
+    "x": 0,
+    "y": 0
+  },
+  "suspicionMonotone": true
+}

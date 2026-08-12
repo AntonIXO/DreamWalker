@@ -1,0 +1,144 @@
+{
+  "id": "07-bassein-i-odnostoronnii-lift",
+  "name": "БАССЕЙН И ОДНОСТОРОННИЙ ЛИФТ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "bele-na-stenah",
+      "kind": "link",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "бельё на стенах",
+      "link": {
+        "to": "refuse",
+        "note": "Мета-пространство «ЧУЖОЙ СТЫД»"
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "panel-lifta-bez-knopki-vniz",
+      "kind": "look",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "панель лифта без кнопки «вниз»",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "polotence-radi-kotorogo-prishel-ne-nahod",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "полотенце, ради которого пришёл, — не находится",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "voda-v-chashe-basseina-slishkom-nepodviz",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "вода в чаше бассейна, слишком неподвижная",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "07-bassein-i-odnostoronnii-lift--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": -2,
+    "y": -1
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(−2, −1)"
+  },
+  "meta": null,
+  "description": "Лифт ходит только вверх. Не «в основном вверх», не «вниз по запросу» — **только вверх**, кнопки вниз физически нет, и на панели ровное место, будто её никогда и не планировали. Третий этаж. Ты идёшь то ли в раздевалку, то ли за полотенцем, и заходишь в помещение, где по всем стенам развешано женское бельё. Трусы, бюстгальтеры, полотенца. Развешано аккуратно, как экспозиция. Между ними ходит хлор и запах мокрого кафеля. Ты понимаешь, что зашёл не туда, ровно в тот момент, когда понимаешь, что выйти можно только выше.",
+  "atmosphere": "(−2, −1)",
+  "personality": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
+  "tags": [],
+  "copy": {
+    "animations": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
+    "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
+  }
+}

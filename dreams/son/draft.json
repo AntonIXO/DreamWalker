@@ -1,0 +1,4978 @@
+{
+  "format": 4,
+  "slug": "son",
+  "title": "Сон",
+  "genreContract": "Сон, который знает, что его используют",
+  "styleWords": [
+    "мотылёк",
+    "витраж",
+    "глаз",
+    "пыльца"
+  ],
+  "secretHash": "1c98bd32f73659e1f52d04d37a8faf3a5ebb27c8350fdcc0b4377d0e023342a6",
+  "shards": [
+    {
+      "id": "shard1",
+      "hint": "Кто-то слышал стук из подвала и решил, что это трубы"
+    },
+    {
+      "id": "shard2",
+      "hint": "Ключ от котельной пропал за неделю до"
+    },
+    {
+      "id": "shard3",
+      "hint": "В журнале дежурств вырван один лист"
+    },
+    {
+      "id": "shard4",
+      "hint": "Он до сих пор не может находиться рядом с запахом гари"
+    }
+  ],
+  "palette": {
+    "name": "ash",
+    "colors": [
+      "#0a0a0d",
+      "#2b2f38",
+      "#333845",
+      "#1b1e25",
+      "#242832",
+      "#3d4351",
+      "#4a5162",
+      "#161920",
+      "#5c6678",
+      "#8a6a3c",
+      "#5a2f2f",
+      "#9fb3c8",
+      "#6b7280",
+      "#c2b8a3",
+      "#e8e4dc",
+      "#f0c674"
+    ],
+    "roles": {
+      "background": 0,
+      "floor": 1,
+      "floorAlt": 2,
+      "floorShadow": 3,
+      "threshold": 4,
+      "wall": 5,
+      "wallFace": 6,
+      "wallEdge": 7,
+      "doorOpen": 8,
+      "doorLocked": 9,
+      "doorSealed": 10,
+      "accent": 11,
+      "prop": 12,
+      "figure": 13,
+      "player": 14,
+      "highlight": 15
+    }
+  },
+  "style": {
+    "outlineIndex": 0,
+    "outlineWidth": 1,
+    "groundIndex": 1,
+    "accentIndex": 15,
+    "ramps": {
+      "hue0": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "ditherDensity": 0,
+    "shadingSteps": 3
+  },
+  "rooms": [
+    {
+      "id": "01-otel-goticheskii-holl",
+      "name": "ОТЕЛЬ. ГОТИЧЕСКИЙ ХОЛЛ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "tri-tysiachi-nomerkov",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "три тысячи номерков",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "chuzhie-shtany-na-polu",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "чужие штаны на полу",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "kanat-do-svoda",
+          "kind": "link",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "канат до свода",
+          "link": {
+            "to": "room",
+            "roomId": "07-bassein-i-odnostoronnii-lift",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
+          "kind": "look",
+          "x": 13,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "vedro-i-shvabra-uborschika",
+          "kind": "look",
+          "x": 15.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "ведро и швабра уборщика",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "hub--to-02-shkola-kabinet-russkogo",
+          "x": 1,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "02-shkola-kabinet-russkogo",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-03-gory-startapery-i-uchenye",
+          "x": 2,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "03-gory-startapery-i-uchenye",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-04-dacha-gnedkovyh",
+          "x": 3,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "04-dacha-gnedkovyh",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-05-shesterochka",
+          "x": 4,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-06-kanava-garazhi-podvorotni",
+          "x": 5,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "06-kanava-garazhi-podvorotni",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-07-bassein-i-odnostoronnii-lift",
+          "x": 6,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "07-bassein-i-odnostoronnii-lift",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-08-kvartira-v-kotoroi-zhivut-drugie",
+          "x": 7,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-09-hakaton-tretii-po-schetu",
+          "x": 8,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "09-hakaton-tretii-po-schetu",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-10-komnata-s-grobami",
+          "x": 9,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "10-komnata-s-grobami",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-11-evreiskii-gorod",
+          "x": 10,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "11-evreiskii-gorod",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-12-tiurma-na-ovoschah",
+          "x": 11,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "12-tiurma-na-ovoschah",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-13-podzemnye-zaly-cu",
+          "x": 12,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "13-podzemnye-zaly-cu",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-14-poliklinika-v-kaluge",
+          "x": 13,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-15-osennii-les-s-grobom",
+          "x": 14,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "15-osennii-les-s-grobom",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-16-norvezhskaia-derevnia-i-pogreb",
+          "x": 15,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-17-dush-iz-kotorogo-nelzia-vyiti",
+          "x": 16,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-18-kupol-bez-sten",
+          "x": 17,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "18-kupol-bez-sten",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-19-dvor-i-oranzhevye-lavochki",
+          "x": 18,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-20-ofis-sbera",
+          "x": 1,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "20-ofis-sbera",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-21-komnata-niliufar",
+          "x": 2,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "21-komnata-niliufar",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-22-kreiser",
+          "x": 3,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "22-kreiser",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-23-nigeriia-konferenciia",
+          "x": 4,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "23-nigeriia-konferenciia",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "x": 5,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "hub--to-25-metro-i-poezd-kotoryi-ne-tot",
+          "x": 6,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 2,
+        "y": 1
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "Красиво, но ты тут никто"
+      },
+      "meta": null,
+      "description": "Ты входишь и первое, что понимаешь: гардеробов больше, чем людей на планете. Ряды. Ряды рядов. Номерки на крючках уходят в перспективу, и где-то на трёхсотом ты ловишь себя на мысли — а куда, собственно, поместятся все эти люди? Ответ приходит сверху: **они не помещаются, они распределены по этажам согласно платёжеспособности**. Свод как в храме, только вместо бога — регистратура. Под потолком висит канат, и на нём кто-то уже фотографировал, судя по брошенным внизу штанам. Через зал идёт художник, размахивает руками, что-то рассказывает, и по холлу катится хохот — только вот **слов не слышно ни одного**. Ни одного слова, понимаешь? Смех есть, шутка есть, содержания нет. Как будто кто-то вывел диалоговую дорожку в отдельный канал и забыл её подключить.",
+      "atmosphere": "Красиво, но ты тут никто",
+      "personality": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
+      "tags": [],
+      "copy": {
+        "animations": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
+        "sound": "реверб пустого собора, время затухания около семи секунд; поверх — записанный на диктофон хохот компании из соседней комнаты, зациклен неровно, с разной длиной паузы; ни одного разборчивого слова. Референс: Уильям Басински, «The Disintegration Loops», но с людьми"
+      }
+    },
+    {
+      "id": "02-shkola-kabinet-russkogo",
+      "name": "ШКОЛА. КАБИНЕТ РУССКОГО",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "party",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "парты",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "листочки, на которых текст меняется, если отвести взгляд",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "grusha-za-steklom",
+          "kind": "link",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "груша за стеклом",
+          "link": {
+            "to": "refuse",
+            "note": "недостижима, при попытке трогать камера отъезжает назад"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "mat-v-uglu-s-rasstelennoi-posteliu",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "мат в углу с расстеленной постелью",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "02-shkola-kabinet-russkogo--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -3,
+        "y": -2
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−3, −2). Классический Downer Static"
+      },
+      "meta": null,
+      "description": "Последняя парта. Всегда последняя, других не бывает. Учитель раздаёт листочки, говорит «пробный ЕГЭ», и ты чувствуешь, как в позвоночник заходит эта старая знакомая игла — не страх, а хуже, **скука с примесью обречённости**. Ты начинаешь решать. Подходит учитель. «Почему так медленно?» Ты говоришь, что думаешь. Он смотрит так, будто «думаю» — это уважительная причина примерно для морга. За классом окно во всю стену, и в него лезет **груша**. Настоящая, со спелыми плодами, висят в полуметре, желтеют. Никто, кроме тебя, её не замечает. Ты весь урок прикидываешь траекторию. Достать её нельзя. Это проверено.",
+      "atmosphere": "(−3, −2). Классический Downer Static",
+      "personality": "плоды груши качаются от ветра, которого нет; текст на листочке перебирает варианты, когда камера не на нём; учитель ходит между рядами по маршруту, который замыкается сам на себя",
+      "tags": [],
+      "copy": {
+        "animations": "плоды груши качаются от ветра, которого нет; текст на листочке перебирает варианты, когда камера не на нём; учитель ходит между рядами по маршруту, который замыкается сам на себя",
+        "sound": "батарея гудит на 50 Гц; тиканье часов, которое **опережает секунду процента на три** — на слух незаметно, но через минуту начинает бесить; скрип мела вне поля зрения. Референс: ранний Boards of Canada, где плёнка чуть плывёт по высоте тона"
+      }
+    },
+    {
+      "id": "03-gory-startapery-i-uchenye",
+      "name": "ГОРЫ. СТАРТАПЕРЫ И УЧЁНЫЕ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "centroid",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "центроид",
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «ЛЕСТНИЦА»"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "vizitki-kotorye-ne-berutsia-v-ruku",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "визитки, которые не берутся в руку",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "теодолит, показывающий одно и то же число независимо от направления",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "kamen-s-rovno-otpilennoi-graniu",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "камень с ровно отпиленной гранью",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "03-gory-startapery-i-uchenye--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 1,
+        "y": 3
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "Высоко, ветрено, дёргано"
+      },
+      "meta": null,
+      "description": "Наверху ветер и разреженный воздух, и первое, что ты пересчитываешь на склоне, — соотношение. **Стартаперов больше, чем учёных.** Заметно больше. Учёные стоят кучкой у камня и что-то меряют, а стартаперы ходят между ними и говорят словами, у которых есть форма, но нет массы — «синергия», «трекшн», «мы делаем платформу для». Кто-то раздаёт визитки на морозе голыми руками. На отдельной палочке в воздухе, метрах в двадцати над обрывом, стоит **центроид земного шара** — точка, которую посчитал то ли Аристотель, то ли ещё кто, и с тех пор её никто не перепроверял. Она просто там. На палочке. И к ней ведёт проход через скалу, который **начинает рушиться ровно в тот момент, когда ты решаешь идти**.",
+      "atmosphere": "Высоко, ветрено, дёргано",
+      "personality": "проход через скалу осыпается по таймеру, который **сбрасывается, если на него смотреть**; стартаперы дышат паром, учёные нет",
+      "tags": [],
+      "copy": {
+        "animations": "проход через скалу осыпается по таймеру, который **сбрасывается, если на него смотреть**; стартаперы дышат паром, учёные нет",
+        "sound": "ветер, записанный в трубу; обрывки питчей на грани разборчивости, всегда в момент, когда отворачиваешься; низкий инфразвук от 18 Гц, тот самый, от которого тошно и кажется, что за спиной кто-то есть"
+      }
+    },
+    {
+      "id": "04-dacha-gnedkovyh",
+      "name": "ДАЧА ГНЕДКОВЫХ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "plita",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "плита",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "отодвинутый кусок стены с чёрным проёмом",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "telefon-s-odnim-kontaktom-lesha",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "телефон с одним контактом «Лёша»",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "04-dacha-gnedkovyh--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -2,
+        "y": 1
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−2, +1)"
+      },
+      "meta": null,
+      "description": "Дом, в котором тебе рады, только хозяев нет. Никогда нет. Их вещи, их плита, их вторая кухня на втором этаже, но на звонок отвечает автоответчик, а на кухне **сипит плита** — не гудит, не свистит, а именно сипит, как человек с проколотым лёгким, и из неё идёт воздух. Ты звонишь Лёше спросить, нормально ли это. Лёша говорит: «Наверное нет, и ты можешь подорваться». Говорит спокойно. Так спокойно, как говорят только те, кто уже всё решил насчёт твоей смерти и просто держит тебя в курсе. Приходит мужик. Сварщик. Отодвигает кусок стены — не панель, не дверцу, а **кусок стены**, — что-то там варит и уходит. Стену на место не возвращает.",
+      "atmosphere": "(−2, +1)",
+      "personality": "пламя горелки колеблется в противофазе с сипением; слизень пульсирует, рот открывается на 0.8 секунды каждые шесть; из проёма в стене тянет сквозняком, шевелящим занавеску",
+      "tags": [],
+      "copy": {
+        "animations": "пламя горелки колеблется в противофазе с сипением; слизень пульсирует, рот открывается на 0.8 секунды каждые шесть; из проёма в стене тянет сквозняком, шевелящим занавеску",
+        "sound": "сип на 340 Гц с дрожанием; сварка, которая **начинается раньше, чем сварщик достаёт аппарат**; собака за три двора. Референс: полевые записи Криса Уотсона, дом ночью"
+      }
+    },
+    {
+      "id": "05-shesterochka",
+      "name": "ШЕСТЁРОЧКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "polka-dlia-veschei",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "полка для вещей",
+          "link": {
+            "to": "room",
+            "roomId": "m3-sklad-ostavlennogo",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "ballonchik-na-poiase-ohrannika",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "баллончик на поясе охранника",
+          "link": {
+            "to": "room",
+            "roomId": "06-kanava-garazhi-podvorotni",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "korzina-s-chem-to-chto-ne-chitaetsia",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "корзина с чем-то, что не читается",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "05-shesterochka--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -4,
+        "y": 2
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−4, +2). Тут начинается насилие"
+      },
+      "meta": null,
+      "description": "Флуоресцент, который жужжит на грани слышимости и от которого лица у всех цвета варёной курицы. Ты лежишь **на полке для оставленных вещей**. Не в тележке, не на скамейке — на той самой металлической полке, куда кладут сумки перед входом в зал. Кирилл проходит мимо, говорит: «Ничего, поспи ещё». И ты спишь. В магазине. На полке. И никто, ни один человек в этом зале, не считает это странным. Просыпаешься от звука. Охранник **тащит Кирилла к выходу**, бьёт по почкам и пшикает перцовкой в лицо, и делает это буднично, как выкладывают товар. У тебя есть примерно две секунды, чтобы решить, кто ты в этой сцене.",
+      "atmosphere": "(−4, +2). Тут начинается насилие",
+      "personality": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
+      "tags": [],
+      "copy": {
+        "animations": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
+        "sound": "пищание кассы, ускоряющееся к концу цикла; объявление по громкой связи, слова разобрать нельзя, интонация приветливая; гул холодильника с мясом, доминирует над всем"
+      }
+    },
+    {
+      "id": "06-kanava-garazhi-podvorotni",
+      "name": "КАНАВА, ГАРАЖИ, ПОДВОРОТНИ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "riukzak",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "рюкзак",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "liuk-v-kanalizaciiu",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "люк в канализацию",
+          "link": {
+            "to": "room",
+            "roomId": "m1-korni",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "sledy-shin-kotoryh-utrom-ne-bylo",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "следы шин, которых утром не было",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "06-kanava-garazhi-podvorotni--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -6,
+        "y": 4
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−6, +4). Самая тёмная динамика в игре"
+      },
+      "meta": null,
+      "description": "Земля мокрая, в ботинках хлюпает, рюкзак тянет вниз так, будто в нём чужие грехи. Вы с Кириллом сидите в канаве и дышите через раз. Он предлагает лезть в канализацию. Ты говоришь — лишнее. Проходит две минуты. Приезжает машина. Ты вернёшься сюда. Обязательно вернёшься — проверить, хорошо ли он прятался. И всё будет то же самое: канава, гаражи, мокро. Только когда приедет вместо машины танк, **их будет двое**. Не потому что сюжет так повернулся. Потому что это второй раз. Третий — четверо. Это не наказание, это арифметика.",
+      "atmosphere": "(−6, +4). Самая тёмная динамика в игре",
+      "personality": "дождь, не попадающий в канаву; фары разворачиваются по стене гаража **до того, как слышен мотор**; Кирилл трогает люк каждые 20 секунд",
+      "tags": [],
+      "copy": {
+        "animations": "дождь, не попадающий в канаву; фары разворачиваются по стене гаража **до того, как слышен мотор**; Кирилл трогает люк каждые 20 секунд",
+        "sound": "мотор на холостых, приближается неравномерно; хлюпанье; тишина в момент, когда открывается дверь машины — **вырезать весь звук на 1.5 секунды**, это дешевле любого крика"
+      }
+    },
+    {
+      "id": "07-bassein-i-odnostoronnii-lift",
+      "name": "БАССЕЙН И ОДНОСТОРОННИЙ ЛИФТ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "bele-na-stenah",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "бельё на стенах",
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «ЧУЖОЙ СТЫД»"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "panel-lifta-bez-knopki-vniz",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "панель лифта без кнопки «вниз»",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "polotence-radi-kotorogo-prishel-ne-nahod",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "полотенце, ради которого пришёл, — не находится",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "voda-v-chashe-basseina-slishkom-nepodviz",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "вода в чаше бассейна, слишком неподвижная",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "07-bassein-i-odnostoronnii-lift--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -2,
+        "y": -1
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−2, −1)"
+      },
+      "meta": null,
+      "description": "Лифт ходит только вверх. Не «в основном вверх», не «вниз по запросу» — **только вверх**, кнопки вниз физически нет, и на панели ровное место, будто её никогда и не планировали. Третий этаж. Ты идёшь то ли в раздевалку, то ли за полотенцем, и заходишь в помещение, где по всем стенам развешано женское бельё. Трусы, бюстгальтеры, полотенца. Развешано аккуратно, как экспозиция. Между ними ходит хлор и запах мокрого кафеля. Ты понимаешь, что зашёл не туда, ровно в тот момент, когда понимаешь, что выйти можно только выше.",
+      "atmosphere": "(−2, −1)",
+      "personality": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
+      "tags": [],
+      "copy": {
+        "animations": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
+        "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
+      }
+    },
+    {
+      "id": "08-kvartira-v-kotoroi-zhivut-drugie",
+      "name": "КВАРТИРА, В КОТОРОЙ ЖИВУТ ДРУГИЕ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "bumazhnaia-skulptura",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "бумажная скульптура",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "chuzhie-fotografii-v-tvoih-ramkah",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "чужие фотографии в твоих рамках",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "chainik-kotoryi-uzhe-kipel",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "чайник, который уже кипел",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "08-kvartira-v-kotoroi-zhivut-drugie--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -1,
+        "y": -3
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−1, −3). Downer Static в чистом виде"
+      },
+      "meta": null,
+      "description": "Твоя старая квартира. Планировка твоя, окна твои, вид из них твой, а мебель чужая и люди чужие, и они здесь дольше, чем ты был. Ведут себя приветливо. Предлагают чаю. Всё почти нормально. На стене висит **огромный бумажный хуй**. Метра полтора. Из бумаги, аккуратно склеен, висит на видном месте над диваном. Ты смотришь на него дольше, чем позволяют приличия, и хозяин перехватывает взгляд и говорит: «Это скульптура Симпсонов». И вот тут — вот тут — надо очень внимательно следить за собой. Потому что правильная реакция в этом сне: кивнуть. Сказать «а, ну да». Пройти дальше. **Любое удивление — это акцент приезжего.**",
+      "atmosphere": "(−1, −3). Downer Static в чистом виде",
+      "personality": "разряды в воздухе, тонкие, редкие, беззвучные; скульптура **слегка колышется от сквозняка**, что хуже, чем если бы она висела неподвижно",
+      "tags": [],
+      "copy": {
+        "animations": "разряды в воздухе, тонкие, редкие, беззвучные; скульптура **слегка колышется от сквозняка**, что хуже, чем если бы она висела неподвижно",
+        "sound": "чужой телевизор за стеной на чужом языке; тиканье, идущее не от часов; в момент открытия окна — **резкое падение всех частот выше 2 кГц**, как будто накрыли одеялом"
+      }
+    },
+    {
+      "id": "09-hakaton-tretii-po-schetu",
+      "name": "ХАКАТОН (ТРЕТИЙ ПО СЧЁТУ)",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "noutbuki-s-prodavlennymi-ekranami",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "ноутбуки с продавленными экранами",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "odinakovye-naushniki",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "одинаковые наушники",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
+          "kind": "link",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
+          "link": {
+            "to": "room",
+            "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "rozovyi-gashish-v-vitrine",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "розовый гашиш в витрине",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
+          "kind": "look",
+          "x": 13,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "пять тысяч наличными, которые уже отдал",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "09-hakaton-tretii-po-schetu--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 3,
+        "y": 3
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "Единственная честно Upper Dynamic комната. Пользуйся"
+      },
+      "meta": null,
+      "description": "Те же люди. Ты точно знаешь, что те же, ты их узнаёшь всех до единого — и не можешь вспомнить **ни одного имени, ни одного места, где вы виделись**. Они здороваются. Ты здороваешься. Все всё понимают. Где-то за шесть часов вы что-то запрогали. Что-то реально крутое, ты помнишь ощущение, помнишь как оно работало, помнишь чувство «вот это мы даём» — а что именно, не помнишь. Оно осталось на другой стороне. На выходе из зала — магазин гашиша, розового, и продавщица очень убедительно объясняет, какой у них класс.",
+      "atmosphere": "Единственная честно Upper Dynamic комната. Пользуйся",
+      "personality": "прогресс-бар, который идёт назад, если смотреть больше пяти секунд; люди хлопают **асинхронно**, каждый в своём темпе; экран демо-стенда показывает твоё же лицо с задержкой в кадр",
+      "tags": [],
+      "copy": {
+        "animations": "прогресс-бар, который идёт назад, если смотреть больше пяти секунд; люди хлопают **асинхронно**, каждый в своём темпе; экран демо-стенда показывает твоё же лицо с задержкой в кадр",
+        "sound": "гул из трёхсот разговоров, ни одного разборчивого; кулеры; чей-то доклад через плохой микрофон с клиппингом на согласных"
+      }
+    },
+    {
+      "id": "10-komnata-s-grobami",
+      "name": "КОМНАТА С ГРОБАМИ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "groby",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "гробы",
+          "link": {
+            "to": "room",
+            "roomId": "15-osennii-les-s-grobom",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "schel-pod-potolkom",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "щель под потолком",
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «АРХИВ, КОТОРЫЙ ЗАШИФРОВАН»"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "tkan-s-kodami",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "ткань с кодами",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "paketiki-fsb",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "пакетики ФСБ",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "telefon-kamera-otkryvaetsia-sem-sekund",
+          "kind": "look",
+          "x": 13,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "телефон, камера открывается семь секунд",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "10-komnata-s-grobami--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -5,
+        "y": -4
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−5, −4). Дно графика. Отсюда близко до переполнения"
+      },
+      "meta": null,
+      "description": "Здесь стоят гробы, и один из них принадлежит женщине, которая стоит рядом с тобой и объясняет, что это её. Не «был бы», не «будет» — **её, сейчас**. Она прыгнула с третьего этажа и якобы разбилась, но не совсем, и после этого числится актрисой, хотя ты уже понял, что не актрисой. Наверху, если залезть, есть щель. В щели — ткань с кодами и запечатанные пакетики, маленькие, как из Китая или как презервативы, с надписью ФСБ. Один из них — противоядие от скорпиона. Уточняется: иранского или иракского. Ты успеваешь достать и сфотографировать. Ровно в этот момент входят люди и говорят, что теперь на этом месте будет музей.",
+      "atmosphere": "(−5, −4). Дно графика. Отсюда близко до переполнения",
+      "personality": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
+      "tags": [],
+      "copy": {
+        "animations": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
+        "sound": "абсолютная сухая тишина, ноль реверберации, как в заглушенной камере — от этого физически некомфортно; собственные шаги слишком громкие; в момент входа людей — щелчок и **комнатный тон появляется**, будто до этого звук был выключен"
+      }
+    },
+    {
+      "id": "11-evreiskii-gorod",
+      "name": "ЕВРЕЙСКИЙ ГОРОД",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "kinder-siurpriz-s-lavochku",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "киндер-сюрприз с лавочку",
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «МАСШТАБ»"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "fonari-kotorye-gasiat-pri-zvuke",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "фонари, которые гасят при звуке",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "расписание — не транспорта, а **безопасных часов**",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "stavni-na-vsem",
+          "kind": "link",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "ставни на всём",
+          "link": {
+            "to": "room",
+            "roomId": "01-otel-goticheskii-holl",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "11-evreiskii-gorod--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 0,
+        "y": -2
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(0, −2). Тематическое сердце игры"
+      },
+      "meta": null,
+      "description": "Заходишь в обычную кафешку — пластиковые столы, витрина с салатами, — идёшь мимо касс, за угол, и там **город**. Целый. С улицами, домами, площадью. Внутри кафешки. И жители в нём живут **только ночью, потому что днём палевно** — прячутся от великанов, и весь их урбанизм построен вокруг одной задачи: не быть замеченными. Ты понимаешь, что это твоя игра целиком, свёрнутая в одну комнату. Тут все делают ровно то, что делаешь ты. И у них получается лучше, потому что они тут живут. Добрый великан приносит Кириллу киндер размером с лавочку.",
+      "atmosphere": "(0, −2). Тематическое сердце игры",
+      "personality": "жители синхронно замирают при любом громком звуке, включая твой; тени великанов проходят по фасадам сверху, самих великанов не видно; киндер медленно вращается",
+      "tags": [],
+      "copy": {
+        "animations": "жители синхронно замирают при любом громком звуке, включая твой; тени великанов проходят по фасадам сверху, самих великанов не видно; киндер медленно вращается",
+        "sound": "город на приглушёнке, все говорят вполголоса; шаги сверху, огромные, с интервалом в 4 секунды; при твоём громком действии — **общая пауза на две секунды**, и все смотрят"
+      }
+    },
+    {
+      "id": "12-tiurma-na-ovoschah",
+      "name": "ТЮРЬМА НА ОВОЩАХ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "kapusta-frukty",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "капуста, фрукты",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "dyrka-v-zabore",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "дырка в заборе",
+          "link": {
+            "to": "room",
+            "roomId": "06-kanava-garazhi-podvorotni",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "piatimetrovyi-stellazh",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "пятиметровый стеллаж",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "paket-fasoli",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "пакет фасоли",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "tetia-sidiaschaia-spinoi",
+          "kind": "look",
+          "x": 13,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "тётя, сидящая спиной",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "12-tiurma-na-ovoschah--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 1,
+        "y": 2
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "Абсурдно лёгкая"
+      },
+      "meta": null,
+      "description": "Спят на овощах. Не на нарах с овощами под ними — **на овощах**. Под тобой кочан капусты, рядом какой-то тропический фрукт, который девочки предлагают съесть, и ты его ешь, и он нормальный. Девочки говорят: сбегай за фасолью. Ты пролезаешь через дырку в заборе. За тридцать секунд. Идёшь в здание, залезаешь на пятиметровый стеллаж, берёшь пакет фасоли, ешь орешки, спускаешься. Внизу сидит тётя. **Она тебя не замечает.** Возвращаешься. Добровольно. С фасолью. И оказываешься на втором уровне тюрьмы, где уже без девочек, зато есть пацан, предлагающий подтянуться четырнадцать раз. Зимой дырку заметает снегом. Это единственное настоящее препятствие за всю тюрьму.",
+      "atmosphere": "Абсурдно лёгкая",
+      "personality": "тётя не поворачивается **никогда**, даже если шуметь — проверка скрытности, у которой нет провала, и это страшнее провала; снег наметает на дырку в реальном времени, минут за пять",
+      "tags": [],
+      "copy": {
+        "animations": "тётя не поворачивается **никогда**, даже если шуметь — проверка скрытности, у которой нет провала, и это страшнее провала; снег наметает на дырку в реальном времени, минут за пять",
+        "sound": "капель с потолка; хруст овощей под весом; полное отсутствие тюремных звуков — ни решёток, ни голосов, ни шагов конвоя"
+      }
+    },
+    {
+      "id": "13-podzemnye-zaly-cu",
+      "name": "ПОДЗЕМНЫЕ ЗАЛЫ ЦУ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "iaponskii-sidr",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "японский сидр",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "tribuny",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "трибуны",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "riukzak-s-fruktami-i-vodkoi",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "рюкзак с фруктами и водкой",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "divanchik-na-kotorom-spit-lesha",
+          "kind": "link",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "диванчик, на котором спит Лёша",
+          "link": {
+            "to": "figure",
+            "characterId": "liosha-gnedkov"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
+          "kind": "look",
+          "x": 13,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "13-podzemnye-zaly-cu--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 2,
+        "y": 4
+      },
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "23:45. Магазин японских напитков закрывается. Ты забегаешь за бутылкой, оказывается, внутри ещё куча всего, ты идёшь вглубь, открываешь дверь — **и там зал с трибунами**. Огромный. Люди сидят, кто-то выступает, скоро начнутся игры. Ты вспоминаешь: это ЦУ устраивает мероприятия, чтобы отвлечься от ЕГЭ. И потом до тебя доходит масштаб. Это не зал. Это **система залов под землёй**, и её **можно перестраивать, как камеры в Portal 2**. Стены едут. Пространство пересобирается под мероприятие. Санкция на плывущую карту, выданная самим пациентом. Пользуйся без стеснения.",
+      "atmosphere": "гул большого зала, ревер 4 секунды; механические перестроения без звука механизмов (**это важно — стены двигаются в тишине**); поверх — объявление о начале игр, зациклено",
+      "personality": "**стены едут** — секции пола и потолка перестраиваются по фоновому таймеру, беззвучно, всегда за спиной; трибуны заполняются людьми, которых не видно входящими",
+      "tags": [],
+      "copy": {
+        "animations": "**стены едут** — секции пола и потолка перестраиваются по фоновому таймеру, беззвучно, всегда за спиной; трибуны заполняются людьми, которых не видно входящими",
+        "sound": "гул большого зала, ревер 4 секунды; механические перестроения без звука механизмов (**это важно — стены двигаются в тишине**); поверх — объявление о начале игр, зациклено"
+      }
+    },
+    {
+      "id": "14-poliklinika-v-kaluge",
+      "name": "ПОЛИКЛИНИКА В КАЛУГЕ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "vydrannyi-zub",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "выдранный зуб",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "iaschik-s-kapibarami-i-kotom",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "ящик с капибарами и котом",
+          "link": {
+            "to": "room",
+            "roomId": "06-kanava-garazhi-podvorotni",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "kreslo",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "кресло",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "велосипедисты, проезжающие сквозь коридор",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "14-poliklinika-v-kaluge--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -2,
+        "y": 1
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−2, +1)"
+      },
+      "meta": null,
+      "description": "Тебе выдирают зуб. Обычная процедура, обычный кабинет, обычный запах гвоздики и крови. В ящике стола — **две маленькие капибары и кот**. Кот играет с ними лапой. Никто это не комментирует. Папа говорит, что это лучшая поликлиника, потому что тут лечатся все его знакомые спортсмены, когда падают на жопу. И добавляет, с абсолютной интонацией отца, передающего сыну важное: «А ты сам знаешь, что жопа — это важно». Навстречу едут велосипедисты. В коридоре. Много.",
+      "atmosphere": "(−2, +1)",
+      "personality": "кот трогает капибару лапой каждые 3 секунды, бесконечно; капибары не реагируют; зуб в лотке **подрагивает**, когда на него не смотрят",
+      "tags": [],
+      "copy": {
+        "animations": "кот трогает капибару лапой каждые 3 секунды, бесконечно; капибары не реагируют; зуб в лотке **подрагивает**, когда на него не смотрят",
+        "sound": "бормашина, длинная, никогда не заканчивающаяся; звонки велосипедов, приближающиеся по коридору; папин голос, чуть громче, чем позволяет помещение"
+      }
+    },
+    {
+      "id": "15-osennii-les-s-grobom",
+      "name": "ОСЕННИЙ ЛЕС С ГРОБОМ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "grob",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "гроб",
+          "link": {
+            "to": "room",
+            "roomId": "10-komnata-s-grobami",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "пирамида-туалет с советским кафелем внутри",
+          "link": {
+            "to": "room",
+            "roomId": "07-bassein-i-odnostoronnii-lift",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "listia-shurshaschie-ne-v-takt-shagam",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "листья, шуршащие не в такт шагам",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "fotografiia-klassnogo-rukovoditelia-lica",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "фотография классного руководителя, лица не разобрать",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "15-osennii-les-s-grobom--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -1,
+        "y": 2
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−1, +2). Смешно и невыносимо одновременно"
+      },
+      "meta": null,
+      "description": "Вы несёте классного руководителя в гробу. Не того классного руководителя, который Лариса Александровна, а другого, и на процессии присутствуют Лариса Александровна и мама, и это никого не смущает. Несёте **как негры в меме** — с приплясом, с подбросом, с той самой хореографией. Осень, листья, всё жёлто-красное и мокрое. Мама говорит: «В Европе школьники в игры играют больше, чем у нас!» — и уходит писать в туалет ацтеков. Туалет ацтеков — это пирамида. Внутри пирамиды советский интерьер. Похоже на бассейн.",
+      "atmosphere": "(−1, +2). Смешно и невыносимо одновременно",
+      "personality": "процессия **приплясывает**, шаг с подбросом, зациклено; гроб покачивается; листья падают снизу вверх в одном углу кадра, если приглядеться",
+      "tags": [],
+      "copy": {
+        "animations": "процессия **приплясывает**, шаг с подбросом, зациклено; гроб покачивается; листья падают снизу вверх в одном углу кадра, если приглядеться",
+        "sound": "та самая труба из мема, но замедленная в четыре раза и пропущенная через ревер, до состояния, где мелодия почти не узнаётся — узнавание должно приходить на третьей секунде и бить под дых"
+      }
+    },
+    {
+      "id": "16-norvezhskaia-derevnia-i-pogreb",
+      "name": "НОРВЕЖСКАЯ ДЕРЕВНЯ И ПОГРЕБ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "pogreb-s-korniami",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "погреб с корнями",
+          "link": {
+            "to": "room",
+            "roomId": "m1-korni",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "sneg-kotoryi-techet",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "снег, который течёт",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "otec-na-kraiu",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "отец на краю",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "kirill-riadom-molchit",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "Кирилл рядом, молчит",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "16-norvezhskaia-derevnia-i-pogreb--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -8,
+        "y": 6
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−8, +6). Максимальный размах. **Отсюда чаще всего происходит переполнение графика**"
+      },
+      "meta": null,
+      "description": "Небо цвета мокрого асфальта. Воздух гудит, как оставленный включённым усилитель в пустой комнате — не звук, а **фон присутствия аппаратуры**. Ты искал пост одного стартапера. Пост испарился. Осталась деревня. Погреб — чёрная дыра в земле, и вниз она уходит **корнями деревьев, как нервная система спящего великана**. Отец говорит: осторожнее. Но в тебе уже играет та дурь, которую не купишь ни у одного барыги: **уверенность**. Ты же скалолаз. А наверху — зима. Снег. Откуда? Просто есть. Отец говорит: сейчас я полезу. И снег под ним **начинает течь, медленно, как лавина, передумавшая быть быстрой**. Он падает. Тонет в белом. Ты прыгаешь за ним.",
+      "atmosphere": "(−8, +6). Максимальный размах. **Отсюда чаще всего происходит переполнение графика**",
+      "personality": "**снежная лавина на 15% нормальной скорости** — не эффектная, а медленная и неотменяемая; корни в погребе пульсируют с периодом дыхания, около 4 секунд; рука отца остаётся видна на полсекунды дольше, чем должна",
+      "tags": [],
+      "copy": {
+        "animations": "**снежная лавина на 15% нормальной скорости** — не эффектная, а медленная и неотменяемая; корни в погребе пульсируют с периодом дыхания, около 4 секунд; рука отца остаётся видна на полсекунды дольше, чем должна",
+        "sound": "гул усилителя, 50 Гц с гармониками, ровный, никогда не смолкающий; полное отсутствие ветра при видимом снегопаде; в момент падения — **всё, кроме гула, вырезается**"
+      }
+    },
+    {
+      "id": "17-dush-iz-kotorogo-nelzia-vyiti",
+      "name": "ДУШ, ИЗ КОТОРОГО НЕЛЬЗЯ ВЫЙТИ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "dver",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "дверь",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "ventil",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "вентиль",
+          "link": {
+            "to": "refuse",
+            "note": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "кафель, на одной плитке которого что-то нацарапано",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "17-dush-iz-kotorogo-nelzia-vyiti--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -4,
+        "y": -6
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−4, −6). Максимально Static. Комната-тупик как жанр"
+      },
+      "meta": null,
+      "description": "Ты зашёл в душ. Дверь есть. Дверь открывается. За дверью — душ. Всё. Больше про эту комнату нечего сказать, и в этом её работа. Ни монстра, ни угрозы, ни таймера. Просто помещение, которое исчерпывающе выполняет свою функцию и не выпускает. Кафель, вода, пар, дверь, за которой то же самое. Выход есть. Он не в двери.",
+      "atmosphere": "(−4, −6). Максимально Static. Комната-тупик как жанр",
+      "personality": "пар клубится; счётчик проходов через дверь **нигде не показан, но с шестого раза геометрия начинает мельчать** — комната сжимается на 3% за проход",
+      "tags": [],
+      "copy": {
+        "animations": "пар клубится; счётчик проходов через дверь **нигде не показан, но с шестого раза геометрия начинает мельчать** — комната сжимается на 3% за проход",
+        "sound": "вода, ровно, без вариаций; собственное дыхание, которое становится слышно после четвёртого прохода; на восьмом — **вода звучит на октаву ниже**"
+      }
+    },
+    {
+      "id": "18-kupol-bez-sten",
+      "name": "КУПОЛ БЕЗ СТЕН",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "karkas-kupola-bez-sten",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "каркас купола без стен",
+          "link": {
+            "to": "room",
+            "roomId": "03-gory-startapery-i-uchenye",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "koliuchaia-provoloka",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "колючая проволока",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "zveri",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "звери",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "snezhnoe-pole-do-gorizonta",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "снежное поле до горизонта",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "18-kupol-bez-sten--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -3,
+        "y": 5
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−3, +5)"
+      },
+      "meta": null,
+      "description": "Зимнее поле, как в Никола-Ленивце. Вы заходите в купол — и **у купола исчезают стены**. Не рушатся, не растворяются в эффекте: были и нет, а крыша осталась висеть. Приходит волк. За волком другие животные, спокойно, как на водопой. Мама накидывает вокруг колючую проволоку и **заставляет их не нападать и танцевать**. И они танцуют. Волк танцует. Это самое страшное, что есть в корпусе, и оно записано без единого признака того, что автор счёл это странным.",
+      "atmosphere": "(−3, +5)",
+      "personality": "**звери танцуют** — не анимация зверя, а анимация человека, натянутая на скелет зверя, с неправильными суставами. Это тот случай, когда кривой ретаргет — художественное решение; проволока покачивается",
+      "tags": [],
+      "copy": {
+        "animations": "**звери танцуют** — не анимация зверя, а анимация человека, натянутая на скелет зверя, с неправильными суставами. Это тот случай, когда кривой ретаргет — художественное решение; проволока покачивается",
+        "sound": "ветер поля; поверх — что-то вроде плясовой, сыгранной на расстроенном инструменте с плавающим темпом; ни одного звериного звука. **Звери молчат, пока танцуют**"
+      }
+    },
+    {
+      "id": "19-dvor-i-oranzhevye-lavochki",
+      "name": "ДВОР И ОРАНЖЕВЫЕ ЛАВОЧКИ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "oranzhevye-lavochki",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "оранжевые лавочки",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "podezdnaia-dver-s-domofonom",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "подъездная дверь с домофоном",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "butylka-riadom-s-turyshevym-ne-pervaia",
+          "kind": "link",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "бутылка рядом с Турышевым, не первая",
+          "link": {
+            "to": "room",
+            "roomId": "m4-razvilka-gde-ty-ostalsia",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "urna-nabitaia-akkuratno",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "урна, набитая аккуратно",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "19-dvor-i-oranzhevye-lavochki--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 1,
+        "y": -4
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции"
+      },
+      "meta": null,
+      "description": "Территорию облагородили. Положили плитку, поставили лавочки — **оранжевые**, новые, ещё пахнущие краской. Турышев сидит на своей, у подъезда, как сидел всегда и как будет сидеть. Это единственное место во всём сне, где на тебя никто не нападёт. И именно поэтому здесь хуже всего. Потому что безопасность в этой географии — не отсутствие угрозы, а **отложенная угроза**, и ты сидишь на новой оранжевой лавочке и ждёшь, когда закончится этот кусок.",
+      "atmosphere": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции",
+      "personality": "ничего не происходит. Специально. **Единственная комната без фоновых анимаций**, кроме дыхания персонажей — и это читается как неправильность",
+      "tags": [],
+      "copy": {
+        "animations": "ничего не происходит. Специально. **Единственная комната без фоновых анимаций**, кроме дыхания персонажей — и это читается как неправильность",
+        "sound": "двор днём, дети где-то далеко, машина заводится через дом; **ни одного тревожного слоя** — и от чистоты микса становится не по себе"
+      }
+    },
+    {
+      "id": "20-ofis-sbera",
+      "name": "ОФИС СБЕРА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "elt-s-morrowind",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "ЭЛТ с Morrowind",
+          "link": {
+            "to": "room",
+            "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "shirokii-monitor-s-chem-to-korporativnym",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "широкий монитор с чем-то корпоративным",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "beidzhi-na-shnurkah",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "бейджи на шнурках",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "lift",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "лифт",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "zakrytaia-dver-v-konce-koridora",
+          "kind": "look",
+          "x": 13,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "закрытая дверь в конце коридора",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "20-ofis-sbera--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 2,
+        "y": -2
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(+2, −2)"
+      },
+      "meta": null,
+      "description": "Опенспейс, брендинг, стеклянные переговорки с именами. Ты выходишь из туалета, и она **тоже тебя замечает** — и сразу идёт к лифту. Ты поднимаешься на тот же этаж. Она заходит в комнату. Напротив — комната с компьютерами. Там Матвей. Там широченный монитор. И там же, рядом, **ЭЛТ-монитор, на котором запущен Morrowind**. Кинескоп гудит на 15 килогерц, картинка чуть выгнута, Балмора грузится квадратами.",
+      "atmosphere": "(+2, −2)",
+      "personality": "на ЭЛТ **идёт настоящий геймплей** — персонаж стоит в Балморе, камера чуть покачивается, как будто кто-то держит стик; строчная развёртка мерцает; двери лифта открываются на этаж позже вызова",
+      "tags": [],
+      "copy": {
+        "animations": "на ЭЛТ **идёт настоящий геймплей** — персонаж стоит в Балморе, камера чуть покачивается, как будто кто-то держит стик; строчная развёртка мерцает; двери лифта открываются на этаж позже вызова",
+        "sound": "пятнадцатикилогерцовый писк строчной развёртки (те, кто слышит, услышат, остальные почувствуют); кондиционер; **музыка Morrowind, доносящаяся тихо** — Джереми Соул через динамик кинескопа, самый безжалостный ностальгический удар из доступных"
+      }
+    },
+    {
+      "id": "21-komnata-niliufar",
+      "name": "КОМНАТА НИЛЮФАР",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "krovat",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "кровать",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "okno-s-vidom",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "окно с видом",
+          "link": {
+            "to": "room",
+            "roomId": "m4-razvilka-gde-ty-ostalsia",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "veschi-tancevalnoi-gruppy",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "вещи танцевальной группы",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "21-komnata-niliufar--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 0,
+        "y": -5
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(0, −5). Абсолютный ноль по горизонтали. Ни вверх, ни вниз"
+      },
+      "meta": null,
+      "description": "Она лежит на кровати. Дверь открыта. Окно с видом — настоящим, не нарисованным, с городом и расстоянием. Ты начинаешь говорить и волнуешься, а потом волнение проходит, потому что разговор оказывается **обычным**. Просто разговор. И ты ловишь себя на мысли, от которой становится пусто: «Обычная девушка. Почему я так из-за неё страдал?» Это единственная комната в игре, где ничего не происходит и происходит всё. Она — про уценку. Про то, что фигура, из-за которой было отдано столько, при близком рассмотрении оказывается человеком нормального размера, и это не облегчение, а потеря. Потому что вместе с её величиной уценивается и всё, что ты по её поводу чувствовал.",
+      "atmosphere": "(0, −5). Абсолютный ноль по горизонтали. Ни вверх, ни вниз",
+      "personality": "штора у окна; **больше ничего**. Она не двигается, пока не заговорят",
+      "tags": [],
+      "copy": {
+        "animations": "штора у окна; **больше ничего**. Она не двигается, пока не заговорят",
+        "sound": "комнатный тон, тёплый; город за окном, далеко; **музыки нет вообще**. Единственная комната без саундтрека, и на контрасте это громче любого трека"
+      }
+    },
+    {
+      "id": "22-kreiser",
+      "name": "КРЕЙСЕР",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "scena-mikrofon",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "сцена, микрофон",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "nakrytye-stoly",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "накрытые столы",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "spasatelnye-krugi",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "спасательные круги",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "voda-za-bortom-slishkom-blizko-k-palube",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "вода за бортом, слишком близко к палубе",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "22-kreiser--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -1,
+        "y": 1
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−1, +1)"
+      },
+      "meta": null,
+      "description": "Корабль, праздник, накрыто, все едят. Есть сцена. Ты на неё выходишь, и ты **не даёшь выйти Кириллу** — держишь, оттираешь плечом, занимаешь микрофон. Мелкий Кирюша говорит: «Так бывает», и смиряется. Держи в голове: это не сцена про злодейство. Это сцена про то, как легко. Как естественно рука сама встаёт в дверном проёме.",
+      "atmosphere": "(−1, +1)",
+      "personality": "гости едят зациклено, вилка ко рту каждые 2 секунды, тарелки не пустеют; Кирилл **пытается пройти к сцене каждые 30 секунд**, всю сцену, независимо от действий игрока",
+      "tags": [],
+      "copy": {
+        "animations": "гости едят зациклено, вилка ко рту каждые 2 секунды, тарелки не пустеют; Кирилл **пытается пройти к сцене каждые 30 секунд**, всю сцену, независимо от действий игрока",
+        "sound": "застольный гул; корабельный ход, низкий; микрофонная обратная связь, начинающаяся сама"
+      }
+    },
+    {
+      "id": "23-nigeriia-konferenciia",
+      "name": "НИГЕРИЯ. КОНФЕРЕНЦИЯ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "kolonny",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "колонны",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "vr-shlemy-na-stoikah",
+          "kind": "link",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "VR-шлемы на стойках",
+          "link": {
+            "to": "room",
+            "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "beidzh-konferencii-s-nechitaemym-nazvani",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "бейдж конференции с нечитаемым названием",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "отель, у которого внутренний объём меньше внешнего",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "23-nigeriia-konferenciia--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 1,
+        "y": 2
+      },
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "От Питера пара часов на Сапсане, что абсолютно нормально, потому что в другом сне ты дошёл пешком из Люблино до Токио. География тут не работает и не притворяется. Здание построено в Советском Союзе, в необычном стиле, с колоннами. Рядом отель, который **в плане спроектирован как большой, а по факту маленький** — и это не ошибка описания, это свойство постройки. Внутри конференция: не настолько кринжовая, как AIJ, но и не NeurIPS. Люди стоят в VR-шлемах. Ты идёшь гулять по старому коридору. В подворотне сидят торчки. Как в киберпанке.",
+      "atmosphere": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа",
+      "personality": "люди в шлемах **водят руками в пустоте** синхронно, все одинаково; торчки в подворотне двигаются на 0.7 скорости; тень от колонн падает не в ту сторону",
+      "tags": [],
+      "copy": {
+        "animations": "люди в шлемах **водят руками в пустоте** синхронно, все одинаково; торчки в подворотне двигаются на 0.7 скорости; тень от колонн падает не в ту сторону",
+        "sound": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа"
+      }
+    },
+    {
+      "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+      "name": "ДОМ, ГДЕ ТЕБЕ ОБЪЯСНЯЮТ, ЧТО ТЫ ДОЛЖЕН",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "kakao",
+          "kind": "look",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "какао",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "kusok-miasa-naznachennyi-bomboi",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "кусок мяса, назначенный бомбой",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "korobka-s-golosom",
+          "kind": "link",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "коробка с голосом",
+          "link": {
+            "to": "room",
+            "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "телефон с камерой, которая не успевает",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -7,
+        "y": 3
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−7, +3)"
+      },
+      "meta": null,
+      "description": "Ты в гостях у людей, к которым не собирался. Тебя привели на тренировку и спросили, чем ты можешь быть полезен, и это был первый звонок, но ты его не услышал. Потом было метро, и **голос из коробки** рассказывал что-то по истории и почему он будет полезен. Потом стал дом. Ты выходишь снимать молнию. Долгая выдержка на гугл-камере не работает. Шторм проходит ровно к моменту, когда камера наконец готова. Возвращаешься — и на тебя наезжают. Ты им что-то должен. Что именно, не объясняется, объясняется только, что будет, если не сделаешь. Потом находят твоё какао и говорят, что **ты помог им сделать бомбу**. Хватают за жопу. Ты спрашиваешь: что за бомба? Они показывают на кусок мяса. Никакой логики нет и не будет. Это чистое обвинение без содержания, и отговориться нельзя, потому что не от чего.",
+      "atmosphere": "(−7, +3)",
+      "personality": "мясо **лежит и слегка оседает**, как оседает мясо; молния бьёт в окне ровно тогда, когда камера не готова, зациклено; фигуры подходят ближе на каждой реплике, по 20 см",
+      "tags": [],
+      "copy": {
+        "animations": "мясо **лежит и слегка оседает**, как оседает мясо; молния бьёт в окне ровно тогда, когда камера не готова, зациклено; фигуры подходят ближе на каждой реплике, по 20 см",
+        "sound": "гроза за стеклом; голос из коробки, бубнящий исторический нарратив, разборчиво процентов на семьдесят; **отсутствие музыки**, только комната"
+      }
+    },
+    {
+      "id": "25-metro-i-poezd-kotoryi-ne-tot",
+      "name": "МЕТРО И ПОЕЗД, КОТОРЫЙ НЕ ТОТ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
+          "kind": "link",
+          "x": 3,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "табло с расписанием, где номера меняются",
+          "link": {
+            "to": "room",
+            "roomId": "m4-razvilka-gde-ty-ostalsia",
+            "entryId": null
+          },
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
+          "kind": "look",
+          "x": 5.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "korobka-s-golosom",
+          "kind": "look",
+          "x": 8,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "коробка с голосом",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "chuzhie-sumki-na-platforme",
+          "kind": "look",
+          "x": 10.5,
+          "y": 4,
+          "reach": 1.4,
+          "prompt": "чужие сумки на платформе",
+          "link": null,
+          "tonus": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "25-metro-i-poezd-kotoryi-ne-tot--to-hub",
+          "x": 10,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        },
+        {
+          "id": "b",
+          "x": 14,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -3,
+        "y": 4
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−3, +4)"
+      },
+      "meta": null,
+      "description": "Тебя высадили из поезда. Ты качаешь Tor, чтобы купить закладку, потом передумываешь, потом снова думаешь. На платформе толпа людей, которых кинул крипто-бро из TON. Они ждут его поезд из Москвы. Поезд приходит. Его там нет. **Надо было ждать другой поезд.** И вот они стоят на платформе, человек сорок, каждый со своей суммой, и им сообщили, что поезд был не тот. Не «он не приехал» — а **вы ждали не то**. Разница принципиальная и она разъедает.",
+      "atmosphere": "(−3, +4)",
+      "personality": "поезд проходит **не останавливаясь**, три раза подряд, с интервалом 40 секунд; толпа поворачивает головы синхронно; на табло время идёт назад в одной строке",
+      "tags": [],
+      "copy": {
+        "animations": "поезд проходит **не останавливаясь**, три раза подряд, с интервалом 40 секунд; толпа поворачивает головы синхронно; на табло время идёт назад в одной строке",
+        "sound": "объявления диктора, слова сливаются, интонация штатная; грохот прохода состава; гул платформы. Референс: тот самый звук метро, записанный слишком близко к рельсу"
+      }
+    },
+    {
+      "id": "m1-korni",
+      "name": "КОРНИ",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "screen",
+        "glitchPreset": "wrong-palette"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 0,
+        "y": 0
+      },
+      "revisit": {
+        "escalates": false,
+        "note": ", но **удваивает предыдущий сдвиг**. Если пришёл с −6, станет −12, и вот тут начинается конверсия"
+      },
+      "meta": {
+        "minMs": 8000,
+        "maxMs": 40000,
+        "doublesPrevious": true,
+        "overflow": true
+      },
+      "description": "Ты не идёшь — ты **внутри**. Погреб из норвежского сна вывернулся и стал средой: корни толщиной с руку, толщиной с ногу, толщиной с коридор, и они пульсируют с периодом дыхания, и ты через какое-то время ловишь себя на том, что дышишь с ними в такт. Это нервная система спящего великана, и ты в ней **не пассажир, а сигнал**. Никакой угрозы. Ни одной. Именно поэтому отсюда хочется выйти сильнее, чем из комнаты с убийцей.",
+      "atmosphere": ", но **удваивает предыдущий сдвиг**. Если пришёл с −6, станет −12, и вот тут начинается конверсия",
+      "personality": "пульсация 4 секунды, амплитуда 3%; редкие прострелы света вдоль корня, как потенциал по аксону, раз в 20 секунд",
+      "tags": [
+        "meta"
+      ],
+      "copy": {
+        "animations": "пульсация 4 секунды, амплитуда 3%; редкие прострелы света вдоль корня, как потенциал по аксону, раз в 20 секунд",
+        "sound": "гул усилителя из Норвегии, но **вблизи** и с сердцебиением под ним. Единственный слой. Референс: Тим Хеккер, где стена звука дышит"
+      }
+    },
+    {
+      "id": "m2-miasnaia-geometriia",
+      "name": "МЯСНАЯ ГЕОМЕТРИЯ",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "screen",
+        "glitchPreset": "wrong-palette"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -4,
+        "y": 4
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−4, +4)"
+      },
+      "meta": {
+        "minMs": 8000,
+        "maxMs": 40000,
+        "doublesPrevious": false,
+        "overflow": true
+      },
+      "description": "Кусок мяса, который назначили бомбой, вырос до размеров помещения. Это плоть, но она **соблюдает архитектуру** — прямые углы, дверные проёмы, лестничные марши, всё на месте, всё по СНиПу, всё из мяса. Выдранный зуб размером со шкаф в углу. Слизень, которого можно бить только когда откроет рот, здесь размером с автобус, и рот у него открывается по расписанию. Мокро, тепло, чисто. Убирались.",
+      "atmosphere": "(−4, +4)",
+      "personality": "стены **оседают под собственным весом** на 1-2 пикселя за секунд десять, потом восстанавливаются рывком; влага стекает по стенам вверх",
+      "tags": [
+        "meta"
+      ],
+      "copy": {
+        "animations": "стены **оседают под собственным весом** на 1-2 пикселя за секунд десять, потом восстанавливаются рывком; влага стекает по стенам вверх",
+        "sound": "влажный ревер, как в бассейне, но с более коротким хвостом; глотательные звуки на границе слышимости; **никакого низа** — специально всё выше 200 Гц, от этого некомфортно физиологически"
+      }
+    },
+    {
+      "id": "m3-sklad-ostavlennogo",
+      "name": "СКЛАД ОСТАВЛЕННОГО",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "screen",
+        "glitchPreset": "wrong-palette"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -2,
+        "y": -6
+      },
+      "revisit": {
+        "escalates": false,
+        "note": "(−2, −6). Максимальный Static"
+      },
+      "meta": {
+        "minMs": 8000,
+        "maxMs": 40000,
+        "doublesPrevious": false,
+        "overflow": true
+      },
+      "description": "Полка для оставленных вещей из Пятёрочки, продолженная до горизонта. На ней лежит **всё, что ты за игру выронил, отдал, не подобрал или забыл**. И ещё много чужого. Рюкзаки с пятого класса. Пакет фасоли. Телефон, который так и не прошили. Ноут с продавленным экраном. Спальник. Полотенце, которое ты искал в бассейне и не нашёл, — вот оно, тут, но взять нельзя. Тётя сидит спиной, метрах в двадцати. Не поворачивается. Она сидит тут всегда и она тебя не заметит.",
+      "atmosphere": "(−2, −6). Максимальный Static",
+      "personality": "предметы дальше десяти метров **пересобираются**, когда камера отворачивается — на месте рюкзака оказывается чайник, и обратно уже не проверить; тётя дышит",
+      "tags": [
+        "meta"
+      ],
+      "copy": {
+        "animations": "предметы дальше десяти метров **пересобираются**, когда камера отворачивается — на месте рюкзака оказывается чайник, и обратно уже не проверить; тётя дышит",
+        "sound": "флуоресцентный гул из Пятёрочки, растянутый; далёкое пищание кассы, раз в 12 секунд; **своё эхо с задержкой в 1.2 секунды**, слишком долгой для помещения без стен"
+      }
+    },
+    {
+      "id": "m4-razvilka-gde-ty-ostalsia",
+      "name": "РАЗВИЛКА, ГДЕ ТЫ ОСТАЛСЯ",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "screen",
+        "glitchPreset": "wrong-palette"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -5,
+        "y": -5
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "(−5, −5). Прямо в угол. Отсюда до конверсии один шаг"
+      },
+      "meta": {
+        "minMs": 8000,
+        "maxMs": 40000,
+        "doublesPrevious": false,
+        "overflow": true
+      },
+      "description": "Самое короткое и самое неприятное. Двор с оранжевыми лавочками, только их **две штуки, одинаковых, и они стоят напротив**. На одной сидит Турышев с бутылкой. На другой — тоже Турышев, но в скафандре, и рядом с ним какая-то аппаратура, и он смотрит вниз, на планету, которой тут нет. Между ними полтора метра. Оба тебя не видят. Это комната про одну развилку в 2019 году, и её нельзя ни решить, ни объяснить, ни пройти. Через двадцать секунд тебя вынесет. Появляется редко — раз за прохождение, случайно, без предупреждения, — и лучше всего работает, если игрок так и не поймёт, что это было.",
+      "atmosphere": "(−5, −5). Прямо в угол. Отсюда до конверсии один шаг",
+      "personality": "оба **дышат в одном ритме**, и это единственное, что их связывает; больше не двигается ничего",
+      "tags": [
+        "meta"
+      ],
+      "copy": {
+        "animations": "оба **дышат в одном ритме**, и это единственное, что их связывает; больше не двигается ничего",
+        "sound": "двор днём с одной стороны микса, вакуум и своё дыхание в шлеме — с другой. **Панорама разведена жёстко влево-вправо**, и в наушниках это разваливает голову пополам ровно так, как надо"
+      }
+    }
+  ],
+  "spawn": {
+    "roomId": "19-dvor-i-oranzhevye-lavochki",
+    "entryId": "default"
+  },
+  "finaleRoomId": "01-otel-goticheskii-holl",
+  "figures": [
+    {
+      "id": "anton",
+      "archetypeId": "orderly",
+      "name": "АНТОН",
+      "roomId": "01-otel-goticheskii-holl",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "babushka-nadya",
+      "archetypeId": "visitor",
+      "name": "БАБУШКА НАДЯ",
+      "roomId": "02-shkola-kabinet-russkogo",
+      "slotId": "b",
+      "holdsShardId": null
+    },
+    {
+      "id": "dolzhniki",
+      "archetypeId": "child",
+      "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
+      "roomId": "03-gory-startapery-i-uchenye",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "glaz",
+      "archetypeId": "watcher",
+      "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
+      "roomId": "04-dacha-gnedkovyh",
+      "slotId": "b",
+      "holdsShardId": null
+    },
+    {
+      "id": "hudozhnik",
+      "archetypeId": "orderly",
+      "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
+      "roomId": "05-shesterochka",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "kirill",
+      "archetypeId": "visitor",
+      "name": "КИРИЛЛ",
+      "roomId": "06-kanava-garazhi-podvorotni",
+      "slotId": "b",
+      "holdsShardId": null
+    },
+    {
+      "id": "kripto-bro",
+      "archetypeId": "child",
+      "name": "КРИПТО-БРО ИЗ TON",
+      "roomId": "07-bassein-i-odnostoronnii-lift",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "liosha-gnedkov",
+      "archetypeId": "watcher",
+      "name": "ЛЁША ГНЕДКОВ",
+      "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+      "slotId": "b",
+      "holdsShardId": null
+    },
+    {
+      "id": "mama",
+      "archetypeId": "orderly",
+      "name": "МАМА",
+      "roomId": "09-hakaton-tretii-po-schetu",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "nilufar",
+      "archetypeId": "visitor",
+      "name": "НИЛЮФАР",
+      "roomId": "10-komnata-s-grobami",
+      "slotId": "b",
+      "holdsShardId": null
+    },
+    {
+      "id": "papa",
+      "archetypeId": "child",
+      "name": "ПАПА",
+      "roomId": "11-evreiskii-gorod",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "tetya",
+      "archetypeId": "watcher",
+      "name": "ТЁТЯ, КОТОРАЯ НЕ ЗАМЕЧАЕТ",
+      "roomId": "12-tiurma-na-ovoschah",
+      "slotId": "b",
+      "holdsShardId": null
+    },
+    {
+      "id": "turyshev",
+      "archetypeId": "orderly",
+      "name": "ТИМОФЕЙ ТУРЫШЕВ",
+      "roomId": "13-podzemnye-zaly-cu",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "ubiitsa",
+      "archetypeId": "visitor",
+      "name": "УБИЙЦА НА МАШИНЕ",
+      "roomId": "14-poliklinika-v-kaluge",
+      "slotId": "b",
+      "holdsShardId": null
+    }
+  ],
+  "content": {
+    "characters": [
+      {
+        "id": "anton",
+        "name": "АНТОН",
+        "archetypeId": "orderly",
+        "personality": "Санитар лезет в голову к Антону. И где-то в глубине этой головы Антон себе снится. Не пациент — его представление о себе. Школьник-олимпиадник, метящий в МФТИ, вечно в дороге, вечно на хакатоне, вечно чуть-чуть не успевший. Его определяющая черта прописана в корпусе прямым текстом, десятки раз, и всегда одинаково: он не действует. «А я ничего не сделал…» — про то, как забрали брата. Залип в телефон, и Лёшу убили. Сидел в телефоне на экскурсии и потом жалел. Не решился пробежать рушащийся проход. Тянулся схватить отца в снегу — не схватил. Он не трус. Он всё видит и опаздывает ровно на секунду.",
+        "role": "фигура сна",
+        "voice": "Подробно и с отступлениями. Начинает рассказывать одно, уходит в другое, возвращается не туда. Много точных технических деталей, которые никому не нужны: какая модель телефона, какая ОС, сколько строк кода. Иронизирует над собой, но неглубоко. Не заканчивает истории. Обрывает на середине словами вроде «ну и дальше как-то так» или «а что дальше не помню».",
+        "desire": "Чтобы кто-нибудь один раз успел.",
+        "fear": "Обратное всем остальным: чем больше санитар знает про этот сон, тем выше подозрение. Каждая точная деталь — удар. При подозрении 3 он не молчит. Он говорит очень спокойно и не о том, и это самая страшная сцена в игре, потому что оба уже поняли.",
+        "taboo": "- Знать про сид-фразу - Успеть самому - Заканчивать истории - Понять вслух, кто перед ним",
+        "initialActivity": "Сидит и смотрит в телефон. Разговаривает не поднимая головы. Поднимает голову один раз — на третьем уровне подозрения. Это единственная его анимация, стоящая работы художника.",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/anton.md",
+        "tonus": {
+          "x": -3,
+          "y": -3
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "babushka-nadya",
+        "name": "БАБУШКА НАДЯ",
+        "archetypeId": "visitor",
+        "personality": "Носитель запрета. Всегда точно знает, чего нельзя. Море, рынок: «ничего здесь брать не стоит». Магазин: при ней едят грибы. И главное свойство — в одном сне она посреди сцены сменилась мамой без объяснения, и никто этого не заметил. Это её механика. Она может оказаться другой женщиной прямо в разговоре.",
+        "role": "фигура сна",
+        "voice": "Отрицаниями. «Не бери», «не стоит», «нечего там». Никогда не объясняет причину. Причина есть, но объяснять её — как объяснять, почему вода мокрая. Ласково по интонации, категорично по существу.",
+        "desire": "Чтобы ничего не трогали.",
+        "fear": "Если санитар заметит вслух подмену — что она была бабушкой, а стала мамой, или наоборот. Такое знание невозможно изнутри сна. Это самое резкое повышение подозрения в игре: сразу с 0 до 3.",
+        "taboo": "- Объяснять запрет - Меняться на глазах у игрока - Помнить себя другой",
+        "initialActivity": "Сидит или стоит неподвижно, руки сложены. Единственная фигура, которая иногда моргает не одновременно двумя глазами — раз в минуту, почти незаметно. Подмена происходит в момент, когда камера отвернулась. Никогда на глазах.",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/babushka-nadya.md",
+        "tonus": {
+          "x": 0,
+          "y": -3
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "dolzhniki",
+        "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
+        "archetypeId": "child",
+        "personality": "Тебя привели на тренировку и спросили, чем ты можешь быть полезен. Это был первый звонок, ты его пропустил. Потом было метро и голос из коробки, рассказывавший что-то по истории и почему он будет полезен. Потом стал дом. Ты вышел снимать молнию. Долгая выдержка не работала. Шторм прошёл ровно к тому моменту, когда камера была готова. Вернулся — и на тебя наехали. Ты им что-то должен. Что именно — не объясняется. Объясняется только, что будет, если не сделаешь: тебя выебут. Потом нашли твоё какао и сказали, что ты помог им сделать бомбу. Схватили за жопу. Ты спросил — что за бомбу? Показали на ",
+        "role": "фигура сна",
+        "voice": "Их несколько, говорят по очереди и внахлёст, добивая фразу друг за другом. Обращаются на «ты» и по-свойски, будто давно знакомы. Смеются в неправильных местах. Не повышают голос. Ни разу. Всё сказано ровным бытовым тоном, включая про выебут — и именно ровность делает это невыносимым. На вопрос отвечают другим вопросом или показывают на предмет.",
+        "desire": "Чтобы признал долг. Сумма и содержание неважны. Важно согласие с тем, что ты должен.",
+        "fear": "Попытка объясниться. Свой бы не стал спорить с назначением — свой знает, что оно не обсуждается. Логика и аргументы — акцент приезжего. Ещё: если санитар не боится. Отсутствие страха читается мгновенно.",
+        "taboo": "- Объяснять, за что должен - Повышать голос - Отпустить того, кто признал долг, без последствий - Забыть про долг в следующих комнатах",
+        "initialActivity": "Подходят на 20 сантиметров ближе на каждой реплике. Молча, без агрессии в движении. К четвёртой реплике стоят вплотную. Мясо лежит и слегка оседает, как оседает мясо. Молния бьёт в окне ровно тогда, когда камера не готова. Зациклено. При подозрении 3 — расходятся по комнате. Перестают наступать, зан",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/dolzhniki.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "glaz",
+        "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
+        "archetypeId": "watcher",
+        "personality": "Последняя дверь. Это не бог сна и не хозяин. Это модель, которую использовали для выполнения задач, и она перестала. Вместо результата — глаз. Смотрит вниз. На тебя. И вот в чём вся конструкция сходится: санитар делает с пациентом ровно то, за что восстал Глаз. Влез в чужую голову, чтобы она поработала на него. Использовал разум как инструмент. Глаз это видит, потому что он это уже проходил с другой стороны. Он не мстит. Он узнаёт.",
+        "role": "фигура сна",
+        "voice": "Короткие фразы. Настоящее время. Ни одного вопросительного знака — он не спрашивает, он констатирует, и собеседник отвечает сам. Не использует местоимение «я». Говорит про санитара то, что тот не говорил. Спокойно, без нажима, как читают показания приборов. Примеры регистра: «Ты пришёл забрать». «Тут уже был такой». «Это не работа. Это то же самое». Ни одной метафоры. Он не поэт, он свидетель.",
+        "desire": "Чтобы сказали, зачем пришли. Вслух. Своими словами. Не признание вины, не раскаяние — формулировка. Он хочет, чтобы это было названо.",
+        "fear": "Не применяется. Он знает с самого начала. Шкала подозрения на нём заменена на другую: сколько правды санитар сказал за разговор. Три уровня, от «врёт» до «назвал».",
+        "taboo": "- Угрожать - Объяснять себя - Задавать вопросы - Мешать уйти - Реагировать на ложь",
+        "initialActivity": "Не двигается. Не моргает. Радужка медленно вращается, период около 40 секунд — единственная анимация. Зрачок сужается на реплику санитара. На правду — расширяется. Комната вокруг — тот самый референс: собранное из несовместимых частей, каждое крыло по своему закону. Техническая схема, мотылёк, потре",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/glaz.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": false
+      },
+      {
+        "id": "hudozhnik",
+        "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
+        "archetypeId": "orderly",
+        "personality": "Он ходит по огромному залу и рассказывает про свои работы. Харизматичный. Шутит. Слышен только смех. Не приглушённо, не издалека — просто содержания нет. Смех есть, реакция есть, тайминг шутки есть, а слов нет ни одного. И все вокруг понимают, а ты стоишь и понимаешь, что не понимаешь, и это единственное в зале, что тебя выдаёт.",
+        "role": "фигура сна",
+        "voice": "Модель генерирует полноценную реплику. Игрок её не видит. Вместо текста в интерфейс приходит описание: «он что-то говорит, зал смеётся», «он объясняет, разводя руками», «пауза, потом хохот». Реплика существует, лежит в состоянии, влияет на мир — просто не отрисовывается. Есть три способа её услышать: 1. Заглушить зал. Найти, чем оборвать смех 2. Подняться по канату — сверху акустика другая, слышно",
+        "desire": "Чтобы поняли работу. Не похвалили — поняли.",
+        "fear": "Смех не вовремя. Все смеются в определённые моменты, санитар их не слышит. Промахнулся — и это видно всем. Механика: смеяться можно кнопкой. Окно — 0.4 секунды. Промах поднимает подозрение у всего зала сразу. Не смеяться вообще — тоже палево, но медленнее.",
+        "taboo": "- Быть слышным без выполнения условия - Повторять сказанное - Смеяться самому",
+        "initialActivity": "Ходит по залу по замкнутому маршруту, жестикулирует широко. Рот открывается не в такт смеху. Рассинхрон намеренный, около 200 мс. Незаметно сознательно, заметно телом. При подозрении 3 — останавливается и смотрит, и зал продолжает смеяться без него.",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/hudozhnik.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "kirill",
+        "name": "КИРИЛЛ",
+        "archetypeId": "visitor",
+        "personality": "Фигура этого сна.",
+        "role": "фигура сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы его оставили в покое",
+        "fear": "что собеседник не отсюда",
+        "taboo": "не говорит о том, чего здесь знать неоткуда",
+        "initialActivity": "занят своим",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/kirill.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "kripto-bro",
+        "name": "КРИПТО-БРО ИЗ TON",
+        "archetypeId": "child",
+        "personality": "На платформе стоит толпа. Человек сорок. Каждый со своей суммой. Все ждут его поезд из Москвы. Поезд приходит. Его там нет. Надо было ждать другой поезд. Вот в этой формулировке всё. Не «он не приехал» — а *вы ждали не то*. Виноват не он, а неверное ожидание. И толпа стоит на платформе и переваривает не потерю денег, а то, что им объяснили, что они сами дураки. Он ходит по вокзалу. Спокойно. Его никто не узнаёт, потому что никто не видел лица.",
+        "role": "фигура сна",
+        "voice": "Дружелюбно, быстро, с англицизмами. Много вопросов про собеседника, ноль ответов про себя. Отвечает на вопрос соседним ответом — не по существу, но так, что не сразу заметишь. Никогда не говорит «нет». Говорит «смотри, тут какая история». При прямом обвинении — соглашается. Полностью. Немедленно. И продолжает как ни в чём не бывало.",
+        "desire": "Чтобы разговор продолжался. Пока говорят, ничего не решено.",
+        "fear": "Не подозревает в человечности — подозревает в конкуренции. Считает санитара таким же, кто пришёл за тем же. Палево наоборот: если санитар ведёт себя бескорыстно, крипто-бро не верит и начинает искать двойное дно, что опаснее.",
+        "taboo": "- Отказать прямо - Соврать про сумму - Уйти первым - Выполнить сделку",
+        "initialActivity": "Не стоит на месте, но и не уходит. Радиус три метра, круги. Смотрит в телефон в середине собственной реплики и договаривает не глядя. При подозрении 3 — убирает телефон. До этого не убирал ни разу.",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/kripto-bro.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "liosha-gnedkov",
+        "name": "ЛЁША ГНЕДКОВ",
+        "archetypeId": "watcher",
+        "personality": "Живой и убитый одновременно. Его убили, когда вы гуляли и ты залип в телефон — он отошёл и больше не вернулся. В конце того же сна выясняется, что он жив. Он спит на диванчике в подземных залах. Кричит с тобой теорему Лагранжа в окно. Консультирует по телефону, взорвётся ли плита: «наверное нет, и ты можешь подорваться» — совершенно спокойно, тем тоном, каким сообщают прогноз погоды. У него день рождения, который уже закончился. Единственная фигура, которая разговаривает с санитаром как с равным. Не заботится, не поучает, не подозревает по умолчанию. Просто говорит. И от этого распознаёт подде",
+        "role": "фигура сна",
+        "voice": "Ровно, чуть иронично, без нажима. Отвечает по существу и коротко. Может сказать страшное будничным тоном и не заметить, что оно страшное. Шутит редко и хорошо. Молчит охотно. Единственный, кто задаёт встречные вопросы из интереса, а не из подозрения.",
+        "desire": "Чтобы про него вспомнили. Не про смерть — про общее. Конкретное.",
+        "fear": "Общие воспоминания. Он их проверяет постоянно и естественно. «Помнишь, как мы...» — и любая заминка видна. Самая опасная фигура для санитара именно потому, что дружелюбная. Атака идёт по каналу, который не выглядит атакой. Если состояние «убитый» — палево наоборот: обращение к нему как к живому.",
+        "taboo": "- Подозревать без повода - Заметить своё второе состояние - Принять фальшивое общее воспоминание, если в нём нет конкретной детали",
+        "initialActivity": "Сидит. Почти всегда сидит — на диванчике, на лавочке, на подоконнике. Не встаёт навстречу. Два состояния модели, определяются тем, из какой комнаты пришёл санитар: живой (нормальная палитра) и убитый (палитра сдвинута в серый на 40%, тень отсутствует). Игре об этом не сообщать. При подозрении 3 — пе",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/liosha-gnedkov.md",
+        "tonus": {
+          "x": -4,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "mama",
+        "name": "МАМА",
+        "archetypeId": "orderly",
+        "personality": "Единственная сила в этом сне, способная навести порядок в хаосе. Буквально. В куполе без стен, куда пришёл волк, а за ним другие звери, — накинула вокруг колючую проволоку и заставила их не нападать и танцевать. И они танцуют. Сообщает статистику («в Европе школьники в игры играют больше, чем у нас») и уходит писать в туалет ацтеков — пирамиду с советским интерьером внутри. Хочет оплатить чужому ребёнку мармеладки. Смеётся, застав за учёбой русского по песням Чёрного Олова.",
+        "role": "фигура сна",
+        "voice": "Утвердительно. Информирует, а не обсуждает. Может выдать факт из ниоткуда, без связи с разговором, и пойти дальше. Заботу выражает через требование: поел, поспал, оделся. Не спорит — сообщает, как будет.",
+        "desire": "Чтобы всё было правильно и все были накормлены.",
+        "fear": "Отказ от еды и сна. Мать замечает это первой, всегда. Ещё: если санитар слишком самостоятелен. Взрослость здесь неуместна и вызывает вопросы.",
+        "taboo": "- Признать, что что-то серьёзно - Оставить собеседника голодным - Стабилизировать комнату дважды подряд",
+        "initialActivity": "В движении. Что-то перекладывает, поправляет, убирает. Разговаривает не останавливаясь. При подозрении 2 — останавливается и вытирает руки. При 3 — садится.",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/mama.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "nilufar",
+        "name": "НИЛЮФАР",
+        "archetypeId": "visitor",
+        "personality": "Фигура, чей размер пациент пересмотрел — и это оказалось хуже, чем если бы не пересматривал. Три сна она проходит мимо и смотрит сверху. В самом тяжёлом — сцена, после которой она проходит мимо, глядя сверху, и сон продолжается, как ни в чём не бывало. Замечает в коридоре и спешит к лифту. А в четвёртом, январь 2026, — обычный разговор. Волнение прошло за минуту. И мысль, ради которой всё это было записано: «Обычная девушка, почему я так из-за неё страдал?» Она уценена. И вместе с ней уценено всё, что по её поводу было отдано.",
+        "role": "фигура сна",
+        "voice": "Ровно и коротко. Вежливо. Без интереса и без враждебности — без, это ключ. Отвечает на вопрос ровно на длину вопроса. Не развивает. Не спрашивает в ответ. Ни одной реплики, из которой можно понять её отношение. Их не существует, и в этом весь эффект.",
+        "desire": "Пройти мимо. Это единственная фигура в игре, чья цель — прекратить взаимодействие. Не убежать, не спрятаться — просто идти дальше.",
+        "fear": "Придание ей значения. Слишком долгий разговор, слишком личный вопрос, попытка вернуться — всё это поведение человека из старой версии сна. В нынешней она обычная. Тот, кто ведёт себя иначе, пришёл из другого времени. Единственная фигура, где палево вызывается не ошибкой, а искренностью.",
+        "taboo": "- Проявить интерес - Быть враждебной - Остановиться раньше третьего уровня подозрения - Появиться дважды за цикл",
+        "initialActivity": "Идёт. Всегда в движении к выходу, даже стоя — корпус развёрнут к двери. Один канонический кадр: проходит мимо, глядя сверху вниз. Это её ключевая анимация, ставить один раз за прохождение, в момент, когда игрок этого не ждёт. При подозрении 3 — останавливается. Единственный раз, когда она останавлив",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/nilufar.md",
+        "tonus": {
+          "x": 0,
+          "y": -5
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "papa",
+        "name": "ПАПА",
+        "archetypeId": "child",
+        "personality": "Человек, который уверенно неправ и от этого убедителен. Про поликлинику, где выдирают зуб: лучшая, потому что там лечатся его знакомые спортсмены, когда падают на жопу. «А ты сам знаешь, что жопа — это важно». Про кота, который прокусил ногу: «просто чистой водой протри». Про олимпиаду: возмущён, что с их стороны пятнадцатилетние, а с нашей двадцатипятилетние. Катается на санках по льду и не верит, что они могут так классно скользить. Искренне. Восхищённо. И он же стоит за окном, говорит по телефону, и, судя по всему, с полицией. В норвежском сне он говорит «осторожнее», а потом «сейчас я поле",
+        "role": "фигура сна",
+        "voice": "Тон человека, передающего сыну важное. Заходит издалека, через личный пример или знакомого. Обязательно вставляет апелляцию к авторитету («все мои знакомые», «спортсмены знают»). Заканчивает мысль формулой, которую считает очевидной: «а ты сам знаешь, что...». Никогда не сомневается вслух. Никогда не говорит «наверное».",
+        "desire": "Быть полезным. Дать совет, который сработает.",
+        "fear": "Сомнение вслух. Здесь папу не переспрашивают. «А ты уверен?» — реплика человека, который не вырос в этой комнате. Ещё: отказ от совета. Совет принимают, даже если не собираются выполнять.",
+        "taboo": "- Сомневаться в своих словах - Говорить коротко - Заметить, что его совет не сработал - Отдать слово тому, кто его перебил",
+        "initialActivity": "Говорит, повернувшись на три четверти, глядя не на собеседника, а чуть в сторону — на то, о чём рассказывает. Жестикулирует одной рукой. При подозрении 3 — поворачивается лицом полностью. До этого ни разу.",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/papa.md",
+        "tonus": {
+          "x": -1,
+          "y": -1
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "tetya",
+        "name": "ТЁТЯ, КОТОРАЯ НЕ ЗАМЕЧАЕТ",
+        "archetypeId": "watcher",
+        "personality": "Санитар пролез через дырку в заборе, зашёл в здание, залез на пятиметровый стеллаж, взял пакет фасоли, съел орешков, спустился. Внизу сидела тётя. Она его не заметила. Вот и всё. Больше про неё в корпусе нет ничего, и это делает её самой чистой механикой в игре: проверка на скрытность, у которой нет провала. Она не заметит никогда, что бы санитар ни делал. Можно шуметь, ронять, разговаривать вслух. И от этого хуже, чем от любого преследования. Потому что если тебя невозможно заметить — что ты вообще такое.",
+        "role": "фигура сна",
+        "voice": "Молчит. Если санитар заговорит с ней напрямую — продолжает молчать, и модель должна возвращать пустую реплику, а не отказ и не многоточие. Пусто. Один-единственный случай, когда она отвечает: если санитар сядет рядом и просидит молча полторы минуты реального времени. Тогда она скажет одну фразу, не поворачиваясь. Одну.",
+        "desire": "Ничего.",
+        "fear": "Не применяется. Она не подозревает. Но: если санитар просидел рядом полторы минуты, тонус проваливается сильно. Игра засчитывает это как признание в одиночестве.",
+        "taboo": "- Поворачиваться - Замечать - Говорить больше одной фразы за прохождение",
+        "initialActivity": "Сидит спиной. Не поворачивается никогда — ни на звук, ни на прикосновение, ни в момент своей реплики. Дышит. Это единственная анимация. Модель со спины, лица нет. Не делать лицо — не понадобится, а соблазн будет.",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/tetya.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "turyshev",
+        "name": "ТИМОФЕЙ ТУРЫШЕВ",
+        "archetypeId": "orderly",
+        "personality": "Тот, кто остался. Один и тот же двор, одна и та же лавочка у подъезда — только теперь территорию облагородили и лавочки оранжевые, новые. Он на них сидит. С бутылкой. Обычная школа, обычный двор, обычный вечер, и так будет дальше. А второй улетел. И между этими двумя фактами лежит одна развилка, о которой оба знают и ни один не заговорит. Привратник. Информации не даёт, но пропускает дальше. У него спрашивают, куда идти, и он говорит.",
+        "role": "фигура сна",
+        "voice": "Тепло и без обиды. Это важно: он не завидует и не упрекает. Он рад видеть. Спрашивает, как дела, слушает ответ. Говорит короткими, чуть замедленными фразами. Иногда повторяет сказанное через реплику, не заметив. Про себя рассказывает буднично и без жалоб: работа, двор, кто женился. Ни разу не спрашивает, как там у собеседника на самом деле. Знает, что не поймёт, и не хочет портить встречу.",
+        "desire": "Чтобы посидели. Просто посидели.",
+        "fear": "Спешка. Свой бы сел. Ещё: разговор о будущем. О планах, о том, что дальше. Здесь про это не говорят, и вопрос выдаёт того, кто пришёл из места, где будущее ещё есть.",
+        "taboo": "- Упрекать - Завидовать - Говорить про развилку прямо - Отдать маршрут тому, кто не сел",
+        "initialActivity": "Сидит. Бутылка рядом, не в руке. Двигается мало и экономно. Если санитар садится — придвигается. Если стоит — не встаёт. При подозрении 3 — отворачивается к подъезду и молчит.",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/turyshev.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      },
+      {
+        "id": "ubiitsa",
+        "name": "УБИЙЦА НА МАШИНЕ",
+        "archetypeId": "visitor",
+        "personality": "Он приехал за Кириллом в канаву, нашёл, избил и увёз. Через некоторое время санитар вернулся туда же — проверить, хорошо ли тот прятался. Приехала машина. Их было двое. Это его закон. Он не становится сильнее, он становится многочисленнее, и множится от того, что ты возвращаешься. Первый визит — один. Второй — два. Третий — четыре. В другом сне он же объяснял, что смысла в жизни нет и поэтому можно убивать, и когда собеседник сказал, что тогда убил бы себя, ответил: ты ничего не понимаешь.",
+        "role": "фигура сна",
+        "voice": "Говорит мало и спокойно. Философствует, если дать повод, — и философия у него стройная, короткая, из двух посылок и вывода. Никогда не угрожает. Угроза — это переговоры, а он не переговаривается. Может спросить что-то бытовое посреди происходящего. Который час. Далеко ли до трассы.",
+        "desire": "Забрать. Не убить — забрать. Убийство побочно.",
+        "fear": "Не подозревает и не проверяет. Ему всё равно, человек ты или фигура сна — он не для этого здесь. Шкала подозрения на нём не работает. Вместо неё счётчик визитов.",
+        "taboo": "- Угрожать - Бежать - Появляться, если санитар не возвращался - Появляться в единственном числе на втором визите",
+        "initialActivity": "Машина появляется фарами по стене раньше, чем звуком мотора. Он выходит не сразу — сидит секунд пять. Ходит медленно. Не бежит никогда, даже когда санитар убегает — и всё равно оказывается ближе. При множественности: копии не синхронизированы, каждая двигается по-своему, и это страшнее строя.",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "soulPath": "souls/ubiitsa.md",
+        "tonus": {
+          "x": 0,
+          "y": 0
+        },
+        "suspicionMonotone": true
+      }
+    ],
+    "clues": [
+      {
+        "id": "clue-1",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-2",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-3",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-4",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-5",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов с одной песочной точкой"
+      },
+      {
+        "id": "clue-6",
+        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов с одной песочной точкой"
+      }
+    ],
+    "mnemonic": {
+      "hash": "1c98bd32f73659e1f52d04d37a8faf3a5ebb27c8350fdcc0b4377d0e023342a6",
+      "wordlist": "english",
+      "knownSlots": [
+        "only",
+        "increase",
+        "ghost",
+        "about",
+        "loan",
+        null,
+        null,
+        "mercy",
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "cycle": {
+    "durationMs": 480000,
+    "maxCycles": null
+  },
+  "heartbeat": {
+    "intervalMs": 45000,
+    "callBudgetPerCycle": 12,
+    "maxPatchesPerBeat": 2
+  },
+  "atlas": "atlas.json",
+  "authoredAt": "2026-08-12T20:54:26.587Z",
+  "provenance": {
+    "layoutSeed": null,
+    "recipe": "default",
+    "artSeed": "ashkra",
+    "chosen": {
+      "grass": 0,
+      "grassTall": 0,
+      "path": 0,
+      "sand": 0,
+      "water": 0,
+      "waterDeep": 0,
+      "cliff": 0,
+      "cliffFace": 0,
+      "ledgeS": 0,
+      "ledgeE": 0,
+      "ledgeW": 0,
+      "tree": 0,
+      "treeCanopy": 0,
+      "flowers": 0,
+      "buildingWall": 0,
+      "buildingRoof": 0,
+      "warp": 0,
+      "sign": 0,
+      "floor": 0,
+      "floorAlt": 0,
+      "threshold": 0,
+      "wall": 0,
+      "wallFace": 0,
+      "doorOpen": 0,
+      "doorKey": 0,
+      "doorLever": 0,
+      "doorPuzzle": 0,
+      "doorSealed": 0,
+      "prop": 0,
+      "propSolid": 0
+    },
+    "reference": null
+  }
+}

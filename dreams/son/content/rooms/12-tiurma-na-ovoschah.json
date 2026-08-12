@@ -1,0 +1,159 @@
+{
+  "id": "12-tiurma-na-ovoschah",
+  "name": "ТЮРЬМА НА ОВОЩАХ",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "kapusta-frukty",
+      "kind": "look",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "капуста, фрукты",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "dyrka-v-zabore",
+      "kind": "link",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "дырка в заборе",
+      "link": {
+        "to": "room",
+        "roomId": "06-kanava-garazhi-podvorotni",
+        "entryId": null
+      },
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "piatimetrovyi-stellazh",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "пятиметровый стеллаж",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "paket-fasoli",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "пакет фасоли",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "tetia-sidiaschaia-spinoi",
+      "kind": "look",
+      "x": 13,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "тётя, сидящая спиной",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "12-tiurma-na-ovoschah--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": 1,
+    "y": 2
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "Абсурдно лёгкая"
+  },
+  "meta": null,
+  "description": "Спят на овощах. Не на нарах с овощами под ними — **на овощах**. Под тобой кочан капусты, рядом какой-то тропический фрукт, который девочки предлагают съесть, и ты его ешь, и он нормальный. Девочки говорят: сбегай за фасолью. Ты пролезаешь через дырку в заборе. За тридцать секунд. Идёшь в здание, залезаешь на пятиметровый стеллаж, берёшь пакет фасоли, ешь орешки, спускаешься. Внизу сидит тётя. **Она тебя не замечает.** Возвращаешься. Добровольно. С фасолью. И оказываешься на втором уровне тюрьмы, где уже без девочек, зато есть пацан, предлагающий подтянуться четырнадцать раз. Зимой дырку заметает снегом. Это единственное настоящее препятствие за всю тюрьму.",
+  "atmosphere": "Абсурдно лёгкая",
+  "personality": "тётя не поворачивается **никогда**, даже если шуметь — проверка скрытности, у которой нет провала, и это страшнее провала; снег наметает на дырку в реальном времени, минут за пять",
+  "tags": [],
+  "copy": {
+    "animations": "тётя не поворачивается **никогда**, даже если шуметь — проверка скрытности, у которой нет провала, и это страшнее провала; снег наметает на дырку в реальном времени, минут за пять",
+    "sound": "капель с потолка; хруст овощей под весом; полное отсутствие тюремных звуков — ни решёток, ни голосов, ни шагов конвоя"
+  }
+}

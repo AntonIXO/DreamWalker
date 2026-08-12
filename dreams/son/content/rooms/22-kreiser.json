@@ -1,0 +1,141 @@
+{
+  "id": "22-kreiser",
+  "name": "КРЕЙСЕР",
+  "kind": "place",
+  "tileSize": 16,
+  "width": 20,
+  "height": 11,
+  "cells": [
+    "####################",
+    "#==================#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "cellVariants": {},
+  "props": [],
+  "hotspots": [
+    {
+      "id": "scena-mikrofon",
+      "kind": "look",
+      "x": 3,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "сцена, микрофон",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "nakrytye-stoly",
+      "kind": "look",
+      "x": 5.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "накрытые столы",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "spasatelnye-krugi",
+      "kind": "look",
+      "x": 8,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "спасательные круги",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    },
+    {
+      "id": "voda-za-bortom-slishkom-blizko-k-palube",
+      "kind": "look",
+      "x": 10.5,
+      "y": 4,
+      "reach": 1.4,
+      "prompt": "вода за бортом, слишком близко к палубе",
+      "link": null,
+      "tonus": null,
+      "clueId": null,
+      "action": null,
+      "once": false,
+      "dwellMs": null
+    }
+  ],
+  "entries": [
+    {
+      "id": "default",
+      "x": 10,
+      "y": 9,
+      "facing": "n"
+    }
+  ],
+  "doors": [
+    {
+      "id": "22-kreiser--to-hub",
+      "x": 10,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "default",
+      "type": "open",
+      "keyId": null,
+      "prompt": null
+    }
+  ],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "id": "b",
+      "x": 14,
+      "y": 6
+    }
+  ],
+  "graphics": {
+    "floorRole": "floor",
+    "wallRole": "wall",
+    "propRole": "prop",
+    "backdropImage": null,
+    "backdropFit": "cells",
+    "glitchPreset": "none"
+  },
+  "camera": "frame",
+  "tonus": {
+    "x": -1,
+    "y": 1
+  },
+  "revisit": {
+    "escalates": false,
+    "note": "(−1, +1)"
+  },
+  "meta": null,
+  "description": "Корабль, праздник, накрыто, все едят. Есть сцена. Ты на неё выходишь, и ты **не даёшь выйти Кириллу** — держишь, оттираешь плечом, занимаешь микрофон. Мелкий Кирюша говорит: «Так бывает», и смиряется. Держи в голове: это не сцена про злодейство. Это сцена про то, как легко. Как естественно рука сама встаёт в дверном проёме.",
+  "atmosphere": "(−1, +1)",
+  "personality": "гости едят зациклено, вилка ко рту каждые 2 секунды, тарелки не пустеют; Кирилл **пытается пройти к сцене каждые 30 секунд**, всю сцену, независимо от действий игрока",
+  "tags": [],
+  "copy": {
+    "animations": "гости едят зациклено, вилка ко рту каждые 2 секунды, тарелки не пустеют; Кирилл **пытается пройти к сцене каждые 30 секунд**, всю сцену, независимо от действий игрока",
+    "sound": "застольный гул; корабельный ход, низкий; микрофонная обратная связь, начинающаяся сама"
+  }
+}
