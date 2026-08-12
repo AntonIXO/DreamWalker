@@ -34,7 +34,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
     },
     {
       "id": "dyrka-v-zabore",
@@ -52,7 +52,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
     },
     {
       "id": "piatimetrovyi-stellazh",
@@ -66,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
     },
     {
       "id": "paket-fasoli",
@@ -80,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
     },
     {
       "id": "tetia-sidiaschaia-spinoi",
@@ -94,7 +97,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
     }
   ],
   "entries": [

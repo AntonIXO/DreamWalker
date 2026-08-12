@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
     },
     {
       "id": "liuk-v-kanalizaciiu",
@@ -51,7 +52,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
     },
     {
       "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
@@ -65,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
     },
     {
       "id": "sledy-shin-kotoryh-utrom-ne-bylo",
@@ -79,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
     }
   ],
   "entries": [

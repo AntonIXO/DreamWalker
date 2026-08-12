@@ -7,10 +7,14 @@
  * legible from tiles and objects, whereas one big painted backdrop is a perspective
  * picture that fights the walk mask and costs more.
  *
- * The economics settle it. `rd_animation__small_sprites` is **$0.07 flat for up to
- * sixteen 32×32 sprites** — `num_images` is not a multiplier there — so a batch of
- * sixteen objects costs $0.0044 each. Generating the same sixteen through an image style
- * would be $0.39. Everything after generation is free.
+ * The economics, corrected. The first attempt used `rd_animation__small_sprites`
+ * because it is $0.07 flat — but that style is a *character* sheet: one figure in twenty
+ * poses (four-direction walk, arms, looking, surprised, lying down). Flat pricing there
+ * buys frames of one subject, not a set of different objects, and the sheet it returned
+ * was twenty pictures of the same man.
+ *
+ * `rd_plus__item_sheet` is the style built for this: many distinct objects on one canvas,
+ * priced **per canvas rather than per object**. Everything after generation is free.
  *
  *   lord objects <slug>                    price it and stop
  *   lord objects <slug> --room 19 --yes    art for one room's objects
@@ -27,6 +31,8 @@ import {
   RetroDiffusionClient,
   type RetroInferenceRequest,
 } from "../art/retroDiffusion";
+import { decodePng } from "../art/reference";
+import { encodePngRgba, keyOutBackground, sliceSheet } from "../art/sheet";
 import { loadRoomFiles } from "../content/files";
 import { dreamDir, loadDraft } from "../project";
 import { heading, note, ok, warn } from "../term/prompt";
@@ -56,8 +62,12 @@ async function submitWithBackoff(
 }
 
 /** Sixteen to a call, because sixteen cost the same as one. */
-const BATCH = 16;
-const SIZE = 32;
+const BATCH = 12;
+const SHEET = 256;
+const CELL = 64;
+
+/** ~10 requests a minute per key is the ceiling, and seven in a row tripped it. */
+const SUBMIT_GAP_MS = 7000;
 
 function seedFor(id: string): number {
   let hash = 2166136261;
@@ -124,19 +134,17 @@ export async function objectsCommand(
     request: {
       // One prompt covers the batch; the model varies within it. Cheaper than one call
       // per object by a factor of sixteen, and these are set dressing, not portraits.
-      prompt: batch
-        .map(({ hotspot, room }) => promptFor(hotspot, room))
-        .join("; "),
-      prompt_style: "rd_animation__small_sprites",
-      width: SIZE,
-      height: SIZE,
-      // Measured, not assumed: this style returns a SINGLE 160x128 sheet — a 5x4 grid of
-      // 32px sprites — regardless of num_images. `max_number_of_images: 16` in the
-      // catalogue describes the ceiling, not a promise of sixteen separate files. The
-      // sheet has to be sliced the way `walkSheet.ts` slices a walk.
+      // One canvas, many objects, described as a grid so the slicer has something
+      // regular to cut. The style renders pixel art; the prompt is subjects.
+      prompt:
+        `grid of ${batch.length} distinct top-down game objects, evenly spaced, ` +
+        `simple flat background: ` +
+        batch.map(({ hotspot, room }) => promptFor(hotspot, room)).join("; "),
+      prompt_style: "rd_plus__item_sheet",
+      width: SHEET,
+      height: SHEET,
       num_images: 1,
       seed: seedFor(batch[0]!.hotspot.id),
-      return_spritesheet: true,
       bypass_prompt_expansion: true,
     },
   }));
@@ -147,7 +155,7 @@ export async function objectsCommand(
   });
   console.log(describePlan(plan));
   note(
-    `$${(plan.totalUsd / wanted.length).toFixed(4)} an object — small_sprites is flat per call`,
+    `$${(plan.totalUsd / wanted.length).toFixed(4)} an object — priced per sheet, not per object`,
   );
   if (!flags.yes) {
     note("dry run — pass --yes to generate");
@@ -194,11 +202,18 @@ export async function objectsCommand(
     }
     spent += result.balance_cost;
 
-    const images = await client.images(result);
-    for (const [slot, raw] of images.entries()) {
+    const [sheet] = await client.images(result);
+    if (!sheet) {
+      warn("no sheet came back");
+      continue;
+    }
+    // One canvas holding many objects: cut it on the grid the prompt asked for.
+    const cells = sliceSheet(decodePng(sheet), CELL);
+    for (const [slot, cell] of cells.entries()) {
       const entry = batch[slot];
       if (!entry) break;
-      let base64 = raw.toString("base64");
+      // Clear the sheet's flat background before anything else touches it.
+      let base64 = encodePngRgba(keyOutBackground(cell)).toString("base64");
       try {
         base64 = await client.edit("palette_converter", {
           input_image: base64,
@@ -216,9 +231,12 @@ export async function objectsCommand(
       entry.hotspot.image = `assets/objects/${name}`;
       touched.add(entry.room);
     }
-    console.log(
-      `$${result.balance_cost.toFixed(3)} · ${images.length} sprites`,
-    );
+    console.log(`$${result.balance_cost.toFixed(3)} · ${cells.length} cells`);
+
+    // Stay under the documented ~10 requests a minute.
+    if (index < plan.jobs.length - 1) {
+      await new Promise((r) => setTimeout(r, SUBMIT_GAP_MS));
+    }
   }
 
   for (const room of touched) {

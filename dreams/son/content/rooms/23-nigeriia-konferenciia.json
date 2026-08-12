@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
     },
     {
       "id": "vr-shlemy-na-stoikah",
@@ -51,7 +52,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
     },
     {
       "id": "beidzh-konferencii-s-nechitaemym-nazvani",
@@ -66,7 +68,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
     },
     {
       "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
@@ -80,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
     }
   ],
   "entries": [

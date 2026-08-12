@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
     },
     {
       "id": "podezdnaia-dver-s-domofonom",
@@ -47,7 +48,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
     },
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
@@ -65,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
     },
     {
       "id": "urna-nabitaia-akkuratno",
@@ -80,7 +83,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
     }
   ],
   "entries": [

@@ -36,7 +36,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
     },
     {
       "id": "panel-lifta-bez-knopki-vniz",
@@ -50,7 +51,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
     },
     {
       "id": "polotence-radi-kotorogo-prishel-ne-nahod",
@@ -64,7 +66,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
     },
     {
       "id": "voda-v-chashe-basseina-slishkom-nepodviz",
@@ -78,7 +81,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
     }
   ],
   "entries": [

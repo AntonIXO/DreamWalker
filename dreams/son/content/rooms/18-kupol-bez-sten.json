@@ -37,7 +37,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
     },
     {
       "id": "koliuchaia-provoloka",
@@ -51,7 +52,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
     },
     {
       "id": "zveri",
@@ -65,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/18-kupol-bez-sten--zveri.png"
     },
     {
       "id": "snezhnoe-pole-do-gorizonta",
@@ -79,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
     }
   ],
   "entries": [

@@ -37,7 +37,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
     },
     {
       "id": "shirokii-monitor-s-chem-to-korporativnym",
@@ -51,7 +52,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
     },
     {
       "id": "beidzhi-na-shnurkah",
@@ -65,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
     },
     {
       "id": "lift",
@@ -79,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/20-ofis-sbera--lift.png"
     },
     {
       "id": "zakrytaia-dver-v-konce-koridora",
@@ -93,7 +97,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
     }
   ],
   "entries": [

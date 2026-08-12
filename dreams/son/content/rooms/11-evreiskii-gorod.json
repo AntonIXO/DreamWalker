@@ -36,7 +36,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
     },
     {
       "id": "fonari-kotorye-gasiat-pri-zvuke",
@@ -50,7 +51,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
     },
     {
       "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
@@ -64,7 +66,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
     },
     {
       "id": "stavni-na-vsem",
@@ -82,7 +85,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
     }
   ],
   "entries": [

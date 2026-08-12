@@ -132,7 +132,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
         },
         {
           "id": "chuzhie-shtany-na-polu",
@@ -146,7 +146,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
         },
         {
           "id": "kanat-do-svoda",
@@ -164,7 +165,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
         },
         {
           "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
@@ -178,7 +180,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
         },
         {
           "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
@@ -192,7 +195,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
         },
         {
           "id": "vedro-i-shvabra-uborschika",
@@ -206,7 +210,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
         }
       ],
       "entries": [
@@ -581,7 +586,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--party.png"
         },
         {
           "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
@@ -595,7 +601,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
         },
         {
           "id": "grusha-za-steklom",
@@ -612,7 +619,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png"
         },
         {
           "id": "mat-v-uglu-s-rasstelennoi-posteliu",
@@ -626,7 +634,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
         }
       ],
       "entries": [
@@ -728,7 +737,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
         },
         {
           "id": "vizitki-kotorye-ne-berutsia-v-ruku",
@@ -742,7 +752,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
         },
         {
           "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
@@ -756,7 +767,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
         },
         {
           "id": "kamen-s-rovno-otpilennoi-graniu",
@@ -770,7 +782,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
         }
       ],
       "entries": [
@@ -869,7 +882,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
         },
         {
           "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
@@ -883,7 +897,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
         },
         {
           "id": "telefon-s-odnim-kontaktom-lesha",
@@ -898,7 +913,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
         },
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
@@ -912,7 +927,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
         }
       ],
       "entries": [
@@ -1015,7 +1031,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
         },
         {
           "id": "ballonchik-na-poiase-ohrannika",
@@ -1033,7 +1050,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
         },
         {
           "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
@@ -1047,7 +1065,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
         },
         {
           "id": "korzina-s-chem-to-chto-ne-chitaetsia",
@@ -1061,7 +1080,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
         }
       ],
       "entries": [
@@ -1160,7 +1180,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
         },
         {
           "id": "liuk-v-kanalizaciiu",
@@ -1178,7 +1199,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
         },
         {
           "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
@@ -1192,7 +1214,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
         },
         {
           "id": "sledy-shin-kotoryh-utrom-ne-bylo",
@@ -1206,7 +1229,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
         }
       ],
       "entries": [
@@ -1308,7 +1332,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
         },
         {
           "id": "panel-lifta-bez-knopki-vniz",
@@ -1322,7 +1347,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
         },
         {
           "id": "polotence-radi-kotorogo-prishel-ne-nahod",
@@ -1336,7 +1362,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
         },
         {
           "id": "voda-v-chashe-basseina-slishkom-nepodviz",
@@ -1350,7 +1377,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
         }
       ],
       "entries": [
@@ -1449,7 +1477,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
         },
         {
           "id": "chuzhie-fotografii-v-tvoih-ramkah",
@@ -1463,7 +1492,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
         },
         {
           "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
@@ -1478,7 +1508,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
         },
         {
           "id": "chainik-kotoryi-uzhe-kipel",
@@ -1492,7 +1522,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
         }
       ],
       "entries": [
@@ -1591,7 +1622,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png"
         },
         {
           "id": "odinakovye-naushniki",
@@ -1605,7 +1637,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
         },
         {
           "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
@@ -1623,7 +1656,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png"
         },
         {
           "id": "rozovyi-gashish-v-vitrine",
@@ -1637,7 +1671,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png"
         },
         {
           "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
@@ -1651,7 +1686,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
         }
       ],
       "entries": [
@@ -1754,7 +1790,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--groby.png"
         },
         {
           "id": "schel-pod-potolkom",
@@ -1771,7 +1808,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
         },
         {
           "id": "tkan-s-kodami",
@@ -1785,7 +1823,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
         },
         {
           "id": "paketiki-fsb",
@@ -1799,7 +1838,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
         },
         {
           "id": "telefon-kamera-otkryvaetsia-sem-sekund",
@@ -1813,7 +1853,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
         }
       ],
       "entries": [
@@ -1915,7 +1956,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
         },
         {
           "id": "fonari-kotorye-gasiat-pri-zvuke",
@@ -1929,7 +1971,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
         },
         {
           "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
@@ -1943,7 +1986,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
         },
         {
           "id": "stavni-na-vsem",
@@ -1961,7 +2005,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
         }
       ],
       "entries": [
@@ -2061,7 +2106,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
         },
         {
           "id": "dyrka-v-zabore",
@@ -2079,7 +2124,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
         },
         {
           "id": "piatimetrovyi-stellazh",
@@ -2093,7 +2139,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
         },
         {
           "id": "paket-fasoli",
@@ -2107,7 +2154,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
         },
         {
           "id": "tetia-sidiaschaia-spinoi",
@@ -2121,7 +2169,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
         }
       ],
       "entries": [
@@ -2220,7 +2269,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
         },
         {
           "id": "tribuny",
@@ -2234,7 +2284,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png"
         },
         {
           "id": "riukzak-s-fruktami-i-vodkoi",
@@ -2248,7 +2299,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
         },
         {
           "id": "divanchik-na-kotorom-spit-lesha",
@@ -2265,7 +2317,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png"
         },
         {
           "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
@@ -2279,7 +2332,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
         }
       ],
       "entries": [
@@ -2378,7 +2432,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
         },
         {
           "id": "iaschik-s-kapibarami-i-kotom",
@@ -2396,7 +2451,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png"
         },
         {
           "id": "kreslo",
@@ -2410,7 +2466,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png"
         },
         {
           "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
@@ -2424,7 +2481,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
         }
       ],
       "entries": [
@@ -2527,7 +2585,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
         },
         {
           "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
@@ -2545,7 +2604,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
         },
         {
           "id": "listia-shurshaschie-ne-v-takt-shagam",
@@ -2560,7 +2620,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
         },
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
@@ -2574,7 +2634,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
         }
       ],
       "entries": [
@@ -2677,7 +2738,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png"
         },
         {
           "id": "sneg-kotoryi-techet",
@@ -2691,7 +2753,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
         },
         {
           "id": "otec-na-kraiu",
@@ -2705,7 +2768,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
         },
         {
           "id": "kirill-riadom-molchit",
@@ -2719,7 +2783,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
         }
       ],
       "entries": [
@@ -2818,7 +2883,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
         },
         {
           "id": "ventil",
@@ -2835,7 +2901,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
         },
         {
           "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
@@ -2849,7 +2916,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
         }
       ],
       "entries": [
@@ -2952,7 +3020,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
         },
         {
           "id": "koliuchaia-provoloka",
@@ -2966,7 +3035,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
         },
         {
           "id": "zveri",
@@ -2980,7 +3050,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--zveri.png"
         },
         {
           "id": "snezhnoe-pole-do-gorizonta",
@@ -2994,7 +3065,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
         }
       ],
       "entries": [
@@ -3093,7 +3165,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
         },
         {
           "id": "podezdnaia-dver-s-domofonom",
@@ -3107,7 +3180,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
         },
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
@@ -3125,7 +3199,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
         },
         {
           "id": "urna-nabitaia-akkuratno",
@@ -3140,7 +3215,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
         }
       ],
       "entries": [
@@ -3243,7 +3318,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
         },
         {
           "id": "shirokii-monitor-s-chem-to-korporativnym",
@@ -3257,7 +3333,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
         },
         {
           "id": "beidzhi-na-shnurkah",
@@ -3271,7 +3348,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
         },
         {
           "id": "lift",
@@ -3285,7 +3363,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--lift.png"
         },
         {
           "id": "zakrytaia-dver-v-konce-koridora",
@@ -3299,7 +3378,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
         }
       ],
       "entries": [
@@ -3398,7 +3478,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--krovat.png"
         },
         {
           "id": "okno-s-vidom",
@@ -3416,7 +3497,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
         },
         {
           "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
@@ -3430,7 +3512,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
         },
         {
           "id": "veschi-tancevalnoi-gruppy",
@@ -3444,7 +3527,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
         }
       ],
       "entries": [
@@ -3543,7 +3627,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--scena-mikrofon.png"
         },
         {
           "id": "nakrytye-stoly",
@@ -3557,7 +3642,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
         },
         {
           "id": "spasatelnye-krugi",
@@ -3571,7 +3657,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
         },
         {
           "id": "voda-za-bortom-slishkom-blizko-k-palube",
@@ -3585,7 +3672,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
         }
       ],
       "entries": [
@@ -3684,7 +3772,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
         },
         {
           "id": "vr-shlemy-na-stoikah",
@@ -3702,7 +3791,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
         },
         {
           "id": "beidzh-konferencii-s-nechitaemym-nazvani",
@@ -3717,7 +3807,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": null
+          "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
         },
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
@@ -3731,7 +3821,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
         }
       ],
       "entries": [
@@ -3830,7 +3921,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png"
         },
         {
           "id": "kusok-miasa-naznachennyi-bomboi",
@@ -3844,7 +3936,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
         },
         {
           "id": "korobka-s-golosom",
@@ -3862,7 +3955,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png"
         },
         {
           "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
@@ -3876,7 +3970,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
         }
       ],
       "entries": [
@@ -3979,7 +4074,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
         },
         {
           "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
@@ -3993,7 +4089,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
         },
         {
           "id": "korobka-s-golosom",
@@ -4007,7 +4104,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
         },
         {
           "id": "chuzhie-sumki-na-platforme",
@@ -4021,7 +4119,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
         }
       ],
       "entries": [

@@ -37,7 +37,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
     },
     {
       "id": "ballonchik-na-poiase-ohrannika",
@@ -55,7 +56,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
     },
     {
       "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
@@ -69,7 +71,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
     },
     {
       "id": "korzina-s-chem-to-chto-ne-chitaetsia",
@@ -83,7 +86,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
     }
   ],
   "entries": [

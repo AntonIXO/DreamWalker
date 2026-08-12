@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/22-kreiser--scena-mikrofon.png"
     },
     {
       "id": "nakrytye-stoly",
@@ -47,7 +48,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
     },
     {
       "id": "spasatelnye-krugi",
@@ -61,7 +63,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
     },
     {
       "id": "voda-za-bortom-slishkom-blizko-k-palube",
@@ -75,7 +78,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
     }
   ],
   "entries": [

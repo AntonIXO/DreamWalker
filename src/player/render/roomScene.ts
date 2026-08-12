@@ -58,6 +58,8 @@ export class RoomScene {
     artifact: DreamArtifact,
     private readonly atlas: AtlasTextures,
     private readonly backdrops: ReadonlyMap<string, Texture>,
+    /** Per-hotspot object art, keyed `<roomId>:<hotspotId>`. */
+    private readonly objects: ReadonlyMap<string, Texture> = new Map(),
   ) {
     this.colors = lobbyColors(artifact);
     this.root = new Container({
@@ -187,6 +189,10 @@ export class RoomScene {
     props.zIndex = 2;
     container.addChild(props);
 
+    const objects = this.drawObjects(room);
+    objects.zIndex = 2;
+    container.addChild(objects);
+
     const actors = new Container({
       label: `room-actors:${room.id}`,
       sortableChildren: true,
@@ -253,6 +259,41 @@ export class RoomScene {
     if (cell === "floor" || cell === "floorAlt") return room.graphics.floorRole;
     if (cell === "wall" || cell === "wallFace") return room.graphics.wallRole;
     return ROLE_BY_CELL[cell] ?? "floor";
+  }
+
+  /**
+   * The things the room's prose says are in it.
+   *
+   * Hotspots are where the game's writing actually lives — a rope to the vault, a shelf
+   * you can sleep on — so once they have art it is drawn at the hotspot's own position,
+   * anchored at its foot so a walker standing below it draws in front.
+   */
+  private drawObjects(room: RoomState): Container {
+    const layer = new Container({
+      label: `room-objects:${room.id}`,
+      eventMode: "none",
+      sortableChildren: true,
+    });
+    for (const hotspot of room.hotspots) {
+      const texture = this.objects.get(`${room.id}:${hotspot.id}`);
+      if (!texture) continue;
+      const sprite = new Sprite({
+        texture,
+        roundPixels: true,
+        eventMode: "none",
+        anchor: { x: 0.5, y: 0.9 },
+        x: hotspot.x * room.tileSize,
+        y: hotspot.y * room.tileSize,
+      });
+      // Objects are generated on a 64px sheet cell but a tile is 16px, so a sprite drawn
+      // at native size is four tiles tall and swallows the room. Two tiles reads as a
+      // thing you can walk up to, and 64 -> 32 is an exact halving, so nothing smears.
+      const target = room.tileSize * 2;
+      sprite.setSize(target, target);
+      sprite.zIndex = Math.round(hotspot.y * room.tileSize);
+      layer.addChild(sprite);
+    }
+    return layer;
   }
 
   private drawProps(room: RoomState): Container {

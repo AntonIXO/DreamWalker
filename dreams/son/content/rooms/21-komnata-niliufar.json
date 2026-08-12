@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/21-komnata-niliufar--krovat.png"
     },
     {
       "id": "okno-s-vidom",
@@ -51,7 +52,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
     },
     {
       "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
@@ -65,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
     },
     {
       "id": "veschi-tancevalnoi-gruppy",
@@ -79,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
     }
   ],
   "entries": [

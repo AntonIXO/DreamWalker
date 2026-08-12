@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
     },
     {
       "id": "chuzhie-fotografii-v-tvoih-ramkah",
@@ -47,7 +48,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
     },
     {
       "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
@@ -62,7 +64,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
     },
     {
       "id": "chainik-kotoryi-uzhe-kipel",
@@ -76,7 +78,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
     }
   ],
   "entries": [

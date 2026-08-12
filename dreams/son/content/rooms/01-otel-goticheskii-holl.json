@@ -34,7 +34,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
     },
     {
       "id": "chuzhie-shtany-na-polu",
@@ -48,7 +48,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
     },
     {
       "id": "kanat-do-svoda",
@@ -66,7 +67,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
     },
     {
       "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
@@ -80,7 +82,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
     },
     {
       "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
@@ -94,7 +97,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
     },
     {
       "id": "vedro-i-shvabra-uborschika",
@@ -108,7 +112,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
     }
   ],
   "entries": [

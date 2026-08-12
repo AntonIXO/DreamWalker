@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
     },
     {
       "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
@@ -47,7 +48,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
     },
     {
       "id": "telefon-s-odnim-kontaktom-lesha",
@@ -62,7 +64,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
     },
     {
       "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
@@ -76,7 +78,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
     }
   ],
   "entries": [

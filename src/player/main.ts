@@ -118,6 +118,19 @@ async function boot(): Promise<void> {
     ),
   );
 
+  // Object art, keyed the way RoomScene asks for it. `strategy: "skip"` means a room
+  // whose objects have not been drawn yet still loads — most of them have not.
+  const objectTextures = await loadExternalTextures(
+    DREAM_URL,
+    artifact.rooms.flatMap((room) =>
+      room.hotspots.flatMap((hotspot) =>
+        hotspot.image
+          ? [{ id: `${room.id}:${hotspot.id}`, path: hotspot.image }]
+          : [],
+      ),
+    ),
+  );
+
   const world = createWorld(artifact);
   const background =
     artifact.palette.colors[artifact.palette.roles.background] ?? "#000000";
@@ -173,7 +186,12 @@ async function boot(): Promise<void> {
   // One room is drawn at a time. There is no mask and no clip: a room is its own
   // container at its own origin, so its neighbours are not merely hidden, they are not
   // in the scene at all.
-  const rooms = new RoomScene(artifact, atlas, backdropTextures);
+  const rooms = new RoomScene(
+    artifact,
+    atlas,
+    backdropTextures,
+    objectTextures,
+  );
   worldRoot.addChild(rooms.root);
   // A meta-space's picture has no edges and must not move with the camera.
   app.stage.addChild(rooms.overlay);

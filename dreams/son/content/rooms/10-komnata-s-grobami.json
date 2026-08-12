@@ -37,7 +37,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/10-komnata-s-grobami--groby.png"
     },
     {
       "id": "schel-pod-potolkom",
@@ -54,7 +55,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
     },
     {
       "id": "tkan-s-kodami",
@@ -68,7 +70,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
     },
     {
       "id": "paketiki-fsb",
@@ -82,7 +85,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
     },
     {
       "id": "telefon-kamera-otkryvaetsia-sem-sekund",
@@ -96,7 +100,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
     }
   ],
   "entries": [

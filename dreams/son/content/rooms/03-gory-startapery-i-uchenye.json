@@ -36,7 +36,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
     },
     {
       "id": "vizitki-kotorye-ne-berutsia-v-ruku",
@@ -50,7 +51,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
     },
     {
       "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
@@ -64,7 +66,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
     },
     {
       "id": "kamen-s-rovno-otpilennoi-graniu",
@@ -78,7 +81,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
     }
   ],
   "entries": [

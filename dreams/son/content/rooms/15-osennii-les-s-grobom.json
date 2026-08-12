@@ -37,7 +37,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
     },
     {
       "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
@@ -55,7 +56,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
     },
     {
       "id": "listia-shurshaschie-ne-v-takt-shagam",
@@ -70,7 +72,7 @@
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": null
+      "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
     },
     {
       "id": "fotografiia-klassnogo-rukovoditelia-lica",
@@ -84,7 +86,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
     }
   ],
   "entries": [
