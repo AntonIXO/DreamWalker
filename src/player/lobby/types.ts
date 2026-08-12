@@ -5,6 +5,8 @@
  * the placeholder furniture without rewriting `main.ts`. Positions are in tiles.
  */
 
+import type { RoomCell } from "../../shared/roomGrid";
+
 export type LobbyHotspotKind =
   "terminal" | "patient" | "controls" | "dream-entry" | "settings";
 
@@ -25,8 +27,11 @@ export interface LobbySpawn {
   facing: "n" | "e" | "s" | "w";
 }
 
-export type LobbyCell =
-  "void" | "floor" | "floorAlt" | "wall" | "wallFace" | "threshold";
+/**
+ * The lobby draws from the shared room alphabet — it was the first hand-authored
+ * room, and now every dream room is authored the same way.
+ */
+export type LobbyCell = RoomCell;
 
 export type FurnitureKind =
   | "desk"

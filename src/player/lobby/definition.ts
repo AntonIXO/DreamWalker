@@ -8,6 +8,7 @@
  *   . floor   , alt floor   # wall   = wall face   _ threshold
  */
 
+import { cellAt as sharedCellAt, rectBlocks } from "../../shared/roomGrid";
 import type { LobbyCell, LobbyDefinition } from "./types";
 
 export const LOBBY_DEFINITION: LobbyDefinition = {
@@ -129,21 +130,14 @@ export const LOBBY_DEFINITION: LobbyDefinition = {
   },
 };
 
+/** Both of these are the shared room readers, narrowed to the lobby's own types. */
+
 export function cellAt(
   definition: LobbyDefinition,
   tx: number,
   ty: number,
 ): LobbyCell {
-  if (tx < 0 || ty < 0 || tx >= definition.width || ty >= definition.height) {
-    return "void";
-  }
-  const mark = definition.cells[ty]?.[tx] ?? "#";
-  if (mark === "#") return "wall";
-  if (mark === "=") return "wallFace";
-  if (mark === "_") return "threshold";
-  if (mark === ",") return "floorAlt";
-  if (mark === ".") return "floor";
-  return "void";
+  return sharedCellAt(definition, tx, ty);
 }
 
 export function furnitureBlocks(
@@ -151,16 +145,5 @@ export function furnitureBlocks(
   tx: number,
   ty: number,
 ): boolean {
-  for (const piece of definition.furniture) {
-    if (!piece.solid) continue;
-    if (
-      tx >= piece.x &&
-      tx < piece.x + piece.w &&
-      ty >= piece.y &&
-      ty < piece.y + piece.h
-    ) {
-      return true;
-    }
-  }
-  return false;
+  return rectBlocks(definition.furniture, tx, ty);
 }

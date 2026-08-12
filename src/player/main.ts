@@ -10,10 +10,12 @@
 import "pixi.js/prepare";
 import {
   Application,
+  Assets,
   Container,
   CullerPlugin,
   Graphics,
   extensions,
+  type Texture,
 } from "pixi.js";
 
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
@@ -21,7 +23,12 @@ import { REQUIRED_TILE_ROLES, TILE_ROLE } from "../shared/tilecodes";
 import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
 import { ChamberBackdropLayer } from "./render/chamberBackdrops";
 import { TileFoundry } from "./render/foundry";
-import { Camera, DEFAULT_CAMERA, outdoorHeight } from "./render/camera";
+import {
+  Camera,
+  DEFAULT_CAMERA,
+  OUTDOOR_VIEW_TILES,
+  outdoorHeight,
+} from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
 import { Shiver } from "./render/shiver";
 import { TilemapView } from "./render/tilemap";
@@ -69,8 +76,6 @@ import { ClueInspectPanel } from "./ui/clueInspect";
 type AppPhase = "lobby" | "enteringDream" | "dream";
 
 const DREAM_URL = "/dream";
-const LOGICAL_WIDTH = 640;
-const LOGICAL_HEIGHT = 360;
 
 extensions.add(CullerPlugin);
 
@@ -120,6 +125,21 @@ async function loadArtifact(): Promise<DreamArtifact> {
 async function boot(): Promise<void> {
   const artifact = await loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
+  const apparatusUrl = new URL("../../assets/autofag.png", import.meta.url)
+    .href;
+  const apparatusTexture = await Assets.load<Texture | undefined>(
+    {
+      src: apparatusUrl,
+      alias: "lobby-apparatus",
+      data: { scaleMode: "nearest" },
+    },
+    {
+      strategy: "skip",
+      onError: (error) =>
+        console.warn("[dream] lobby apparatus skipped", error),
+    },
+  );
+  if (apparatusTexture) apparatusTexture.source.scaleMode = "nearest";
   const clueTextures = await loadExternalTextures(
     DREAM_URL,
     artifact.content.clues.flatMap((clue) =>
@@ -139,13 +159,14 @@ async function boot(): Promise<void> {
   const background =
     artifact.palette.colors[artifact.palette.roles.background] ?? "#000000";
 
+  const pixiHost = document.getElementById("pixi-container")!;
   const app = new Application();
   await app.init({
     background,
-    width: LOGICAL_WIDTH,
-    height: LOGICAL_HEIGHT,
-    resolution: 1,
-    autoDensity: false,
+    resizeTo: pixiHost,
+    // Integer backing-store scale only. 1.25× / 1.5× dpr shimmers 16px tiles.
+    resolution: Math.max(1, Math.round(window.devicePixelRatio || 1)),
+    autoDensity: true,
     antialias: false,
     roundPixels: true,
     preference: ["webgl", "canvas"],
@@ -159,20 +180,8 @@ async function boot(): Promise<void> {
     },
     culler: { updateTransform: true },
   });
-  document.getElementById("pixi-container")!.appendChild(app.canvas);
-  const resizeCanvas = (): void => {
-    const fit = Math.min(
-      window.innerWidth / LOGICAL_WIDTH,
-      window.innerHeight / LOGICAL_HEIGHT,
-    );
-    // Integer enlargement keeps pixels square. Shrinking is allowed on small screens so
-    // the complete 16:9 frame remains usable rather than being cropped.
-    const scale = fit >= 1 ? Math.max(1, Math.floor(fit)) : fit;
-    app.canvas.style.width = `${Math.floor(LOGICAL_WIDTH * scale)}px`;
-    app.canvas.style.height = `${Math.floor(LOGICAL_HEIGHT * scale)}px`;
-  };
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
+  pixiHost.appendChild(app.canvas);
+  app.resize();
   document.title = `${artifact.title} — Dream Walker`;
 
   const uiLayer = document.getElementById("ui-layer")!;
@@ -401,6 +410,7 @@ async function boot(): Promise<void> {
         world.width,
         outdoorHeight(world.rooms, world.height),
       );
+      camera.fit(OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h);
       camera.cutTo(player.x, player.y);
       hud.setLobbyMode(false);
       phase = "dream";
@@ -426,20 +436,53 @@ async function boot(): Promise<void> {
     void enterDream(mode);
   };
 
-  const lobby = new LobbySession(uiLayer, artifact, atlas, camera, {
-    onTerminal: () => {
-      input.setCaptured(true);
-      connect.open();
+  const lobby = new LobbySession(
+    uiLayer,
+    artifact,
+    atlas,
+    camera,
+    {
+      onTerminal: () => {
+        input.setCaptured(true);
+        connect.open();
+      },
+      onControls: () => {
+        input.setCaptured(true);
+        controls.open();
+      },
+      onEnterDream: requestEntry,
     },
-    onControls: () => {
-      input.setCaptured(true);
-      controls.open();
-    },
-    onEnterDream: requestEntry,
-  });
+    apparatusTexture ?? null,
+  );
   cameraRoot.addChild(lobby.scene.root);
   await app.renderer.prepare.upload(lobby.scene.root);
   lobby.setMind(mindSettings);
+
+  /**
+   * Window size changed: the integer zoom that fitted the old window may now crop a
+   * room or leave it as a postage stamp. Re-fit the current space and snap so the
+   * view does not sit against one edge.
+   */
+  const layoutView = (): void => {
+    camera.resize(app.screen.width, app.screen.height);
+    if (phase === "lobby" || phase === "enteringDream") {
+      camera.setWorldSize(lobby.definition.width, lobby.definition.height);
+      camera.fit(lobby.definition.width, lobby.definition.height);
+      camera.cutTo(lobby.walker.x, lobby.walker.y);
+      return;
+    }
+    const tile = playerTile(player, world);
+    const room = roomAt(world, tile.x, tile.y);
+    if (room?.region === "interior") {
+      camera.frame(room, true);
+      return;
+    }
+    camera.setWorldSize(world.width, outdoorHeight(world.rooms, world.height));
+    camera.fit(OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h);
+    camera.cutTo(player.x, player.y);
+  };
+  layoutView();
+  app.renderer.on("resize", layoutView);
 
   const memories = new MemoryPanel(uiLayer, mindMemory, {
     onReady: () => void enterDream(pendingEntry ?? "live"),
@@ -659,6 +702,9 @@ async function boot(): Promise<void> {
         worldRoot.mask = roomMask;
       }
     } else {
+      if (camera.roomId !== null) {
+        camera.fit(OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h);
+      }
       camera.follow(player.x, player.y, delta);
       if (maskedRoomId !== null) {
         maskedRoomId = null;

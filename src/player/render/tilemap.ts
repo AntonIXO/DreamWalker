@@ -29,7 +29,7 @@ import type { Rect } from "../../shared/dream";
 import { roomAt, tileAt, type WorldState } from "../game/world";
 import { variantFor, type AtlasTextures } from "./atlasTextures";
 
-/** Tiles per chunk. 16 keeps a chunk near a screen quarter at the usual zoom. */
+/** Tiles per chunk. 16 stays a useful cull unit as the camera zooms to fit the window. */
 const CHUNK = 16;
 
 const CACHE = {

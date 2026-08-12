@@ -8,10 +8,11 @@
 
 import { Container, Sprite, type Texture } from "pixi.js";
 
+import type { Direction } from "../../shared/roomGrid";
 import type { AtlasTextures } from "./atlasTextures";
 import type { FigureState, InterestState } from "../game/world";
 
-export type Direction = "n" | "e" | "s" | "w";
+export type { Direction };
 
 function frameName(prefix: string, dir: Direction, frame: number): string {
   return `${prefix}_${dir}_${frame % 2}`;

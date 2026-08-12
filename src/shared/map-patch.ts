@@ -1,27 +1,24 @@
-import { Tile, type DoorTypeName } from "./tilecodes";
-
-/**
- * Terrains the sleeper is allowed to conjure.
- *
- * Closed, like everything else here, and named in the sleeper's terms rather than the tile
- * grid's — a model asked for `water` gets it right far more often than one asked for
- * `WATER_DEEP`, and the translation is this table's job, not the model's.
- */
-export const TERRAINS = {
-  water: Tile.WATER,
-  tallGrass: Tile.GRASS_TALL,
-  sand: Tile.SAND,
-  wood: Tile.TREE,
-  flowers: Tile.FLOWERS,
-} as const;
-
-export type TerrainName = keyof typeof TERRAINS;
-
-export const TERRAIN_NAMES = Object.keys(TERRAINS) as TerrainName[];
+import type { DoorTypeName } from "./tilecodes";
 
 /**
  * Closed vocabulary of structural changes the sleeper may ask the player runtime to
  * apply. The model only produces these intents; `game/patch.ts` remains the sole writer.
+ *
+ * ## What changed in format 4
+ *
+ * The terrain patches are gone. `retileRoom` and `growTerrain` existed because the world
+ * was a tile grid the generator had painted, so the most natural thing a sleeper could do
+ * to it was repaint some. With authored rooms the equivalent gestures are better ones,
+ * and both come straight out of `dream-walker-new/rooms.md`:
+ *
+ *   - **`relink`** — the sleeper rewires where an object throws you. §4.1: «комнаты
+ *     соединяются без логики, но переход всегда через порог». The door still exists; it
+ *     just goes somewhere else now.
+ *   - **`shiftWalls`** — a room swaps to another of its authored walk masks. §13's
+ *     underground halls rebuild «как камеры в Portal 2», §17's shower shrinks 3% a pass.
+ *     Authored, so it costs no art and can never produce an unwalkable room by accident.
+ *
+ * `swapRooms` is gone with the card-dealing it served: a room is where it is now.
  */
 export type MapPatch =
   | { kind: "sealDoor"; doorId: string; reason: string }
@@ -54,20 +51,52 @@ export type MapPatch =
       toFigureId: string;
       reason: string;
     }
-  | { kind: "retileRoom"; roomId: string; reason: string }
-  | { kind: "swapRooms"; aRoomId: string; bRoomId: string; reason: string }
   /**
-   * A patch of ground becomes something it was not: water where there was grass, a wood
-   * closing over a field. §6 — "сгенерировалось то, чего не было: разум подкинул, он тут
-   * хозяин".
-   *
-   * The only patch that can call for art the Lord never baked, which is what
-   * `player/render/foundry.ts` exists for. Runtime structural checks keep it inside a
-   * known room; reachability remains the sleeper's concern, not a solver's.
+   * Point an authored link somewhere else. The most in-genre thing a heartbeat can do in
+   * a dream built on touching objects: the rope still hangs there, and this time it puts
+   * you in the morgue.
    */
   | {
-      kind: "growTerrain";
+      kind: "relink";
       roomId: string;
-      terrain: TerrainName;
+      hotspotId: string;
+      toRoomId: string;
+      reason: string;
+    }
+  /** Swap a room's walk mask for one of its authored `cellVariants`. */
+  | {
+      kind: "shiftWalls";
+      roomId: string;
+      variantId: string;
+      reason: string;
+    }
+  /** Take an object away once it has been used, or give one back. */
+  | {
+      kind: "closeHotspot";
+      roomId: string;
+      hotspotId: string;
+      reason: string;
+    }
+  | {
+      kind: "openHotspot";
+      roomId: string;
+      hotspotId: string;
       reason: string;
     };
+
+export const PATCH_KINDS = [
+  "sealDoor",
+  "openDoor",
+  "retypeDoor",
+  "moveFigure",
+  "moveInterest",
+  "removeInterest",
+  "placeInterest",
+  "relocateShard",
+  "relink",
+  "shiftWalls",
+  "closeHotspot",
+  "openHotspot",
+] as const;
+
+export type PatchKind = (typeof PATCH_KINDS)[number];

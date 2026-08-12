@@ -16,6 +16,7 @@
  *     destroyed — a ledge makes the way back longer without closing it).
  */
 
+import { BODY_HEIGHT, BODY_WIDTH, type Box } from "../../shared/roomGrid";
 import {
   LEDGE_DIRECTION,
   isLedgeTile,
@@ -30,17 +31,11 @@ import {
   type WorldState,
 } from "./world";
 
-/** The walker's footprint, in pixels. Narrower than a tile so corners are forgiving. */
-export const BODY_WIDTH = 9;
-export const BODY_HEIGHT = 7;
-
-export interface Box {
-  /** Centre of the footprint, in world pixels. */
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+/**
+ * The footprint is shared with the lobby and, from format 4 on, with every authored
+ * room — one body walks all of them, so its size lives in `shared/roomGrid.ts`.
+ */
+export { BODY_HEIGHT, BODY_WIDTH, type Box };
 
 export function blocksAt(
   world: WorldState,

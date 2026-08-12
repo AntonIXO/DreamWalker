@@ -1,12 +1,14 @@
 /**
- * Draws the procedure room with atlas floor/wall tiles and placeholder furniture.
+ * Draws the procedure room with atlas floor/wall tiles and furniture.
  *
- * Furniture is Graphics on purpose: a later artist can swap the draw functions
- * (or the whole layer) without touching hotspot logic. `cacheAsTexture` is nearest
- * so the placeholders stay as crisp as the tiles.
+ * Layout follows the hand sketch (`room.png`): north desk / cross / locker / terminal /
+ * ward doors, south bed / drip / apparatus / carpet. The apparatus is the authored
+ * pixel sprite; everything else is Graphics so a later artist can swap a piece without
+ * touching hotspot logic. `cacheAsTexture` is nearest so the drawings stay as crisp
+ * as the tiles once the camera zooms them.
  */
 
-import { Container, Graphics, Sprite } from "pixi.js";
+import { Container, Graphics, Sprite, type Texture } from "pixi.js";
 
 import { variantFor, type AtlasTextures } from "../render/atlasTextures";
 import { cellAt } from "./definition";
@@ -31,6 +33,7 @@ export class LobbyScene {
     private readonly definition: LobbyDefinition,
     artifact: DreamArtifact,
     atlas: AtlasTextures,
+    private readonly apparatusTexture: Texture | null = null,
   ) {
     this.colors = lobbyColors(artifact);
     this.root = new Container({
@@ -81,6 +84,12 @@ export class LobbyScene {
       }
     }
 
+    this.furniture.cacheAsTexture({
+      scaleMode: "nearest",
+      resolution: 1,
+      antialias: false,
+    });
+
     this.root.addChild(signals);
 
     this.actors = new Container({
@@ -124,7 +133,7 @@ export class LobbyScene {
           ? 0.25
           : 0.15 + 0.2 * (0.5 + 0.5 * Math.sin(this.pulse * 2.2));
     this.terminalLed
-      .rect(size + 4, 8, 3, 2)
+      .rect(size + 6, 10, 4, 3)
       .fill({ color: this.colors.screen, alpha: waitBlink });
 
     if (this.mindReady) {
@@ -132,10 +141,10 @@ export class LobbyScene {
         ? 0.8
         : 0.25 + 0.75 * Math.max(0, Math.sin(this.pulse * 1.4));
       this.apparatusLed
-        .rect(size - 3, 6, 4, 4)
+        .rect(size - 2, 2, 3, 3)
         .fill({ color: this.colors.blood, alpha: beat });
     } else {
-      this.apparatusLed.rect(size - 3, 6, 4, 4).fill({
+      this.apparatusLed.rect(size - 2, 2, 3, 3).fill({
         color: this.colors.metal,
         alpha: 0.6,
       });
@@ -195,72 +204,105 @@ export class LobbyScene {
     return layer;
   }
 
-  private drawFurniture(kind: FurnitureKind, w: number, h: number): Graphics {
-    const g = new Graphics({ eventMode: "none", roundPixels: true });
+  private drawFurniture(kind: FurnitureKind, w: number, h: number): Container {
     const size = this.definition.tileSize;
     const pw = w * size;
     const ph = h * size;
+    if (kind === "apparatus" && this.apparatusTexture) {
+      return this.drawApparatus(pw, ph);
+    }
+
+    const g = new Graphics({ eventMode: "none", roundPixels: true });
     const c = this.colors;
 
     if (kind === "desk") {
-      g.rect(0, 6, pw, ph - 6).fill(c.metal);
-      g.rect(1, 7, pw - 2, 5).fill(c.paper);
-      g.rect(3, 9, 6, 4).fill(c.rust);
-      g.rect(12, 10, 5, 3).fill(c.screenDim);
-      g.rect(22, 8, 8, 6).fill(c.linen);
-      g.rect(24, 4, 4, 4).fill(c.accent);
-      stamp(g, 2, 2, "APOTHEOSIS", c.ink);
+      // North bench: slab, two objects on it, APOTHEOSIS along the front.
+      g.rect(0, 8, pw, ph - 8).fill(c.metal);
+      g.rect(1, 9, pw - 2, 6).fill(c.paper);
+      g.rect(1, ph - 4, pw - 2, 3).fill(c.ink);
+      g.rect(4, 14, 10, 8).fill(c.rust);
+      g.rect(5, 15, 8, 6).fill(c.screenDim);
+      g.rect(18, 13, 9, 10).fill(c.linen);
+      g.rect(20, 10, 5, 5).fill(c.accent);
+      g.rect(36, 15, 12, 7).fill(c.paper);
+      g.rect(37, 16, 10, 5).fill(c.screen);
+      stamp(g, 4, ph - 11, "APOTHEOSIS", c.paper);
     } else if (kind === "cross") {
-      g.rect(2, 2, pw - 4, ph - 2).fill(c.paper);
-      g.rect(pw / 2 - 2, 4, 4, ph - 6).fill(c.blood);
-      g.rect(4, ph / 2 - 1, pw - 8, 4).fill(c.blood);
+      g.rect(1, 2, pw - 2, ph - 2).fill(c.paper);
+      g.rect(2, 3, pw - 4, ph - 4).fill(c.linen);
+      g.rect(pw / 2 - 2, 5, 4, ph - 8).fill(c.blood);
+      g.rect(5, ph / 2 - 1, pw - 10, 4).fill(c.blood);
     } else if (kind === "locker") {
-      g.rect(1, 0, pw - 2, ph).fill(c.metal);
-      g.rect(3, 3, pw - 6, 6).fill(c.paper);
-      g.rect(3, 11, pw - 6, 8).fill(c.paper);
-      g.rect(pw - 6, 8, 2, 3).fill(c.ink);
+      g.rect(1, 0, pw - 2, ph).fill(c.ink);
+      g.rect(2, 1, pw - 4, ph - 2).fill(c.metal);
+      g.rect(4, 4, pw - 8, 9).fill(c.paper);
+      g.rect(4, 15, pw - 8, 12).fill(c.paper);
+      g.rect(pw - 7, 10, 2, 4).fill(c.ink);
     } else if (kind === "terminal") {
-      g.rect(2, 4, pw - 4, ph - 4).fill(c.ink);
-      g.rect(4, 8, pw - 8, 12).fill(c.screenDim);
-      g.rect(5, 9, pw - 10, 8).fill(c.screen);
+      g.rect(1, 6, pw - 2, ph - 6).fill(c.ink);
+      g.rect(3, 10, pw - 6, 16).fill(c.screenDim);
+      g.rect(4, 11, pw - 8, 12).fill(c.screen);
       g.rect(6, ph - 6, pw - 12, 3).fill(c.metal);
-      stamp(g, 4, 1, "KOH", c.paper);
+      stamp(g, 6, 2, "KOH", c.paper);
     } else if (kind === "ward-doors") {
-      g.rect(0, 0, pw, ph).fill(c.metal);
-      g.rect(1, 2, pw / 2 - 2, ph - 4).fill(c.linen);
-      g.rect(pw / 2 + 1, 2, pw / 2 - 2, ph - 4).fill(c.linen);
-      g.rect(3, ph / 2, 2, 2).fill(c.ink);
-      stamp(g, -14, 2, "PALATA", c.ink);
+      g.rect(0, 0, pw, ph).fill(c.ink);
+      g.rect(1, 2, Math.floor(pw / 2) - 2, ph - 4).fill(c.linen);
+      g.rect(Math.ceil(pw / 2) + 1, 2, Math.floor(pw / 2) - 3, ph - 4).fill(
+        c.linen,
+      );
+      g.rect(3, ph / 2, 2, 3).fill(c.ink);
+      g.rect(pw - 5, ph / 2, 2, 3).fill(c.ink);
+      stamp(g, -18, 3, "PALATA", c.ink);
     } else if (kind === "bed") {
-      g.rect(0, 4, pw, ph - 4).fill(c.metal);
-      g.rect(2, 6, pw - 4, ph - 8).fill(c.paper);
-      g.rect(4, 8, pw - 10, 8).fill(c.linen);
-      g.rect(pw - 10, 8, 6, 6).fill(c.skin);
-      g.rect(2, 6, pw - 4, 3).fill(c.ink);
+      g.rect(0, 6, pw, ph - 6).fill(c.metal);
+      g.rect(2, 8, pw - 4, ph - 10).fill(c.paper);
+      g.rect(4, 12, pw - 16, 10).fill(c.linen);
+      g.rect(pw - 14, 11, 10, 10).fill(c.skin);
+      g.rect(pw - 13, 12, 8, 4).fill(c.paper);
+      g.rect(2, 8, pw - 4, 3).fill(c.ink);
     } else if (kind === "apparatus") {
-      g.rect(2, 8, pw - 4, ph - 8).fill(c.metal);
-      g.rect(4, 2, pw - 8, 10).fill(c.ink);
-      g.rect(6, 4, pw - 12, 6).fill(c.screenDim);
-      g.rect(1, 14, 4, 8).fill(c.rust);
-      g.rect(pw - 6, 12, 3, 10).fill(c.rust);
+      g.rect(2, 14, pw - 4, ph - 16).fill(c.metal);
+      g.rect(6, 4, pw - 12, 16).fill(c.ink);
+      g.rect(8, 6, pw - 16, 12).fill(c.screen);
+      g.rect(1, 20, 5, 12).fill(c.rust);
+      g.rect(pw - 6, 18, 5, 14).fill(c.rust);
     } else if (kind === "drip") {
       g.rect(size / 2 - 1, 0, 2, ph).fill(c.metal);
       g.rect(2, 0, size - 4, 4).fill(c.metal);
       g.rect(size / 2 - 3, 6, 6, 8).fill(c.paper);
-      g.rect(size / 2, 14, 1, 6).fill(c.screen);
+      g.rect(size / 2, 14, 1, 8).fill(c.screen);
     } else if (kind === "carpet") {
-      g.rect(0, 0, pw, ph).fill(c.rust);
-      g.rect(2, 2, pw - 4, ph - 4).fill(c.accent);
-      g.rect(6, 6, pw - 12, ph - 12).fill(c.rust);
+      g.rect(0, 0, pw, ph).fill(c.ink);
+      g.rect(1, 1, pw - 2, ph - 2).fill(c.rust);
+      g.rect(4, 3, pw - 8, ph - 6).fill(c.accent);
+      g.rect(8, 6, pw - 16, ph - 12).fill(c.rust);
     } else if (kind === "plaque") {
-      g.rect(0, 2, pw, 10).fill(c.metal);
-      g.rect(1, 3, pw - 2, 8).fill(c.paper);
+      g.rect(0, 2, pw, 11).fill(c.metal);
+      g.rect(1, 3, pw - 2, 9).fill(c.paper);
       stamp(g, 4, 5, this.definition.copy.plaque ?? "DREAM WALKER", c.ink);
     } else if (kind === "gonzo") {
-      g.rect(2, 4, 10, 8).fill(c.accent);
-      g.rect(3, 5, 8, 3).fill(c.paper);
+      g.rect(2, 4, 11, 9).fill(c.accent);
+      g.rect(3, 5, 9, 3).fill(c.paper);
+      g.rect(4, 9, 7, 2).fill(c.rust);
     }
     return g;
+  }
+
+  private drawApparatus(pw: number, ph: number): Container {
+    const wrap = new Container({ eventMode: "none" });
+    const sprite = new Sprite({
+      texture: this.apparatusTexture!,
+      roundPixels: true,
+      eventMode: "none",
+    });
+    // Fit the width of the 2-tile bay; let the crystal rise above the box so the
+    // authored sprite stays readable instead of being squashed into 32×48.
+    const scale = pw / Math.max(1, sprite.texture.width);
+    sprite.scale.set(scale);
+    sprite.x = 0;
+    sprite.y = Math.round(ph - sprite.height);
+    wrap.addChild(sprite);
+    return wrap;
   }
 
   destroy(): void {

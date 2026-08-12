@@ -7,156 +7,32 @@
  *
  * The artifact describes the dream's *starting state*. Once play begins the heartbeat
  * mutates a live copy of it (§6, "дальше карта плывёт"); the artifact on disk never changes.
+ *
+ * ## Format 4
+ *
+ * Format 3 carried one flat tile grid for the whole dream, plus a mission graph that
+ * proved the *generated* space was crossable. Both existed to serve generation. The
+ * rooms are authored by hand now (`dream-walker-new/rooms.md`), so the grid became a
+ * list of rooms and the graph became the author's problem — an authored dream states its
+ * own edges, and `lord rooms --check` walks them from the spawn to prove nothing is
+ * stranded. What used to be a chamber "dealt onto" a room slot is now simply the room.
  */
 
 import type { StyleProfile } from "./art/style";
 import type { DreamContent } from "./content";
-import type { DoorTypeName } from "./tilecodes";
+import type { DreamRoom, DreamSpawn, RoomLink } from "./room";
+import { DOOR_TYPES, type DoorTypeName } from "./tilecodes";
+import { TONUS_MAX, TONUS_MIN } from "./tonus";
 
-export const DREAM_FORMAT_VERSION = 3;
+export const DREAM_FORMAT_VERSION = 4;
 
-// ---------------------------------------------------------------------------
-// Mission graph — Dormans' abstract structure, kept alongside the space it became
-// ---------------------------------------------------------------------------
-
-/**
- * Node kinds from GraphDungeonGenerator, read in dream fiction:
- *   key    — leverage a figure holds
- *   lock   — a threshold the dream refuses you
- *   puzzle — something the world itself will only give up to poking (§3's safe channel)
- *   lever  — a way round that the sleeper forgot to close
- */
-export const NodeType = {
-  START: "start",
-  END: "end",
-  NORMAL: "normal",
-  KEY: "key",
-  LOCK: "lock",
-  PUZZLE: "puzzle",
-  LEVER: "lever",
-} as const;
-
-export type NodeTypeName = (typeof NodeType)[keyof typeof NodeType];
-
-export interface MissionNode {
-  id: string;
-  type: NodeTypeName;
-  /** How many locks or puzzles stand between the start and here. Drives lever placement. */
-  accessLevel: number;
-  /** For KEY nodes: the id of the lock this opens. */
-  opensLockId: string | null;
-  /** For LOCK nodes: the id of the key that opens it. */
-  requiresKeyId: string | null;
-}
-
-export interface MissionEdge {
-  id: string;
-  from: string;
-  to: string;
-  door: DoorTypeName;
-  /** For keyLock doors, which key id passes. */
-  keyId: string | null;
-}
-
-export interface MissionGraph {
-  nodes: MissionNode[];
-  edges: MissionEdge[];
-  startId: string;
-  endId: string;
-}
-
-// ---------------------------------------------------------------------------
-// Space
-// ---------------------------------------------------------------------------
-
+/** Tile-space rectangle. Still the unit the camera frames a room in. */
 export interface Rect {
   x: number;
   y: number;
   w: number;
   h: number;
 }
-
-/**
- * A place in the world.
- *
- * Still called a room because that is what it is to everything downstream — an area with
- * an id that the heartbeat can rearrange and the journal can name. Outdoors it is a town
- * or a field rather than four walls, which `region` says and `kind` does not: `kind`
- * distinguishes a *mission node's* place from the route between two of them, and plenty of
- * code depends on that distinction (figures do not stand in routes; routes have nothing to
- * rearrange).
- */
-export interface Room {
-  /** Matches the mission node id for `room` kind; synthesised for connectors. */
-  id: string;
-  kind: "room" | "connector";
-  nodeType: NodeTypeName | null;
-  /** town, wild, landmark, interior — what this place is for. See `worldgen/regions.ts`. */
-  region: string;
-  /** Which terrain palette this place is filled from. */
-  biome: string;
-  accessLevel: number;
-  /** Shown in the HUD. The Lord may overwrite these by hand in dream.json. */
-  name: string;
-  /** Tile coordinates, walls included. */
-  rect: Rect;
-  /** Position on the layout cell grid, kept so the heartbeat can reason spatially. */
-  cell: { cx: number; cy: number };
-}
-
-/**
- * A door you walk into that puts you somewhere else on the same grid.
- *
- * Interiors live in a reserved band of the one tile grid rather than in separate maps.
- * That keeps `DreamMap` a single array — so the validator, the room index, the patch
- * system and the minimap all carry on working unchanged — while still giving the world
- * buildings you can go inside, which is most of what makes a town read as a town.
- */
-export interface Warp {
-  id: string;
-  /** Tile you step on. */
-  x: number;
-  y: number;
-  /** Where you come out. */
-  toX: number;
-  toY: number;
-  /** Region on the far side, for the HUD and the camera. */
-  toRoomId: string;
-}
-
-export interface Door {
-  id: string;
-  type: DoorTypeName;
-  /** Tile coordinates of the door tile itself. */
-  x: number;
-  y: number;
-  /** 'v' means the door sits in a vertical wall and you pass through it horizontally. */
-  orientation: "h" | "v";
-  fromRoomId: string;
-  toRoomId: string;
-  keyId: string | null;
-  /** Mission edge this door realises, so patches can keep graph and space in step. */
-  edgeId: string;
-}
-
-export interface DreamMap {
-  tileSize: number;
-  /** Grid dimensions in tiles. */
-  width: number;
-  height: number;
-  /** Base64 of a Uint8Array of length width*height. See `decodeTiles`. */
-  tiles: string;
-  rooms: Room[];
-  doors: Door[];
-  warps: Warp[];
-  graph: MissionGraph;
-  /** Where the sanitar arrives, in tile coordinates. */
-  spawn: { x: number; y: number };
-}
-
-// ---------------------------------------------------------------------------
-// Content the Lord authors by hand
-// ---------------------------------------------------------------------------
 
 /**
  * §2 — the Lord seeds a few hooks and stops there. This is not a schema of the
@@ -169,20 +45,30 @@ export interface Shard {
   hint: string;
 }
 
+/**
+ * Where a figure starts.
+ *
+ * Position is a named slot in the room rather than a coordinate, so the heartbeat can
+ * move someone without hunting for a free floor tile — and so an author can move the
+ * slot without every patch that ever referenced it going stale.
+ */
 export interface FigurePlacement {
   id: string;
   archetypeId: string;
   name: string;
   roomId: string;
-  /** Tile coordinates. */
-  x: number;
-  y: number;
+  slotId: string;
   holdsShardId: string | null;
 }
 
 export interface CycleConfig {
   /** How long before the patient surfaces and the dream restarts (§5). */
   durationMs: number;
+  /**
+   * Cycles before the sanitar is thrown out with whatever they have — «Не сложилось»
+   * in `endings.md`, which sets it at four. Null means unlimited.
+   */
+  maxCycles: number | null;
 }
 
 export interface HeartbeatConfig {
@@ -220,10 +106,10 @@ export const PALETTE_ROLES = [
 export type PaletteRole = (typeof PALETTE_ROLES)[number];
 
 /**
- * §7.1 wants twelve to sixteen, and sixteen stays the default. The ceiling is higher only
- * because an outdoor world has more materials to name than a corridor does — grass, water,
- * cliff, tree, sand, roof — and a Lord who runs out of colours will otherwise reuse one and
- * make two materials indistinguishable, which is worse than a slightly wider palette.
+ * §7.1 wants twelve to sixteen, and sixteen stays the default for the atlas, which is an
+ * indexed PNG and cannot hold more. The ceiling is higher because the loose art — room
+ * backdrops, portraits — is not bound by the atlas, and `prompts-pixelart.md` locks the
+ * generated art to a 28-colour palette measured off the reference image.
  */
 export const MAX_PALETTE_COLORS = 32;
 export const DEFAULT_PALETTE_COLORS = 16;
@@ -257,14 +143,17 @@ export interface DreamArtifact {
   palette: Palette;
   /**
    * §7.1 measured rather than declared — outline colour, shading ramps, dither density,
-   * usually read off the Lord's reference image. It ships because the *player* needs it:
-   * a tile minted at runtime has to obey the same rules as one the Lord baked, or the
-   * sleeper's inventions arrive looking like they came from somewhere else.
+   * usually read off the Lord's reference image.
    */
   style: StyleProfile;
-  map: DreamMap;
+  /** Every room in the dream, authored by hand. */
+  rooms: DreamRoom[];
+  /** Where the sanitar arrives at the start of every cycle. */
+  spawn: DreamSpawn;
+  /** The last door — the room the Eye is in. Replaces format 3's `graph.endId`. */
+  finaleRoomId: string;
   figures: FigurePlacement[];
-  /** Human-authored room, personality and mnemonic records. */
+  /** Human-authored personality and mnemonic records. */
   content: DreamContent;
   cycle: CycleConfig;
   heartbeat: HeartbeatConfig;
@@ -300,46 +189,13 @@ export interface AtlasManifest {
 }
 
 // ---------------------------------------------------------------------------
-// Tile payload codec
-// ---------------------------------------------------------------------------
-
-/**
- * Tiles ride in dream.json as base64 rather than a JSON array: a 120x90 map is
- * ~11k tiles, which as numbers would dominate the file and make every other field
- * unreadable in a diff. base64 keeps the artifact a text file you can still inspect.
- */
-export function encodeTiles(tiles: Uint8Array): string {
-  let binary = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < tiles.length; i += chunk) {
-    binary += String.fromCharCode(...tiles.subarray(i, i + chunk));
-  }
-  return btoa(binary);
-}
-
-export function decodeTiles(
-  encoded: string,
-  expectedLength: number,
-): Uint8Array {
-  const binary = atob(encoded);
-  if (binary.length !== expectedLength) {
-    throw new Error(
-      `tile payload is ${binary.length} bytes, expected ${expectedLength} (width * height)`,
-    );
-  }
-  const out = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
-  return out;
-}
-
-// ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
 
 /**
  * Hand-written rather than schema-driven, because the useful errors here are
- * relational — a door pointing at a room that does not exist, a lock whose key sits
- * behind it — and those read better as prose than as a schema violation path.
+ * relational — a link pointing at a room that does not exist, a door arriving at an
+ * entry nobody authored — and those read better as prose than as a schema violation path.
  */
 export class DreamValidationError extends Error {
   constructor(
@@ -381,6 +237,260 @@ function arr(value: unknown, path: string): unknown[] {
 function bool(value: unknown, path: string): boolean {
   if (typeof value !== "boolean") fail(path, "expected a boolean");
   return value;
+}
+
+function optionalStr(value: unknown, path: string): string | null {
+  if (value === null || value === undefined) return null;
+  return str(value, path);
+}
+
+function tonusAt(value: unknown, path: string): void {
+  const delta = obj(value, path);
+  for (const axis of ["x", "y"] as const) {
+    const component = num(delta[axis], `${path}.${axis}`);
+    if (component < TONUS_MIN || component > TONUS_MAX) {
+      fail(`${path}.${axis}`, `expected ${TONUS_MIN}..${TONUS_MAX}`);
+    }
+  }
+}
+
+/** Collected on the first pass so links and doors can be checked on the second. */
+interface RoomIndex {
+  entryIds: Map<string, Set<string>>;
+  slotIds: Map<string, Set<string>>;
+  kinds: Map<string, string>;
+}
+
+function validateLink(
+  value: unknown,
+  path: string,
+  index: RoomIndex,
+  characterIds: Set<string>,
+): void {
+  const link = obj(value, path);
+  const to = str(link.to, `${path}.to`);
+  if (to === "room") {
+    const roomId = str(link.roomId, `${path}.roomId`);
+    const entries = index.entryIds.get(roomId);
+    if (!entries) fail(`${path}.roomId`, `no room ${roomId}`);
+    const entryId = optionalStr(link.entryId, `${path}.entryId`);
+    if (entryId !== null && !entries.has(entryId)) {
+      fail(`${path}.entryId`, `room ${roomId} has no entry ${entryId}`);
+    }
+    return;
+  }
+  if (to === "figure") {
+    const characterId = str(link.characterId, `${path}.characterId`);
+    if (!characterIds.has(characterId)) {
+      fail(`${path}.characterId`, `no figure ${characterId}`);
+    }
+    return;
+  }
+  if (to === "refuse") {
+    str(link.note, `${path}.note`);
+    return;
+  }
+  if (to === "up") return;
+  fail(`${path}.to`, `unknown link target ${to}`);
+}
+
+/**
+ * Structure of one room. Cross-room references are deliberately *not* checked here —
+ * they need every room id first, so they happen on a second pass.
+ */
+function validateRoomShape(value: unknown, path: string): Record<string, unknown> {
+  const room = obj(value, path);
+  str(room.id, `${path}.id`);
+  str(room.name, `${path}.name`);
+  const kind = str(room.kind, `${path}.kind`);
+  if (kind !== "place" && kind !== "meta") {
+    fail(`${path}.kind`, `expected "place" or "meta", got ${kind}`);
+  }
+
+  const width = num(room.width, `${path}.width`);
+  const height = num(room.height, `${path}.height`);
+  if (width < 1 || height < 1) fail(path, "a room needs a positive size");
+  num(room.tileSize, `${path}.tileSize`);
+
+  const cells = arr(room.cells, `${path}.cells`);
+  if (cells.length !== height) {
+    fail(`${path}.cells`, `expected ${height} rows, got ${cells.length}`);
+  }
+  cells.forEach((row, i) => {
+    const line = str(row, `${path}.cells[${i}]`);
+    if (line.length !== width) {
+      fail(`${path}.cells[${i}]`, `expected ${width} characters, got ${line.length}`);
+    }
+  });
+
+  // A variant that is not the same shape would change the room's size mid-cycle.
+  const variants = obj(room.cellVariants, `${path}.cellVariants`);
+  for (const [name, rows] of Object.entries(variants)) {
+    const list = arr(rows, `${path}.cellVariants.${name}`);
+    if (list.length !== height) {
+      fail(`${path}.cellVariants.${name}`, `expected ${height} rows`);
+    }
+    list.forEach((row, i) => {
+      if (str(row, `${path}.cellVariants.${name}[${i}]`).length !== width) {
+        fail(`${path}.cellVariants.${name}[${i}]`, `expected ${width} characters`);
+      }
+    });
+  }
+
+  const inside = (x: number, y: number, at: string): void => {
+    if (x < 0 || y < 0 || x > width || y > height) {
+      fail(at, `(${x}, ${y}) is outside the ${width}x${height} room`);
+    }
+  };
+
+  const entryIds = new Set<string>();
+  const entries = arr(room.entries, `${path}.entries`);
+  if (entries.length === 0) {
+    fail(`${path}.entries`, "a room needs somewhere to arrive");
+  }
+  entries.forEach((value, i) => {
+    const entry = obj(value, `${path}.entries[${i}]`);
+    const id = str(entry.id, `${path}.entries[${i}].id`);
+    if (entryIds.has(id)) fail(`${path}.entries[${i}].id`, `duplicate entry ${id}`);
+    entryIds.add(id);
+    inside(
+      num(entry.x, `${path}.entries[${i}].x`),
+      num(entry.y, `${path}.entries[${i}].y`),
+      `${path}.entries[${i}]`,
+    );
+    str(entry.facing, `${path}.entries[${i}].facing`);
+  });
+
+  const slotIds = new Set<string>();
+  arr(room.figureSlots, `${path}.figureSlots`).forEach((value, i) => {
+    const slot = obj(value, `${path}.figureSlots[${i}]`);
+    const id = str(slot.id, `${path}.figureSlots[${i}].id`);
+    if (slotIds.has(id)) fail(`${path}.figureSlots[${i}].id`, `duplicate slot ${id}`);
+    slotIds.add(id);
+    inside(
+      num(slot.x, `${path}.figureSlots[${i}].x`),
+      num(slot.y, `${path}.figureSlots[${i}].y`),
+      `${path}.figureSlots[${i}]`,
+    );
+  });
+
+  arr(room.props, `${path}.props`).forEach((value, i) => {
+    const prop = obj(value, `${path}.props[${i}]`);
+    str(prop.id, `${path}.props[${i}].id`);
+    const x = num(prop.x, `${path}.props[${i}].x`);
+    const y = num(prop.y, `${path}.props[${i}].y`);
+    const w = num(prop.w, `${path}.props[${i}].w`);
+    const h = num(prop.h, `${path}.props[${i}].h`);
+    inside(x, y, `${path}.props[${i}]`);
+    inside(x + w, y + h, `${path}.props[${i}]`);
+    bool(prop.solid, `${path}.props[${i}].solid`);
+    optionalStr(prop.role, `${path}.props[${i}].role`);
+    optionalStr(prop.image, `${path}.props[${i}].image`);
+  });
+
+  const hotspotIds = new Set<string>();
+  arr(room.hotspots, `${path}.hotspots`).forEach((value, i) => {
+    const hotspot = obj(value, `${path}.hotspots[${i}]`);
+    const id = str(hotspot.id, `${path}.hotspots[${i}].id`);
+    if (hotspotIds.has(id))
+      fail(`${path}.hotspots[${i}].id`, `duplicate hotspot ${id}`);
+    hotspotIds.add(id);
+    str(hotspot.kind, `${path}.hotspots[${i}].kind`);
+    str(hotspot.prompt, `${path}.hotspots[${i}].prompt`);
+    inside(
+      num(hotspot.x, `${path}.hotspots[${i}].x`),
+      num(hotspot.y, `${path}.hotspots[${i}].y`),
+      `${path}.hotspots[${i}]`,
+    );
+    if (num(hotspot.reach, `${path}.hotspots[${i}].reach`) <= 0) {
+      fail(`${path}.hotspots[${i}].reach`, "a hotspot you cannot reach is not one");
+    }
+    bool(hotspot.once, `${path}.hotspots[${i}].once`);
+    optionalStr(hotspot.clueId, `${path}.hotspots[${i}].clueId`);
+    optionalStr(hotspot.action, `${path}.hotspots[${i}].action`);
+    if (hotspot.dwellMs !== null && hotspot.dwellMs !== undefined) {
+      num(hotspot.dwellMs, `${path}.hotspots[${i}].dwellMs`);
+    }
+    if (hotspot.tonus !== null && hotspot.tonus !== undefined) {
+      tonusAt(hotspot.tonus, `${path}.hotspots[${i}].tonus`);
+    }
+  });
+
+  const doorIds = new Set<string>();
+  arr(room.doors, `${path}.doors`).forEach((value, i) => {
+    const door = obj(value, `${path}.doors[${i}]`);
+    const id = str(door.id, `${path}.doors[${i}].id`);
+    if (doorIds.has(id)) fail(`${path}.doors[${i}].id`, `duplicate door ${id}`);
+    doorIds.add(id);
+    const x = num(door.x, `${path}.doors[${i}].x`);
+    const y = num(door.y, `${path}.doors[${i}].y`);
+    inside(x, y, `${path}.doors[${i}]`);
+    inside(
+      x + num(door.w, `${path}.doors[${i}].w`),
+      y + num(door.h, `${path}.doors[${i}].h`),
+      `${path}.doors[${i}]`,
+    );
+    const type = str(door.type, `${path}.doors[${i}].type`) as DoorTypeName;
+    if (!DOOR_TYPES.includes(type)) {
+      fail(`${path}.doors[${i}].type`, `unknown door type ${type}`);
+    }
+    optionalStr(door.keyId, `${path}.doors[${i}].keyId`);
+    optionalStr(door.prompt, `${path}.doors[${i}].prompt`);
+  });
+
+  const graphics = obj(room.graphics, `${path}.graphics`);
+  for (const role of ["floorRole", "wallRole", "propRole", "glitchPreset"] as const) {
+    str(graphics[role], `${path}.graphics.${role}`);
+  }
+  const fit = str(graphics.backdropFit, `${path}.graphics.backdropFit`);
+  if (fit !== "cells" && fit !== "screen") {
+    fail(`${path}.graphics.backdropFit`, `expected "cells" or "screen", got ${fit}`);
+  }
+  const backdrop = optionalStr(
+    graphics.backdropImage,
+    `${path}.graphics.backdropImage`,
+  );
+
+  const camera = str(room.camera, `${path}.camera`);
+  if (camera !== "frame" && camera !== "follow") {
+    fail(`${path}.camera`, `expected "frame" or "follow", got ${camera}`);
+  }
+
+  tonusAt(room.tonus, `${path}.tonus`);
+  const revisit = obj(room.revisit, `${path}.revisit`);
+  bool(revisit.escalates, `${path}.revisit.escalates`);
+  optionalStr(revisit.note, `${path}.revisit.note`);
+
+  for (const field of ["description", "atmosphere", "personality"] as const) {
+    str(room[field], `${path}.${field}`);
+  }
+  arr(room.tags, `${path}.tags`).forEach((tag, i) =>
+    str(tag, `${path}.tags[${i}]`),
+  );
+  obj(room.copy, `${path}.copy`);
+
+  // A meta-space is defined by what it lacks: no doors, no figures, and one picture
+  // covering the whole screen. Part II of rooms.md — «выход не ищется, он случается».
+  if (kind === "meta") {
+    const meta = obj(room.meta, `${path}.meta`);
+    const minMs = num(meta.minMs, `${path}.meta.minMs`);
+    const maxMs = num(meta.maxMs, `${path}.meta.maxMs`);
+    if (minMs <= 0 || maxMs < minMs) {
+      fail(`${path}.meta`, `expected 0 < minMs <= maxMs, got ${minMs}..${maxMs}`);
+    }
+    bool(meta.doublesPrevious, `${path}.meta.doublesPrevious`);
+    bool(meta.overflow, `${path}.meta.overflow`);
+    if (doorIds.size > 0) {
+      fail(`${path}.doors`, "a meta-space has no doors — you leave on a timer");
+    }
+    if (backdrop === null) {
+      fail(`${path}.graphics.backdropImage`, "a meta-space is one picture");
+    }
+  } else if (room.meta !== null && room.meta !== undefined) {
+    fail(`${path}.meta`, "only a meta-space carries a meta config");
+  }
+
+  return room;
 }
 
 /**
@@ -459,109 +569,33 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     );
   }
 
-  // --- map
-  const map = obj(root.map, "dream.map");
-  const width = num(map.width, "dream.map.width");
-  const height = num(map.height, "dream.map.height");
-  num(map.tileSize, "dream.map.tileSize");
-  const tiles = decodeTiles(str(map.tiles, "dream.map.tiles"), width * height);
-
-  const spawn = obj(map.spawn, "dream.map.spawn");
-  const sx = num(spawn.x, "dream.map.spawn.x");
-  const sy = num(spawn.y, "dream.map.spawn.y");
-  if (sx < 0 || sy < 0 || sx >= width || sy >= height) {
-    fail(
-      "dream.map.spawn",
-      `spawn (${sx}, ${sy}) is outside the ${width}x${height} grid`,
+  // --- rooms, first pass: shape, and the index the second pass needs
+  const rooms = arr(root.rooms, "dream.rooms");
+  if (rooms.length === 0) fail("dream.rooms", "a dream needs at least one room");
+  const index: RoomIndex = {
+    entryIds: new Map(),
+    slotIds: new Map(),
+    kinds: new Map(),
+  };
+  const shaped = rooms.map((value, i) => {
+    const room = validateRoomShape(value, `dream.rooms[${i}]`);
+    const id = room.id as string;
+    if (index.entryIds.has(id))
+      fail(`dream.rooms[${i}].id`, `duplicate room id ${id}`);
+    index.entryIds.set(
+      id,
+      new Set((room.entries as { id: string }[]).map((entry) => entry.id)),
     );
-  }
-
-  const rooms = arr(map.rooms, "dream.map.rooms") as unknown[];
-  const roomIds = new Set<string>();
-  rooms.forEach((r, i) => {
-    const room = obj(r, `dream.map.rooms[${i}]`);
-    const id = str(room.id, `dream.map.rooms[${i}].id`);
-    if (roomIds.has(id))
-      fail(`dream.map.rooms[${i}].id`, `duplicate room id ${id}`);
-    roomIds.add(id);
-    obj(room.rect, `dream.map.rooms[${i}].rect`);
+    index.slotIds.set(
+      id,
+      new Set((room.figureSlots as { id: string }[]).map((slot) => slot.id)),
+    );
+    index.kinds.set(id, room.kind as string);
+    return room;
   });
-  if (rooms.length === 0)
-    fail("dream.map.rooms", "a dream needs at least one room");
+  const roomIds = new Set(index.entryIds.keys());
 
-  const graph = obj(map.graph, "dream.map.graph");
-  const nodes = arr(graph.nodes, "dream.map.graph.nodes") as unknown[];
-  const nodeById = new Map<string, MissionNode>();
-  nodes.forEach((n, i) => {
-    const node = obj(
-      n,
-      `dream.map.graph.nodes[${i}]`,
-    ) as unknown as MissionNode;
-    nodeById.set(str(node.id, `dream.map.graph.nodes[${i}].id`), node);
-  });
-  const startId = str(graph.startId, "dream.map.graph.startId");
-  const endId = str(graph.endId, "dream.map.graph.endId");
-  if (!nodeById.has(startId))
-    fail("dream.map.graph.startId", `no node ${startId}`);
-  if (!nodeById.has(endId)) fail("dream.map.graph.endId", `no node ${endId}`);
-
-  arr(graph.edges, "dream.map.graph.edges").forEach((e, i) => {
-    const edge = obj(e, `dream.map.graph.edges[${i}]`);
-    const from = str(edge.from, `dream.map.graph.edges[${i}].from`);
-    const to = str(edge.to, `dream.map.graph.edges[${i}].to`);
-    if (!nodeById.has(from))
-      fail(`dream.map.graph.edges[${i}].from`, `no node ${from}`);
-    if (!nodeById.has(to))
-      fail(`dream.map.graph.edges[${i}].to`, `no node ${to}`);
-  });
-
-  // A lock you can only open with a key that sits behind it is a dead dream. The
-  // generator will not produce one, but a Lord editing dream.json by hand might.
-  for (const node of nodeById.values()) {
-    if (node.type !== NodeType.LOCK || !node.requiresKeyId) continue;
-    const key = [...nodeById.values()].find((n) => n.opensLockId === node.id);
-    if (!key) fail(`dream.map.graph`, `lock ${node.id} has no key node`);
-    if (key.accessLevel >= node.accessLevel) {
-      fail(
-        `dream.map.graph`,
-        `key ${key.id} (access ${key.accessLevel}) is not reachable before lock ${node.id} (access ${node.accessLevel})`,
-      );
-    }
-  }
-
-  arr(map.warps, "dream.map.warps").forEach((w, i) => {
-    const warp = obj(w, `dream.map.warps[${i}]`);
-    const toRoomId = str(warp.toRoomId, `dream.map.warps[${i}].toRoomId`);
-    if (!roomIds.has(toRoomId))
-      fail(`dream.map.warps[${i}].toRoomId`, `no room ${toRoomId}`);
-    for (const axis of ["x", "y", "toX", "toY"] as const) {
-      const value = num(warp[axis], `dream.map.warps[${i}].${axis}`);
-      const limit = axis === "x" || axis === "toX" ? width : height;
-      if (value < 0 || value >= limit) {
-        fail(`dream.map.warps[${i}].${axis}`, `${value} is outside the grid`);
-      }
-    }
-  });
-
-  arr(map.doors, "dream.map.doors").forEach((d, i) => {
-    const door = obj(d, `dream.map.doors[${i}]`);
-    const from = str(door.fromRoomId, `dream.map.doors[${i}].fromRoomId`);
-    const to = str(door.toRoomId, `dream.map.doors[${i}].toRoomId`);
-    if (!roomIds.has(from))
-      fail(`dream.map.doors[${i}].fromRoomId`, `no room ${from}`);
-    if (!roomIds.has(to))
-      fail(`dream.map.doors[${i}].toRoomId`, `no room ${to}`);
-    const dx = num(door.x, `dream.map.doors[${i}].x`);
-    const dy = num(door.y, `dream.map.doors[${i}].y`);
-    if (dx < 0 || dy < 0 || dx >= width || dy >= height) {
-      fail(
-        `dream.map.doors[${i}]`,
-        `door at (${dx}, ${dy}) is outside the grid`,
-      );
-    }
-  });
-
-  // --- shards and figures
+  // --- shards and figures. Figures are needed before links, since a link may aim at one.
   const shardIds = new Set<string>();
   arr(root.shards, "dream.shards").forEach((s, i) => {
     const shard = obj(s, `dream.shards[${i}]`);
@@ -576,16 +610,64 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     if (figureIds.has(figureId))
       fail(`dream.figures[${i}].id`, `duplicate figure id ${figureId}`);
     figureIds.add(figureId);
+    str(figure.name, `dream.figures[${i}].name`);
+    str(figure.archetypeId, `dream.figures[${i}].archetypeId`);
     const roomId = str(figure.roomId, `dream.figures[${i}].roomId`);
     if (!roomIds.has(roomId))
       fail(`dream.figures[${i}].roomId`, `no room ${roomId}`);
+    if (index.kinds.get(roomId) === "meta") {
+      fail(
+        `dream.figures[${i}].roomId`,
+        `${roomId} is a meta-space — «разговаривать не с кем»`,
+      );
+    }
+    const slotId = str(figure.slotId, `dream.figures[${i}].slotId`);
+    if (!index.slotIds.get(roomId)?.has(slotId)) {
+      fail(`dream.figures[${i}].slotId`, `room ${roomId} has no slot ${slotId}`);
+    }
     const holds = figure.holdsShardId;
     if (holds !== null && holds !== undefined && !shardIds.has(String(holds))) {
       fail(`dream.figures[${i}].holdsShardId`, `no shard ${String(holds)}`);
     }
   });
 
-  // --- author-editable chambers, personalities and the public mnemonic half
+  // --- rooms, second pass: everything that points at another room
+  shaped.forEach((room, i) => {
+    const path = `dream.rooms[${i}]`;
+    (room.hotspots as unknown[]).forEach((value, j) => {
+      const hotspot = value as { link?: unknown };
+      if (hotspot.link !== null && hotspot.link !== undefined) {
+        validateLink(hotspot.link, `${path}.hotspots[${j}].link`, index, figureIds);
+      }
+    });
+    (room.doors as unknown[]).forEach((value, j) => {
+      const door = value as { toRoomId: string; toEntryId: string | null };
+      const entries = index.entryIds.get(door.toRoomId);
+      if (!entries) fail(`${path}.doors[${j}].toRoomId`, `no room ${door.toRoomId}`);
+      if (door.toEntryId !== null && !entries.has(door.toEntryId)) {
+        fail(
+          `${path}.doors[${j}].toEntryId`,
+          `room ${door.toRoomId} has no entry ${door.toEntryId}`,
+        );
+      }
+    });
+  });
+
+  // --- spawn and finale
+  const spawn = obj(root.spawn, "dream.spawn");
+  const spawnRoom = str(spawn.roomId, "dream.spawn.roomId");
+  const spawnEntries = index.entryIds.get(spawnRoom);
+  if (!spawnEntries) fail("dream.spawn.roomId", `no room ${spawnRoom}`);
+  const spawnEntry = str(spawn.entryId, "dream.spawn.entryId");
+  if (!spawnEntries.has(spawnEntry)) {
+    fail("dream.spawn.entryId", `room ${spawnRoom} has no entry ${spawnEntry}`);
+  }
+  const finaleRoomId = str(root.finaleRoomId, "dream.finaleRoomId");
+  if (!roomIds.has(finaleRoomId)) {
+    fail("dream.finaleRoomId", `no room ${finaleRoomId}`);
+  }
+
+  // --- authored personalities and the public mnemonic half
   const content = obj(root.content, "dream.content");
   const mnemonic = obj(content.mnemonic, "dream.content.mnemonic");
   const mnemonicHash = str(mnemonic.hash, "dream.content.mnemonic.hash");
@@ -647,6 +729,38 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
         `dream.content.characters[${i}].portraits.${state}`,
       );
     }
+    // Loose 128x128 PNGs, when the art has been generated. The atlas frames above stay
+    // required as the fallback, so a half-arted dream still draws something.
+    if (
+      character.portraitImages !== null &&
+      character.portraitImages !== undefined
+    ) {
+      const images = obj(
+        character.portraitImages,
+        `dream.content.characters[${i}].portraitImages`,
+      );
+      for (const state of ["neutral", "interested", "wary", "knows"] as const) {
+        optionalStr(
+          images[state],
+          `dream.content.characters[${i}].portraitImages.${state}`,
+        );
+      }
+    }
+    if (character.spriteSheet !== null && character.spriteSheet !== undefined) {
+      const sheet = obj(
+        character.spriteSheet,
+        `dream.content.characters[${i}].spriteSheet`,
+      );
+      str(sheet.path, `dream.content.characters[${i}].spriteSheet.path`);
+      num(sheet.frameW, `dream.content.characters[${i}].spriteSheet.frameW`);
+      num(sheet.frameH, `dream.content.characters[${i}].spriteSheet.frameH`);
+      num(sheet.frames, `dream.content.characters[${i}].spriteSheet.frames`);
+      num(sheet.anchorY, `dream.content.characters[${i}].spriteSheet.anchorY`);
+      arr(sheet.dirs, `dream.content.characters[${i}].spriteSheet.dirs`).forEach(
+        (dir, j) =>
+          str(dir, `dream.content.characters[${i}].spriteSheet.dirs[${j}]`),
+      );
+    }
   });
   if (characterIds.size !== figureIds.size) {
     fail(
@@ -654,91 +768,6 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
       "every figure placement needs one character definition",
     );
   }
-
-  const chamberIds = new Set<string>();
-  arr(content.chambers, "dream.content.chambers").forEach((entry, i) => {
-    const chamber = obj(entry, `dream.content.chambers[${i}]`);
-    const id = str(chamber.id, `dream.content.chambers[${i}].id`);
-    if (chamberIds.has(id))
-      fail(`dream.content.chambers[${i}].id`, `duplicate chamber ${id}`);
-    chamberIds.add(id);
-    for (const field of [
-      "name",
-      "description",
-      "atmosphere",
-      "personality",
-    ] as const) {
-      str(chamber[field], `dream.content.chambers[${i}].${field}`);
-    }
-    bool(chamber.unique, `dream.content.chambers[${i}].unique`);
-    arr(chamber.tags, `dream.content.chambers[${i}].tags`).forEach((tag, j) =>
-      str(tag, `dream.content.chambers[${i}].tags[${j}]`),
-    );
-    arr(
-      chamber.eligibleRoomIds,
-      `dream.content.chambers[${i}].eligibleRoomIds`,
-    ).forEach((roomId, j) => {
-      const value = str(
-        roomId,
-        `dream.content.chambers[${i}].eligibleRoomIds[${j}]`,
-      );
-      if (!roomIds.has(value))
-        fail(
-          `dream.content.chambers[${i}].eligibleRoomIds[${j}]`,
-          `no room ${value}`,
-        );
-    });
-    const graphics = obj(
-      chamber.graphics,
-      `dream.content.chambers[${i}].graphics`,
-    );
-    for (const role of [
-      "floorRole",
-      "wallRole",
-      "propRole",
-      "glitchPreset",
-    ] as const) {
-      str(graphics[role], `dream.content.chambers[${i}].graphics.${role}`);
-    }
-    if (graphics.backdropFrame !== null)
-      str(
-        graphics.backdropFrame,
-        `dream.content.chambers[${i}].graphics.backdropFrame`,
-      );
-    if (graphics.backdropImage !== null && graphics.backdropImage !== undefined)
-      str(
-        graphics.backdropImage,
-        `dream.content.chambers[${i}].graphics.backdropImage`,
-      );
-    arr(chamber.anchors, `dream.content.chambers[${i}].anchors`).forEach(
-      (anchorEntry, j) => {
-        const anchor = obj(
-          anchorEntry,
-          `dream.content.chambers[${i}].anchors[${j}]`,
-        );
-        str(anchor.id, `dream.content.chambers[${i}].anchors[${j}].id`);
-        str(anchor.kind, `dream.content.chambers[${i}].anchors[${j}].kind`);
-        const ax = num(
-          anchor.x,
-          `dream.content.chambers[${i}].anchors[${j}].x`,
-        );
-        const ay = num(
-          anchor.y,
-          `dream.content.chambers[${i}].anchors[${j}].y`,
-        );
-        if (ax < 0 || ax > 1 || ay < 0 || ay > 1)
-          fail(
-            `dream.content.chambers[${i}].anchors[${j}]`,
-            "normalised coordinates must be inside 0..1",
-          );
-      },
-    );
-  });
-  if (chamberIds.size === 0)
-    fail(
-      "dream.content.chambers",
-      "a dream needs at least one authored chamber",
-    );
 
   const clueIds = new Set<string>();
   arr(content.clues, "dream.content.clues").forEach((entry, i) => {
@@ -756,8 +785,7 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
       str(clue[field], `dream.content.clues[${i}].${field}`);
     }
     for (const field of ["worldImage", "detailImage"] as const) {
-      if (clue[field] !== null && clue[field] !== undefined)
-        str(clue[field], `dream.content.clues[${i}].${field}`);
+      optionalStr(clue[field], `dream.content.clues[${i}].${field}`);
     }
     arr(clue.placementTags, `dream.content.clues[${i}].placementTags`).forEach(
       (tag, j) => str(tag, `dream.content.clues[${i}].placementTags[${j}]`),
@@ -766,18 +794,30 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
   if (clueIds.size !== 6)
     fail("dream.content.clues", "the MVP requires exactly six clue objects");
 
-  const activeChamberCount = num(
-    content.activeChamberCount,
-    "dream.content.activeChamberCount",
-  );
-  if (activeChamberCount < 1 || activeChamberCount > chamberIds.size) {
-    fail("dream.content.activeChamberCount", `expected 1..${chamberIds.size}`);
-  }
+  // Every clue hotspot must name a clue that exists, or a word sits somewhere unreachable.
+  shaped.forEach((room, i) => {
+    (room.hotspots as { kind: string; clueId: string | null }[]).forEach(
+      (hotspot, j) => {
+        if (hotspot.kind !== "clue") return;
+        if (hotspot.clueId === null || !clueIds.has(hotspot.clueId)) {
+          fail(
+            `dream.rooms[${i}].hotspots[${j}].clueId`,
+            `no clue ${String(hotspot.clueId)}`,
+          );
+        }
+      },
+    );
+  });
 
   // --- timings
   const cycle = obj(root.cycle, "dream.cycle");
   if (num(cycle.durationMs, "dream.cycle.durationMs") <= 0) {
     fail("dream.cycle.durationMs", "must be positive");
+  }
+  if (cycle.maxCycles !== null && cycle.maxCycles !== undefined) {
+    if (num(cycle.maxCycles, "dream.cycle.maxCycles") < 1) {
+      fail("dream.cycle.maxCycles", "must be at least one cycle");
+    }
   }
   const heartbeat = obj(root.heartbeat, "dream.heartbeat");
   if (num(heartbeat.intervalMs, "dream.heartbeat.intervalMs") < 1000) {
@@ -789,7 +829,6 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
   num(heartbeat.callBudgetPerCycle, "dream.heartbeat.callBudgetPerCycle");
   num(heartbeat.maxPatchesPerBeat, "dream.heartbeat.maxPatchesPerBeat");
 
-  void tiles; // decoded above purely to validate length
   return root as unknown as DreamArtifact;
 }
 
@@ -814,3 +853,6 @@ export function validateAtlasManifest(value: unknown): AtlasManifest {
   }
   return root as unknown as AtlasManifest;
 }
+
+/** Re-exported so consumers get the room vocabulary from the artifact contract. */
+export type { DreamRoom, DreamSpawn, RoomLink };

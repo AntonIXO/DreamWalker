@@ -4,27 +4,26 @@
  * The artifact on disk is the dream's *starting* state and never changes. This is the
  * copy that does: the heartbeat rewrites it while the player is standing in it (§6,
  * "дальше карта плывёт"). Keeping the two apart is what makes a cycle reset trivial —
- * throw the live copy away and build another from the same artifact.
+ * throw the live copy away and rebuild it from the same artifact.
  *
- * Only `game/patch.ts` is allowed to write to `tiles`. Everything else reads.
+ * Only `game/patch.ts` is allowed to write to rooms. Everything else reads.
+ *
+ * Format 4 made this much smaller. There is no tile array, no room index, no door tile
+ * map and no chamber assignment, because a room is now a discrete authored scene rather
+ * than a rectangle cut out of one shared grid. What survives is the part that was always
+ * about *state* rather than geometry: who is where, what the sanitar is carrying, what
+ * the sleeper has shut, and how many times you have been somewhere.
  */
 
-import {
-  decodeTiles,
-  type Door,
-  type DreamArtifact,
-  type FigurePlacement,
-  type MissionNode,
-  type Room,
-  type Warp,
-} from "../../shared/dream";
-import { doorSpan } from "../../shared/doors";
-import {
-  Tile,
-  doorTypeOfTile,
-  isDoorTile,
-  type DoorTypeName,
-} from "../../shared/tilecodes";
+import type { DreamArtifact, FigurePlacement } from "../../shared/dream";
+import type {
+  DreamRoom,
+  RoomDoor,
+  RoomHotspot,
+  RoomLink,
+} from "../../shared/room";
+import type { Direction } from "../../shared/roomGrid";
+import type { DoorTypeName } from "../../shared/tilecodes";
 import type {
   AgendaPhase,
   DreamPopulation,
@@ -32,10 +31,12 @@ import type {
   InterestSeed,
 } from "../../shared/ai";
 import type { PortraitState } from "../../shared/content";
-import type { ChamberDefinition } from "../../shared/content";
 
 export interface FigureState extends FigurePlacement {
-  facing: "n" | "e" | "s" | "w";
+  facing: Direction;
+  /** Tile coordinates, fractional. Seeded from the slot, then walked. */
+  x: number;
+  y: number;
   /** Bumped when the heartbeat moves them, so the view knows to re-place the sprite. */
   revision: number;
   personality: string;
@@ -55,37 +56,39 @@ export interface FigureState extends FigurePlacement {
   walking: boolean;
 }
 
+/**
+ * Something the sleeper put in a room for the sanitar to find.
+ *
+ * In format 3 an interest wrote a prop tile into the grid and remembered what it had
+ * covered. It is a hotspot now, so there is nothing to cover and nothing to restore.
+ */
 export interface InterestState extends InterestSeed {
+  roomId: string;
+  /** Tile coordinates, fractional. */
   x: number;
   y: number;
-  /** Tile restored when a cycle patch moves or removes this interest. */
-  underTile: number;
+}
+
+/** A room as it currently stands, which is not always as it was authored. */
+export interface RoomState extends DreamRoom {
+  /** Which `cellVariants` entry is live, or null for the authored mask. */
+  activeVariant: string | null;
+  /** Hotspots the sleeper has taken away, or that have already fired their `once`. */
+  closedHotspotIds: Set<string>;
 }
 
 export interface WorldState {
   readonly artifact: DreamArtifact;
-  readonly width: number;
-  readonly height: number;
-  readonly tileSize: number;
-  /** Mutable. The authored grid is in `artifact`; this one drifts. */
-  tiles: Uint8Array;
-  /** Installed population is the cycle's immutable reset point. */
-  baseTiles: Uint8Array;
 
-  readonly rooms: Room[];
-  readonly roomById: Map<string, Room>;
-  /** tile index -> position in `rooms`, or -1 outside every cell. */
-  readonly roomIndex: Int16Array;
-  /** Authored room cards currently occupying physical map slots. */
-  chamberByRoomId: Map<string, ChamberDefinition>;
-  baseChamberByRoomId: Map<string, ChamberDefinition>;
+  readonly rooms: RoomState[];
+  readonly roomById: Map<string, RoomState>;
+  /** Where the sanitar is. Replaces format 3's "which rect am I inside". */
+  currentRoomId: string;
 
-  doors: Door[];
-  /** "x,y" for every tile of a gate -> the gate. Rebuilt whenever doors move. */
-  doorAt: Map<string, Door>;
-
-  /** Doorways into buildings. Never patched — the sleeper rearranges country, not houses. */
-  readonly warpAt: Map<string, Warp>;
+  /** Every door in the dream, indexed across rooms so a patch can name one. */
+  doorById: Map<string, RoomDoor>;
+  /** Which room each door lives in, so a patch knows what it touched. */
+  roomIdByDoorId: Map<string, string>;
 
   figures: FigureState[];
   interests: InterestState[];
@@ -98,8 +101,18 @@ export interface WorldState {
   leversPulled: Set<string>;
   puzzlesSolved: Set<string>;
 
-  /** Rooms the player has stood in. Feeds the heartbeat's observation and the journal. */
+  /** Rooms the player has stood in this cycle. Feeds observation and the journal. */
   visited: Set<string>;
+
+  /**
+   * How many times the sanitar has entered each room, **across cycles**.
+   *
+   * §4.3 — «второй визит хуже первого». The canonical case is §06: the same ditch, the
+   * same garages, except this time there are two of them, and next time four. It is
+   * deliberately not cleared by `resetWorld`: the dream repeats, and the sanitar is the
+   * one thing in it that remembers.
+   */
+  visitCounts: Map<string, number>;
 
   /**
    * Doors the sleeper has shut this cycle, and what they were before. `openDoor` may
@@ -109,65 +122,59 @@ export interface WorldState {
   sealHistory: Map<string, DoorTypeName>;
 }
 
-const key = (x: number, y: number): string => `${x},${y}`;
+function cloneRoom(room: DreamRoom): RoomState {
+  return {
+    ...room,
+    cells: [...room.cells],
+    cellVariants: Object.fromEntries(
+      Object.entries(room.cellVariants).map(([name, rows]) => [name, [...rows]]),
+    ),
+    props: room.props.map((prop) => ({ ...prop })),
+    hotspots: room.hotspots.map((hotspot) => ({ ...hotspot })),
+    entries: room.entries.map((entry) => ({ ...entry })),
+    doors: room.doors.map((door) => ({ ...door })),
+    figureSlots: room.figureSlots.map((slot) => ({ ...slot })),
+    graphics: { ...room.graphics },
+    tonus: { ...room.tonus },
+    revisit: { ...room.revisit },
+    meta: room.meta ? { ...room.meta } : null,
+    tags: [...room.tags],
+    copy: { ...room.copy },
+    activeVariant: null,
+    closedHotspotIds: new Set(),
+  };
+}
 
-function indexRooms(rooms: Room[], width: number, height: number): Int16Array {
-  const index = new Int16Array(width * height).fill(-1);
-  rooms.forEach((room, i) => {
-    for (let y = room.rect.y; y < room.rect.y + room.rect.h; y++) {
-      for (let x = room.rect.x; x < room.rect.x + room.rect.w; x++) {
-        if (x < 0 || y < 0 || x >= width || y >= height) continue;
-        index[y * width + x] = i;
-      }
+export function buildDoorIndexes(rooms: readonly RoomState[]): {
+  doorById: Map<string, RoomDoor>;
+  roomIdByDoorId: Map<string, string>;
+} {
+  const doorById = new Map<string, RoomDoor>();
+  const roomIdByDoorId = new Map<string, string>();
+  for (const room of rooms) {
+    for (const door of room.doors) {
+      doorById.set(door.id, door);
+      roomIdByDoorId.set(door.id, room.id);
     }
-  });
-  return index;
-}
-
-export function buildDoorIndex(doors: readonly Door[]): Map<string, Door> {
-  const map = new Map<string, Door>();
-  for (const door of doors) {
-    for (const tile of doorSpan(door)) map.set(key(tile.x, tile.y), door);
   }
-  return map;
+  return { doorById, roomIdByDoorId };
 }
-
-/**
- * The tiles a gate covers.
- *
- * Re-exported from `shared/doors.ts` rather than reimplemented. It used to be a hand-kept
- * copy of the generator's version; they are now the same function, because the two were
- * never allowed to disagree and pretending otherwise only made the disagreement quiet.
- */
-export { doorSpan as doorTiles } from "../../shared/doors";
 
 export function createWorld(artifact: DreamArtifact): WorldState {
-  const { map } = artifact;
-  const rooms = map.rooms.map((room) => ({ ...room, rect: { ...room.rect } }));
-  const doors = map.doors.map((door) => ({ ...door }));
+  const rooms = artifact.rooms.map(cloneRoom);
+  const roomById = new Map(rooms.map((room) => [room.id, room]));
+  const figures = artifact.figures.map((figure) =>
+    makeFigureState(figure, roomById.get(figure.roomId)),
+  );
+  const { doorById, roomIdByDoorId } = buildDoorIndexes(rooms);
 
-  const tiles = decodeTiles(map.tiles, map.width * map.height);
-  const figures = artifact.figures.map((figure) => makeFigureState(figure));
-  const chamberByRoomId = assignChambers(artifact, rooms);
-  for (const [roomId, chamber] of chamberByRoomId) {
-    const room = rooms.find((candidate) => candidate.id === roomId);
-    if (room) room.name = chamber.name;
-  }
   return {
     artifact,
-    width: map.width,
-    height: map.height,
-    tileSize: map.tileSize,
-    tiles,
-    baseTiles: tiles.slice(),
     rooms,
-    roomById: new Map(rooms.map((room) => [room.id, room])),
-    roomIndex: indexRooms(rooms, map.width, map.height),
-    chamberByRoomId,
-    baseChamberByRoomId: new Map(chamberByRoomId),
-    doors,
-    doorAt: buildDoorIndex(doors),
-    warpAt: new Map(map.warps.map((warp) => [key(warp.x, warp.y), warp])),
+    roomById,
+    currentRoomId: artifact.spawn.roomId,
+    doorById,
+    roomIdByDoorId,
     figures,
     interests: [],
     population: null,
@@ -177,35 +184,21 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     leversPulled: new Set(),
     puzzlesSolved: new Set(),
     visited: new Set(),
+    visitCounts: new Map(),
     sealHistory: new Map(),
   };
 }
 
-function assignChambers(
-  artifact: DreamArtifact,
-  rooms: Room[],
-): Map<string, ChamberDefinition> {
-  const assigned = new Map<string, ChamberDefinition>();
-  const slots = rooms.filter((room) => room.kind === "room");
-  for (const chamber of artifact.content.chambers.slice(
-    0,
-    artifact.content.activeChamberCount,
-  )) {
-    const room = slots.find(
-      (candidate) =>
-        !assigned.has(candidate.id) &&
-        (chamber.eligibleRoomIds.length === 0 ||
-          chamber.eligibleRoomIds.includes(candidate.id)),
-    );
-    if (room) assigned.set(room.id, chamber);
-  }
-  return assigned;
-}
-
-function makeFigureState(figure: FigurePlacement): FigureState {
+function makeFigureState(
+  figure: FigurePlacement,
+  room: RoomState | undefined,
+): FigureState {
+  const slot = room?.figureSlots.find((entry) => entry.id === figure.slotId);
   return {
     ...figure,
     facing: "s",
+    x: slot?.x ?? 1,
+    y: slot?.y ?? 1,
     revision: 0,
     personality: "Держится за привычный порядок.",
     portraitState: "neutral",
@@ -240,24 +233,27 @@ export function cloneFigureState(figure: FigureState): FigureState {
  * Put the dream back the way its Lord left it (§5).
  *
  * Done in place rather than by building a new world, so every long-lived reference —
- * the tilemap, the mind, the heartbeat, the debug overlay — stays valid across a cycle.
+ * the scene, the mind, the heartbeat, the debug overlay — stays valid across a cycle.
  * The installed population snapshot is the source of truth; nothing here has to undo
  * individual patches. Before population arrives that snapshot is simply the artifact.
  */
 export function resetWorld(world: WorldState): void {
-  const { map } = world.artifact;
-
-  world.tiles = world.baseTiles.slice();
-  world.chamberByRoomId = new Map(world.baseChamberByRoomId);
+  const authoredById = new Map(
+    world.artifact.rooms.map((room) => [room.id, room]),
+  );
   for (const room of world.rooms) {
-    const authored = map.rooms.find((candidate) => candidate.id === room.id);
-    room.name =
-      world.chamberByRoomId.get(room.id)?.name ?? authored?.name ?? room.name;
+    const authored = authoredById.get(room.id);
+    if (!authored) continue;
+    room.name = authored.name;
+    room.cells = [...authored.cells];
+    room.activeVariant = null;
+    room.closedHotspotIds.clear();
+    room.hotspots = authored.hotspots.map((hotspot) => ({ ...hotspot }));
+    room.doors = authored.doors.map((door) => ({ ...door }));
   }
-
-  world.doors.length = 0;
-  world.doors.push(...map.doors.map((door) => ({ ...door })));
-  world.doorAt = buildDoorIndex(world.doors);
+  const indexes = buildDoorIndexes(world.rooms);
+  world.doorById = indexes.doorById;
+  world.roomIdByDoorId = indexes.roomIdByDoorId;
 
   world.figures.length = 0;
   world.figures.push(...world.baseFigures.map(cloneFigureState));
@@ -266,8 +262,10 @@ export function resetWorld(world: WorldState): void {
     ...world.baseInterests.map((interest) => ({ ...interest })),
   );
 
-  // The live world and its figures forget. The journal and the sleeper's compact model
-  // live outside WorldState and deliberately survive (§5).
+  world.currentRoomId = world.artifact.spawn.roomId;
+
+  // The live world and its figures forget. The journal, the sleeper's compact model and
+  // `visitCounts` live outside a cycle and deliberately survive (§5, §4.3).
   world.keysHeld.clear();
   world.leversPulled.clear();
   world.puzzlesSolved.clear();
@@ -275,71 +273,101 @@ export function resetWorld(world: WorldState): void {
   world.sealHistory.clear();
 }
 
-export function interestAtTile(
-  world: WorldState,
-  x: number,
-  y: number,
-): InterestState | null {
-  return (
-    world.interests.find((interest) => interest.x === x && interest.y === y) ??
-    null
+export function currentRoom(world: WorldState): RoomState {
+  const room = world.roomById.get(world.currentRoomId);
+  if (!room) {
+    throw new Error(`world is in room ${world.currentRoomId}, which does not exist`);
+  }
+  return room;
+}
+
+export function roomOf(world: WorldState, roomId: string): RoomState | null {
+  return world.roomById.get(roomId) ?? null;
+}
+
+/** How many times the sanitar has entered a room, counting this cycle and every earlier one. */
+export function visitCount(world: WorldState, roomId: string): number {
+  return world.visitCounts.get(roomId) ?? 0;
+}
+
+/** Records an arrival and returns the new count. */
+export function noteVisit(world: WorldState, roomId: string): number {
+  const next = visitCount(world, roomId) + 1;
+  world.visitCounts.set(roomId, next);
+  world.visited.add(roomId);
+  return next;
+}
+
+/** Hotspots that are actually there right now. */
+export function liveHotspots(room: RoomState): RoomHotspot[] {
+  if (room.closedHotspotIds.size === 0) return room.hotspots;
+  return room.hotspots.filter(
+    (hotspot) => !room.closedHotspotIds.has(hotspot.id),
   );
 }
 
-export function tileAt(world: WorldState, x: number, y: number): number {
-  if (x < 0 || y < 0 || x >= world.width || y >= world.height) return Tile.VOID;
-  return world.tiles[y * world.width + x]!;
-}
-
-export function roomAt(world: WorldState, x: number, y: number): Room | null {
-  if (x < 0 || y < 0 || x >= world.width || y >= world.height) return null;
-  const index = world.roomIndex[y * world.width + x]!;
-  return index >= 0 ? (world.rooms[index] ?? null) : null;
-}
-
-export function doorAtTile(
+/** Interests the sleeper placed in this room, as hotspots the resolver can see. */
+export function interestHotspots(
   world: WorldState,
-  x: number,
-  y: number,
-): Door | null {
-  return world.doorAt.get(key(x, y)) ?? null;
+  roomId: string,
+): RoomHotspot[] {
+  return world.interests
+    .filter((interest) => interest.roomId === roomId)
+    .map((interest) => ({
+      id: `interest:${interest.id}`,
+      kind: "look" as const,
+      x: interest.x,
+      y: interest.y,
+      reach: 1.4,
+      prompt: interest.name,
+      link: null,
+      tonus: null,
+      clueId: interest.clueId,
+      action: null,
+      once: false,
+      dwellMs: null,
+    }));
 }
 
-export function warpAtTile(
+export function interestById(
   world: WorldState,
-  x: number,
-  y: number,
-): Warp | null {
-  return world.warpAt.get(key(x, y)) ?? null;
+  id: string,
+): InterestState | null {
+  return world.interests.find((interest) => interest.id === id) ?? null;
+}
+
+export function doorById(world: WorldState, id: string): RoomDoor | null {
+  return world.doorById.get(id) ?? null;
 }
 
 /**
  * Whether the sanitar may pass a door *right now*. Deliberately not a property of the
- * tile: it depends on what you are carrying, and the grid does not know that.
+ * geometry: it depends on what you are carrying, and a rect does not know that.
  */
-export function canPassDoor(world: WorldState, door: Door): boolean {
+export function canPassDoor(world: WorldState, door: RoomDoor): boolean {
   switch (door.type) {
     case "open":
       return true;
     case "sealed":
       return false;
     // A ledge never refuses. It is one-way, and which way is a question about the
-    // direction of travel, which `collision.ts` answers from the tile.
+    // direction of travel, which the walker answers, not the door.
     case "ledge":
       return true;
     case "keyLock":
       return door.keyId !== null && world.keysHeld.has(door.keyId);
     case "leverLock":
-      return world.leversPulled.has(door.edgeId);
+      return world.leversPulled.has(door.id);
     case "puzzleLock":
-      return world.puzzlesSolved.has(door.edgeId);
+      return world.puzzlesSolved.has(door.id);
     default:
       return false;
   }
 }
 
 /** Reason a door will not open, phrased for the player rather than for a log. */
-export function doorRefusal(door: Door): string {
+export function doorRefusal(door: RoomDoor): string {
+  if (door.prompt) return door.prompt;
   switch (door.type) {
     case "keyLock":
       return "Заперто. Нужно то, чего у тебя нет.";
@@ -354,22 +382,57 @@ export function doorRefusal(door: Door): string {
   }
 }
 
-export function missionNode(
-  world: WorldState,
-  id: string,
-): MissionNode | undefined {
-  return world.artifact.map.graph.nodes.find((node) => node.id === id);
+/** The door whose rect contains this tile, if any. */
+export function doorAtTile(
+  room: RoomState,
+  tx: number,
+  ty: number,
+): RoomDoor | null {
+  for (const door of room.doors) {
+    if (
+      tx >= door.x &&
+      tx < door.x + door.w &&
+      ty >= door.y &&
+      ty < door.y + door.h
+    ) {
+      return door;
+    }
+  }
+  return null;
 }
 
-/** Every door tile of the grid agrees with the door list. Used after patches. */
-export function isDoorTileAt(world: WorldState, x: number, y: number): boolean {
-  return isDoorTile(tileAt(world, x, y));
+/** Where a link points, resolved against the live world. Null means "nowhere right now". */
+export function resolveLink(
+  world: WorldState,
+  link: RoomLink,
+): { roomId: string; entryId: string | null } | null {
+  switch (link.to) {
+    case "room":
+      return { roomId: link.roomId, entryId: link.entryId };
+    case "figure": {
+      const figure = world.figures.find((f) => f.id === link.characterId);
+      return figure ? { roomId: figure.roomId, entryId: null } : null;
+    }
+    case "up": {
+      // §07 — the lift only goes up. One floor higher than wherever we are, and the
+      // hotel is the top, so there is always somewhere for it to arrive.
+      const here = world.roomById.get(world.currentRoomId);
+      const floor = floorOf(here);
+      const above = world.rooms.find((room) => floorOf(room) === floor + 1);
+      return { roomId: (above ?? here)?.id ?? world.currentRoomId, entryId: null };
+    }
+    case "refuse":
+      return null;
+  }
 }
 
-export function doorTypeAt(
-  world: WorldState,
-  x: number,
-  y: number,
-): string | null {
-  return doorTypeOfTile(tileAt(world, x, y));
+function floorOf(room: RoomState | undefined): number {
+  if (!room) return 0;
+  for (const tag of room.tags) {
+    if (tag.startsWith("floor-")) {
+      const level = Number(tag.slice("floor-".length));
+      if (Number.isFinite(level)) return level;
+    }
+  }
+  return 0;
 }

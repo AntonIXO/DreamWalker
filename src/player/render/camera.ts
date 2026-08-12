@@ -18,7 +18,7 @@ import type { Container } from "pixi.js";
 import type { Rect, Room } from "../../shared/dream";
 
 export interface CameraOptions {
-  /** Whole-number zoom. 3 shows about a screen of country on a laptop. */
+  /** Whole-number zoom. Overridden at runtime by `fitZoom` so a room is never cropped. */
   zoom: number;
   /** Seconds for a hard cut to settle — used by warps, not by walking. */
   transitionSeconds: number;
@@ -33,11 +33,43 @@ export interface CameraOptions {
 }
 
 export const DEFAULT_CAMERA: CameraOptions = {
-  zoom: 3,
+  zoom: 1,
   transitionSeconds: 0.22,
   followRate: 8,
   edgeMargin: 0,
 };
+
+/**
+ * How much country the follow camera aims to show.
+ *
+ * Chosen so a laptop sees a route and a junction, not a close-up of one tile. Interiors
+ * and the lobby ignore this and fit their own rectangle instead.
+ */
+export const OUTDOOR_VIEW_TILES = { w: 22, h: 13 } as const;
+
+/**
+ * Largest whole-number zoom that still keeps `tilesW × tilesH` on screen.
+ *
+ * Floor, never round: a rounded 1.7 becomes 2 and crops the room the player is standing
+ * in. Zoom is at least 1 so a tiny window still shows something, even if it must scroll.
+ */
+export function fitZoom(
+  viewW: number,
+  viewH: number,
+  tilesW: number,
+  tilesH: number,
+  tileSize: number,
+): number {
+  if (viewW <= 0 || viewH <= 0 || tilesW <= 0 || tilesH <= 0 || tileSize <= 0) {
+    return 1;
+  }
+  return Math.max(
+    1,
+    Math.floor(
+      Math.min(viewW / (tilesW * tileSize), viewH / (tilesH * tileSize)),
+    ),
+  );
+}
 
 /**
  * How far south the follow camera may go.
@@ -77,19 +109,62 @@ export class Camera {
   private worldTilesWide = 0;
   private worldTilesHigh = 0;
 
+  private readonly options: CameraOptions;
+
   constructor(
     private readonly stage: Container,
     private readonly tileSize: number,
     private viewWidth: number,
     private viewHeight: number,
-    private readonly options: CameraOptions = DEFAULT_CAMERA,
+    options: CameraOptions = DEFAULT_CAMERA,
   ) {
-    this.stage.scale.set(options.zoom);
+    // Copy so mutating zoom cannot rewrite the shared DEFAULT_CAMERA.
+    this.options = { ...options };
+    this.stage.scale.set(this.options.zoom);
   }
 
   setWorldSize(tilesWide: number, tilesHigh: number): void {
     this.worldTilesWide = tilesWide;
     this.worldTilesHigh = tilesHigh;
+  }
+
+  /**
+   * Change the integer world scale and keep the current centre on screen.
+   *
+   * Framed interiors skip the world-edge clamp: they sit in a reserved band and a clamp
+   * would shove the house into a corner. Followed views re-clamp so the treeline stays
+   * honest.
+   */
+  setZoom(zoom: number): void {
+    const next = Math.max(1, Math.floor(zoom));
+    if (next === this.options.zoom) return;
+    const prev = this.options.zoom;
+    const centreX = (this.viewWidth / 2 - this.currentX) / prev;
+    const centreY = (this.viewHeight / 2 - this.currentY) / prev;
+    this.options.zoom = next;
+    this.stage.scale.set(next);
+    if (this.framedRoomId) {
+      const target = this.centre(centreX, centreY);
+      this.currentX = this.targetX = this.fromX = target.x;
+      this.currentY = this.targetY = this.fromY = target.y;
+      this.elapsed = this.duration = 0;
+      this.apply();
+      return;
+    }
+    this.cutTo(centreX, centreY);
+  }
+
+  /** Fit `tilesW × tilesH` on screen and return the zoom that did it. */
+  fit(tilesW: number, tilesH: number): number {
+    const zoom = fitZoom(
+      this.viewWidth,
+      this.viewHeight,
+      tilesW,
+      tilesH,
+      this.tileSize,
+    );
+    this.setZoom(zoom);
+    return zoom;
   }
 
   /**
@@ -194,8 +269,23 @@ export class Camera {
   frame(room: Room, immediate = false): void {
     // Called every frame while indoors, so re-framing the room already framed has to be a
     // no-op — otherwise the transition restarts each tick and the camera never arrives.
-    if (this.framedRoomId === room.id && !immediate) return;
+    const nextZoom = fitZoom(
+      this.viewWidth,
+      this.viewHeight,
+      room.rect.w,
+      room.rect.h,
+      this.tileSize,
+    );
+    if (
+      this.framedRoomId === room.id &&
+      !immediate &&
+      this.options.zoom === nextZoom
+    ) {
+      return;
+    }
+    // Mark framed *before* setZoom so the new scale centres without the world clamp.
     this.framedRoomId = room.id;
+    this.setZoom(nextZoom);
     const centreX = (room.rect.x + room.rect.w / 2) * this.tileSize;
     const centreY = (room.rect.y + room.rect.h / 2) * this.tileSize;
 

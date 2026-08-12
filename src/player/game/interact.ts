@@ -1,111 +1,117 @@
 /**
- * Standing close enough to speak, and poking at things that are not people.
+ * What the sanitar can reach, and what pressing E on it means.
  *
- * §3 splits the game's two channels and prices them differently:
- *
- *   the world  — slow, safe, gives you crumbs. Things do not suspect you.
- *   people     — fast, dangerous, gives you pieces.
- *
- * Both come through here, and the difference is entirely in what they cost, which is
- * why the low-risk channel has to exist at all: without it the player is squeezed
- * between asking nothing and being found out.
+ * One resolver for figures, authored objects and the things the sleeper put there. The
+ * ordering rule matters and is the thing format 3 got wrong: it returned the nearest
+ * *figure* unconditionally before it looked at anything else, so an object standing next
+ * to somebody was unreachable. Now whichever is actually closer wins — which is what the
+ * player expects, and what §06's ditch needs, where Кирилл is sitting on the manhole.
  */
 
-import { Tile } from "../../shared/tilecodes";
+import { findHotspot } from "../../shared/roomGrid";
+import type { RoomHotspot } from "../../shared/room";
+import type { PlayerState } from "./player";
 import {
-  doorAtTile,
   doorRefusal,
-  interestAtTile,
-  tileAt,
+  interestHotspots,
+  liveHotspots,
   type FigureState,
+  type RoomState,
   type WorldState,
 } from "./world";
-import type { PlayerState } from "./player";
 
-/** How close you have to stand. Just over one tile, so you must mean it. */
-const REACH = 20;
+/** How close the sanitar must be to speak to somebody, in pixels. */
+export const FIGURE_REACH = 20;
 
 export type InteractTarget =
   | { kind: "figure"; figure: FigureState; prompt: string }
-  | {
-      kind: "world";
-      x: number;
-      y: number;
-      interestId: string | null;
-      prompt: string;
-    }
+  | { kind: "hotspot"; hotspot: RoomHotspot; prompt: string }
   | { kind: "door"; doorId: string; prompt: string };
+
+function nearestFigure(
+  world: WorldState,
+  player: PlayerState,
+  room: RoomState,
+): { figure: FigureState; distance: number } | null {
+  let best: FigureState | null = null;
+  let bestDistance = Infinity;
+  for (const figure of world.figures) {
+    if (figure.roomId !== room.id) continue;
+    const distance = Math.hypot(
+      figure.x * room.tileSize - player.x,
+      figure.y * room.tileSize - player.y,
+    );
+    if (distance <= FIGURE_REACH && distance < bestDistance) {
+      best = figure;
+      bestDistance = distance;
+    }
+  }
+  return best ? { figure: best, distance: bestDistance } : null;
+}
+
+function hotspotDistance(
+  hotspot: RoomHotspot,
+  player: PlayerState,
+  tileSize: number,
+): number {
+  return Math.hypot(
+    hotspot.x * tileSize - player.x,
+    hotspot.y * tileSize - player.y,
+  );
+}
+
+/** Every hotspot in the room right now: authored ones plus whatever the sleeper added. */
+export function reachableHotspots(
+  world: WorldState,
+  room: RoomState,
+): RoomHotspot[] {
+  return [...liveHotspots(room), ...interestHotspots(world, room.id)];
+}
 
 export function findTarget(
   world: WorldState,
+  room: RoomState,
   player: PlayerState,
 ): InteractTarget | null {
-  const size = world.tileSize;
-
-  let nearest: FigureState | null = null;
-  let nearestDistance = REACH;
-  for (const figure of world.figures) {
-    const fx = figure.x * size + size / 2;
-    const fy = figure.y * size + size / 2;
-    const distance = Math.hypot(fx - player.x, fy - player.y);
-    if (distance < nearestDistance) {
-      nearest = figure;
-      nearestDistance = distance;
+  // A door that just turned us away outranks everything: the player pressed into it on
+  // purpose, and saying why is more useful than offering to look at a nearby chair.
+  if (player.refusedDoorId) {
+    const door = world.doorById.get(player.refusedDoorId);
+    if (door) {
+      return {
+        kind: "door",
+        doorId: door.id,
+        prompt: doorRefusal(door),
+      };
     }
   }
-  if (nearest) {
+
+  const figure = nearestFigure(world, player, room);
+  const hotspot = findHotspot(
+    reachableHotspots(world, room),
+    player.x,
+    player.y,
+    room.tileSize,
+  );
+
+  if (figure && hotspot) {
+    const hotspotAway = hotspotDistance(hotspot, player, room.tileSize);
+    if (hotspotAway < figure.distance) {
+      return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
+    }
     return {
       kind: "figure",
-      figure: nearest,
-      prompt: `${nearest.name} — заговорить`,
+      figure: figure.figure,
+      prompt: `заговорить с ${figure.figure.name}`,
     };
   }
-
-  // Whatever is directly in front, one tile along the way you are facing.
-  const ahead = {
-    n: { x: 0, y: -1 },
-    s: { x: 0, y: 1 },
-    e: { x: 1, y: 0 },
-    w: { x: -1, y: 0 },
-  }[player.facing];
-
-  const tx = Math.floor(player.x / size) + ahead.x;
-  const ty = Math.floor(player.y / size) + ahead.y;
-
-  const door = doorAtTile(world, tx, ty);
-  if (door) return { kind: "door", doorId: door.id, prompt: doorRefusal(door) };
-
-  const tile = tileAt(world, tx, ty);
-  if (tile === Tile.PROP || tile === Tile.PROP_SOLID) {
-    const interest = interestAtTile(world, tx, ty);
+  if (figure) {
     return {
-      kind: "world",
-      x: tx,
-      y: ty,
-      interestId: interest?.id ?? null,
-      prompt: interest ? `${interest.name} — осмотреть` : "посмотреть",
+      kind: "figure",
+      figure: figure.figure,
+      prompt: `заговорить с ${figure.figure.name}`,
     };
   }
-
+  if (hotspot) return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
   return null;
-}
-
-/**
- * Poking at the world. Cheap, safe, and mostly disappointing — which is the point:
- * §3 wants a channel that never raises suspicion, so it must not be a way to win.
- */
-const WORLD_LINES = [
-  "Ничего. Пыль и та ненастоящая.",
-  "Кто-то это уже трогал. Недавно.",
-  "Под этим — пол. Просто пол.",
-  "Слишком аккуратно лежит для этой комнаты.",
-  "Здесь чего-то не хватает, и непонятно чего.",
-  "Ты уверен, что это было тут в прошлый раз?",
-];
-
-export function examine(world: WorldState, x: number, y: number): string {
-  // Stable per tile, so re-examining the same thing does not reroll into new fiction.
-  const hash = ((x * 73856093) ^ (y * 19349663)) >>> 0;
-  void world;
-  return WORLD_LINES[hash % WORLD_LINES.length]!;
 }

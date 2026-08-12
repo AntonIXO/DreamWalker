@@ -5,6 +5,8 @@
 import { Action, Input, keyFor } from "../game/input";
 import type { MindSettings } from "../mind/settings";
 import { WalkerSprite } from "../render/walkerView";
+import type { Texture } from "pixi.js";
+
 import type { AtlasTextures } from "../render/atlasTextures";
 import type { Camera } from "../render/camera";
 import { LOBBY_DEFINITION } from "./definition";
@@ -44,8 +46,14 @@ export class LobbySession {
     atlas: AtlasTextures,
     private readonly camera: Camera,
     private readonly callbacks: LobbyCallbacks,
+    apparatusTexture: Texture | null = null,
   ) {
-    this.scene = new LobbyScene(this.definition, artifact, atlas);
+    this.scene = new LobbyScene(
+      this.definition,
+      artifact,
+      atlas,
+      apparatusTexture,
+    );
     this.walker = createLobbyWalker(this.definition);
     this.sprite = new WalkerSprite(atlas, "player");
     this.scene.actorLayer.addChild(this.sprite.sprite);
@@ -63,6 +71,7 @@ export class LobbySession {
     });
 
     this.camera.setWorldSize(this.definition.width, this.definition.height);
+    this.camera.fit(this.definition.width, this.definition.height);
     this.camera.cutTo(this.walker.x, this.walker.y);
   }
 

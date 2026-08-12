@@ -1,98 +1,105 @@
 /**
  * The sanitar.
  *
- * Eight directions of movement, four of facing, two frames of walk (§7.2). The walk
- * cycle advances on distance travelled rather than on time, so the feet keep pace with
- * the ground whatever the frame rate is doing.
+ * Movement itself lives in `shared/roomWalk.ts`, shared with the lobby and with every
+ * authored room. What is left here is the dream-specific part: which room's geometry the
+ * walker is being tested against, and which door most recently refused them.
  */
 
-import type { Direction } from "../render/walkerView";
-import { BODY_HEIGHT, BODY_WIDTH, moveBox, type Box } from "./collision";
-import type { WorldState } from "./world";
+import {
+  createWalker,
+  updateWalker,
+  walkFrame as sharedWalkFrame,
+  type Walker,
+} from "../../shared/roomWalk";
+import type { Direction } from "../../shared/roomGrid";
+import { doorAtTile, canPassDoor, type RoomState } from "./world";
 
-/** Pixels per second. Fast enough to cross a room in about two seconds. */
-const SPEED = 62;
-/** Pixels of travel per walk frame. */
-const STRIDE = 9;
-
-export interface PlayerState {
-  x: number;
-  y: number;
-  facing: Direction;
-  /** Distance walked, in pixels. The animation frame is derived from it. */
-  travelled: number;
-  moving: boolean;
-  /** Set when a door refuses. The HUD shows it, then it clears. */
+export interface PlayerState extends Walker {
+  /**
+   * The door that turned the sanitar away since the last frame that did not, so the HUD
+   * can say so once rather than every frame.
+   */
   refusedDoorId: string | null;
+  /** The door walked into and passed this frame, for the session to act on. */
+  enteredDoorId: string | null;
 }
 
-export function createPlayer(world: WorldState): PlayerState {
-  const { spawn, tileSize } = world.artifact.map;
+export function createPlayer(room: RoomState, entryId: string): PlayerState {
+  const entry =
+    room.entries.find((candidate) => candidate.id === entryId) ??
+    room.entries[0];
+  const size = room.tileSize;
   return {
-    x: spawn.x * tileSize + tileSize / 2,
-    y: spawn.y * tileSize + tileSize / 2,
-    facing: "s",
-    travelled: 0,
-    moving: false,
+    ...createWalker(
+      (entry?.x ?? 1) * size,
+      (entry?.y ?? 1) * size,
+      (entry?.facing ?? "s") as Direction,
+    ),
     refusedDoorId: null,
+    enteredDoorId: null,
   };
 }
 
-function facingFor(dx: number, dy: number, current: Direction): Direction {
-  if (dx === 0 && dy === 0) return current;
-  // Horizontal wins ties: a player running diagonally reads better in profile.
-  if (Math.abs(dx) >= Math.abs(dy)) return dx > 0 ? "e" : "w";
-  return dy > 0 ? "s" : "n";
+/** Put the sanitar at a named entry of a room, keeping the same state object. */
+export function placeAtEntry(
+  player: PlayerState,
+  room: RoomState,
+  entryId: string | null,
+): void {
+  const entry =
+    room.entries.find((candidate) => candidate.id === entryId) ??
+    room.entries[0];
+  const size = room.tileSize;
+  player.x = (entry?.x ?? 1) * size;
+  player.y = (entry?.y ?? 1) * size;
+  player.facing = (entry?.facing ?? "s") as Direction;
+  player.moving = false;
+  player.refusedDoorId = null;
+  player.enteredDoorId = null;
 }
 
 export function updatePlayer(
   player: PlayerState,
-  world: WorldState,
+  room: RoomState,
+  world: { keysHeld: Set<string>; leversPulled: Set<string>; puzzlesSolved: Set<string> },
   axis: { x: number; y: number },
   deltaSeconds: number,
 ): void {
-  player.refusedDoorId = null;
+  const before = { x: player.x, y: player.y };
+  const solidProps = room.props.filter((prop) => prop.solid);
+  updateWalker(player, room, solidProps, room.tileSize, axis, deltaSeconds);
 
-  const dx = axis.x * SPEED * deltaSeconds;
-  const dy = axis.y * SPEED * deltaSeconds;
-
-  if (dx === 0 && dy === 0) {
-    player.moving = false;
+  player.enteredDoorId = null;
+  const tx = Math.floor(player.x / room.tileSize);
+  const ty = Math.floor(player.y / room.tileSize);
+  const door = doorAtTile(room, tx, ty);
+  if (!door) {
+    player.refusedDoorId = null;
     return;
   }
-
-  const box: Box = {
-    x: player.x,
-    y: player.y,
-    width: BODY_WIDTH,
-    height: BODY_HEIGHT,
-  };
-  const result = moveBox(world, box, dx, dy);
-
-  const movedX = result.x - player.x;
-  const movedY = result.y - player.y;
-
-  player.x = result.x;
-  player.y = result.y;
-  player.facing = facingFor(axis.x, axis.y, player.facing);
-  player.refusedDoorId = result.blockedBy;
-
-  const distance = Math.hypot(movedX, movedY);
-  player.travelled += distance;
-  player.moving = distance > 0.01;
+  if (canPassDoor(world as never, door)) {
+    player.enteredDoorId = door.id;
+    player.refusedDoorId = null;
+    return;
+  }
+  // Refused: undo the step so the sanitar stands against it rather than inside it.
+  player.x = before.x;
+  player.y = before.y;
+  player.refusedDoorId = door.id;
 }
 
 export function walkFrame(player: PlayerState): number {
-  if (!player.moving) return 0;
-  return Math.floor(player.travelled / STRIDE) % 2;
+  return sharedWalkFrame(player);
 }
 
+/** Tile the sanitar is standing on. */
 export function playerTile(
   player: PlayerState,
-  world: WorldState,
+  room: RoomState,
 ): { x: number; y: number } {
   return {
-    x: Math.floor(player.x / world.tileSize),
-    y: Math.floor(player.y / world.tileSize),
+    x: Math.floor(player.x / room.tileSize),
+    y: Math.floor(player.y / room.tileSize),
   };
 }

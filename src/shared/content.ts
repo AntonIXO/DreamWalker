@@ -1,18 +1,69 @@
 /**
  * Author-editable content for one dream.
  *
- * Geometry still comes from DreamMap; these records say what a room means and which
- * prepared visual/personality assets are allowed to inhabit it. Keeping them separate
- * lets a Lord add final writing and PNGs without touching the engine.
+ * Rooms carry their own geometry and prose from format 4 on (`shared/room.ts`); what is
+ * left here is everything about the *people* — who they are, how they look at four
+ * levels of suspicion, and the sealed half of the phrase they are guarding.
+ *
+ * Keeping it separate from the engine is the point: a Lord adds final writing and PNGs
+ * by editing `dreams/<slug>/content/**`, and never touches code.
  */
 
+/**
+ * The four portrait states, which are also the four rungs of the suspicion ladder in
+ * `dream-walker-new/characters/README.md`:
+ *
+ *   0 занят собой · 1 заинтересовался · 2 насторожился · 3 знает
+ *
+ * The model returns the level, the UI shows the face. Level 3 never rolls back, and it
+ * is the most important asset in the game — «не злой, а вежливый и не моргающий».
+ */
 export type PortraitState = "neutral" | "interested" | "wary" | "knows";
 
+export const PORTRAIT_STATES: readonly PortraitState[] = [
+  "neutral",
+  "interested",
+  "wary",
+  "knows",
+];
+
+/** Atlas frame names. Always present, because they are the fallback that cannot fail. */
 export interface PortraitFrames {
   neutral: string;
   interested: string;
   wary: string;
   knows: string;
+}
+
+/**
+ * Loose 128×128 PNGs under `assets/`, once the art exists.
+ *
+ * They cannot live in the atlas: every atlas frame is 16×16 and the sheet is an indexed
+ * 16-colour PNG (`tools/lord/art/atlas.ts`). A face at 16×16 is the placeholder these
+ * are replacing, so portraits ride the same loose-PNG path as clue art and are drawn as
+ * a DOM background rather than through Pixi.
+ */
+export type PortraitImages = Partial<Record<PortraitState, string | null>>;
+
+/**
+ * A generated walk sheet: one PNG, `dirs.length` rows by `frames` columns.
+ *
+ * Retro Diffusion's four-angle walk comes back 48×48 in a 4×4 grid, which is both too
+ * big for the atlas and a different direction order from ours — so the sheet ships whole
+ * and the renderer slices it. `dirs` records the order that was *measured* from the
+ * sheet, never assumed.
+ */
+export interface SpriteSheetRef {
+  /** Relative to the published dream, e.g. `assets/sprites/kirill.png`. */
+  path: string;
+  frameW: number;
+  frameH: number;
+  /** Row order, top to bottom. */
+  dirs: string[];
+  /** Columns per row. Two are used; more are kept so the choice can be revisited. */
+  frames: number;
+  /** Where the feet sit in the frame, 0..1. A 48px sprite does not anchor like a 16px one. */
+  anchorY: number;
 }
 
 export interface CharacterDefinition {
@@ -28,42 +79,24 @@ export interface CharacterDefinition {
   taboo: string;
   initialActivity: string;
   portraits: PortraitFrames;
-}
-
-export interface ChamberGraphics {
-  /** Existing atlas role used as the dominant floor texture. */
-  floorRole: string;
-  /** Existing atlas role used for the room boundary. */
-  wallRole: string;
-  /** Existing atlas role used by safe interactive props. */
-  propRole: string;
-  /** Optional large authored illustration. Loaded when a future content atlas supplies it. */
-  backdropFrame: string | null;
-  /** Optional authored PNG relative to the published dream. */
-  backdropImage?: string | null;
-  glitchPreset: "none" | "split" | "double-edge" | "wrong-palette";
-}
-
-export interface ChamberAnchor {
-  id: string;
-  kind: "figure" | "object" | "clue";
-  /** Normalised position inside the room, 0..1. */
-  x: number;
-  y: number;
-}
-
-export interface ChamberDefinition {
-  id: string;
-  name: string;
-  description: string;
-  atmosphere: string;
-  personality: string;
-  tags: string[];
-  /** Existing map rooms this chamber may occupy. Empty means any room-shaped slot. */
-  eligibleRoomIds: string[];
-  unique: boolean;
-  graphics: ChamberGraphics;
-  anchors: ChamberAnchor[];
+  portraitImages?: PortraitImages | null;
+  spriteSheet?: SpriteSheetRef | null;
+  /**
+   * Path to this figure's `SOUL.md`, relative to `dreams/<slug>/content/`.
+   *
+   * The soul itself is **never published**. `dream.json` is served at
+   * `/dream/dream.json`, and a soul carries the figure's ПАЛЕВО section — exactly what
+   * gives the sanitar away. Shipping it would hand the player a cheat sheet. The server
+   * reads it from disk, the way it already reads `secret.local.txt`.
+   */
+  soulPath?: string | null;
+  /** Applied when this figure's suspicion rises a rung. */
+  tonus?: { x: number; y: number } | null;
+  /**
+   * Whether suspicion is one-way. True everywhere except the Eye, whose scale is
+   * replaced by «сколько правды санитар сказал» and whose tonus axis is switched off.
+   */
+  suspicionMonotone?: boolean;
 }
 
 /** Public half of the sealed mnemonic. Nulls are the six positions the player fills. */
@@ -88,14 +121,24 @@ export interface ClueDefinition {
 
 export interface DreamContent {
   characters: CharacterDefinition[];
-  chambers: ChamberDefinition[];
   clues: ClueDefinition[];
   mnemonic: MnemonicCommitment;
-  /** Number selected from the catalog at once. Must be smaller than the catalog. */
-  activeChamberCount: number;
 }
 
 export function fallbackPortraits(archetypeId: string): PortraitFrames {
   const frame = `figure_${archetypeId}_s_0`;
   return { neutral: frame, interested: frame, wary: frame, knows: frame };
+}
+
+/** The rung a state sits on, so a rise can be compared and never walked back. */
+export function portraitRank(state: PortraitState): number {
+  return PORTRAIT_STATES.indexOf(state);
+}
+
+/** Suspicion is a ratchet: «уровень 3 не откатывается». */
+export function highestPortraitState(
+  a: PortraitState,
+  b: PortraitState,
+): PortraitState {
+  return portraitRank(b) > portraitRank(a) ? b : a;
 }
