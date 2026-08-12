@@ -33,7 +33,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": null
     },
     {
       "id": "chuzhie-shtany-na-polu",

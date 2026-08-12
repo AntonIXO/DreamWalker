@@ -65,7 +65,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": null
     },
     {
       "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",

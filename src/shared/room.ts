@@ -82,6 +82,8 @@ export interface RoomHotspot {
   tonus: TonusDelta | null;
   /** Set when `kind === "clue"`. */
   clueId: string | null;
+  /** A loose PNG under `assets/`, once the object has been drawn. */
+  image?: string | null;
   /** Set when `kind === "ui"` — which panel to open. */
   action: string | null;
   /** Whether it fires once per cycle or every time. */

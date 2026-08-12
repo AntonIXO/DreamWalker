@@ -79,7 +79,8 @@
       "clueId": null,
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "image": null
     }
   ],
   "entries": [

@@ -39,9 +39,19 @@ const GUARD =
   "off-center asymmetric framing, subject placed away from the center, " +
   "hard pixel edges, flat matte surfaces, dry unlit shading";
 
-/** §3.1 — the seam rule is deliberately *omitted* for rooms; it makes a floor unreadable. */
+/**
+ * §3.1 — the seam rule is deliberately *omitted* for rooms; it makes a floor unreadable.
+ *
+ * The first version of this produced a front-facing Victorian sitting room for an
+ * outdoor courtyard, because `rd_plus__environment` is a perspective-scene style and
+ * prompt expansion had been left on to rewrite the rest. A top-down game needs the
+ * camera stated first and stated hard: the floor plan is the subject, and the walls are
+ * seen from above rather than in elevation.
+ */
 const ROOM_TAIL =
-  "top-down game room, low contrast, muted, background layer readability priority, " +
+  "top-down overhead view looking straight down, floor plan seen from above, " +
+  "orthographic bird's eye view, no horizon, no perspective, no vanishing point, " +
+  "game map tile art, low contrast, muted, background layer readability priority, " +
   "floors clearly distinct from walls at a glance";
 
 function seedFor(id: string): number {
@@ -91,12 +101,16 @@ export async function backdropsCommand(
         // this account's live catalogue — the published style list is wider than what a
         // given key can actually reach, which is why assertRequest checks the catalogue
         // rather than a hardcoded name.
-        prompt_style: "rd_plus__environment",
+        // `topdown_map` rather than `environment`: the latter draws scenes in elevation.
+        prompt_style: "rd_plus__topdown_map",
         width: wide ? 320 : room.width * room.tileSize,
         height: wide ? 180 : room.height * room.tileSize,
         num_images: 1,
         seed: seedFor(room.id),
-        bypass_prompt_expansion: false,
+        // Off. The expander rewrites the prompt per call, which both loses the camera
+        // instruction and makes two rooms of the same dream disagree about what the
+        // style words meant.
+        bypass_prompt_expansion: true,
       },
     };
   });
@@ -123,7 +137,22 @@ export async function backdropsCommand(
   for (const job of plan.jobs) {
     const room = rooms.find((candidate) => candidate.id === job.key)!;
     process.stdout.write(`  ${room.id} … `);
-    const result = await client.generate(job.request);
+    // A submit whose response is lost was still accepted *and charged*. Resubmitting
+    // pays twice — which is exactly what happened when a command timeout killed this
+    // very loop mid-flight. Submit without retries, then recover through the task list.
+    let result;
+    try {
+      const accepted = await client.submit(job.request);
+      result = await client.poll(accepted.task_id);
+    } catch (error) {
+      const recent = await client.listTasks(10);
+      const orphan = recent.find(
+        (task) => task.status === "succeeded" || task.status === "running",
+      );
+      if (!orphan) throw error;
+      warn(`submission response lost — recovering task ${orphan.task_id}`);
+      result = await client.poll(orphan.task_id);
+    }
     spent += result.balance_cost;
     const [raw] = await client.images(result);
     if (!raw) {

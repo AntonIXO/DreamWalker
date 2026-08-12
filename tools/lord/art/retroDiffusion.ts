@@ -258,10 +258,14 @@ export class RetroDiffusionClient {
 
     const style = (await this.styles()).get(request.prompt_style);
     if (!style) {
-      if (options.force) return;
-      throw new Error(
-        `Retro Diffusion style ${request.prompt_style} is not in the live catalogue`,
+      // Not fatal. The selector may return internal ids for some families (rd_fast comes
+      // back as `default:rd_flux`), and the API accepts *both* forms — so a style missing
+      // from the catalogue is unverifiable, not invalid. `check_cost` is the free way to
+      // find out for certain, and the caller runs it next anyway.
+      console.warn(
+        `[rd] ${request.prompt_style} is not in the live catalogue — limits unverified`,
       );
+      return;
     }
     const complain = (
       what: string,

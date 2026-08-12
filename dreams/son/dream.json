@@ -131,7 +131,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         },
         {
           "id": "chuzhie-shtany-na-polu",
@@ -896,7 +897,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         },
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
@@ -1475,7 +1477,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         },
         {
           "id": "chainik-kotoryi-uzhe-kipel",
@@ -2057,7 +2060,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         },
         {
           "id": "dyrka-v-zabore",
@@ -2555,7 +2559,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         },
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
@@ -3134,7 +3139,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         }
       ],
       "entries": [
@@ -3710,7 +3716,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": null
         },
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
