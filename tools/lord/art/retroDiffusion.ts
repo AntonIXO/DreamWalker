@@ -85,6 +85,25 @@ const STATUS_KEY: Record<string, string | null> = {
 /** Thrown for a request the server will reject anyway. Never retried. */
 class NonRetryable extends Error {}
 
+/**
+ * The server answered, so the job was **not** accepted and **not** charged.
+ *
+ * This distinction is the whole safety model of `submit`. A 429 or a 400 is an answer:
+ * nothing was created, so resubmitting is free and correct. A *transport* failure — the
+ * socket dying after the request went out — is the ambiguous one, because the job may
+ * have been accepted and billed before the response was lost. Only that case may not be
+ * retried, and only that case justifies going looking for an orphaned task.
+ */
+export class RejectedBeforeCharge extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+    this.name = "RejectedBeforeCharge";
+  }
+}
+
 export interface RetroInferenceResult {
   request_id?: string;
   balance_cost: number;
@@ -177,6 +196,10 @@ export class RetroDiffusionClient {
         if (response.status !== 429 && response.status < 500) {
           throw new NonRetryable(message);
         }
+        // Rate limited on a no-retry call: say so precisely, so the caller can resubmit
+        // rather than assume a lost response and go hunting for someone else's task.
+        if (retries === 1)
+          throw new RejectedBeforeCharge(message, response.status);
         last = new Error(message);
         const retryAfter = Number(response.headers.get("retry-after") ?? 0);
         const delay = retryAfter > 0 ? retryAfter * 1000 : 750 * 2 ** attempt;
@@ -304,6 +327,14 @@ export class RetroDiffusionClient {
    *
    * If this throws, the job may or may not have been accepted and charged. The caller
    * must not resubmit; it should call `listTasks` and match on `created_at`.
+   */
+  /**
+   * Submit a job and return its id, **without retrying**.
+   *
+   * If this throws `RejectedBeforeCharge` the server refused it and nothing was created —
+   * wait and submit again. Any *other* throw is ambiguous: the job may have been accepted
+   * and charged before the response was lost, so the caller must not resubmit and should
+   * look for the orphan with `listTasks` instead.
    */
   async submit(
     request: RetroInferenceRequest,

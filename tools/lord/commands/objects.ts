@@ -22,11 +22,38 @@ import { join } from "node:path";
 
 import type { DreamRoom, RoomHotspot } from "../../../src/shared/room";
 import { assertAffordable, describePlan, priceBatch } from "../art/pricing";
-import { RetroDiffusionClient } from "../art/retroDiffusion";
+import {
+  RejectedBeforeCharge,
+  RetroDiffusionClient,
+  type RetroInferenceRequest,
+} from "../art/retroDiffusion";
 import { loadRoomFiles } from "../content/files";
 import { dreamDir, loadDraft } from "../project";
 import { heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
+
+/**
+ * Submit, waiting out a rate limit rather than treating it as a lost response.
+ *
+ * This is the bug that broke the first run. `submit` has retries disabled so an
+ * ambiguous transport failure cannot be paid for twice — but a 429 is not ambiguous, and
+ * six of seven batches died on one. Worse, each was then handed to "recovery", which
+ * found the *first* batch's finished task and reused its art six times.
+ */
+async function submitWithBackoff(
+  client: RetroDiffusionClient,
+  request: RetroInferenceRequest,
+) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const accepted = await client.submit(request);
+      return await client.poll(accepted.task_id);
+    } catch (error) {
+      if (!(error instanceof RejectedBeforeCharge) || attempt >= 4) throw error;
+      await new Promise((r) => setTimeout(r, 2000 * 2 ** attempt));
+    }
+  }
+}
 
 /** Sixteen to a call, because sixteen cost the same as one. */
 const BATCH = 16;
@@ -135,6 +162,7 @@ export async function objectsCommand(
   await mkdir(assetDir, { recursive: true });
   const roomDir = join(dir, "content", "rooms");
   const touched = new Set<DreamRoom>();
+  const startBalance = plan.balanceUsd;
   let spent = 0;
 
   for (const [index, job] of plan.jobs.entries()) {
@@ -146,9 +174,9 @@ export async function objectsCommand(
     let result;
     const submittedAt = Date.now();
     try {
-      const accepted = await client.submit(job.request);
-      result = await client.poll(accepted.task_id);
+      result = await submitWithBackoff(client, job.request);
     } catch (error) {
+      if (error instanceof RejectedBeforeCharge) throw error;
       // DO NOT "recover" by taking the newest succeeded task. An earlier version did
       // exactly that and silently reused one batch's output for four later batches —
       // seven objects ended up pointing at the same picture and nothing failed. A task
@@ -200,8 +228,13 @@ export async function objectsCommand(
     );
   }
 
+  // Measured against the balance rather than summed from results: a result that came
+  // back from recovery is a job that was already paid for, and adding its cost again
+  // reports a loss that never happened. The first run claimed $0.49 and cost $0.07.
   const { balance } = await client.credits();
   console.log();
-  ok(`spent $${spent.toFixed(3)} — $${balance.toFixed(3)} left`);
+  ok(
+    `spent $${(startBalance - balance).toFixed(3)} (${spent.toFixed(3)} reported by jobs) — $${balance.toFixed(3)} left`,
+  );
   note(`Next: bun run lord build ${slug}`);
 }
