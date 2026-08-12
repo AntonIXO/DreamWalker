@@ -194,21 +194,33 @@ const patchSchema = z.discriminatedUnion("kind", [
     toFigureId: z.string(),
     reason: z.string().max(300),
   }),
+  // §4.1 — «комнаты соединяются без логики». Where an object throws you is the most
+  // in-genre thing the sleeper can change, and the object itself stays where it was.
   z.object({
-    kind: z.literal("retileRoom"),
+    kind: z.literal("relink"),
     roomId: z.string(),
+    hotspotId: z.string(),
+    toRoomId: z.string(),
+    reason: z.string().max(300),
+  }),
+  // §13's halls rebuild «как камеры в Portal 2». Only masks the Lord authored, so the
+  // sleeper cannot produce a room nobody can cross.
+  z.object({
+    kind: z.literal("shiftWalls"),
+    roomId: z.string(),
+    variantId: z.string(),
     reason: z.string().max(300),
   }),
   z.object({
-    kind: z.literal("swapRooms"),
-    aRoomId: z.string(),
-    bRoomId: z.string(),
+    kind: z.literal("closeHotspot"),
+    roomId: z.string(),
+    hotspotId: z.string(),
     reason: z.string().max(300),
   }),
   z.object({
-    kind: z.literal("growTerrain"),
+    kind: z.literal("openHotspot"),
     roomId: z.string(),
-    terrain: z.enum(["water", "tallGrass", "sand", "wood", "flowers"]),
+    hotspotId: z.string(),
     reason: z.string().max(300),
   }),
 ]);
@@ -419,7 +431,8 @@ function populationSlots(artifact: DreamArtifact): {
   figures: FigureSlot[];
   interests: InterestSlot[];
 } {
-  const placeRooms = artifact.map.rooms.filter((room) => room.kind === "room");
+  // Meta-spaces hold nobody and nothing: «ходить можно, разговаривать не с кем».
+  const placeRooms = artifact.rooms.filter((room) => room.kind === "place");
   const figures: FigureSlot[] = artifact.figures.map((figure) => ({
     id: figure.id,
     homeRoomId: figure.roomId,
@@ -428,29 +441,19 @@ function populationSlots(artifact: DreamArtifact): {
     authoredShardId: figure.holdsShardId,
   }));
 
-  const interestRooms = [
-    ...artifact.map.graph.nodes
-      .map((node) => artifact.map.rooms.find((room) => room.id === node.id))
-      .filter((room): room is DreamArtifact["map"]["rooms"][number] =>
-        Boolean(room),
-      ),
-    ...placeRooms.filter((room) => room.region === "interior"),
-  ];
-  const uniqueRooms = [
-    ...new Map(interestRooms.map((room) => [room.id, room])).values(),
-  ];
+  const uniqueRooms = placeRooms;
   const fallbackRoomIds = uniqueRooms.map((room) => room.id);
-  const authoredClueRooms = artifact.content.chambers
-    .filter((chamber) => chamber.tags.includes("clue-compatible"))
-    .flatMap((chamber) => chamber.eligibleRoomIds)
-    .filter((roomId) => placeRooms.some((room) => room.id === roomId));
+  // The bible names the room each of the six words belongs in, so a room that says it
+  // can hold a clue is honoured before anything is spread round-robin.
+  const authoredClueRooms = placeRooms
+    .filter((room) => room.tags.includes("clue-compatible"))
+    .map((room) => room.id);
   const clueRooms =
     authoredClueRooms.length > 0 ? authoredClueRooms : fallbackRoomIds;
   const clues: InterestSlot[] = artifact.content.clues.map((clue, index) => ({
     id: `clue-interest-${clue.id}`,
     roomId:
-      clueRooms[index % Math.max(1, clueRooms.length)] ??
-      artifact.map.graph.startId,
+      clueRooms[index % Math.max(1, clueRooms.length)] ?? artifact.spawn.roomId,
     clueId: clue.id,
     sensorySeed: clue.sensorySeed,
   }));
@@ -561,21 +564,16 @@ function buildPopulation(
     };
   });
 
+  // A room's own authored prose beats anything the model proposes for it: the Lord
+  // wrote the room, the model is only filling gaps.
   const roomMoods: Record<string, string> = {};
-  const activeChambers = artifact.content.chambers.slice(
-    0,
-    artifact.content.activeChamberCount,
-  );
-  for (const room of artifact.map.rooms.filter(
-    (candidate) => candidate.kind === "room",
-  )) {
-    const chamber = activeChambers.find((candidate) =>
-      candidate.eligibleRoomIds.includes(room.id),
-    );
-    roomMoods[room.id] = chamber
-      ? `${chamber.atmosphere} ${chamber.personality}`.slice(0, 140)
-      : proposal?.roomMoods[room.id]?.trim().slice(0, 140) ||
-        `${room.name}: воздух кажется чуть тяжелее, чем должен.`;
+  for (const room of artifact.rooms) {
+    const authored = `${room.atmosphere} ${room.personality}`.trim();
+    roomMoods[room.id] =
+      authored.length > 1
+        ? authored.slice(0, 140)
+        : proposal?.roomMoods[room.id]?.trim().slice(0, 140) ||
+          `${room.name}: воздух кажется чуть тяжелее, чем должен.`;
   }
   return { figures, interests, roomMoods, source };
 }
@@ -804,13 +802,13 @@ export class AgentRuntime {
           `Жанровый контракт: ${this.artifact.genreContract}`,
           `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
           `Комнаты, которыми можно пользоваться:\n${json(
-            this.artifact.map.rooms
-              .filter((room) => room.kind === "room")
+            this.artifact.rooms
+              .filter((room) => room.kind === "place")
               .map((room) => ({
                 id: room.id,
                 name: room.name,
-                region: room.region,
-                accessLevel: room.accessLevel,
+                tags: room.tags,
+                atmosphere: room.atmosphere,
               })),
           )}`,
           `Верни профиль для каждого фиксированного слота фигуры. Не меняй id:\n${json(
@@ -1084,7 +1082,20 @@ export class AgentRuntime {
           `Разговоры этого цикла:\n${json(request.transcripts)}`,
           `Уже найденные зацепки: ${request.knownShardIds.join(", ") || "нет"}`,
           `Текущее состояние мира:\n${json(request.world)}`,
-          `Авторский каталог комнат (новые придумывать нельзя):\n${json(this.artifact.content.chambers)}`,
+          `Авторский каталог комнат (новые придумывать нельзя):\n${json(
+            this.artifact.rooms.map((room) => ({
+              id: room.id,
+              name: room.name,
+              kind: room.kind,
+              tags: room.tags,
+              atmosphere: room.atmosphere,
+              // Only these can be shifted or rewired, so the model sees its own options.
+              variants: Object.keys(room.cellVariants),
+              links: room.hotspots
+                .filter((hotspot) => hotspot.link)
+                .map((hotspot) => hotspot.id),
+            })),
+          )}`,
           `Допустимые seed-зацепки:\n${json(this.artifact.shards)}`,
         ].join("\n\n"),
         signal,
@@ -1134,11 +1145,12 @@ export class AgentRuntime {
             );
           case "relocateShard":
             return shards.has(patch.shardId) && figures.has(patch.toFigureId);
-          case "retileRoom":
-          case "growTerrain":
+          case "relink":
+            return rooms.has(patch.roomId) && rooms.has(patch.toRoomId);
+          case "shiftWalls":
+          case "closeHotspot":
+          case "openHotspot":
             return rooms.has(patch.roomId);
-          case "swapRooms":
-            return rooms.has(patch.aRoomId) && rooms.has(patch.bRoomId);
         }
       })
       .slice(0, this.artifact.heartbeat.maxPatchesPerBeat);

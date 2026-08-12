@@ -15,7 +15,19 @@
 
 import type { Container } from "pixi.js";
 
-import type { Rect, Room } from "../../shared/dream";
+import type { Rect } from "../../shared/dream";
+
+/**
+ * What the camera needs to frame something.
+ *
+ * Format 3 passed a `Room`, which carried a rect inside one shared grid. An authored
+ * room is its own coordinate space starting at (0, 0), so its size is the whole story.
+ */
+export interface FramedRoom {
+  id: string;
+  width: number;
+  height: number;
+}
 
 export interface CameraOptions {
   /** Whole-number zoom. Overridden at runtime by `fitZoom` so a room is never cropped. */
@@ -69,24 +81,6 @@ export function fitZoom(
       Math.min(viewW / (tilesW * tileSize), viewH / (tilesH * tileSize)),
     ),
   );
-}
-
-/**
- * How far south the follow camera may go.
- *
- * Interiors share the same tile grid, packed into a band under the country. The follow
- * camera must stop at that band — otherwise the south treeline shows kitchens. Framing
- * (`frame`) still centres an interior without this clamp.
- */
-export function outdoorHeight(
-  rooms: readonly Room[],
-  worldHeight: number,
-): number {
-  let height = worldHeight;
-  for (const room of rooms) {
-    if (room.region === "interior") height = Math.min(height, room.rect.y);
-  }
-  return height;
 }
 
 /** Smoothstep. Eases both ends, so the slide neither jerks nor drifts. */
@@ -266,14 +260,14 @@ export class Camera {
    * Frame a whole region. Kept for warps, where a hard cut is right — stepping through a
    * door in a Game Boy game does not pan, it changes scene.
    */
-  frame(room: Room, immediate = false): void {
+  frame(room: FramedRoom, immediate = false): void {
     // Called every frame while indoors, so re-framing the room already framed has to be a
     // no-op — otherwise the transition restarts each tick and the camera never arrives.
     const nextZoom = fitZoom(
       this.viewWidth,
       this.viewHeight,
-      room.rect.w,
-      room.rect.h,
+      room.width,
+      room.height,
       this.tileSize,
     );
     if (
@@ -286,8 +280,8 @@ export class Camera {
     // Mark framed *before* setZoom so the new scale centres without the world clamp.
     this.framedRoomId = room.id;
     this.setZoom(nextZoom);
-    const centreX = (room.rect.x + room.rect.w / 2) * this.tileSize;
-    const centreY = (room.rect.y + room.rect.h / 2) * this.tileSize;
+    const centreX = (room.width / 2) * this.tileSize;
+    const centreY = (room.height / 2) * this.tileSize;
 
     if (immediate) {
       const target = this.centre(centreX, centreY);

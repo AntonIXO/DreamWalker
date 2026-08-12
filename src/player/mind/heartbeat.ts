@@ -5,10 +5,10 @@
  */
 
 import type { CycleExitResult } from "../../shared/ai";
-import type { HeartbeatConfig, Rect } from "../../shared/dream";
+import type { HeartbeatConfig } from "../../shared/dream";
 import {
   applyPatch,
-  patchArea,
+  patchTouches,
   type MapPatch,
   type PatchResult,
 } from "../game/patch";
@@ -16,13 +16,16 @@ import type { WorldState } from "../game/world";
 import type { ObservationLog } from "./observation";
 import type { DreamMind } from "./types";
 
-export type ViewportSource = () => Rect;
-
-function overlaps(a: Rect, b: Rect): boolean {
-  return (
-    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
-  );
-}
+/**
+ * The room the sanitar is standing in.
+ *
+ * §6's rule is that the dream never rearranges what the player can see. Format 3
+ * approximated that with the camera's visible tile rectangle, because rooms were
+ * rectangles inside one grid. With discrete rooms the rule is literal: never patch the
+ * room they are in. Read *after* the model's await — a turn takes seconds and the
+ * sanitar keeps walking.
+ */
+export type ViewportSource = () => string;
 
 export interface BeatEntry {
   at: number;
@@ -125,8 +128,8 @@ export class Heartbeat {
         continue;
       }
 
-      const area = patchArea(patch, this.world);
-      if (protectViewport && area && overlaps(area, view)) {
+      const touched = patchTouches(patch, this.world);
+      if (protectViewport && touched.includes(view)) {
         entries.push({
           at: observation.elapsedSeconds,
           patch,

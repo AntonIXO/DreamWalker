@@ -29,7 +29,11 @@ import {
   type DreamArtifact,
 } from "../../../src/shared/dream";
 import { PUBLIC_DREAM_DIR, dreamDir, loadDraft, statusOf } from "../project";
-import { loadContentFiles } from "../content/files";
+import {
+  loadContentFiles,
+  loadRoomFiles,
+  loadRoomSettings,
+} from "../content/files";
 import { color, heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
 
@@ -48,8 +52,10 @@ export async function buildCommand(
       `"${slug}" is not finished:\n    ${status.missing.map((m) => `bun run ${m}`).join("\n    ")}`,
     );
   }
-  if (!draft.map || !draft.secretHash)
-    throw new Error("draft is missing its map or secret");
+  if (!draft.secretHash) throw new Error("draft is missing its secret");
+  if (!draft.spawn || !draft.finaleRoomId) {
+    throw new Error("draft is missing its spawn or finale room");
+  }
 
   const dir = dreamDir(slug);
 
@@ -58,10 +64,13 @@ export async function buildCommand(
   const manifest = validateAtlasManifest(
     JSON.parse(await readFile(join(dir, "atlas.json"), "utf8")),
   );
+  draft.rooms = await loadRoomFiles(slug);
+  const settings = await loadRoomSettings(slug);
+  draft.spawn = settings.spawn ?? draft.spawn;
+  draft.finaleRoomId = settings.finaleRoomId ?? draft.finaleRoomId;
   draft.content = await loadContentFiles(draft);
 
   const missingRoles: string[] = [];
-  for (const room of draft.map.rooms) void room;
   for (const figure of draft.figures) {
     const prefix = `figure_${figure.archetypeId}`;
     if (!Object.keys(manifest.frames).some((name) => name.startsWith(prefix))) {
@@ -97,23 +106,21 @@ export async function buildCommand(
       }
     }
   }
-  for (const chamber of draft.content.chambers) {
+  for (const room of draft.rooms) {
     for (const role of [
-      chamber.graphics.floorRole,
-      chamber.graphics.wallRole,
-      chamber.graphics.propRole,
+      room.graphics.floorRole,
+      room.graphics.wallRole,
+      room.graphics.propRole,
     ]) {
       if (!(role in manifest.roleFrames)) {
-        throw new Error(
-          `chamber ${chamber.id} names missing atlas role ${role}`,
-        );
+        throw new Error(`room ${room.id} names missing atlas role ${role}`);
       }
     }
-    const backdrop = chamber.graphics.backdropImage;
+    const backdrop = room.graphics.backdropImage;
     if (backdrop) {
       if (!backdrop.startsWith("assets/") || backdrop.includes("..")) {
         throw new Error(
-          `chamber ${chamber.id} backdropImage must be inside published assets/`,
+          `room ${room.id} backdropImage must be inside published assets/`,
         );
       }
       try {
@@ -122,7 +129,7 @@ export async function buildCommand(
         );
       } catch {
         throw new Error(
-          `chamber ${chamber.id} backdrop source is missing: content/${backdrop}`,
+          `room ${room.id} backdrop source is missing: content/${backdrop}`,
         );
       }
     }
@@ -143,7 +150,9 @@ export async function buildCommand(
     shards: draft.shards,
     palette: draft.palette,
     style: draft.style,
-    map: draft.map,
+    rooms: draft.rooms,
+    spawn: draft.spawn,
+    finaleRoomId: draft.finaleRoomId,
     figures: draft.figures,
     content: draft.content,
     cycle: draft.cycle,
@@ -196,7 +205,7 @@ export async function buildCommand(
   ok(`dreams/${slug}/dream.json (${sizeKb} KB)`);
   ok("public/dream/ updated — the dev server will pick it up");
   note(
-    `${draft.map.rooms.length} cells · ${draft.map.doors.length} doors · ` +
+    `${draft.rooms.length} rooms · ${draft.rooms.reduce((n, r) => n + r.doors.length, 0)} doors · ` +
       `${draft.figures.length} figures · ${draft.shards.length} hooks`,
   );
   note(

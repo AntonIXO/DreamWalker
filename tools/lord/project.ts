@@ -20,12 +20,12 @@ import { fileURLToPath } from "node:url";
 import {
   DREAM_FORMAT_VERSION,
   type CycleConfig,
-  type DreamMap,
   type FigurePlacement,
   type HeartbeatConfig,
   type Palette,
   type Shard,
 } from "../../src/shared/dream";
+import type { DreamRoom, DreamSpawn } from "../../src/shared/room";
 import {
   fallbackPortraits,
   type CharacterDefinition,
@@ -69,8 +69,17 @@ export interface DreamDraft {
   palette: Palette;
   /** §7.1 measured off the reference image, or a flat default. */
   style: StyleProfile;
-  /** Null until `lord layout` has been accepted. */
-  map: DreamMap | null;
+  /**
+   * Every authored room. Empty until `lord rooms` has scaffolded them.
+   *
+   * Rooms are hand-drawn, not generated, so they live in `content/rooms/*.json` and are
+   * loaded back into the draft on every command. Nothing re-derives them from a seed.
+   */
+  rooms: DreamRoom[];
+  /** Null until at least one room exists. */
+  spawn: DreamSpawn | null;
+  /** The room the Eye is in. Null until chosen. */
+  finaleRoomId: string | null;
   figures: FigurePlacement[];
   content: DreamContent;
   cycle: CycleConfig;
@@ -80,7 +89,11 @@ export interface DreamDraft {
   provenance: Provenance;
 }
 
-export const DEFAULT_CYCLE: CycleConfig = { durationMs: 8 * 60 * 1000 };
+export const DEFAULT_CYCLE: CycleConfig = {
+  durationMs: 8 * 60 * 1000,
+  // `endings.md` sets four cycles before «Не сложилось». Null while a dream is unfinished.
+  maxCycles: null,
+};
 
 export const DEFAULT_HEARTBEAT: HeartbeatConfig = {
   // Long enough that the world feels stable, short enough that you notice it is not.
@@ -158,6 +171,10 @@ export async function loadDraft(slug: string): Promise<DreamDraft> {
 function migrate(draft: DreamDraft): DreamDraft {
   if (!draft.style) draft.style = defaultStyle(draft.palette.colors.length);
   draft.provenance.reference ??= null;
+  draft.rooms ??= [];
+  draft.spawn ??= null;
+  draft.finaleRoomId ??= null;
+  draft.cycle.maxCycles ??= null;
   draft.content ??= fallbackContent(draft);
   draft.format = DREAM_FORMAT_VERSION;
   return draft;
@@ -197,37 +214,10 @@ function characterFromPlacement(figure: FigurePlacement): CharacterDefinition {
 
 /** A usable migration/default; `lord content` writes the same records as separate files. */
 export function fallbackContent(
-  draft: Pick<DreamDraft, "map" | "figures" | "secretHash">,
+  draft: Pick<DreamDraft, "figures" | "secretHash">,
 ): DreamContent {
-  const rooms =
-    draft.map?.rooms.filter((room) => room.kind === "room").slice(0, 12) ?? [];
   return {
     characters: draft.figures.map(characterFromPlacement),
-    chambers: rooms.map((room, index) => ({
-      id: `chamber-${room.id}`,
-      name: room.name,
-      description:
-        "Временная авторская камера. Замените описание в content/rooms.",
-      atmosphere: "Светло, клинически и неуместно подробно.",
-      personality:
-        "Комната притворяется обычным местом, но материалы не сходятся.",
-      tags: [room.region, index < 6 ? "clue-compatible" : "ambient"],
-      eligibleRoomIds: [room.id],
-      unique: true,
-      graphics: {
-        floorRole: room.region === "interior" ? "floor" : "grass",
-        wallRole: room.region === "interior" ? "wall" : "tree",
-        propRole: "prop",
-        backdropFrame: null,
-        backdropImage: null,
-        glitchPreset: index % 3 === 0 ? "split" : "double-edge",
-      },
-      anchors: [
-        { id: `${room.id}-figure`, kind: "figure", x: 0.48, y: 0.55 },
-        { id: `${room.id}-object`, kind: "object", x: 0.68, y: 0.58 },
-        { id: `${room.id}-clue`, kind: "clue", x: 0.3, y: 0.62 },
-      ],
-    })),
     clues: Array.from({ length: 6 }, (_, index) => ({
       id: `clue-${index + 1}`,
       sensorySeed:
@@ -244,7 +234,6 @@ export function fallbackContent(
       wordlist: "english",
       knownSlots: PLACEHOLDER_SLOTS,
     },
-    activeChamberCount: Math.max(1, Math.min(8, rooms.length || 1)),
   };
 }
 
@@ -292,7 +281,7 @@ export async function sealSecret(plaintext: string): Promise<string> {
 /** What is done and what is not, for the CLI to report and for `build` to gate on. */
 export interface DraftStatus {
   hasSecret: boolean;
-  hasMap: boolean;
+  hasRooms: boolean;
   hasArt: boolean;
   hasFigures: boolean;
   hasContent: boolean;
@@ -302,12 +291,12 @@ export interface DraftStatus {
 
 export async function statusOf(draft: DreamDraft): Promise<DraftStatus> {
   const hasSecret = Boolean(draft.secretHash);
-  const hasMap = Boolean(draft.map);
+  const hasRooms = draft.rooms.length > 0 && draft.spawn !== null;
   const hasArt = await exists(join(dreamDir(draft.slug), "atlas.json"));
   const hasFigures = draft.figures.length > 0;
   const hasContent =
-    draft.content.chambers.length > 0 &&
     draft.content.characters.length === draft.figures.length &&
+    draft.figures.length > 0 &&
     draft.content.clues.length === 6;
   const hasMnemonic =
     draft.content.mnemonic.hash !== "0".repeat(64) &&
@@ -317,7 +306,7 @@ export async function statusOf(draft: DreamDraft): Promise<DraftStatus> {
 
   const missing: string[] = [];
   if (!hasSecret) missing.push(`lord secret ${draft.slug}`);
-  if (!hasMap) missing.push(`lord layout ${draft.slug}`);
+  if (!hasRooms) missing.push(`lord rooms ${draft.slug}`);
   if (!hasArt) missing.push(`lord art ${draft.slug}`);
   if (!hasFigures) missing.push(`lord figures ${draft.slug}`);
   if (!hasContent) missing.push(`lord content ${draft.slug}`);
@@ -325,7 +314,7 @@ export async function statusOf(draft: DreamDraft): Promise<DraftStatus> {
 
   return {
     hasSecret,
-    hasMap,
+    hasRooms,
     hasArt,
     hasFigures,
     hasContent,

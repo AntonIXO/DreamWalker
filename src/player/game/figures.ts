@@ -1,6 +1,5 @@
-import type { Rect } from "../../shared/dream";
+import { cellAt, isSolidCell, rectBlocks } from "../../shared/roomGrid";
 import { makeRng } from "../../shared/rng";
-import { isFloorTile } from "../../shared/tilecodes";
 import { applyPatch } from "./patch";
 import type { FigureState, WorldState } from "./world";
 
@@ -10,17 +9,11 @@ function phaseAt(progress: number): FigureState["agendaPhase"] {
   return "late";
 }
 
-function overlaps(a: Rect, b: Rect): boolean {
-  return (
-    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
-  );
-}
-
 function scheduleFigure(
   world: WorldState,
   figure: FigureState,
   phase: FigureState["agendaPhase"],
-  visible: Rect,
+  visibleRoomId: string,
 ): void {
   if (figure.agendaPhase === phase) return;
   const stop = figure.agenda.find((candidate) => candidate.phase === phase);
@@ -29,15 +22,9 @@ function scheduleFigure(
     return;
   }
   if (stop.roomId !== figure.roomId) {
-    const from = world.roomById.get(figure.roomId);
-    const to = world.roomById.get(stop.roomId);
-    // A schedule is seen as an absence and a later arrival, never teleportation.
-    if (
-      !from ||
-      !to ||
-      overlaps(from.rect, visible) ||
-      overlaps(to.rect, visible)
-    )
+    // A schedule is seen as an absence and a later arrival, never teleportation. With
+    // discrete rooms that is simply "not the room the sanitar is standing in".
+    if (figure.roomId === visibleRoomId || stop.roomId === visibleRoomId)
       return;
     const moved = applyPatch(world, {
       kind: "moveFigure",
@@ -63,14 +50,15 @@ function beginStep(world: WorldState, figure: FigureState): void {
     { x, y: y + 1, facing: "s" as const },
     { x, y: y - 1, facing: "n" as const },
   ].filter((candidate) => {
-    const roomIndex = world.roomIndex[candidate.y * world.width + candidate.x];
-    const room = roomIndex === undefined ? undefined : world.rooms[roomIndex];
-    return (
-      room?.id === figure.roomId &&
-      isFloorTile(world.tiles[candidate.y * world.width + candidate.x] ?? 0) &&
-      !world.interests.some(
-        (interest) => interest.x === candidate.x && interest.y === candidate.y,
-      )
+    const room = world.roomById.get(figure.roomId);
+    if (!room) return false;
+    if (isSolidCell(cellAt(room, candidate.x, candidate.y))) return false;
+    if (rectBlocks(room.props, candidate.x, candidate.y)) return false;
+    return !world.interests.some(
+      (interest) =>
+        interest.roomId === room.id &&
+        Math.round(interest.x) === candidate.x &&
+        Math.round(interest.y) === candidate.y,
     );
   });
   const rng = makeRng(
@@ -122,11 +110,11 @@ export function updateFigures(
   cycleProgress: number,
   deltaSeconds: number,
   frozenFigureId: string | null,
-  visible: Rect,
+  visibleRoomId: string,
 ): void {
   const phase = phaseAt(cycleProgress);
   for (const figure of world.figures) {
-    scheduleFigure(world, figure, phase, visible);
+    scheduleFigure(world, figure, phase, visibleRoomId);
     if (figure.id === frozenFigureId) {
       figure.walking = false;
       continue;

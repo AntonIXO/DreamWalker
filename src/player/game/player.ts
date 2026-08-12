@@ -62,7 +62,11 @@ export function placeAtEntry(
 export function updatePlayer(
   player: PlayerState,
   room: RoomState,
-  world: { keysHeld: Set<string>; leversPulled: Set<string>; puzzlesSolved: Set<string> },
+  world: {
+    keysHeld: Set<string>;
+    leversPulled: Set<string>;
+    puzzlesSolved: Set<string>;
+  },
   axis: { x: number; y: number },
   deltaSeconds: number,
 ): void {

@@ -1,0 +1,498 @@
+{
+  "format": 4,
+  "slug": "tiny",
+  "title": "Крошечный сон",
+  "genreContract": "Сон, где всё узнаваемо и ничего не сходится.",
+  "styleWords": [
+    "мотылёк",
+    "витраж"
+  ],
+  "secretHash": "8950abfda7b727630760dd35bcf5c3daa7631aff223a90f7728c0d2521dde10c",
+  "shards": [
+    {
+      "id": "shard1",
+      "hint": "Кто-то стучит снизу."
+    }
+  ],
+  "palette": {
+    "name": "fixture",
+    "colors": [
+      "#0b0a1f",
+      "#2a2740",
+      "#343050",
+      "#181630",
+      "#4a4468",
+      "#5a5478",
+      "#6a6488",
+      "#7a7498",
+      "#c9a24a",
+      "#a05050",
+      "#402030",
+      "#5cc6d1",
+      "#8a84a8",
+      "#c98ade",
+      "#e6e0d0",
+      "#fdf4c5"
+    ],
+    "roles": {
+      "background": 0,
+      "floor": 1,
+      "floorAlt": 2,
+      "floorShadow": 3,
+      "threshold": 4,
+      "wall": 5,
+      "wallFace": 6,
+      "wallEdge": 7,
+      "doorOpen": 8,
+      "doorLocked": 9,
+      "doorSealed": 10,
+      "accent": 11,
+      "prop": 12,
+      "figure": 13,
+      "player": 14,
+      "highlight": 15
+    }
+  },
+  "style": {
+    "outlineIndex": 0,
+    "groundIndex": 1,
+    "accentIndex": 11,
+    "ramps": {
+      "ground": [
+        1,
+        2,
+        3
+      ]
+    },
+    "ditherDensity": 0.2
+  },
+  "rooms": [
+    {
+      "id": "a",
+      "name": "Комната А",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 12,
+      "height": 8,
+      "cells": [
+        "############",
+        "#==========#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "############"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "a-crate",
+          "x": 3,
+          "y": 4,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": null,
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "rope",
+          "kind": "link",
+          "x": 2,
+          "y": 4,
+          "reach": 1.5,
+          "prompt": "дёрнуть канат",
+          "link": {
+            "to": "room",
+            "roomId": "m1",
+            "entryId": null
+          },
+          "tonus": {
+            "x": -2,
+            "y": 1
+          },
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        },
+        {
+          "id": "shelf",
+          "kind": "clue",
+          "x": 9,
+          "y": 4,
+          "reach": 1.2,
+          "prompt": "прочитать надпись",
+          "link": null,
+          "tonus": null,
+          "clueId": "clue-1",
+          "action": null,
+          "once": false,
+          "dwellMs": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 6,
+          "y": 6,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "a-to-b",
+          "x": 6,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "b",
+          "toEntryId": "default",
+          "type": "keyLock",
+          "keyId": "key1",
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 4
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 0,
+        "y": 0
+      },
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "",
+      "atmosphere": "",
+      "personality": "",
+      "tags": [
+        "clue-compatible"
+      ],
+      "copy": {}
+    },
+    {
+      "id": "b",
+      "name": "Комната Б",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 12,
+      "height": 8,
+      "cells": [
+        "############",
+        "#==========#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "############"
+      ],
+      "cellVariants": {
+        "shifted": [
+          "############",
+          "#==========#",
+          "#..........#",
+          "#..........#",
+          "#....##...##",
+          "#..........#",
+          "#..........#",
+          "############"
+        ]
+      },
+      "props": [
+        {
+          "id": "b-crate",
+          "x": 3,
+          "y": 4,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": null,
+          "image": null
+        }
+      ],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 6,
+          "y": 6,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "b-to-a",
+          "x": 6,
+          "y": 6,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "a",
+          "toEntryId": "default",
+          "type": "open",
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 4
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": -3,
+        "y": 2
+      },
+      "revisit": {
+        "escalates": true,
+        "note": "Их стало двое."
+      },
+      "meta": null,
+      "description": "",
+      "atmosphere": "",
+      "personality": "",
+      "tags": [],
+      "copy": {}
+    },
+    {
+      "id": "m1",
+      "name": "КОРНИ",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 12,
+      "height": 8,
+      "cells": [
+        "############",
+        "#==========#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "############"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "m1-crate",
+          "x": 3,
+          "y": 4,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": null,
+          "image": null
+        }
+      ],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 6,
+          "y": 6,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/m1.png",
+        "backdropFit": "screen",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "tonus": {
+        "x": 0,
+        "y": 0
+      },
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 8000,
+        "maxMs": 40000,
+        "doublesPrevious": true,
+        "overflow": true
+      },
+      "description": "",
+      "atmosphere": "",
+      "personality": "",
+      "tags": [],
+      "copy": {}
+    }
+  ],
+  "spawn": {
+    "roomId": "a",
+    "entryId": "default"
+  },
+  "finaleRoomId": "b",
+  "figures": [
+    {
+      "id": "figure1",
+      "archetypeId": "orderly",
+      "name": "Санитарка",
+      "roomId": "a",
+      "slotId": "a",
+      "holdsShardId": "shard1"
+    }
+  ],
+  "content": {
+    "characters": [
+      {
+        "id": "figure1",
+        "name": "Санитарка",
+        "archetypeId": "orderly",
+        "personality": "Держится за привычный порядок.",
+        "role": "часть больничного сна",
+        "voice": "говорит коротко и бытово",
+        "desire": "чтобы смена закончилась",
+        "fear": "понять, что рядом чужой",
+        "taboo": "не обсуждает то, что за пределами сна",
+        "initialActivity": "занята привычным делом",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        }
+      }
+    ],
+    "clues": [
+      {
+        "id": "clue-1",
+        "sensorySeed": "Предмет узнаваем по форме.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов"
+      },
+      {
+        "id": "clue-2",
+        "sensorySeed": "Предмет узнаваем по форме.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов"
+      },
+      {
+        "id": "clue-3",
+        "sensorySeed": "Предмет узнаваем по форме.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов"
+      },
+      {
+        "id": "clue-4",
+        "sensorySeed": "Предмет узнаваем по форме.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов"
+      },
+      {
+        "id": "clue-5",
+        "sensorySeed": "Предмет узнаваем по форме.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов"
+      },
+      {
+        "id": "clue-6",
+        "sensorySeed": "Предмет узнаваем по форме.",
+        "placementTags": [
+          "clue-compatible"
+        ],
+        "worldFrame": "prop",
+        "detailFrame": "prop",
+        "worldImage": null,
+        "detailImage": null,
+        "marker": "бирюзовый шов"
+      }
+    ],
+    "mnemonic": {
+      "hash": "c557eec878dfd852ba3f88087c4f350f09c55537ab5e549c3cd14320ec3cef38",
+      "wordlist": "english",
+      "knownSlots": [
+        "abandon",
+        null,
+        "abandon",
+        null,
+        "abandon",
+        null,
+        "abandon",
+        null,
+        "abandon",
+        null,
+        "abandon",
+        null
+      ]
+    }
+  },
+  "cycle": {
+    "durationMs": 480000,
+    "maxCycles": 4
+  },
+  "heartbeat": {
+    "intervalMs": 45000,
+    "callBudgetPerCycle": 12,
+    "maxPatchesPerBeat": 2
+  },
+  "atlas": "atlas.json",
+  "authoredAt": "2026-08-12T00:00:00.000Z"
+}

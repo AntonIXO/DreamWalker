@@ -5,21 +5,25 @@
  * holding which hook, and from then on the sleeping mind may move them. So this command
  * proposes a spread and lets the Lord reroll it — it is not solving anything.
  *
- * Hooks go to rooms that already mean something in the mission: the leverage a lock
- * needs sits in the room the graph called a key, which is what makes the map's shape
- * and the story's shape the same shape.
+ * Two modes, and the roster is the one that matters now:
+ *
+ *   - **roster** — `content/figures.json` lists the cast by hand. Exactly those figures
+ *     are placed, in the rooms they name. This is what a dream with fourteen written
+ *     characters uses, and it is the only mode that can satisfy the validator's 1:1
+ *     figure↔character rule.
+ *   - **proposal** — no roster, so a spread is invented and offered for reroll. Kept for
+ *     a dream that is still being sketched.
  */
 
-import {
-  NodeType,
-  decodeTiles,
-  type FigurePlacement,
-  type Room,
-} from "../../../src/shared/dream";
-import { isFloorTile } from "../../../src/shared/tilecodes";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+import type { FigurePlacement } from "../../../src/shared/dream";
+import type { DreamRoom } from "../../../src/shared/room";
 import { ARCHETYPES } from "../art/silhouettes";
-import { loadDraft, saveDraft } from "../project";
-import { makeRng, randomSeedWord, type Rng } from "../worldgen/rng";
+import { loadRoomFiles } from "../content/files";
+import { dreamDir, loadDraft, saveDraft } from "../project";
+import { makeRng, randomSeedWord, type Rng } from "../rng";
 import {
   color,
   heading,
@@ -41,160 +45,190 @@ const FIGURE_NAMES = [
   "Соседка",
 ];
 
-/** A spot inside the room that is actually floor and not the doorway everyone uses. */
-function standingSpot(
-  room: Room,
-  tiles: Uint8Array,
-  width: number,
-  rng: Rng,
-  taken: Set<string>,
-): { x: number; y: number } | null {
-  const cx = room.rect.x + Math.floor(room.rect.w / 2);
-  const cy = room.rect.y + Math.floor(room.rect.h / 2);
-
-  for (let attempt = 0; attempt < 40; attempt++) {
-    // Start at the middle and widen, so figures gravitate to where you will see them.
-    const spread = 1 + Math.floor(attempt / 8);
-    const x = cx + rng.int(-spread, spread);
-    const y = cy + rng.int(-spread, spread);
-    const key = `${x},${y}`;
-    if (taken.has(key)) continue;
-    if (!isFloorTile(tiles[y * width + x] ?? 0)) continue;
-    taken.add(key);
-    return { x, y };
-  }
-  return null;
+/** One entry of `content/figures.json`. */
+interface RosterEntry {
+  id: string;
+  name: string;
+  roomId: string;
+  slotId?: string;
+  archetypeId?: string;
+  holdsShardId?: string | null;
 }
 
-function propose(
-  draft: Awaited<ReturnType<typeof loadDraft>>,
-  seed: string,
+async function loadRoster(slug: string): Promise<RosterEntry[] | null> {
+  const path = join(dreamDir(slug), "content", "figures.json");
+  try {
+    const parsed = JSON.parse(await readFile(path, "utf8")) as RosterEntry[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/** A named slot in the room that nobody has claimed yet. */
+function freeSlot(
+  room: DreamRoom,
+  taken: Set<string>,
+  rng: Rng,
+): string | null {
+  const free = room.figureSlots.filter(
+    (slot) => !taken.has(`${room.id}:${slot.id}`),
+  );
+  if (free.length === 0) return null;
+  const slot = rng.pick(free);
+  taken.add(`${room.id}:${slot.id}`);
+  return slot.id;
+}
+
+function placeRoster(
+  roster: readonly RosterEntry[],
+  rooms: readonly DreamRoom[],
+  rng: Rng,
 ): FigurePlacement[] {
-  const map = draft.map;
-  if (!map) throw new Error("no layout yet — run `lord layout` first");
-
-  const rng = makeRng(seed);
-  const tiles = decodeTiles(map.tiles, map.width * map.height);
+  const byId = new Map(rooms.map((room) => [room.id, room]));
   const taken = new Set<string>();
-
-  const rooms = map.rooms.filter((r) => r.kind === "room");
-  const keyRooms = rng.shuffle(
-    rooms.filter((r) => r.nodeType === NodeType.KEY),
-  );
-  const otherRooms = rng.shuffle(
-    rooms.filter(
-      (r) =>
-        r.nodeType !== NodeType.KEY &&
-        r.nodeType !== NodeType.START &&
-        r.nodeType !== NodeType.END,
-    ),
-  );
-
-  const hosts = [...keyRooms, ...otherRooms];
   const placements: FigurePlacement[] = [];
-  const names = rng.shuffle(FIGURE_NAMES);
 
-  // One holder per hook first.
-  draft.shards.forEach((shard, i) => {
-    const room = hosts[i];
-    if (!room) return;
-    const spot = standingSpot(room, tiles, map.width, rng, taken);
-    if (!spot) return;
+  for (const entry of roster) {
+    const room = byId.get(entry.roomId);
+    if (!room)
+      throw new Error(
+        `${entry.id} names room ${entry.roomId}, which does not exist`,
+      );
+    // «Ходить можно, разговаривать не с кем» — a meta-space holds nobody.
+    if (room.kind === "meta") {
+      throw new Error(`${entry.id} is placed in the meta-space ${room.id}`);
+    }
+    const slotId =
+      entry.slotId && room.figureSlots.some((slot) => slot.id === entry.slotId)
+        ? (taken.add(`${room.id}:${entry.slotId}`), entry.slotId)
+        : freeSlot(room, taken, rng);
+    if (!slotId) {
+      throw new Error(
+        `${room.id} has no free figure slot for ${entry.id} — add one to its room file`,
+      );
+    }
     placements.push({
-      id: `figure${placements.length + 1}`,
-      archetypeId: ARCHETYPES[placements.length % ARCHETYPES.length]!,
-      name: names[placements.length % names.length]!,
+      id: entry.id,
+      archetypeId: entry.archetypeId ?? ARCHETYPES[0],
+      name: entry.name,
       roomId: room.id,
-      x: spot.x,
-      y: spot.y,
-      holdsShardId: shard.id,
-    });
-  });
-
-  // Then a couple who know nothing, so holding something is not obvious from the map.
-  const ambient = rng.int(1, 3);
-  for (let i = 0; i < ambient; i++) {
-    const room = hosts[draft.shards.length + i];
-    if (!room) break;
-    const spot = standingSpot(room, tiles, map.width, rng, taken);
-    if (!spot) continue;
-    placements.push({
-      id: `figure${placements.length + 1}`,
-      archetypeId: ARCHETYPES[placements.length % ARCHETYPES.length]!,
-      name: names[placements.length % names.length]!,
-      roomId: room.id,
-      x: spot.x,
-      y: spot.y,
-      holdsShardId: null,
+      slotId,
+      holdsShardId: entry.holdsShardId ?? null,
     });
   }
-
   return placements;
 }
 
-function show(
+function proposePlacements(
+  rooms: readonly DreamRoom[],
+  shardIds: readonly string[],
+  rng: Rng,
+): FigurePlacement[] {
+  const places = rooms.filter(
+    (room) => room.kind === "place" && room.figureSlots.length > 0,
+  );
+  if (places.length === 0) return [];
+
+  const taken = new Set<string>();
+  const placements: FigurePlacement[] = [];
+  const push = (roomId: string, holdsShardId: string | null): void => {
+    const room = places.find((candidate) => candidate.id === roomId);
+    if (!room) return;
+    const slotId = freeSlot(room, taken, rng);
+    if (!slotId) return;
+    const index = placements.length;
+    placements.push({
+      id: `figure${index + 1}`,
+      archetypeId: ARCHETYPES[index % ARCHETYPES.length]!,
+      name: FIGURE_NAMES[index % FIGURE_NAMES.length]!,
+      roomId: room.id,
+      slotId,
+      holdsShardId,
+    });
+  };
+
+  // Hooks go somewhere the author already marked as worth visiting; the rest fill in.
+  const clueRooms = places.filter((room) =>
+    room.tags.includes("clue-compatible"),
+  );
+  const preferred = clueRooms.length > 0 ? clueRooms : places;
+  shardIds.forEach((shardId, index) => {
+    push(preferred[index % preferred.length]!.id, shardId);
+  });
+  const ambient = rng.int(1, 3);
+  for (let i = 0; i < ambient; i++) {
+    push(rng.pick(places).id, null);
+  }
+  return placements;
+}
+
+function describe(
   placements: readonly FigurePlacement[],
-  draft: Awaited<ReturnType<typeof loadDraft>>,
+  rooms: readonly DreamRoom[],
 ): void {
-  console.log();
+  const byId = new Map(rooms.map((room) => [room.id, room]));
   for (const figure of placements) {
-    const room = draft.map?.rooms.find((r) => r.id === figure.roomId);
-    const shard = draft.shards.find((s) => s.id === figure.holdsShardId);
-    const holds = shard
-      ? color.yellow(shard.hint)
-      : color.grey("knows nothing");
+    const room = byId.get(figure.roomId);
     console.log(
-      `  ${color.bold(figure.name.padEnd(20))} ${color.grey((room?.name ?? figure.roomId).padEnd(18))} ${holds}`,
+      `  ${color.bold(figure.name.padEnd(22))} ${(room?.name ?? figure.roomId).padEnd(24)} ` +
+        color.grey(
+          `${figure.roomId}:${figure.slotId}` +
+            (figure.holdsShardId ? ` · ${figure.holdsShardId}` : ""),
+        ),
     );
   }
 }
 
 export async function figuresCommand(
-  slug: string | undefined,
+  slug: string | null,
   flags: Flags,
 ): Promise<void> {
   if (!slug) throw new Error("usage: lord figures <slug>");
   const draft = await loadDraft(slug);
-  if (!draft.map)
-    throw new Error(
-      `"${slug}" has no layout yet — run \`lord layout ${slug}\``,
-    );
-  if (draft.shards.length === 0) {
-    note("this dream has no hooks yet; figures will be placed knowing nothing");
+  draft.rooms = await loadRoomFiles(slug);
+  if (draft.rooms.length === 0) {
+    throw new Error(`no rooms yet — run \`bun run lord rooms ${slug}\` first`);
   }
 
+  const roster = await loadRoster(slug);
   heading(`Figures — ${draft.title}`);
 
-  let seed = flags.seed ?? randomSeedWord();
-
-  for (;;) {
-    const placements = propose(draft, seed);
-    show(placements, draft);
-
-    const accept = async (): Promise<void> => {
-      draft.figures = placements;
-      await saveDraft(draft);
-      console.log();
-      ok(`${placements.length} figures placed`);
-      console.log();
-      note(`Next: bun run lord build ${slug}`);
-    };
-
-    if (!isInteractive() || flags.yes) return accept();
-
+  if (roster) {
+    // A written cast is not a proposal, so there is nothing to reroll: place it and stop.
+    const placements = placeRoster(roster, draft.rooms, makeRng("roster"));
+    describe(placements, draft.rooms);
+    draft.figures = placements;
+    await saveDraft(draft);
     console.log();
-    const key = await readOneOf(
-      ["r", "a", "q"],
-      `${color.bold("r")}eroll · ${color.bold("a")}ccept · ${color.bold("q")}uit`,
-    );
-    if (key === "q") {
-      note("nothing written");
-      return;
-    }
-    if (key === "r") {
+    ok(`${placements.length} figures placed from content/figures.json`);
+    note(`Next: bun run lord content ${slug}`);
+    return;
+  }
+
+  const shardIds = draft.shards.map((shard) => shard.id);
+  let seed = String(flags.seed ?? randomSeedWord());
+  for (;;) {
+    const placements = proposePlacements(draft.rooms, shardIds, makeRng(seed));
+    describe(placements, draft.rooms);
+    console.log();
+
+    const answer =
+      flags.yes || !isInteractive()
+        ? "a"
+        : await readOneOf(["r", "a", "q"], "[r]eroll / [a]ccept / [q]uit");
+    if (answer === "q") return;
+    if (answer === "r") {
       seed = randomSeedWord();
       continue;
     }
-    return accept();
+    draft.figures = placements;
+    await saveDraft(draft);
+    ok(`${placements.length} figures placed`);
+    note(
+      `A written cast goes in dreams/${slug}/content/figures.json — one entry per character.`,
+    );
+    note(`Next: bun run lord content ${slug}`);
+    return;
   }
 }

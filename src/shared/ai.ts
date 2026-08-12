@@ -110,9 +110,15 @@ export interface WorldSnapshot {
   rooms: Array<{
     id: string;
     name: string;
-    kind: "room" | "connector";
-    chamberId: string | null;
+    kind: "place" | "meta";
     personality: string | null;
+    /**
+     * How often the sanitar has been here, across cycles. §4.3 — «второй визит хуже
+     * первого». Handing the count to the sleeper lets it write its own escalation
+     * instead of the engine hard-coding one.
+     */
+    visitCount: number;
+    tags: string[];
   }>;
   doors: Array<{
     id: string;
@@ -137,6 +143,8 @@ export interface WorldSnapshot {
     holdsShardId: string | null;
     clueId: string | null;
   }>;
+  /** Which corner of the chart the sanitar is currently in. Sets the register, not the plot. */
+  mood: "upper-dynamic" | "upper-static" | "downer-dynamic" | "downer-static";
 }
 
 export interface DialogueRequestPayload {

@@ -15,14 +15,12 @@
  * What it cannot do is be surprising, which is the entire reason for the model later.
  */
 
-import { NodeType } from "../../shared/dream";
 import { makeRng } from "../../shared/rng";
 import type {
   CycleExitResult,
   ExamineResult,
   FinaleResult,
 } from "../../shared/ai";
-import { TERRAIN_NAMES } from "../../shared/map-patch";
 import type { MapPatch } from "../game/patch";
 import type { WorldState } from "../game/world";
 import type { Observation } from "./observation";
@@ -197,6 +195,17 @@ export class ScriptedMind implements DreamMind {
 
   // --- the heartbeat -----------------------------------------------------
 
+  /** A wall mask the room is not already wearing, or null if the author authored none. */
+  private variantFor(roomId: string | undefined): string | null {
+    if (!roomId) return null;
+    const room = this.world.roomById.get(roomId);
+    if (!room) return null;
+    const options = Object.keys(room.cellVariants).filter(
+      (name) => name !== room.activeVariant,
+    );
+    return options[0] ?? null;
+  }
+
   async mutate(observation: Observation): Promise<CycleExitResult> {
     const patches: MapPatch[] = [];
     const rng = makeRng(
@@ -224,9 +233,9 @@ export class ScriptedMind implements DreamMind {
       const figure = this.world.figures.find((f) => f.id === target);
       const elsewhere = this.world.rooms.filter(
         (room) =>
-          room.kind === "room" &&
+          room.kind === "place" &&
           room.id !== figure?.roomId &&
-          room.nodeType !== NodeType.START &&
+          room.id !== this.world.artifact.spawn.roomId &&
           !observation.visitedRoomIds.includes(room.id),
       );
       const destination = rng.maybePick(elsewhere);
@@ -249,10 +258,12 @@ export class ScriptedMind implements DreamMind {
       )
       .sort((a, b) => b[1] - a[1]);
     const lingeredRoom = lingered[0]?.[0];
-    if (lingeredRoom) {
+    const lingeredVariant = this.variantFor(lingeredRoom);
+    if (lingeredRoom && lingeredVariant) {
       patches.push({
-        kind: "retileRoom",
+        kind: "shiftWalls",
         roomId: lingeredRoom,
+        variantId: lingeredVariant,
         reason: `player spent ${Math.round(observation.dwell[lingeredRoom] ?? 0)}s here`,
       });
     }
@@ -276,24 +287,31 @@ export class ScriptedMind implements DreamMind {
       }
     }
 
-    // 5. Somewhere the player has walked past more than once starts turning into something
-    //    else. §6: the sleeper is not limited to rearranging what the Lord put there — it
-    //    can put in what was never there, and `render/foundry.ts` draws it on the spot.
+    // 5. Something the player has already used starts arriving somewhere else. §4.1 —
+    //    «комнаты соединяются без логики». The rope is still hanging there.
     if (observation.visitedRoomIds.length >= 3 && rng.chance(0.4)) {
-      const elsewhere = rng.maybePick(
+      const rewireable = this.world.rooms.flatMap((room) =>
+        room.id === observation.currentRoomId
+          ? []
+          : room.hotspots
+              .filter(
+                (hotspot) =>
+                  hotspot.link !== null && hotspot.link.to === "room",
+              )
+              .map((hotspot) => ({ roomId: room.id, hotspotId: hotspot.id })),
+      );
+      const victim = rng.maybePick(rewireable);
+      const destination = rng.maybePick(
         this.world.rooms.filter(
-          (room) =>
-            room.kind === "room" &&
-            room.region !== "interior" &&
-            room.id !== observation.currentRoomId &&
-            observation.visitedRoomIds.includes(room.id),
+          (room) => room.kind === "place" && room.id !== victim?.roomId,
         ),
       );
-      if (elsewhere) {
+      if (victim && destination) {
         patches.push({
-          kind: "growTerrain",
-          roomId: elsewhere.id,
-          terrain: rng.pick(TERRAIN_NAMES),
+          kind: "relink",
+          roomId: victim.roomId,
+          hotspotId: victim.hotspotId,
+          toRoomId: destination.id,
           reason: "the player has been through here before",
         });
       }
@@ -305,13 +323,17 @@ export class ScriptedMind implements DreamMind {
       const idle = rng.maybePick(
         this.world.rooms.filter(
           (room) =>
-            room.kind === "room" && room.id !== observation.currentRoomId,
+            room.kind === "place" &&
+            room.id !== observation.currentRoomId &&
+            Object.keys(room.cellVariants).length > 0,
         ),
       );
-      if (idle) {
+      const variant = this.variantFor(idle?.id);
+      if (idle && variant) {
         patches.push({
-          kind: "retileRoom",
+          kind: "shiftWalls",
           roomId: idle.id,
+          variantId: variant,
           reason: "restlessness",
         });
       }

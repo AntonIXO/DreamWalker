@@ -13,46 +13,25 @@ import {
   Assets,
   Container,
   CullerPlugin,
-  Graphics,
   extensions,
   type Texture,
 } from "pixi.js";
 
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
-import { REQUIRED_TILE_ROLES, TILE_ROLE } from "../shared/tilecodes";
 import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
-import { ChamberBackdropLayer } from "./render/chamberBackdrops";
-import { TileFoundry } from "./render/foundry";
-import {
-  Camera,
-  DEFAULT_CAMERA,
-  OUTDOOR_VIEW_TILES,
-  outdoorHeight,
-} from "./render/camera";
+import { Camera, DEFAULT_CAMERA } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
+import { RoomScene } from "./render/roomScene";
 import { Shiver } from "./render/shiver";
-import { TilemapView } from "./render/tilemap";
 import { ActorLayer, WalkerSprite } from "./render/walkerView";
 import { Cycle, Journal } from "./game/cycle";
 import { WordNotebook } from "./game/wordNotebook";
 import { Action, Input } from "./game/input";
-import { findTarget } from "./game/interact";
 import { updateFigures } from "./game/figures";
 import { installPopulation } from "./game/patch";
-import {
-  createPlayer,
-  playerTile,
-  updatePlayer,
-  walkFrame,
-} from "./game/player";
-import {
-  createWorld,
-  resetWorld,
-  roomAt,
-  tileAt,
-  warpAtTile,
-  type WorldState,
-} from "./game/world";
+import { walkFrame } from "./game/player";
+import { DreamSession } from "./game/session";
+import { createWorld, currentRoom, resetWorld } from "./game/world";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
@@ -79,22 +58,6 @@ const DREAM_URL = "/dream";
 
 extensions.add(CullerPlugin);
 
-/** Every atlas role the tiles in these regions actually call for, after a patch. */
-function rolesIn(world: WorldState, roomIds: Iterable<string>): Set<string> {
-  const roles = new Set<string>();
-  for (const id of roomIds) {
-    const room = world.roomById.get(id);
-    if (!room) continue;
-    for (let y = room.rect.y; y < room.rect.y + room.rect.h; y++) {
-      for (let x = room.rect.x; x < room.rect.x + room.rect.w; x++) {
-        const role = TILE_ROLE[tileAt(world, x, y)];
-        if (role && role !== "void") roles.add(role);
-      }
-    }
-  }
-  return roles;
-}
-
 function showBootError(title: string, detail: string): void {
   const node = document.getElementById("boot-error");
   if (!node) return;
@@ -113,7 +76,7 @@ async function loadArtifact(): Promise<DreamArtifact> {
       "No dream is published on this server. Build one:<br><br>" +
         "<code>bun run lord init my-dream</code><br>" +
         "<code>bun run lord secret my-dream</code><br>" +
-        "<code>bun run lord layout my-dream</code><br>" +
+        "<code>bun run lord rooms my-dream</code><br>" +
         "<code>bun run lord art my-dream</code><br>" +
         "<code>bun run lord figures my-dream</code><br>" +
         "<code>bun run lord build my-dream</code>",
@@ -148,9 +111,9 @@ async function boot(): Promise<void> {
   );
   const backdropTextures = await loadExternalTextures(
     DREAM_URL,
-    artifact.content.chambers.flatMap((chamber) =>
-      chamber.graphics.backdropImage
-        ? [{ id: chamber.id, path: chamber.graphics.backdropImage }]
+    artifact.rooms.flatMap((room) =>
+      room.graphics.backdropImage
+        ? [{ id: room.id, path: room.graphics.backdropImage }]
         : [],
     ),
   );
@@ -207,48 +170,70 @@ async function boot(): Promise<void> {
   });
   cameraRoot.addChild(worldRoot);
 
-  // Anything the Lord baked is already here; the foundry only ever adds what they did not.
-  const foundry = new TileFoundry(artifact, atlas);
-  foundry.ensureAll(REQUIRED_TILE_ROLES);
-
-  const tilemap = new TilemapView(world, atlas);
-  worldRoot.addChild(tilemap.root);
-  await app.renderer.prepare.upload(tilemap.root);
-
-  const chamberBackdrops = new ChamberBackdropLayer(world, backdropTextures);
-  worldRoot.addChild(chamberBackdrops.root);
+  // One room is drawn at a time. There is no mask and no clip: a room is its own
+  // container at its own origin, so its neighbours are not merely hidden, they are not
+  // in the scene at all.
+  const rooms = new RoomScene(artifact, atlas, backdropTextures);
+  worldRoot.addChild(rooms.root);
+  // A meta-space's picture has no edges and must not move with the camera.
+  app.stage.addChild(rooms.overlay);
 
   const actors = new ActorLayer(atlas, clueTextures);
   worldRoot.addChild(actors.root);
 
-  /**
-   * Clips the world to one room while the player is inside a building.
-   *
-   * Interiors share the overworld's tile grid, laid out side by side in a band nobody is
-   * meant to see whole (see `Warp` in `shared/dream.ts`). Framing the room centres it but
-   * does not hide its neighbours, because a house is smaller than a browser window — so
-   * without this you stand in your kitchen looking into the two next door. A child of
-   * `worldRoot`, so it inherits the camera transform for free.
-   */
-  // A stencil mask must remain visible to Pixi's render pipeline. Once assigned as a
-  // mask, Pixi excludes the Graphics itself from the colour pass; `visible = false`
-  // would instead disable the stencil too and leave only the canvas background indoors.
-  const roomMask = new Graphics({ label: "interior-mask", eventMode: "none" });
-  worldRoot.addChild(roomMask);
-  let maskedRoomId: string | null = null;
-
-  let player = createPlayer(world);
   const playerSprite = new WalkerSprite(atlas, "player");
   actors.add(playerSprite);
 
+  const tileSize = artifact.rooms[0]?.tileSize ?? 16;
   const camera = new Camera(
     cameraRoot,
-    world.tileSize,
+    tileSize,
     app.screen.width,
     app.screen.height,
     DEFAULT_CAMERA,
   );
   const shiver = new Shiver(camera);
+  const transition = new EnterTransition(uiLayer);
+
+  /**
+   * Walking, doors, links, meta-spaces and the tonus coordinate.
+   *
+   * Everything that used to be inline in this ticker as a warp block lives here now,
+   * because there are four ways out of a room instead of one.
+   */
+  const session = new DreamSession(
+    world,
+    rooms,
+    camera,
+    shiver,
+    {
+      onEnterRoom: (room, visits) => {
+        world.visited.add(room.id);
+        const mood = world.population?.roomMoods[room.id];
+        // The second visit is the one that is worse, so that is when the room says so.
+        const line =
+          visits > 1 && room.revisit.escalates && room.revisit.note
+            ? room.revisit.note
+            : (mood ?? room.atmosphere);
+        if (line) hud.whisper(line, 4);
+      },
+      onRefused: (doorId) => observations.noteRefusal(doorId),
+      onOverflow: () => {
+        // Everything got as bad as the counter can hold and came out the other side.
+        shiver.trigger(1);
+        hud.whisper("Стало легко. Ничего не изменилось.", 6);
+      },
+      onRefusedLink: (note) => hud.whisper(note, 4),
+    },
+    transition,
+  );
+
+  const figuresHere = (): typeof world.figures =>
+    world.figures.filter((figure) => figure.roomId === world.currentRoomId);
+  const interestsHere = (): typeof world.interests =>
+    world.interests.filter(
+      (interest) => interest.roomId === world.currentRoomId,
+    );
 
   const cycle = new Cycle(artifact);
   const journal = new Journal(artifact.slug);
@@ -257,7 +242,6 @@ async function boot(): Promise<void> {
   const hud = new Hud(uiLayer);
   hud.setLobbyMode(true);
   const thinking = new ModelThinkingIndicator(uiLayer);
-  const transition = new EnterTransition(uiLayer);
 
   const observations = new ObservationLog();
   const mindSettings = await loadMindSettings();
@@ -275,8 +259,8 @@ async function boot(): Promise<void> {
     observations,
     artifact.heartbeat,
     // §6's guarantee, as a question the heartbeat asks rather than a shape the camera
-    // enforced: the sleeper may rearrange anything the player cannot currently see.
-    () => camera.visibleTiles(),
+    // enforced: the sleeper may rearrange any room the sanitar is not standing in.
+    () => world.currentRoomId,
   );
 
   const noteShard = (shardId: string): void => {
@@ -323,7 +307,12 @@ async function boot(): Promise<void> {
     },
   });
 
-  const debug = new DebugOverlay(uiLayer, world, heartbeat);
+  const debug = new DebugOverlay(
+    uiLayer,
+    world,
+    heartbeat,
+    () => session.tonus.position,
+  );
   const input = new Input();
   input.attach();
   const journalPanel = new JournalPanel(uiLayer, journal, {
@@ -390,12 +379,11 @@ async function boot(): Promise<void> {
           "Населяет сон персонажами и деталями",
           () => inhabitDream(artifact.slug),
         );
-        const installed = installPopulation(world, population);
-        foundry.ensureAll(rolesIn(world, installed.affectedRooms));
-        tilemap.refreshAll();
-        await app.renderer.prepare.upload(tilemap.root);
-        actors.syncFigures(world.figures, world.tileSize);
-        actors.syncInterests(world.interests, world.tileSize);
+        installPopulation(world, population);
+        for (const room of world.rooms) rooms.invalidate(room.id);
+        session.enterRoomImmediate();
+        actors.syncFigures(figuresHere(), tileSize);
+        actors.syncInterests(interestsHere(), tileSize);
         populationInstalled = true;
       }
       controls.close();
@@ -406,12 +394,7 @@ async function boot(): Promise<void> {
       clueInspect.close();
       lobby.teardown();
       worldRoot.visible = true;
-      camera.setWorldSize(
-        world.width,
-        outdoorHeight(world.rooms, world.height),
-      );
-      camera.fit(OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h);
-      camera.cutTo(player.x, player.y);
+      session.enterRoomImmediate();
       hud.setLobbyMode(false);
       phase = "dream";
       input.setCaptured(false);
@@ -471,15 +454,11 @@ async function boot(): Promise<void> {
       camera.cutTo(lobby.walker.x, lobby.walker.y);
       return;
     }
-    const tile = playerTile(player, world);
-    const room = roomAt(world, tile.x, tile.y);
-    if (room?.region === "interior") {
-      camera.frame(room, true);
-      return;
-    }
-    camera.setWorldSize(world.width, outdoorHeight(world.rooms, world.height));
-    camera.fit(OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h);
-    camera.cutTo(player.x, player.y);
+    const room = currentRoom(world);
+    camera.setWorldSize(room.width, room.height);
+    camera.fit(room.width, room.height);
+    camera.cutTo(session.player.x, session.player.y);
+    rooms.resizeOverlay(app.screen.width, app.screen.height);
   };
   layoutView();
   app.renderer.on("resize", layoutView);
@@ -500,11 +479,12 @@ async function boot(): Promise<void> {
   });
 
   heartbeat.onBeat((outcome) => {
-    // The sleeper may have made something the Lord never baked art for. Mint it before the
-    // redraw, or the new ground appears as a hole (§6, "разум подкинул — он тут хозяин").
-    foundry.ensureAll(rolesIn(world, outcome.affectedRooms));
-    tilemap.refreshRooms(outcome.affectedRooms);
-    chamberBackdrops.sync();
+    // A shifted wall mask means the room has to be rebuilt; everything else the sleeper
+    // does is state the next frame reads for itself.
+    for (const roomId of outcome.affectedRooms) rooms.invalidate(roomId);
+    if (outcome.affectedRooms.includes(world.currentRoomId)) {
+      rooms.show(currentRoom(world));
+    }
     shiver.trigger(Math.min(1, outcome.affectedRooms.length / 2));
     for (const note of outcome.notes) journal.add(cycle.number, note);
     if (outcome.notes.length > 0) hud.whisper(outcome.notes[0]!);
@@ -532,21 +512,10 @@ async function boot(): Promise<void> {
       observations.reset();
       heartbeat.resetCycle();
       forgetCycle(mind);
-      player = createPlayer(world);
-      tilemap.clipTo(null);
-      maskedRoomId = null;
-      worldRoot.mask = null;
-      roomMask.clear();
-      tilemap.refreshAll();
-      chamberBackdrops.sync();
-      await app.renderer.prepare.upload(tilemap.root);
+      for (const room of world.rooms) rooms.invalidate(room.id);
+      session.restart();
 
       cycle.restart();
-      lastWarpId = null;
-      camera.cutTo(player.x, player.y);
-      const tile = playerTile(player, world);
-      const room = roomAt(world, tile.x, tile.y);
-      if (room) world.visited.add(room.id);
       hud.whisper("Сон начинается заново. Ты помнишь.", 5);
     } finally {
       restarting = false;
@@ -570,27 +539,23 @@ async function boot(): Promise<void> {
     thinking,
     dialogue,
     finale,
-    tilemap,
-    chamberBackdrops,
+    rooms,
+    session,
     atlas,
     lobby,
+    get tonus(): unknown {
+      return session.tonus.position;
+    },
     get phase(): AppPhase {
       return phase;
     },
     restartCycle,
-    get player(): typeof player {
-      return player;
+    get player(): typeof session.player {
+      return session.player;
     },
   };
 
-  const startTile = playerTile(player, world);
-  const startRoom = roomAt(world, startTile.x, startTile.y);
-  if (startRoom) world.visited.add(startRoom.id);
-
   let prompt: string | null = null;
-  /** The warp we arrived on, so stepping out of a door does not immediately re-enter it. */
-  let lastWarpId: string | null = null;
-
   app.ticker.add((ticker) => {
     const delta = Math.min(ticker.deltaMS, 100) / 1000;
 
@@ -641,78 +606,24 @@ async function boot(): Promise<void> {
     hud.setMuted(held);
 
     if (!held && !simulationPaused) {
-      updatePlayer(player, world, input.axis(), delta);
-      if (player.refusedDoorId) observations.noteRefusal(player.refusedDoorId);
+      session.update(input.axis(), delta);
     }
 
-    const tile = playerTile(player, world);
-    const room = roomAt(world, tile.x, tile.y);
-    if (room) world.visited.add(room.id);
-    if (!simulationPaused) observations.tick(delta, room?.id ?? null);
+    const room = currentRoom(world);
+    if (!simulationPaused) observations.tick(delta, room.id);
     if (!simulationPaused) {
       updateFigures(
         world,
         cycle.progress,
         delta,
         dialogue.currentFigureId,
-        camera.visibleTiles(),
+        world.currentRoomId,
       );
     }
 
-    // Stepping onto a doorway puts you somewhere else on the same grid. A hard cut, the
-    // way a Game Boy doorway works — panning across the gap between a town and the room
-    // behind its front door would show the seam that the single-grid trick relies on
-    // nobody seeing.
-    const warp =
-      held || simulationPaused ? null : warpAtTile(world, tile.x, tile.y);
-    if (warp && warp.id !== lastWarpId) {
-      lastWarpId = warp.id;
-      player.x = warp.toX * world.tileSize + world.tileSize / 2;
-      player.y = warp.toY * world.tileSize + world.tileSize / 2;
-      camera.cutTo(player.x, player.y);
-      shiver.trigger(0.3);
-      world.visited.add(warp.toRoomId);
-    } else if (!warp) {
-      // Cleared only once you are off the pad, or you would bounce straight back.
-      lastWarpId = null;
-    }
-
-    // Outdoors the camera follows; indoors it frames the room. Not a flourish — interiors
-    // are laid out side by side in a reserved band of the one grid, so a following camera
-    // shows you the neighbours' living rooms. Framing is also simply how a Game Boy
-    // interior behaves, which is the other reason it is right.
-    if (room?.region === "interior") {
-      camera.frame(room);
-      if (maskedRoomId !== room.id) {
-        maskedRoomId = room.id;
-        tilemap.clipTo(room.rect);
-        const size = world.tileSize;
-        roomMask
-          .clear()
-          .rect(
-            room.rect.x * size,
-            room.rect.y * size,
-            room.rect.w * size,
-            room.rect.h * size,
-          )
-          .fill(0xffffff);
-        // Neighbouring interiors can share a 16-tile chunk, so hiding whole chunks is
-        // not enough. Pixi uses this Graphics as a stencil and omits its white fill from
-        // the colour pass while it is assigned as the mask.
-        worldRoot.mask = roomMask;
-      }
-    } else {
-      if (camera.roomId !== null) {
-        camera.fit(OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h);
-      }
-      camera.follow(player.x, player.y, delta);
-      if (maskedRoomId !== null) {
-        maskedRoomId = null;
-        tilemap.clipTo(null);
-        worldRoot.mask = null;
-        roomMask.clear();
-      }
-    }
+    // Rooms are discrete, so the camera always frames the one we are in. There is no
+    // follow mode and no interior mask: neighbours are not hidden, they are not drawn.
+    camera.frame(room);
 
     // --- one-shot actions
     if (input.consume(Action.DEBUG)) debug.toggle();
@@ -758,51 +669,58 @@ async function boot(): Promise<void> {
     if (input.consume(Action.GRANT)) {
       // Debug convenience: hand over every key so locked doors can be walked through
       // while testing the map, without pretending the game has an inventory yet.
-      for (const door of world.doors)
+      for (const [id, door] of world.doorById) {
         if (door.keyId) world.keysHeld.add(door.keyId);
-      for (const edge of artifact.map.graph.edges) {
-        if (edge.door === "leverLock") world.leversPulled.add(edge.id);
-        if (edge.door === "puzzleLock") world.puzzlesSolved.add(edge.id);
+        if (door.type === "leverLock") world.leversPulled.add(id);
+        if (door.type === "puzzleLock") world.puzzlesSolved.add(id);
       }
       hud.whisper("Двери больше не спорят. (отладка)");
     }
 
-    const target = held || simulationPaused ? null : findTarget(world, player);
-    const atFinale = room?.id === artifact.map.graph.endId;
+    const target = held || simulationPaused ? null : session.target();
+    const atFinale = room.id === artifact.finaleRoomId;
     prompt = target?.prompt ?? (atFinale ? "сердце сна — назвать тайну" : null);
 
     if (!simulationPaused && input.consume(Action.INTERACT)) {
       if (target?.kind === "figure") {
         dialogue.open(target.figure);
-      } else if (target?.kind === "world") {
-        void thinking
-          .run("Рассматривает деталь мира", () =>
-            mind.examine({
-              x: target.x,
-              y: target.y,
-              roomId: room?.id ?? null,
-              interestId: target.interestId,
-            }),
-          )
-          .then((result) => {
-            if (result.clueObservedId) {
-              const clue = artifact.content.clues.find(
-                (candidate) => candidate.id === result.clueObservedId,
-              );
-              if (clue) {
-                wordNotebook.observe(clue.id);
-                journal.add(
-                  cycle.number,
-                  `УЛИКА — осмотрен предмет-ребус ${wordNotebook.observedCount}/6.`,
+      } else if (target?.kind === "hotspot") {
+        const hotspot = target.hotspot;
+        // A link is a place, not a thing to look at: touching it moves you.
+        if (hotspot.kind === "link" || hotspot.link) {
+          session.use(hotspot);
+        } else {
+          void thinking
+            .run("Рассматривает деталь мира", () =>
+              mind.examine({
+                x: hotspot.x,
+                y: hotspot.y,
+                roomId: room.id,
+                interestId: hotspot.id.startsWith("interest:")
+                  ? hotspot.id.slice("interest:".length)
+                  : null,
+              }),
+            )
+            .then((result) => {
+              if (result.clueObservedId) {
+                const clue = artifact.content.clues.find(
+                  (candidate) => candidate.id === result.clueObservedId,
                 );
-                input.setCaptured(true);
-                clueInspect.open(clue, result.reply);
+                if (clue) {
+                  wordNotebook.observe(clue.id);
+                  journal.add(
+                    cycle.number,
+                    `УЛИКА — осмотрен предмет-ребус ${wordNotebook.observedCount}/6.`,
+                  );
+                  input.setCaptured(true);
+                  clueInspect.open(clue, result.reply);
+                }
+              } else {
+                hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
               }
-            } else {
-              hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
-            }
-            if (result.yieldedShardId) noteShard(result.yieldedShardId);
-          });
+              if (result.yieldedShardId) noteShard(result.yieldedShardId);
+            });
+        }
       } else if (target) {
         hud.whisper(target.prompt, 3);
       } else if (atFinale) {
@@ -816,14 +734,15 @@ async function boot(): Promise<void> {
     camera.update(delta);
 
     // --- draw
-    playerSprite.update(player.x, player.y, player.facing, walkFrame(player));
-    actors.syncFigures(world.figures, world.tileSize);
-    actors.syncInterests(world.interests, world.tileSize);
+    const walker = session.player;
+    playerSprite.update(walker.x, walker.y, walker.facing, walkFrame(walker));
+    actors.syncFigures(figuresHere(), room.tileSize);
+    actors.syncInterests(interestsHere(), room.tileSize);
 
     hud.update(
       {
         title: artifact.title,
-        roomName: room?.name ?? "",
+        roomName: room.name,
         cycleNumber: cycle.number,
         remainingSeconds: cycle.remainingSeconds,
         journalCount: journal.size,
@@ -831,7 +750,10 @@ async function boot(): Promise<void> {
       },
       delta,
     );
-    debug.update(tile.x, tile.y);
+    debug.update(
+      Math.floor(walker.x / room.tileSize),
+      Math.floor(walker.y / room.tileSize),
+    );
 
     input.endFrame();
   });

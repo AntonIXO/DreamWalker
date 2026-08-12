@@ -26,7 +26,7 @@ import { bakeAtlas, writeAtlas } from "../art/atlas";
 import { buildFigureFrames, buildPlayerFrames } from "../art/silhouettes";
 import { toRgba, type Raster } from "../../../src/shared/art/raster";
 import { dreamDir, loadDraft, saveDraft } from "../project";
-import { randomSeedWord } from "../worldgen/rng";
+import { randomSeedWord } from "../rng";
 import {
   color,
   heading,

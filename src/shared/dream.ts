@@ -298,7 +298,10 @@ function validateLink(
  * Structure of one room. Cross-room references are deliberately *not* checked here —
  * they need every room id first, so they happen on a second pass.
  */
-function validateRoomShape(value: unknown, path: string): Record<string, unknown> {
+function validateRoomShape(
+  value: unknown,
+  path: string,
+): Record<string, unknown> {
   const room = obj(value, path);
   str(room.id, `${path}.id`);
   str(room.name, `${path}.name`);
@@ -319,7 +322,10 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
   cells.forEach((row, i) => {
     const line = str(row, `${path}.cells[${i}]`);
     if (line.length !== width) {
-      fail(`${path}.cells[${i}]`, `expected ${width} characters, got ${line.length}`);
+      fail(
+        `${path}.cells[${i}]`,
+        `expected ${width} characters, got ${line.length}`,
+      );
     }
   });
 
@@ -332,7 +338,10 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
     }
     list.forEach((row, i) => {
       if (str(row, `${path}.cellVariants.${name}[${i}]`).length !== width) {
-        fail(`${path}.cellVariants.${name}[${i}]`, `expected ${width} characters`);
+        fail(
+          `${path}.cellVariants.${name}[${i}]`,
+          `expected ${width} characters`,
+        );
       }
     });
   }
@@ -351,7 +360,8 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
   entries.forEach((value, i) => {
     const entry = obj(value, `${path}.entries[${i}]`);
     const id = str(entry.id, `${path}.entries[${i}].id`);
-    if (entryIds.has(id)) fail(`${path}.entries[${i}].id`, `duplicate entry ${id}`);
+    if (entryIds.has(id))
+      fail(`${path}.entries[${i}].id`, `duplicate entry ${id}`);
     entryIds.add(id);
     inside(
       num(entry.x, `${path}.entries[${i}].x`),
@@ -365,7 +375,8 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
   arr(room.figureSlots, `${path}.figureSlots`).forEach((value, i) => {
     const slot = obj(value, `${path}.figureSlots[${i}]`);
     const id = str(slot.id, `${path}.figureSlots[${i}].id`);
-    if (slotIds.has(id)) fail(`${path}.figureSlots[${i}].id`, `duplicate slot ${id}`);
+    if (slotIds.has(id))
+      fail(`${path}.figureSlots[${i}].id`, `duplicate slot ${id}`);
     slotIds.add(id);
     inside(
       num(slot.x, `${path}.figureSlots[${i}].x`),
@@ -403,7 +414,10 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
       `${path}.hotspots[${i}]`,
     );
     if (num(hotspot.reach, `${path}.hotspots[${i}].reach`) <= 0) {
-      fail(`${path}.hotspots[${i}].reach`, "a hotspot you cannot reach is not one");
+      fail(
+        `${path}.hotspots[${i}].reach`,
+        "a hotspot you cannot reach is not one",
+      );
     }
     bool(hotspot.once, `${path}.hotspots[${i}].once`);
     optionalStr(hotspot.clueId, `${path}.hotspots[${i}].clueId`);
@@ -439,12 +453,20 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
   });
 
   const graphics = obj(room.graphics, `${path}.graphics`);
-  for (const role of ["floorRole", "wallRole", "propRole", "glitchPreset"] as const) {
+  for (const role of [
+    "floorRole",
+    "wallRole",
+    "propRole",
+    "glitchPreset",
+  ] as const) {
     str(graphics[role], `${path}.graphics.${role}`);
   }
   const fit = str(graphics.backdropFit, `${path}.graphics.backdropFit`);
   if (fit !== "cells" && fit !== "screen") {
-    fail(`${path}.graphics.backdropFit`, `expected "cells" or "screen", got ${fit}`);
+    fail(
+      `${path}.graphics.backdropFit`,
+      `expected "cells" or "screen", got ${fit}`,
+    );
   }
   const backdrop = optionalStr(
     graphics.backdropImage,
@@ -476,7 +498,10 @@ function validateRoomShape(value: unknown, path: string): Record<string, unknown
     const minMs = num(meta.minMs, `${path}.meta.minMs`);
     const maxMs = num(meta.maxMs, `${path}.meta.maxMs`);
     if (minMs <= 0 || maxMs < minMs) {
-      fail(`${path}.meta`, `expected 0 < minMs <= maxMs, got ${minMs}..${maxMs}`);
+      fail(
+        `${path}.meta`,
+        `expected 0 < minMs <= maxMs, got ${minMs}..${maxMs}`,
+      );
     }
     bool(meta.doublesPrevious, `${path}.meta.doublesPrevious`);
     bool(meta.overflow, `${path}.meta.overflow`);
@@ -571,7 +596,8 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
 
   // --- rooms, first pass: shape, and the index the second pass needs
   const rooms = arr(root.rooms, "dream.rooms");
-  if (rooms.length === 0) fail("dream.rooms", "a dream needs at least one room");
+  if (rooms.length === 0)
+    fail("dream.rooms", "a dream needs at least one room");
   const index: RoomIndex = {
     entryIds: new Map(),
     slotIds: new Map(),
@@ -623,7 +649,10 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     }
     const slotId = str(figure.slotId, `dream.figures[${i}].slotId`);
     if (!index.slotIds.get(roomId)?.has(slotId)) {
-      fail(`dream.figures[${i}].slotId`, `room ${roomId} has no slot ${slotId}`);
+      fail(
+        `dream.figures[${i}].slotId`,
+        `room ${roomId} has no slot ${slotId}`,
+      );
     }
     const holds = figure.holdsShardId;
     if (holds !== null && holds !== undefined && !shardIds.has(String(holds))) {
@@ -637,13 +666,19 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     (room.hotspots as unknown[]).forEach((value, j) => {
       const hotspot = value as { link?: unknown };
       if (hotspot.link !== null && hotspot.link !== undefined) {
-        validateLink(hotspot.link, `${path}.hotspots[${j}].link`, index, figureIds);
+        validateLink(
+          hotspot.link,
+          `${path}.hotspots[${j}].link`,
+          index,
+          figureIds,
+        );
       }
     });
     (room.doors as unknown[]).forEach((value, j) => {
       const door = value as { toRoomId: string; toEntryId: string | null };
       const entries = index.entryIds.get(door.toRoomId);
-      if (!entries) fail(`${path}.doors[${j}].toRoomId`, `no room ${door.toRoomId}`);
+      if (!entries)
+        fail(`${path}.doors[${j}].toRoomId`, `no room ${door.toRoomId}`);
       if (door.toEntryId !== null && !entries.has(door.toEntryId)) {
         fail(
           `${path}.doors[${j}].toEntryId`,
@@ -756,9 +791,11 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
       num(sheet.frameH, `dream.content.characters[${i}].spriteSheet.frameH`);
       num(sheet.frames, `dream.content.characters[${i}].spriteSheet.frames`);
       num(sheet.anchorY, `dream.content.characters[${i}].spriteSheet.anchorY`);
-      arr(sheet.dirs, `dream.content.characters[${i}].spriteSheet.dirs`).forEach(
-        (dir, j) =>
-          str(dir, `dream.content.characters[${i}].spriteSheet.dirs[${j}]`),
+      arr(
+        sheet.dirs,
+        `dream.content.characters[${i}].spriteSheet.dirs`,
+      ).forEach((dir, j) =>
+        str(dir, `dream.content.characters[${i}].spriteSheet.dirs[${j}]`),
       );
     }
   });

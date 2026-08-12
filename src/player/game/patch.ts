@@ -57,8 +57,7 @@ function freeSlot(
   const taken = new Set(
     world.figures
       .filter(
-        (figure) =>
-          figure.roomId === room.id && figure.id !== ignoreFigureId,
+        (figure) => figure.roomId === room.id && figure.id !== ignoreFigureId,
       )
       .map((figure) => figure.slotId),
   );
@@ -85,9 +84,8 @@ function profileState(
 
   const slotId = authoredUsable
     ? authored.slotId
-    : (room.figureSlots.find(
-        (slot) => !taken.has(`${room.id}:${slot.id}`),
-      )?.id ?? null);
+    : (room.figureSlots.find((slot) => !taken.has(`${room.id}:${slot.id}`))
+        ?.id ?? null);
   if (slotId === null) return null;
   taken.add(`${room.id}:${slotId}`);
 
@@ -456,11 +454,15 @@ export function patchTouches(patch: MapPatch, world: WorldState): string[] {
       return roomsTouchingDoor(world, patch.doorId);
     case "moveFigure": {
       const figure = world.figures.find((f) => f.id === patch.figureId);
-      return [...new Set([figure?.roomId, patch.toRoomId].filter(Boolean))] as string[];
+      return [
+        ...new Set([figure?.roomId, patch.toRoomId].filter(Boolean)),
+      ] as string[];
     }
     case "moveInterest": {
       const interest = world.interests.find((i) => i.id === patch.interestId);
-      return [...new Set([interest?.roomId, patch.toRoomId].filter(Boolean))] as string[];
+      return [
+        ...new Set([interest?.roomId, patch.toRoomId].filter(Boolean)),
+      ] as string[];
     }
     case "removeInterest": {
       const interest = world.interests.find((i) => i.id === patch.interestId);

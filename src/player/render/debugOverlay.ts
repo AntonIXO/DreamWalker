@@ -10,20 +10,10 @@
  * The refusals are the interesting half: they are the invariant of §6 doing its job.
  */
 
-import { NodeType, type MissionNode } from "../../shared/dream";
-import { TILE_PALETTE_ROLE } from "../../shared/tilecodes";
+import { cellAt } from "../../shared/roomGrid";
+import type { TonusDelta } from "../../shared/tonus";
 import type { BeatEntry, Heartbeat } from "../mind/heartbeat";
 import type { WorldState } from "../game/world";
-
-const NODE_COLOR: Record<string, string> = {
-  [NodeType.START]: "#5fd68a",
-  [NodeType.END]: "#c98ade",
-  [NodeType.KEY]: "#e6c164",
-  [NodeType.LOCK]: "#d1655c",
-  [NodeType.PUZZLE]: "#5cc6d1",
-  [NodeType.LEVER]: "#6f8fd6",
-  [NodeType.NORMAL]: "#9aa0aa",
-};
 
 export class DebugOverlay {
   private readonly root: HTMLElement;
@@ -38,6 +28,13 @@ export class DebugOverlay {
     parent: HTMLElement,
     private readonly world: WorldState,
     private readonly heartbeat: Heartbeat,
+    /**
+     * The chart position, if the session is running.
+     *
+     * The player is never shown a number (§3 — no meters, ever). Behind F1 it is the
+     * only way to tell a clamped counter from one that is about to wrap.
+     */
+    private readonly tonusAt?: () => TonusDelta,
   ) {
     this.root = document.createElement("div");
     this.root.className = "debug";
@@ -54,9 +51,11 @@ export class DebugOverlay {
     this.statsEl = this.root.querySelector(".debug-stats")!;
     this.logEl = this.root.querySelector(".debug-log")!;
 
-    // Two pixels per tile: big enough to read the shape, small enough to fit a corner.
-    this.canvas.width = world.width * 2;
-    this.canvas.height = world.height * 2;
+    // Sized for the biggest authored room; `drawMap` picks a per-room scale inside it.
+    const widest = Math.max(1, ...world.rooms.map((room) => room.width));
+    const tallest = Math.max(1, ...world.rooms.map((room) => room.height));
+    this.canvas.width = Math.min(240, widest * 8);
+    this.canvas.height = Math.min(200, tallest * 8);
 
     const ctx = this.canvas.getContext("2d");
     if (!ctx) throw new Error("no 2d context for the debug map");
@@ -85,6 +84,14 @@ export class DebugOverlay {
   }
 
   /** Drawn from the *live* grid, so a patch shows up here the moment it lands. */
+  /**
+   * The room the sanitar is standing in, drawn from its walk mask.
+   *
+   * Format 3 drew the whole 249×209 world at 2px a tile, because there was one grid and
+   * the interesting question was where in it you were. With authored rooms the useful
+   * picture is the room itself: which cells are solid, where the doors and hotspots are,
+   * and whether the walls have shifted under you.
+   */
   private drawMap(playerTileX: number, playerTileY: number): void {
     const { palette } = this.world.artifact;
     const colorOf = (role: string): string =>
@@ -94,59 +101,91 @@ export class DebugOverlay {
     this.ctx.fillStyle = colorOf("background");
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    for (let y = 0; y < this.world.height; y++) {
-      for (let x = 0; x < this.world.width; x++) {
-        const tile = this.world.tiles[y * this.world.width + x]!;
-        if (tile === 0) continue;
-        this.ctx.fillStyle = colorOf(TILE_PALETTE_ROLE[tile] ?? "background");
-        this.ctx.fillRect(x * 2, y * 2, 2, 2);
+    const room = this.world.roomById.get(this.world.currentRoomId);
+    if (!room) return;
+    const scale = Math.max(
+      2,
+      Math.min(
+        Math.floor(this.canvas.width / Math.max(1, room.width)),
+        Math.floor(this.canvas.height / Math.max(1, room.height)),
+      ),
+    );
+
+    for (let y = 0; y < room.height; y++) {
+      for (let x = 0; x < room.width; x++) {
+        const cell = cellAt(room, x, y);
+        if (cell === "void") continue;
+        this.ctx.fillStyle = colorOf(
+          cell === "wall" || cell === "wallFace"
+            ? "wall"
+            : cell === "threshold"
+              ? "threshold"
+              : cell === "floorAlt"
+                ? "floorAlt"
+                : "floor",
+        );
+        this.ctx.fillRect(x * scale, y * scale, scale, scale);
       }
     }
 
-    // Mission nodes on top, so the shape of the mission is readable over the space.
-    for (const room of this.world.rooms) {
-      if (room.kind !== "room" || !room.nodeType) continue;
-      const cx = (room.rect.x + room.rect.w / 2) * 2;
-      const cy = (room.rect.y + room.rect.h / 2) * 2;
-      this.ctx.fillStyle = NODE_COLOR[room.nodeType] ?? "#fff";
-      this.ctx.fillRect(cx - 3, cy - 3, 6, 6);
-      this.ctx.fillStyle = "#000";
-      this.ctx.font = "8px monospace";
-      this.ctx.fillText(String(room.accessLevel), cx - 2, cy + 3);
+    for (const prop of room.props) {
+      this.ctx.fillStyle = prop.solid ? "#6f8fd6" : "#3a4a6a";
+      this.ctx.fillRect(
+        prop.x * scale,
+        prop.y * scale,
+        prop.w * scale,
+        prop.h * scale,
+      );
     }
 
-    // Sealed doors, which is what you came to this overlay to see.
-    for (const door of this.world.doors) {
-      if (door.type !== "sealed") continue;
-      this.ctx.fillStyle = "#ff4444";
-      this.ctx.fillRect(door.x * 2 - 2, door.y * 2 - 2, 5, 5);
+    // Doors first, then what they became: a sealed one is why you opened this panel.
+    for (const door of room.doors) {
+      this.ctx.fillStyle = door.type === "sealed" ? "#ff4444" : "#e6c164";
+      this.ctx.fillRect(
+        door.x * scale,
+        door.y * scale,
+        Math.max(2, door.w * scale),
+        Math.max(2, door.h * scale),
+      );
+    }
+
+    for (const hotspot of room.hotspots) {
+      if (room.closedHotspotIds.has(hotspot.id)) continue;
+      this.ctx.fillStyle = hotspot.link ? "#c98ade" : "#5cc6d1";
+      this.ctx.fillRect(hotspot.x * scale - 1, hotspot.y * scale - 1, 3, 3);
     }
 
     this.ctx.fillStyle = colorOf("highlight");
-    this.ctx.fillRect(playerTileX * 2 - 2, playerTileY * 2 - 2, 5, 5);
+    this.ctx.fillRect(playerTileX * scale - 2, playerTileY * scale - 2, 5, 5);
   }
 
   private drawStats(): void {
-    const { graph } = this.world.artifact.map;
-    const byType = new Map<string, number>();
-    for (const node of graph.nodes)
-      byType.set(node.type, (byType.get(node.type) ?? 0) + 1);
-
-    const sealed = this.world.doors.filter((d) => d.type === "sealed").length;
+    const rooms = this.world.rooms;
+    const doors = [...this.world.doorById.values()];
+    const sealed = doors.filter((door) => door.type === "sealed").length;
+    const links = rooms.reduce(
+      (total, room) =>
+        total + room.hotspots.filter((hotspot) => hotspot.link).length,
+      0,
+    );
     const held = this.world.figures.filter((f) => f.holdsShardId).length;
     const worldHooks = this.world.interests.filter((interest) =>
       Boolean(interest.holdsShardId),
     ).length;
-    const worst = worstKeyLockGap(graph.nodes);
+    const here = this.world.roomById.get(this.world.currentRoomId);
+    const visits = this.world.visitCounts.get(this.world.currentRoomId) ?? 0;
 
     this.statsEl.innerHTML = "";
     const rows: Array<[string, string]> = [
+      ["room", `${here?.name ?? "?"} (${this.world.currentRoomId})`],
       [
-        "rooms",
-        `${graph.nodes.length} (${[...byType].map(([t, n]) => `${n} ${t}`).join(", ")})`,
+        "visits",
+        `${visits}${visits > 1 && here?.revisit.escalates ? " — escalating" : ""}`,
       ],
-      ["depth", String(Math.max(...graph.nodes.map((n) => n.accessLevel)))],
-      ["doors", `${this.world.doors.length}, ${sealed} sealed`],
+      ["rooms", `${rooms.length}, ${this.world.visited.size} seen this cycle`],
+      ["doors", `${doors.length}, ${sealed} sealed`],
+      ["links", String(links)],
+      ["tonus", this.tonusAt ? formatTonus(this.tonusAt()) : "—"],
       [
         "population",
         `${this.world.figures.length} people, ${this.world.interests.length} interests`,
@@ -155,10 +194,8 @@ export class DebugOverlay {
         "hooks",
         `${held} with people, ${worldHooks} in world / ${this.world.artifact.shards.length}`,
       ],
-      ["visited", `${this.world.visited.size}/${this.world.rooms.length}`],
       ["mind wakes", "cycle exit"],
       ["beat budget", String(this.heartbeat.budgetRemaining)],
-      ["key/lock ok", worst],
     ];
 
     for (const [label, value] of rows) {
@@ -203,18 +240,7 @@ function renderEntry(entry: BeatEntry): HTMLElement {
   return node;
 }
 
-/**
- * The one invariant worth checking every frame: no lock may need a key that lies
- * behind it. The generator guarantees it, and the heartbeat must not break it.
- */
-function worstKeyLockGap(nodes: readonly MissionNode[]): string {
-  const worst = "yes";
-  for (const node of nodes) {
-    if (node.type !== NodeType.LOCK || !node.requiresKeyId) continue;
-    const key = nodes.find((n) => n.id === node.requiresKeyId);
-    if (!key) return `NO — ${node.id} has no key`;
-    if (key.accessLevel >= node.accessLevel)
-      return `NO — ${key.id} behind ${node.id}`;
-  }
-  return worst;
+function formatTonus(position: TonusDelta): string {
+  const sign = (n: number): string => (n > 0 ? `+${n}` : String(n));
+  return `${sign(position.x)}, ${sign(position.y)}`;
 }

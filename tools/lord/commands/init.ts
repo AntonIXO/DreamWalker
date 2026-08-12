@@ -201,9 +201,11 @@ export async function initCommand(
     shards: [],
     palette,
     style,
-    map: null,
+    rooms: [],
+    spawn: null,
+    finaleRoomId: null,
     figures: [],
-    content: fallbackContent({ map: null, figures: [], secretHash: null }),
+    content: fallbackContent({ figures: [], secretHash: null }),
     cycle: { ...DEFAULT_CYCLE },
     heartbeat: {
       ...DEFAULT_HEARTBEAT,

@@ -127,7 +127,10 @@ function cloneRoom(room: DreamRoom): RoomState {
     ...room,
     cells: [...room.cells],
     cellVariants: Object.fromEntries(
-      Object.entries(room.cellVariants).map(([name, rows]) => [name, [...rows]]),
+      Object.entries(room.cellVariants).map(([name, rows]) => [
+        name,
+        [...rows],
+      ]),
     ),
     props: room.props.map((prop) => ({ ...prop })),
     hotspots: room.hotspots.map((hotspot) => ({ ...hotspot })),
@@ -276,7 +279,9 @@ export function resetWorld(world: WorldState): void {
 export function currentRoom(world: WorldState): RoomState {
   const room = world.roomById.get(world.currentRoomId);
   if (!room) {
-    throw new Error(`world is in room ${world.currentRoomId}, which does not exist`);
+    throw new Error(
+      `world is in room ${world.currentRoomId}, which does not exist`,
+    );
   }
   return room;
 }
@@ -419,7 +424,10 @@ export function resolveLink(
       const here = world.roomById.get(world.currentRoomId);
       const floor = floorOf(here);
       const above = world.rooms.find((room) => floorOf(room) === floor + 1);
-      return { roomId: (above ?? here)?.id ?? world.currentRoomId, entryId: null };
+      return {
+        roomId: (above ?? here)?.id ?? world.currentRoomId,
+        entryId: null,
+      };
     }
     case "refuse":
       return null;

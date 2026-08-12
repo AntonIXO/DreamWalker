@@ -7,7 +7,7 @@
  * screen and type back in.
  */
 
-export { hashSeed, makeRng, type Rng } from "../../../src/shared/rng";
+export { hashSeed, makeRng, type Rng } from "../../src/shared/rng";
 
 const SYLLABLES = [
   "mor",

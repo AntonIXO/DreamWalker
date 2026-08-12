@@ -38,19 +38,23 @@ class RemoteMindError extends Error {
   }
 }
 
-function snapshot(world: WorldState): WorldSnapshot {
+function snapshot(
+  world: WorldState,
+  mood: WorldSnapshot["mood"] = "upper-dynamic",
+): WorldSnapshot {
   return {
     rooms: world.rooms.map((room) => ({
       id: room.id,
       name: room.name,
       kind: room.kind,
-      chamberId: world.chamberByRoomId.get(room.id)?.id ?? null,
-      personality: world.chamberByRoomId.get(room.id)?.personality ?? null,
+      personality: room.personality,
+      visitCount: world.visitCounts.get(room.id) ?? 0,
+      tags: room.tags,
     })),
-    doors: world.doors.map((door) => ({
-      id: door.id,
+    doors: [...world.doorById.entries()].map(([id, door]) => ({
+      id,
       type: door.type,
-      fromRoomId: door.fromRoomId,
+      fromRoomId: world.roomIdByDoorId.get(id) ?? "",
       toRoomId: door.toRoomId,
     })),
     figures: world.figures.map((figure) => ({
@@ -70,6 +74,7 @@ function snapshot(world: WorldState): WorldSnapshot {
       holdsShardId: interest.holdsShardId,
       clueId: interest.clueId,
     })),
+    mood,
   };
 }
 
