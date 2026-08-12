@@ -227,6 +227,12 @@ export interface FinaleRequestPayload {
 }
 
 export interface FinaleResult {
+  /**
+   * Whether there was anything in it. Only ever set on a match, and decided when the
+   * dream was made — never rolled at the finale, or the loss reads as the game cheating
+   * rather than as the risk it was.
+   */
+  wallet?: "full" | "dry";
   verdict: "match" | "miss";
   reply: string;
 }

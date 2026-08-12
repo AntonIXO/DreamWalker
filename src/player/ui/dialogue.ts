@@ -10,6 +10,7 @@
  * warning, because the moment it looks like a UI alert it stops being a conversation.
  */
 
+import { highestPortraitState } from "../../shared/content";
 import type { FigureState } from "../game/world";
 import type { DreamMind, TurnResponse } from "../mind/types";
 import type { DreamArtifact } from "../../shared/dream";
@@ -210,13 +211,33 @@ export class DialoguePanel {
 
     pending.textContent = response.reply;
     pending.className = "said-by-them";
-    figure.portraitState = response.portraitState;
+    // «Уровень 3 не откатывается» — suspicion is a ratchet, so a figure that has worked
+    // it out cannot be talked back down into being merely curious. The Eye is the one
+    // exception: its scale is «сколько правды санитар сказал», not suspicion at all.
+    const before = figure.portraitState;
+    const character = this.artifact.content.characters.find(
+      (candidate) => candidate.id === figure.id,
+    );
+    figure.portraitState =
+      character?.suspicionMonotone === false
+        ? response.portraitState
+        : highestPortraitState(before, response.portraitState);
     this.renderPortrait();
 
     // A tell is already woven into the reply. Keeping it as metadata makes the cause
     // journalable without producing the unexplained yellow second sentence the old UI did.
     if (response.tell) {
       this.callbacks.onTell(figure, response.tell.quoted);
+    }
+
+    // «Третий уровень сам по себе не убивает. Убивает то, что ты продолжил давить на
+    // фигуру, которая уже смотрит молча.» Resonance needs the дожим: the figure has to
+    // have *already* known before this turn, and this turn has to have handed it one
+    // more piece. Without that gate any single turn could end the run.
+    const dozhim =
+      before === "knows" && figure.portraitState === "knows" && !!response.tell;
+    if (response.resonance && !dozhim) {
+      response = { ...response, resonance: null };
     }
 
     if (response.yieldedShardId)

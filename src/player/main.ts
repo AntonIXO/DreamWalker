@@ -297,6 +297,11 @@ async function boot(): Promise<void> {
     onShard: noteShard,
     onMemorySpent: () => {
       journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
+      // «Пустота» — nothing left to spend, so the sanitar stays. Not dead; stuck.
+      if (mindMemory.availableMemories().length === 0) {
+        input.setCaptured(true);
+        finale.openVoid();
+      }
     },
     onJournal: (figure, text) => {
       journal.addPerson(cycle.number, figure.id, figure.name, text);
@@ -340,9 +345,15 @@ async function boot(): Promise<void> {
           cycle.number,
           kind === "match"
             ? "Ты назвал тайну сна."
-            : kind === "walk-away"
-              ? "Ты ушёл, не забрав тайну."
-              : "Фигура назвала тебя чужим.",
+            : kind === "empty"
+              ? "Фраза была верна. Кошелёк был пуст."
+              : kind === "unfinished"
+                ? "Он проснулся раньше, чем ты собрал фразу."
+                : kind === "void"
+                  ? "Отдавать больше нечего."
+                  : kind === "walk-away"
+                    ? "Ты ушёл, не забрав тайну."
+                    : "Фигура назвала тебя чужим.",
         );
       },
     },
@@ -515,6 +526,14 @@ async function boot(): Promise<void> {
       for (const room of world.rooms) rooms.invalidate(room.id);
       session.restart();
 
+      // `endings.md` sets four cycles before the sanitar is thrown out with whatever
+      // they have. The gaps in the phrase persist into the next run.
+      const maxCycles = artifact.cycle.maxCycles;
+      if (maxCycles !== null && cycle.number > maxCycles) {
+        input.setCaptured(true);
+        finale.openFailed(wordNotebook.words);
+        return;
+      }
       cycle.restart();
       hud.whisper("Сон начинается заново. Ты помнишь.", 5);
     } finally {

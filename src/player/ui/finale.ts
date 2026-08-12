@@ -3,10 +3,21 @@ import type { WordNotebook } from "../game/wordNotebook";
 import type { DreamMind } from "../mind/types";
 import type { ModelThinkingIndicator } from "./modelThinking";
 
+/**
+ * The six outcomes of `endings.md`.
+ *
+ * Two of them are the ones that make the game a risk rather than a crossword: `empty` is
+ * a correct phrase over a wallet that never had anything in it, and `walk-away` is
+ * leaving with five words while the wallet was full — and the game never tells you which
+ * it was, «даже в статистике».
+ */
+export type EndingKind =
+  "match" | "empty" | "unfinished" | "resonance" | "void" | "walk-away";
+
 export interface FinaleCallbacks {
   onOpen(): void;
   onClose(): void;
-  onEnded(kind: "match" | "resonance" | "walk-away"): void;
+  onEnded(kind: EndingKind): void;
 }
 
 export class FinalePanel {
@@ -139,11 +150,20 @@ export class FinalePanel {
       const result = await this.thinking.run("Проверяет сид-фразу", () =>
         this.mind.judge(this.fullPhrase()),
       );
-      this.reply.textContent = result.reply;
       if (result.verdict === "match") {
-        this.ended = true;
-        this.callbacks.onEnded("match");
+        // «Взял» and «Пусто» are the same correct phrase and two different worlds. The
+        // dry one holds on screen longer than is comfortable, because the doc asks for
+        // exactly that: the number is the point, and so is how long you look at it.
+        const dry = result.wallet === "dry";
+        this.showEnding(
+          dry
+            ? `${result.reply}\n\n0.00000000`
+            : `${result.reply}\n\nЗа это отдано:`,
+          dry ? "empty" : "match",
+        );
+        return;
       }
+      this.reply.textContent = result.reply;
     } catch (error) {
       this.reply.textContent =
         error instanceof Error ? error.message : String(error);
@@ -154,7 +174,30 @@ export class FinalePanel {
     }
   }
 
-  private showEnding(text: string, kind: "resonance" | "walk-away"): void {
+  /**
+   * «Не сложилось» — the cycles ran out with the phrase incomplete.
+   *
+   * The gaps stay where they are: `WordNotebook` persists per slug, so the next run
+   * opens on the same column with the same holes in it.
+   */
+  openFailed(words: readonly (string | null)[]): void {
+    this.open();
+    const column = words
+      .map((word, index) => `${String(index + 1).padStart(2)}. ${word ?? "—"}`)
+      .join("\n");
+    this.showEnding(`Он проснулся.\n\n${column}`, "unfinished");
+  }
+
+  /** «Пустота» — every memory spent. The one screen with no way back to a menu. */
+  openVoid(): void {
+    this.open();
+    this.showEnding(
+      "Рука сжата вокруг пустоты. Пальцы не разжимаются.",
+      "void",
+    );
+  }
+
+  private showEnding(text: string, kind: EndingKind): void {
     this.ended = true;
     this.reply.textContent = text;
     this.reply.style.whiteSpace = "pre-line";

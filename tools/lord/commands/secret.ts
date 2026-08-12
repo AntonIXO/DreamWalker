@@ -14,7 +14,11 @@
  * §2 again: a few hooks, and the mind decides who ends up holding them.
  */
 
+import { access, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+
 import {
+  dreamDir,
   loadDraft,
   loadSecret,
   saveDraft,
@@ -94,6 +98,30 @@ export async function secretCommand(
     shards.push({ id: `shard${i + 1}`, hint });
   }
   draft.shards = shards;
+
+  // `endings.md`: about one dream in four is dry, and it is decided *here* rather than
+  // rolled at the finale — «броска в финале нет, иначе игрок справедливо решит, что его
+  // кинула не игра, а рандом». Local and gitignored: a flag in a served file would turn
+  // the whole discovery loop into a `curl`.
+  const walletPath = join(dreamDir(slug), "wallet.local.json");
+  const walletExists = await access(walletPath).then(
+    () => true,
+    () => false,
+  );
+  if (!walletExists) {
+    const dry =
+      flags.dry === true || (flags.wet !== true && Math.random() < 0.25);
+    await writeFile(
+      walletPath,
+      `${JSON.stringify({ wallet: dry ? "dry" : "full" }, null, 2)}\n`,
+      "utf8",
+    );
+    note(
+      dry
+        ? "this dream is dry — the tells are in the money scenes"
+        : "this dream has funds",
+    );
+  }
 
   await saveDraft(draft);
 

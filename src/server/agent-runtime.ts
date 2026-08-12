@@ -625,7 +625,78 @@ export class AgentRuntime {
     }
 
     this.agentCwd = mkdtempSync(join(tmpdir(), "dream-walker-agent-"));
+    this.dreamDir = join(process.cwd(), "dreams", this.artifact.slug);
+    this.wallet = this.readWallet();
   }
+
+  /**
+   * A figure's SOUL.md, read from disk and never from the artifact.
+   *
+   * `dream.json` is served at `/dream/dream.json`, and a soul carries the figure's
+   * ПАЛЕВО section — the list of things that give the sanitar away. Publishing it would
+   * hand the player the answer key, so the artifact carries only a `soulPath` and the
+   * server reads the file, exactly as it already does for `secret.local.txt`.
+   */
+  private soulFor(figureId: string): string | null {
+    const cached = this.souls.get(figureId);
+    if (cached !== undefined) return cached;
+    const card = this.artifact.content.characters.find(
+      (character) => character.id === figureId,
+    );
+    let soul: string | null = null;
+    if (card?.soulPath) {
+      try {
+        soul = readFileSync(
+          join(this.dreamDir, "content", card.soulPath),
+          "utf8",
+        ).trim();
+      } catch {
+        soul = null;
+      }
+    }
+    this.souls.set(figureId, soul);
+    return soul;
+  }
+
+  /**
+   * Whether this dream's wallet was ever going to have anything in it.
+   *
+   * `endings.md`: about one dream in four is dry, and it is decided when the dream is
+   * made rather than rolled at the finale — «броска в финале нет, иначе игрок справедливо
+   * решит, что его кинула не игра, а рандом». It must never reach the artifact: a flag in
+   * a served file turns the whole discovery loop into a `curl`.
+   */
+  private readWallet(): "full" | "dry" {
+    try {
+      const raw = readFileSync(
+        join(this.dreamDir, "wallet.local.json"),
+        "utf8",
+      );
+      return (JSON.parse(raw) as { wallet?: string }).wallet === "dry"
+        ? "dry"
+        : "full";
+    } catch {
+      return "full";
+    }
+  }
+
+  /**
+   * The system prompt for one figure: the guardrails, then its soul.
+   *
+   * Order matters. `SLEEPER_INSTRUCTIONS`' prompt-injection clause has to come *first*
+   * and stay in force — player utterances and figure transcripts are untrusted evidence
+   * whatever the soul says. The soul is Lord-authored and trusted, so it is appended
+   * rather than allowed to replace anything.
+   */
+  private dialogueInstructionsFor(figureId: string): string {
+    const soul = this.soulFor(figureId);
+    if (!soul) return DIALOGUE_INSTRUCTIONS;
+    return `${DIALOGUE_INSTRUCTIONS}\n\n--- КТО ТЫ ---\n${soul}`;
+  }
+
+  private readonly souls = new Map<string, string | null>();
+  private readonly dreamDir: string;
+  private readonly wallet: "full" | "dry";
 
   get providerMode(): "codex" | "anthropic" {
     return this.options.anthropic ? "anthropic" : "codex";
@@ -907,7 +978,10 @@ export class AgentRuntime {
       if (this.providerMode === "anthropic") {
         const stream = streamText({
           model: this.ensureModel(),
-          system: structuredInstructions(DIALOGUE_INSTRUCTIONS, dialogueSchema),
+          system: structuredInstructions(
+            this.dialogueInstructionsFor(figure.id),
+            dialogueSchema,
+          ),
           prompt,
           maxOutputTokens: 4096,
           abortSignal: signal,
@@ -928,7 +1002,7 @@ export class AgentRuntime {
           if (!(error instanceof AgentRuntimeError)) throw error;
           output = await this.generate(
             dialogueSchema,
-            DIALOGUE_INSTRUCTIONS,
+            this.dialogueInstructionsFor(figure.id),
             `${prompt}\n\nПоток не прошёл схему. Верни исправленный полный объект.`,
             signal,
           );
@@ -1173,14 +1247,26 @@ export class AgentRuntime {
         words.every(Boolean) &&
         validateMnemonic(phrase, wordlists.english) &&
         hash === this.artifact.content.mnemonic.hash;
-      return exact
+      if (!exact) {
+        return {
+          verdict: "miss",
+          reply: "Фраза не открыла кошелёк. Сон не говорит, где ошибка.",
+        };
+      }
+      // `endings.md` — the phrase can be right and the wallet still empty. That is the
+      // whole point: «настоящий гоп-стоп отличается тем, что у терпилы может не оказаться
+      // денег». The tells were readable all along; the sanitar chose not to spend a cycle
+      // on them.
+      return this.wallet === "dry"
         ? {
             verdict: "match",
-            reply: "Шесть слов встали на места. Аппарат забирает ключ из сна.",
+            wallet: "dry",
+            reply: "Фраза встала на места. Кошелёк пуст. Он всегда был пуст.",
           }
         : {
-            verdict: "miss",
-            reply: "Фраза не открыла кошелёк. Сон не говорит, где ошибка.",
+            verdict: "match",
+            wallet: "full",
+            reply: "Фраза встала на места. Аппарат забирает ключ из сна.",
           };
     } catch (error) {
       throw classify(error);

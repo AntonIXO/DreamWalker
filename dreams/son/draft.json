@@ -4928,7 +4928,7 @@
   },
   "cycle": {
     "durationMs": 480000,
-    "maxCycles": null
+    "maxCycles": 4
   },
   "heartbeat": {
     "intervalMs": 45000,
