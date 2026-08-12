@@ -115,6 +115,8 @@ export class ScriptedMind implements DreamMind {
         residueDelta: [],
         memoryEffect: null,
         resonance: null,
+        figureMemorySummary: "",
+        journalEntry: null,
       };
     }
 
@@ -129,7 +131,6 @@ export class ScriptedMind implements DreamMind {
       const quoted = quotedWordFor(request.utterance, hit);
       tell = {
         quoted,
-        voiced: `«${quoted}»… Откуда ты знаешь про это?`,
       };
     }
 
@@ -140,9 +141,12 @@ export class ScriptedMind implements DreamMind {
     let reply: string;
     if (yielded) {
       const shard = this.world.artifact.shards.find((s) => s.id === yielded);
-      reply = `${rng.pick(WARM)} ${shard?.hint ?? ""}`.trim();
+      reply =
+        `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(WARM)} ${shard?.hint ?? ""}`
+          .trim()
+          .slice(0, 240);
     } else if (hit) {
-      reply = rng.pick(DEFLECTIONS);
+      reply = `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(DEFLECTIONS)}`;
     } else if (hedged) {
       reply = "Да. Наверное.";
     } else {
@@ -156,6 +160,12 @@ export class ScriptedMind implements DreamMind {
       residueDelta: tell ? [`Санитар знает слово «${tell.quoted}».`] : [],
       memoryEffect: null,
       resonance: null,
+      figureMemorySummary: tell
+        ? `Чужой знает слово «${tell.quoted}» и задаёт слишком точные вопросы.`
+        : "Этот человек уже подходил и расспрашивал.",
+      journalEntry: yielded
+        ? `${figure.name} проговорился о важной детали.`
+        : null,
     };
   }
 
@@ -303,6 +313,10 @@ export class ScriptedMind implements DreamMind {
   }
 
   availableMemories(): readonly [] {
+    return [];
+  }
+
+  conversation(): readonly [] {
     return [];
   }
 

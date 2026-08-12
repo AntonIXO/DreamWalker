@@ -25,11 +25,37 @@ import {
   isDoorTile,
   type DoorTypeName,
 } from "../../shared/tilecodes";
+import type {
+  AgendaPhase,
+  DreamPopulation,
+  FigureAgenda,
+  InterestSeed,
+} from "../../shared/ai";
 
 export interface FigureState extends FigurePlacement {
   facing: "n" | "e" | "s" | "w";
   /** Bumped when the heartbeat moves them, so the view knows to re-place the sprite. */
   revision: number;
+  role: string;
+  voice: string;
+  desire: string;
+  fear: string;
+  taboo: string;
+  agenda: FigureAgenda[];
+  activity: string;
+  agendaPhase: AgendaPhase;
+  targetX: number | null;
+  targetY: number | null;
+  walkWait: number;
+  walkTime: number;
+  walking: boolean;
+}
+
+export interface InterestState extends InterestSeed {
+  x: number;
+  y: number;
+  /** Tile restored when a cycle patch moves or removes this interest. */
+  underTile: number;
 }
 
 export interface WorldState {
@@ -39,6 +65,8 @@ export interface WorldState {
   readonly tileSize: number;
   /** Mutable. The authored grid is in `artifact`; this one drifts. */
   tiles: Uint8Array;
+  /** Installed population is the cycle's immutable reset point. */
+  baseTiles: Uint8Array;
 
   readonly rooms: Room[];
   readonly roomById: Map<string, Room>;
@@ -53,6 +81,10 @@ export interface WorldState {
   readonly warpAt: Map<string, Warp>;
 
   figures: FigureState[];
+  interests: InterestState[];
+  population: DreamPopulation | null;
+  baseFigures: FigureState[];
+  baseInterests: InterestState[];
 
   /** What the sanitar has got hold of. Doors consult these. */
   keysHeld: Set<string>;
@@ -107,23 +139,26 @@ export function createWorld(artifact: DreamArtifact): WorldState {
   const rooms = map.rooms.map((room) => ({ ...room, rect: { ...room.rect } }));
   const doors = map.doors.map((door) => ({ ...door }));
 
+  const tiles = decodeTiles(map.tiles, map.width * map.height);
+  const figures = artifact.figures.map((figure) => makeFigureState(figure));
   return {
     artifact,
     width: map.width,
     height: map.height,
     tileSize: map.tileSize,
-    tiles: decodeTiles(map.tiles, map.width * map.height),
+    tiles,
+    baseTiles: tiles.slice(),
     rooms,
     roomById: new Map(rooms.map((room) => [room.id, room])),
     roomIndex: indexRooms(rooms, map.width, map.height),
     doors,
     doorAt: buildDoorIndex(doors),
     warpAt: new Map(map.warps.map((warp) => [key(warp.x, warp.y), warp])),
-    figures: artifact.figures.map((figure) => ({
-      ...figure,
-      facing: "s",
-      revision: 0,
-    })),
+    figures,
+    interests: [],
+    population: null,
+    baseFigures: figures.map(cloneFigureState),
+    baseInterests: [],
     keysHeld: new Set(),
     leversPulled: new Set(),
     puzzlesSolved: new Set(),
@@ -132,29 +167,60 @@ export function createWorld(artifact: DreamArtifact): WorldState {
   };
 }
 
+function makeFigureState(figure: FigurePlacement): FigureState {
+  return {
+    ...figure,
+    facing: "s",
+    revision: 0,
+    role: "часть этого сна",
+    voice: "говорит просто и настороженно",
+    desire: "сохранить привычный порядок",
+    fear: "что день пойдёт не так",
+    taboo: "не обсуждает то, что было до сна",
+    agenda: [],
+    activity: "стоит и прислушивается",
+    agendaPhase: "early",
+    targetX: null,
+    targetY: null,
+    walkWait: 1,
+    walkTime: 0,
+    walking: false,
+  };
+}
+
+export function cloneFigureState(figure: FigureState): FigureState {
+  return {
+    ...figure,
+    agenda: figure.agenda.map((stop) => ({ ...stop })),
+    targetX: null,
+    targetY: null,
+    walking: false,
+    walkTime: 0,
+  };
+}
+
 /**
  * Put the dream back the way its Lord left it (§5).
  *
  * Done in place rather than by building a new world, so every long-lived reference —
  * the tilemap, the mind, the heartbeat, the debug overlay — stays valid across a cycle.
- * The artifact is the source of truth; nothing here has to undo anything.
+ * The installed population snapshot is the source of truth; nothing here has to undo
+ * individual patches. Before population arrives that snapshot is simply the artifact.
  */
 export function resetWorld(world: WorldState): void {
   const { map } = world.artifact;
 
-  world.tiles = decodeTiles(map.tiles, map.width * map.height);
+  world.tiles = world.baseTiles.slice();
 
   world.doors.length = 0;
   world.doors.push(...map.doors.map((door) => ({ ...door })));
   world.doorAt = buildDoorIndex(world.doors);
 
   world.figures.length = 0;
-  world.figures.push(
-    ...world.artifact.figures.map((figure) => ({
-      ...figure,
-      facing: "s" as const,
-      revision: 0,
-    })),
+  world.figures.push(...world.baseFigures.map(cloneFigureState));
+  world.interests.length = 0;
+  world.interests.push(
+    ...world.baseInterests.map((interest) => ({ ...interest })),
   );
 
   // The live world and its figures forget. The journal and the sleeper's compact model
@@ -164,6 +230,17 @@ export function resetWorld(world: WorldState): void {
   world.puzzlesSolved.clear();
   world.visited.clear();
   world.sealHistory.clear();
+}
+
+export function interestAtTile(
+  world: WorldState,
+  x: number,
+  y: number,
+): InterestState | null {
+  return (
+    world.interests.find((interest) => interest.x === x && interest.y === y) ??
+    null
+  );
 }
 
 export function tileAt(world: WorldState, x: number, y: number): number {

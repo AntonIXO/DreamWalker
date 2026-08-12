@@ -20,6 +20,7 @@ import type {
   DreamMemory,
   ExamineResult,
   FinaleResult,
+  FigureTranscriptLine,
 } from "../../shared/ai";
 import type { Observation } from "./observation";
 
@@ -54,6 +55,7 @@ export interface ExamineRequest {
   x: number;
   y: number;
   roomId: string | null;
+  interestId: string | null;
 }
 
 export interface MindContext {
@@ -82,6 +84,7 @@ export interface DreamMind {
 
   judge(diagnosis: string): Promise<FinaleResult>;
   availableMemories(): readonly DreamMemory[];
+  conversation(figureId: string): readonly FigureTranscriptLine[];
   forgetFigures(): void;
   abort(): void;
 }

@@ -6,6 +6,7 @@ import type {
   DialogueRequestPayload,
   ExamineRequestPayload,
   FinaleRequestPayload,
+  InhabitRequestPayload,
 } from "../shared/ai";
 import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
@@ -93,6 +94,7 @@ function streaming<T>(
 ): Response {
   const encoder = new TextEncoder();
   let open = true;
+  let keepAlive: ReturnType<typeof setInterval> | null = null;
   const body = new ReadableStream<Uint8Array>({
     start(controller) {
       const send = (event: AiStreamEvent<T>) => {
@@ -103,10 +105,20 @@ function streaming<T>(
           open = false;
         }
       };
+      // Population generation can take longer than an HTTP proxy's silent-response
+      // window. Empty partials are valid NDJSON events and keep the connection alive;
+      // clients without a visible streaming target simply ignore them.
+      send({ type: "partial", reply: "" });
+      keepAlive = setInterval(
+        () => send({ type: "partial", reply: "" }),
+        10_000,
+      );
       void run((reply) => send({ type: "partial", reply }))
         .then((value) => send({ type: "result", value }))
         .catch((error) => send(errorEvent(error)))
         .finally(() => {
+          if (keepAlive) clearInterval(keepAlive);
+          keepAlive = null;
           if (!open) return;
           open = false;
           try {
@@ -118,6 +130,8 @@ function streaming<T>(
     },
     cancel() {
       open = false;
+      if (keepAlive) clearInterval(keepAlive);
+      keepAlive = null;
     },
   });
   return new Response(body, {
@@ -222,6 +236,13 @@ async function api(
     >(request, (payload, signal, emit) =>
       agents.dialogue(payload, signal, emit),
     );
+  }
+
+  if (pathname === "/api/ai/inhabit" && request.method === "POST") {
+    return aiRoute<
+      InhabitRequestPayload,
+      Awaited<ReturnType<typeof agents.inhabit>>
+    >(request, (payload, signal) => agents.inhabit(payload, signal));
   }
 
   if (pathname === "/api/ai/examine" && request.method === "POST") {

@@ -42,8 +42,9 @@ For normal development, run `bun run dev`. It starts Vite on `:8080` and the Bun
 
 ### Playing
 
-`WASD`/arrows to walk, `E` to speak or examine, `M` to spend a memory for two minutes,
-`Esc` to step away, and `H` for controls. `F1`, `B`, and `K` are debug controls.
+`WASD`/arrows to walk, `E` to speak or examine, `J` for the people journal, `M` to spend
+a memory for two minutes, `Esc` to step away, and `H` for controls. `F1`, `B`, and `K`
+are debug controls.
 
 ## What is where
 
@@ -106,19 +107,28 @@ function and nothing else; it is author-time only, never runtime.
 
 ## AI runtime
 
-`src/server/agent-runtime.ts` contains four schema-validated agents:
+`src/server/agent-runtime.ts` contains five schema-validated agents:
 
+- inhabit turns the Lord's sparse hooks into cached profiles, three-phase schedules,
+  room moods, and safe world interests without seeing the sealed secret;
 - dialogue streams a figure's answer, may yield only that figure's shard, and enforces
-  that every tell quotes an exact substring of the player's current words;
-- examine is the safe, slow channel — things do not suspect;
+  that every tell quotes an exact substring of the player's current words inside one
+  short visible reply;
+- examine is the safe, slow channel — things do not suspect, and a thing may yield only
+  the shard assigned to that exact world interest;
 - cycle exit compresses sleeper memory and proposes only the closed patch vocabulary;
 - finale compares the player's diagnosis with the sealed line by meaning. It is the only
   agent that sees plaintext, and the server reveals it only after `match`.
 
-`RemoteMind` keeps bounded per-figure transcripts, persistent discovered shards, sleeper
+`RemoteMind` keeps the last six lines and a compact summary per figure for the current
+cycle, plus persistent discovered shards, sleeper
 tells, and exactly three irreplaceable player memories. A memory can be offered in a
 conversation or burned with `M` for `+2:00`. Any failed call falls back per action to
 `ScriptedMind`; the Pixi ticker keeps rendering while only simulation is paused.
+
+Generated population is cached under `.dreamwalker/runtime/`, keyed by dream slug and
+sealed-secret hash. A disconnected first run receives a deterministic 15-person/24-interest
+fallback rather than an empty map; a later authenticated run can replace it with AI output.
 
 ### Codex OAuth (default)
 
@@ -149,7 +159,7 @@ token remains server-side and is never bundled by Vite.
 ## Status
 
 Working: the Lord CLI end to end, artifact validator, world generation, indexed-PNG art
-pipeline, PixiJS player, typed runtime patches, AI dialogue/examination/cycle/finale,
+pipeline, PixiJS player, typed runtime patches, AI population/dialogue/examination/cycle/finale,
 Codex device OAuth, an Anthropic-compatible provider, persistent memory economy, journal,
 and deterministic offline fallback.
 

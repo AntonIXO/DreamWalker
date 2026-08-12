@@ -12,6 +12,7 @@ describe("Cycle", () => {
     cycle.extend(120_000);
     expect(cycle.number).toBe(1);
     expect(cycle.remainingSeconds).toBe(165);
+    expect(cycle.progress).toBe(0);
   });
 
   test("restart restores authored duration and advances the number", () => {

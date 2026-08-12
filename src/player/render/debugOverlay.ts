@@ -43,7 +43,7 @@ export class DebugOverlay {
     this.root.className = "debug";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <div class="debug-head">F1 — карта сна · H — удар сердца · K — выдать ключи</div>
+      <div class="debug-head">F1 — карта сна · B — удар сердца · K — выдать ключи</div>
       <canvas class="debug-map"></canvas>
       <div class="debug-stats"></div>
       <div class="debug-log"></div>
@@ -134,6 +134,9 @@ export class DebugOverlay {
 
     const sealed = this.world.doors.filter((d) => d.type === "sealed").length;
     const held = this.world.figures.filter((f) => f.holdsShardId).length;
+    const worldHooks = this.world.interests.filter((interest) =>
+      Boolean(interest.holdsShardId),
+    ).length;
     const worst = worstKeyLockGap(graph.nodes);
 
     this.statsEl.innerHTML = "";
@@ -144,7 +147,14 @@ export class DebugOverlay {
       ],
       ["depth", String(Math.max(...graph.nodes.map((n) => n.accessLevel)))],
       ["doors", `${this.world.doors.length}, ${sealed} sealed`],
-      ["hooks held", `${held}/${this.world.artifact.shards.length}`],
+      [
+        "population",
+        `${this.world.figures.length} people, ${this.world.interests.length} interests`,
+      ],
+      [
+        "hooks",
+        `${held} with people, ${worldHooks} in world / ${this.world.artifact.shards.length}`,
+      ],
       ["visited", `${this.world.visited.size}/${this.world.rooms.length}`],
       ["mind wakes", "cycle exit"],
       ["beat budget", String(this.heartbeat.budgetRemaining)],

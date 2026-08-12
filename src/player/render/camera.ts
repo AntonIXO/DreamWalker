@@ -39,6 +39,24 @@ export const DEFAULT_CAMERA: CameraOptions = {
   edgeMargin: 0,
 };
 
+/**
+ * How far south the follow camera may go.
+ *
+ * Interiors share the same tile grid, packed into a band under the country. The follow
+ * camera must stop at that band — otherwise the south treeline shows kitchens. Framing
+ * (`frame`) still centres an interior without this clamp.
+ */
+export function outdoorHeight(
+  rooms: readonly Room[],
+  worldHeight: number,
+): number {
+  let height = worldHeight;
+  for (const room of rooms) {
+    if (room.region === "interior") height = Math.min(height, room.rect.y);
+  }
+  return height;
+}
+
 /** Smoothstep. Eases both ends, so the slide neither jerks nor drifts. */
 function ease(t: number): number {
   return t * t * (3 - 2 * t);

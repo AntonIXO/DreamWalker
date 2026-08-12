@@ -15,6 +15,7 @@ import { Tile } from "../../shared/tilecodes";
 import {
   doorAtTile,
   doorRefusal,
+  interestAtTile,
   tileAt,
   type FigureState,
   type WorldState,
@@ -26,7 +27,13 @@ const REACH = 20;
 
 export type InteractTarget =
   | { kind: "figure"; figure: FigureState; prompt: string }
-  | { kind: "world"; x: number; y: number; prompt: string }
+  | {
+      kind: "world";
+      x: number;
+      y: number;
+      interestId: string | null;
+      prompt: string;
+    }
   | { kind: "door"; doorId: string; prompt: string };
 
 export function findTarget(
@@ -70,7 +77,14 @@ export function findTarget(
 
   const tile = tileAt(world, tx, ty);
   if (tile === Tile.PROP || tile === Tile.PROP_SOLID) {
-    return { kind: "world", x: tx, y: ty, prompt: "посмотреть" };
+    const interest = interestAtTile(world, tx, ty);
+    return {
+      kind: "world",
+      x: tx,
+      y: ty,
+      interestId: interest?.id ?? null,
+      prompt: interest ? `${interest.name} — осмотреть` : "посмотреть",
+    };
   }
 
   return null;

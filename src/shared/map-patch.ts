@@ -29,6 +29,25 @@ export type MapPatch =
   | { kind: "retypeDoor"; doorId: string; to: DoorTypeName; reason: string }
   | { kind: "moveFigure"; figureId: string; toRoomId: string; reason: string }
   | {
+      kind: "moveInterest";
+      interestId: string;
+      toRoomId: string;
+      reason: string;
+    }
+  | { kind: "removeInterest"; interestId: string; reason: string }
+  | {
+      kind: "placeInterest";
+      interest: {
+        id: string;
+        roomId: string;
+        name: string;
+        sensorySeed: string;
+        solid: boolean;
+        holdsShardId: string | null;
+      };
+      reason: string;
+    }
+  | {
       kind: "relocateShard";
       shardId: string;
       toFigureId: string;

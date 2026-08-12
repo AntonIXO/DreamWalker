@@ -53,6 +53,55 @@ export interface FigureTranscriptLine {
   text: string;
 }
 
+export type AgendaPhase = "early" | "middle" | "late";
+
+export interface FigureAgenda {
+  phase: AgendaPhase;
+  roomId: string;
+  activity: string;
+}
+
+/** Model-authored character notes. They describe the fiction, never game rules. */
+export interface FigureProfile {
+  id: string;
+  name: string;
+  archetypeId: string;
+  homeRoomId: string;
+  role: string;
+  voice: string;
+  desire: string;
+  fear: string;
+  taboo: string;
+  holdsShardId: string | null;
+  agenda: FigureAgenda[];
+}
+
+/** A safe, slow source of information placed into the generated world. */
+export interface InterestSeed {
+  id: string;
+  roomId: string;
+  name: string;
+  sensorySeed: string;
+  solid: boolean;
+  holdsShardId: string | null;
+}
+
+export interface DreamPopulation {
+  figures: FigureProfile[];
+  interests: InterestSeed[];
+  roomMoods: Record<string, string>;
+  source: "ai" | "fallback";
+}
+
+export interface InhabitRequestPayload {
+  slug: string;
+}
+
+export interface FigureMemory {
+  summary: string;
+  lines: FigureTranscriptLine[];
+}
+
 export interface WorldSnapshot {
   rooms: Array<{ id: string; name: string; kind: "room" | "connector" }>;
   doors: Array<{
@@ -66,6 +115,15 @@ export interface WorldSnapshot {
     name: string;
     roomId: string;
     holdsShardId: string | null;
+    role: string;
+    activity: string;
+  }>;
+  interests: Array<{
+    id: string;
+    name: string;
+    roomId: string;
+    sensorySeed: string;
+    holdsShardId: string | null;
   }>;
 }
 
@@ -75,7 +133,7 @@ export interface DialogueRequestPayload {
   figureId: string;
   utterance: string;
   offeredMemory: DreamMemory | null;
-  history: FigureTranscriptLine[];
+  figureMemory: FigureMemory;
   knownShardIds: string[];
   sleeper: SleeperMemory;
   world: WorldSnapshot;
@@ -83,7 +141,6 @@ export interface DialogueRequestPayload {
 
 export interface Tell {
   quoted: string;
-  voiced: string;
 }
 
 export interface DialogueResult {
@@ -94,15 +151,17 @@ export interface DialogueResult {
   memoryEffect: {
     memoryId: string;
     accepted: boolean;
-    voiced: string;
   } | null;
   resonance: { declaration: string } | null;
+  figureMemorySummary: string;
+  journalEntry: string | null;
 }
 
 export interface ExamineRequestPayload {
   slug: string;
   cycleNumber: number;
   roomId: string | null;
+  interestId: string | null;
   x: number;
   y: number;
   knownShardIds: string[];

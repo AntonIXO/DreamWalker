@@ -23,6 +23,8 @@ export interface AtlasTextures {
   tileSize: number;
 }
 
+let assetsReady = false;
+
 export async function loadAtlas(baseUrl: string): Promise<AtlasTextures> {
   const manifestResponse = await fetch(`${baseUrl}/atlas.json`);
   if (!manifestResponse.ok) {
@@ -32,10 +34,17 @@ export async function loadAtlas(baseUrl: string): Promise<AtlasTextures> {
   }
   const manifest = validateAtlasManifest(await manifestResponse.json());
 
+  // Once per page. A second init throws; hot reload would otherwise blow up here.
+  if (!assetsReady) {
+    await Assets.init({ texturePreference: { resolution: 1 } });
+    assetsReady = true;
+  }
+
   const sheet: Texture = await Assets.load({
     src: `${baseUrl}/${manifest.image}`,
     // Vite serves the atlas with a cache-busting query in dev; keep the alias stable.
     alias: "dream-atlas",
+    data: { scaleMode: "nearest" },
   });
   sheet.source.scaleMode = "nearest";
 

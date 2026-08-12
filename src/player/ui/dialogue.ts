@@ -16,9 +16,10 @@ import type { DreamMind, TurnResponse } from "../mind/types";
 export interface DialogueCallbacks {
   onOpen(figure: FigureState): void;
   onClose(): void;
-  onTell(quoted: string): void;
+  onTell(figure: FigureState, quoted: string): void;
   onShard(shardId: string): void;
   onMemorySpent(memoryId: string): void;
+  onJournal(figure: FigureState, text: string): void;
   onResonance(declaration: string): void;
 }
 
@@ -72,6 +73,10 @@ export class DialoguePanel {
     return this.busy;
   }
 
+  get currentFigureId(): string | null {
+    return this.figure?.id ?? null;
+  }
+
   private refreshMemories(): void {
     const previous = this.memoryEl.value;
     this.memoryEl.replaceChildren(new Option("не отдавать воспоминание", ""));
@@ -90,6 +95,12 @@ export class DialoguePanel {
     this.root.hidden = false;
     this.nameEl.textContent = figure.name;
     this.logEl.replaceChildren();
+    for (const line of this.mind.conversation(figure.id)) {
+      this.line(
+        line.text,
+        line.speaker === "sanitar" ? "said-by-you" : "said-by-them",
+      );
+    }
     this.refreshMemories();
     this.inputEl.value = "";
     this.inputEl.focus();
@@ -162,19 +173,17 @@ export class DialoguePanel {
     pending.textContent = response.reply;
     pending.className = "said-by-them";
 
-    // The tell is the figure noticing, so it reads as another thing they said — and it
-    // always quotes the exact word that caused it (§3).
+    // A tell is already woven into the reply. Keeping it as metadata makes the cause
+    // journalable without producing the unexplained yellow second sentence the old UI did.
     if (response.tell) {
-      this.line(response.tell.voiced, "said-by-them tell");
-      this.callbacks.onTell(response.tell.quoted);
+      this.callbacks.onTell(figure, response.tell.quoted);
     }
 
     if (response.yieldedShardId)
       this.callbacks.onShard(response.yieldedShardId);
 
-    if (response.memoryEffect) {
-      this.line(response.memoryEffect.voiced, "said-by-them memory");
-    }
+    if (response.journalEntry)
+      this.callbacks.onJournal(figure, response.journalEntry);
     if (
       offeredMemoryId &&
       !this.mind

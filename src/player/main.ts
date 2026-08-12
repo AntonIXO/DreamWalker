@@ -7,6 +7,7 @@
  * heartbeat does goes through `game/patch.ts`.
  */
 
+import "pixi.js/prepare";
 import {
   Application,
   Container,
@@ -19,7 +20,7 @@ import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import { REQUIRED_TILE_ROLES, TILE_ROLE } from "../shared/tilecodes";
 import { loadAtlas } from "./render/atlasTextures";
 import { TileFoundry } from "./render/foundry";
-import { Camera, DEFAULT_CAMERA } from "./render/camera";
+import { Camera, DEFAULT_CAMERA, outdoorHeight } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
 import { Shiver } from "./render/shiver";
 import { TilemapView } from "./render/tilemap";
@@ -27,6 +28,8 @@ import { ActorLayer, WalkerSprite } from "./render/walkerView";
 import { Cycle, Journal } from "./game/cycle";
 import { Action, Input } from "./game/input";
 import { findTarget } from "./game/interact";
+import { updateFigures } from "./game/figures";
+import { installPopulation } from "./game/patch";
 import {
   createPlayer,
   playerTile,
@@ -44,6 +47,7 @@ import {
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
+import { inhabitDream } from "./mind/remote";
 import { MindMemory } from "./mind/memory";
 import { loadMindSettings } from "./mind/settings";
 import { ConnectPanel } from "./ui/connect";
@@ -52,6 +56,7 @@ import { DialoguePanel } from "./ui/dialogue";
 import { Hud } from "./ui/hud";
 import { FinalePanel } from "./ui/finale";
 import { MemoryPanel } from "./ui/memories";
+import { JournalPanel } from "./ui/journal";
 import { StartMenu } from "./ui/menu";
 
 const DREAM_URL = "/dream";
@@ -113,16 +118,34 @@ async function boot(): Promise<void> {
   await app.init({
     background,
     resizeTo: window,
+    resolution: 1,
+    autoDensity: false,
     antialias: false,
     roundPixels: true,
+    preference: ["webgl", "canvas"],
+    powerPreference: "high-performance",
+    eventMode: "none",
+    eventFeatures: {
+      move: false,
+      globalMove: false,
+      click: false,
+      wheel: false,
+    },
+    culler: { updateTransform: true },
   });
   document.getElementById("pixi-container")!.appendChild(app.canvas);
   document.title = `${artifact.title} — Dream Walker`;
 
   const uiLayer = document.getElementById("ui-layer")!;
 
-  // Everything the camera moves lives under here; UI does not.
-  const worldRoot = new Container({ label: "world" });
+  // Everything the camera moves lives under here; UI does not. One render group
+  // so the zoom/pan is applied on the GPU instead of per tile sprite.
+  const worldRoot = new Container({
+    label: "world",
+    isRenderGroup: true,
+    eventMode: "none",
+    interactiveChildren: false,
+  });
   app.stage.addChild(worldRoot);
 
   // Anything the Lord baked is already here; the foundry only ever adds what they did not.
@@ -131,6 +154,7 @@ async function boot(): Promise<void> {
 
   const tilemap = new TilemapView(world, atlas);
   worldRoot.addChild(tilemap.root);
+  await app.renderer.prepare.upload(tilemap.root);
 
   const actors = new ActorLayer(atlas);
   worldRoot.addChild(actors.root);
@@ -144,7 +168,7 @@ async function boot(): Promise<void> {
    * without this you stand in your kitchen looking into the two next door. A child of
    * `worldRoot`, so it inherits the camera transform for free.
    */
-  const roomMask = new Graphics();
+  const roomMask = new Graphics({ visible: false, eventMode: "none" });
   worldRoot.addChild(roomMask);
   let maskedRoomId: string | null = null;
 
@@ -159,7 +183,7 @@ async function boot(): Promise<void> {
     app.screen.height,
     DEFAULT_CAMERA,
   );
-  camera.setWorldSize(world.width, world.height);
+  camera.setWorldSize(world.width, outdoorHeight(world.rooms, world.height));
   const shiver = new Shiver(camera);
 
   const cycle = new Cycle(artifact);
@@ -198,15 +222,32 @@ async function boot(): Promise<void> {
     onOpen: (figure) => {
       input.setCaptured(true);
       observations.noteApproach(figure.id);
+      const roomName =
+        world.roomById.get(figure.roomId)?.name ?? "неизвестное место";
+      journal.addPerson(
+        cycle.number,
+        figure.id,
+        figure.name,
+        `${figure.activity}. Встречен: ${roomName}.`,
+      );
     },
     onClose: () => input.setCaptured(false),
-    onTell: (quoted) => {
+    onTell: (figure, quoted) => {
       // §3: a tell is only useful if the player can go back and see what caused it.
-      journal.add(cycle.number, `Тебя переспросили про «${quoted}».`);
+      journal.addPerson(
+        cycle.number,
+        figure.id,
+        figure.name,
+        `Заметил чужого по словам «${quoted}».`,
+        "tell",
+      );
     },
     onShard: noteShard,
     onMemorySpent: () => {
       journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
+    },
+    onJournal: (figure, text) => {
+      journal.addPerson(cycle.number, figure.id, figure.name, text);
     },
     onResonance: (declaration) => {
       dialogue.close();
@@ -223,6 +264,9 @@ async function boot(): Promise<void> {
   const debug = new DebugOverlay(uiLayer, world, heartbeat);
   const input = new Input();
   input.attach();
+  const journalPanel = new JournalPanel(uiLayer, journal, {
+    onClose: () => input.setCaptured(false),
+  });
 
   const finale = new FinalePanel(uiLayer, mind, {
     onOpen: () => input.setCaptured(true),
@@ -244,11 +288,34 @@ async function boot(): Promise<void> {
     onChange: (settings) => menu.setMind(settings),
     onClose: () => menu.setVisible(true),
   });
-  const beginDream = (): void => {
-    menu.close();
-    controls.close();
-    connect.close();
-    memories.close();
+  let populationInstalled = false;
+  let populationLoading = false;
+  const beginDream = async (): Promise<void> => {
+    if (populationLoading) return;
+    populationLoading = true;
+    try {
+      if (!populationInstalled) {
+        hud.whisper("Сон вспоминает, кто здесь живёт…", 10);
+        const population = await inhabitDream(artifact.slug);
+        const installed = installPopulation(world, population);
+        foundry.ensureAll(rolesIn(world, installed.affectedRooms));
+        tilemap.refreshAll();
+        await app.renderer.prepare.upload(tilemap.root);
+        actors.syncFigures(world.figures, world.tileSize);
+        populationInstalled = true;
+      }
+      menu.close();
+      controls.close();
+      connect.close();
+      memories.close();
+      journalPanel.close();
+      input.setCaptured(false);
+    } catch (error) {
+      console.error("[population]", error);
+      hud.whisper("Сон не смог вспомнить всех. Попробуй ещё раз.", 6);
+    } finally {
+      populationLoading = false;
+    }
   };
   const menu: StartMenu = new StartMenu(uiLayer, artifact, {
     onStart: () => {
@@ -257,7 +324,7 @@ async function boot(): Promise<void> {
         memories.open();
         return;
       }
-      beginDream();
+      void beginDream();
     },
     // Panels open *over* the menu, one at a time. Two absolutely-positioned things in the
     // middle of the screen do not layer, they collide.
@@ -271,7 +338,7 @@ async function boot(): Promise<void> {
     },
   });
   const memories = new MemoryPanel(uiLayer, mindMemory, {
-    onReady: beginDream,
+    onReady: () => void beginDream(),
     onClose: (wasOnboarding) => {
       if (wasOnboarding) menu.setVisible(true);
       else input.setCaptured(false);
@@ -322,7 +389,13 @@ async function boot(): Promise<void> {
       heartbeat.resetCycle();
       forgetCycle(mind);
       player = createPlayer(world);
+      tilemap.clipTo(null);
+      maskedRoomId = null;
+      worldRoot.mask = null;
+      roomMask.clear();
+      roomMask.visible = false;
       tilemap.refreshAll();
+      await app.renderer.prepare.upload(tilemap.root);
 
       cycle.restart();
       lastWarpId = null;
@@ -398,7 +471,11 @@ async function boot(): Promise<void> {
     // Anything that has taken over the screen also takes the sanitar's feet. Reading the
     // controls should not walk you into a wall.
     const held =
-      dialogue.isOpen || controls.isOpen || memories.isOpen || finale.isOpen;
+      dialogue.isOpen ||
+      controls.isOpen ||
+      memories.isOpen ||
+      journalPanel.isOpen ||
+      finale.isOpen;
     // Pixi's ticker and renderer stay alive. Only the game clock is paused while network
     // latency, a cycle transition, or the finale owns the simulation.
     const simulationPaused = mind.waiting || restarting || finale.isOpen;
@@ -413,6 +490,15 @@ async function boot(): Promise<void> {
     const room = roomAt(world, tile.x, tile.y);
     if (room) world.visited.add(room.id);
     if (!simulationPaused) observations.tick(delta, room?.id ?? null);
+    if (!simulationPaused) {
+      updateFigures(
+        world,
+        cycle.progress,
+        delta,
+        dialogue.currentFigureId,
+        camera.visibleTiles(),
+      );
+    }
 
     // Stepping onto a doorway puts you somewhere else on the same grid. A hard cut, the
     // way a Game Boy doorway works — panning across the gap between a town and the room
@@ -440,6 +526,7 @@ async function boot(): Promise<void> {
       camera.frame(room);
       if (maskedRoomId !== room.id) {
         maskedRoomId = room.id;
+        tilemap.clipTo(room.rect);
         const size = world.tileSize;
         roomMask
           .clear()
@@ -450,13 +537,20 @@ async function boot(): Promise<void> {
             room.rect.h * size,
           )
           .fill(0xffffff);
+        // Still a stencil: neighbouring interiors can share a 16-tile chunk, so
+        // hiding whole chunks is not enough. The Graphics stays invisible; Pixi
+        // only uses its shape. Never leave it drawn once the mask comes off.
+        roomMask.visible = false;
         worldRoot.mask = roomMask;
       }
     } else {
       camera.follow(player.x, player.y, delta);
       if (maskedRoomId !== null) {
         maskedRoomId = null;
+        tilemap.clipTo(null);
         worldRoot.mask = null;
+        roomMask.clear();
+        roomMask.visible = false;
       }
     }
 
@@ -470,12 +564,20 @@ async function boot(): Promise<void> {
         memories.open();
       }
     }
+    if (input.consume(Action.JOURNAL)) {
+      if (journalPanel.isOpen) journalPanel.close();
+      else {
+        input.setCaptured(true);
+        journalPanel.open();
+      }
+    }
 
     // Escape peels one layer at a time, outermost first, so it never closes a
     // conversation the player only meant to look away from.
     if (input.consume(Action.CANCEL)) {
       if (controls.isOpen) controls.close();
       else if (memories.isOpen) memories.close();
+      else if (journalPanel.isOpen) journalPanel.close();
       else if (finale.isOpen) finale.close();
       else dialogue.close();
     }
@@ -503,7 +605,12 @@ async function boot(): Promise<void> {
         dialogue.open(target.figure);
       } else if (target?.kind === "world") {
         void mind
-          .examine({ x: target.x, y: target.y, roomId: room?.id ?? null })
+          .examine({
+            x: target.x,
+            y: target.y,
+            roomId: room?.id ?? null,
+            interestId: target.interestId,
+          })
           .then((result) => {
             hud.whisper(result.reply, 5);
             if (result.yieldedShardId) noteShard(result.yieldedShardId);

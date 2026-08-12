@@ -2,9 +2,11 @@ import type {
   AiStreamEvent,
   CycleExitRequestPayload,
   DialogueRequestPayload,
+  DreamPopulation,
   ExamineRequestPayload,
   FinaleRequestPayload,
   FigureTranscriptLine,
+  FigureMemory,
   WorldSnapshot,
 } from "../../shared/ai";
 import type { WorldState } from "../game/world";
@@ -18,7 +20,8 @@ import type {
 } from "./types";
 
 const REQUEST_TIMEOUT_MS = 120_000;
-const TRANSCRIPT_LINES = 16;
+const INHABIT_TIMEOUT_MS = 175_000;
+const TRANSCRIPT_LINES = 6;
 
 export interface RemoteMindContext {
   cycleNumber(): number;
@@ -53,6 +56,15 @@ function snapshot(world: WorldState): WorldSnapshot {
       name: figure.name,
       roomId: figure.roomId,
       holdsShardId: figure.holdsShardId,
+      role: figure.role,
+      activity: figure.activity,
+    })),
+    interests: world.interests.map((interest) => ({
+      id: interest.id,
+      name: interest.name,
+      roomId: interest.roomId,
+      sensorySeed: interest.sensorySeed,
+      holdsShardId: interest.holdsShardId,
     })),
   };
 }
@@ -101,10 +113,24 @@ async function streamRequest<T>(
   return value;
 }
 
+export async function inhabitDream(slug: string): Promise<DreamPopulation> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), INHABIT_TIMEOUT_MS);
+  try {
+    return await streamRequest<DreamPopulation>(
+      "/api/ai/inhabit",
+      { slug },
+      controller.signal,
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 /** Server-backed mind with a deterministic per-call fallback. */
 export class RemoteMind implements DreamMind {
   readonly name = "remote";
-  private readonly transcripts = new Map<string, FigureTranscriptLine[]>();
+  private readonly figureMemories = new Map<string, FigureMemory>();
   private activeController: AbortController | null = null;
   private failures = 0;
 
@@ -154,7 +180,10 @@ export class RemoteMind implements DreamMind {
     onPartial?: (reply: string) => void,
   ): Promise<TurnResponse> {
     const controller = this.controller();
-    const history = this.transcripts.get(request.figureId) ?? [];
+    const figureMemory = this.figureMemories.get(request.figureId) ?? {
+      summary: "",
+      lines: [],
+    };
     const offeredMemory = this.memory.memory(request.offeredMemoryId);
     const payload: DialogueRequestPayload = {
       slug: this.world.artifact.slug,
@@ -162,7 +191,7 @@ export class RemoteMind implements DreamMind {
       figureId: request.figureId,
       utterance: request.utterance,
       offeredMemory,
-      history,
+      figureMemory,
       knownShardIds: [...this.memory.knownShardIds],
       sleeper: this.memory.sleeper,
       world: snapshot(this.world),
@@ -175,11 +204,13 @@ export class RemoteMind implements DreamMind {
         controller.signal,
         onPartial,
       );
-      history.push(
+      figureMemory.lines.push(
         { speaker: "sanitar", text: request.utterance },
         { speaker: "figure", text: result.reply },
       );
-      this.transcripts.set(request.figureId, history.slice(-TRANSCRIPT_LINES));
+      figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
+      figureMemory.summary = result.figureMemorySummary.slice(-400);
+      this.figureMemories.set(request.figureId, figureMemory);
       if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
       if (result.tell) {
         this.memory.addTell(
@@ -193,7 +224,25 @@ export class RemoteMind implements DreamMind {
       return result;
     } catch (error) {
       if (!this.failed(error)) throw error;
-      return this.fallback.turn(request, onPartial);
+      const result = await this.fallback.turn(request, onPartial);
+      figureMemory.lines.push(
+        { speaker: "sanitar", text: request.utterance },
+        { speaker: "figure", text: result.reply },
+      );
+      figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
+      figureMemory.summary = result.figureMemorySummary.slice(-400);
+      this.figureMemories.set(request.figureId, figureMemory);
+      if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
+      if (result.tell) {
+        this.memory.addTell(
+          this.context.cycleNumber(),
+          request.figureId,
+          result.tell.quoted,
+        );
+      }
+      this.memory.addResidue(result.residueDelta);
+      if (offeredMemory) this.memory.spendMemory(offeredMemory.id);
+      return result;
     } finally {
       this.finish(controller);
     }
@@ -205,6 +254,7 @@ export class RemoteMind implements DreamMind {
       slug: this.world.artifact.slug,
       cycleNumber: this.context.cycleNumber(),
       roomId: request.roomId,
+      interestId: request.interestId,
       x: request.x,
       y: request.y,
       knownShardIds: [...this.memory.knownShardIds],
@@ -232,7 +282,9 @@ export class RemoteMind implements DreamMind {
       observation,
       knownShardIds: [...this.memory.knownShardIds],
       sleeper: this.memory.sleeper,
-      transcripts: Object.fromEntries(this.transcripts),
+      transcripts: Object.fromEntries(
+        [...this.figureMemories].map(([id, memory]) => [id, memory.lines]),
+      ),
       world: snapshot(this.world),
     };
     try {
@@ -275,8 +327,12 @@ export class RemoteMind implements DreamMind {
     return this.memory.availableMemories();
   }
 
+  conversation(figureId: string): readonly FigureTranscriptLine[] {
+    return this.figureMemories.get(figureId)?.lines ?? [];
+  }
+
   forgetFigures(): void {
-    this.transcripts.clear();
+    this.figureMemories.clear();
     this.fallback.forgetFigures();
   }
 

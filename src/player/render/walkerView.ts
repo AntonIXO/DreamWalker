@@ -20,6 +20,10 @@ function frameName(prefix: string, dir: Direction, frame: number): string {
 export class WalkerSprite {
   readonly sprite: Sprite;
   private currentName = "";
+  private lastX = Number.NaN;
+  private lastY = Number.NaN;
+  private lastDir: Direction | "" = "";
+  private lastFrame = -1;
 
   constructor(
     private readonly atlas: AtlasTextures,
@@ -31,6 +35,7 @@ export class WalkerSprite {
       // Feet at the position, not the middle of the body.
       anchor: { x: 0.5, y: 0.9 },
       roundPixels: true,
+      eventMode: "none",
     });
   }
 
@@ -42,6 +47,19 @@ export class WalkerSprite {
   }
 
   update(x: number, y: number, dir: Direction, frame: number): void {
+    if (
+      x === this.lastX &&
+      y === this.lastY &&
+      dir === this.lastDir &&
+      frame === this.lastFrame
+    ) {
+      return;
+    }
+    this.lastX = x;
+    this.lastY = y;
+    this.lastDir = dir;
+    this.lastFrame = frame;
+
     this.sprite.x = Math.round(x);
     this.sprite.y = Math.round(y);
     // Sorting key: whoever stands lower draws in front.
@@ -65,7 +83,13 @@ export class WalkerSprite {
  * things happened to be created in.
  */
 export class ActorLayer {
-  readonly root = new Container({ label: "actors", sortableChildren: true });
+  readonly root = new Container({
+    label: "actors",
+    sortableChildren: true,
+    eventMode: "none",
+    interactiveChildren: false,
+    cullableChildren: false,
+  });
   private readonly figures = new Map<string, WalkerSprite>();
 
   constructor(private readonly atlas: AtlasTextures) {}
@@ -90,7 +114,7 @@ export class ActorLayer {
         figure.x * tileSize + tileSize / 2,
         figure.y * tileSize + tileSize,
         figure.facing,
-        0,
+        figure.walking ? Math.floor(figure.walkTime * 5) : 0,
       );
     }
 

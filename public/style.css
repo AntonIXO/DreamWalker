@@ -216,12 +216,6 @@ body {
     }
 }
 
-/* The tell. Styled as speech, never as a warning — the moment it reads as UI
-   it stops being a conversation and starts being a meter. */
-.said-by-them.tell {
-    color: #d8b46a;
-}
-
 .dialogue-input {
     width: 100%;
     padding: 0.5rem 0.6rem;
@@ -256,10 +250,6 @@ body {
     color: var(--ink-dim);
     background: #0e0e12;
     border: 1px solid var(--edge);
-}
-
-.said-by-them.memory {
-    color: #9aa7d8;
 }
 
 .dialogue-hint {
@@ -497,6 +487,33 @@ body {
     width: 100%;
     text-align: left;
     line-height: 1.45;
+}
+
+.journal-people,
+.journal-people section,
+.journal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.journal-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.journal-list li {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 0.75rem;
+    font-size: 0.78125rem;
+    line-height: 1.55;
+    color: var(--ink);
+}
+
+.journal-list li > :first-child {
+    color: var(--ink-dim);
 }
 
 .connect-account {

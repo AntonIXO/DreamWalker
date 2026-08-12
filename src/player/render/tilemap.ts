@@ -32,11 +32,44 @@ import { variantFor, type AtlasTextures } from "./atlasTextures";
 /** Tiles per chunk. 16 keeps a chunk near a screen quarter at the usual zoom. */
 const CHUNK = 16;
 
+const CACHE = {
+  scaleMode: "nearest" as const,
+  resolution: 1,
+  antialias: false,
+};
+
+interface ChunkRecord {
+  container: Container;
+  sprites: Sprite[];
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+}
+
+function overlaps(
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  clip: Rect,
+): boolean {
+  return (
+    x0 < clip.x + clip.w && x1 > clip.x && y0 < clip.y + clip.h && y1 > clip.y
+  );
+}
+
 export class TilemapView {
-  readonly root = new Container({ label: "tilemap", isRenderGroup: true });
-  private readonly chunks = new Map<string, Container>();
+  readonly root = new Container({
+    label: "tilemap",
+    eventMode: "none",
+    interactiveChildren: false,
+    cullableChildren: false,
+  });
+  private readonly chunks = new Map<string, ChunkRecord>();
   private readonly chunksWide: number;
   private readonly chunksHigh: number;
+  private clip: Rect | null = null;
 
   constructor(
     private readonly world: WorldState,
@@ -88,61 +121,121 @@ export class TilemapView {
     );
   }
 
+  /**
+   * Hide chunks that do not overlap a tile rectangle. Used indoors so a neighbour
+   * living room does not sit in the same cached chunk as the one you are standing in.
+   * Pass null to show everything again.
+   */
+  clipTo(rect: Rect | null): void {
+    this.clip = rect;
+    for (const record of this.chunks.values()) {
+      record.container.visible = this.chunkShown(record);
+    }
+  }
+
+  private chunkShown(record: ChunkRecord): boolean {
+    return (
+      this.clip === null ||
+      overlaps(record.x0, record.y0, record.x1, record.y1, this.clip)
+    );
+  }
+
+  private releaseChunk(record: ChunkRecord): void {
+    // Disable the cache first so the RenderGroup goes back to the pool; destroy()
+    // returns the texture but not the group.
+    record.container.cacheAsTexture(false);
+    record.container.removeFromParent();
+    record.container.destroy({ children: true });
+  }
+
   private buildChunk(chunkX: number, chunkY: number): void {
     const key = `${chunkX},${chunkY}`;
-    const existing = this.chunks.get(key);
-    if (existing) {
-      this.root.removeChild(existing);
-      existing.destroy({ children: true });
-    }
-
     const size = this.world.tileSize;
     const x0 = chunkX * CHUNK;
     const y0 = chunkY * CHUNK;
     const x1 = Math.min(this.world.width, x0 + CHUNK);
     const y1 = Math.min(this.world.height, y0 + CHUNK);
 
-    const container = new Container({ label: `chunk:${key}` });
-
+    const painted: Array<{ lx: number; ly: number; texture: Texture }> = [];
     for (let y = y0; y < y1; y++) {
       for (let x = x0; x < x1; x++) {
         const tile = tileAt(this.world, x, y);
         if (tile === Tile.VOID) continue;
         const texture = this.textureFor(x, y, tile);
         if (!texture) continue;
-
-        container.addChild(
-          new Sprite({
-            texture,
-            x: x * size,
-            y: y * size,
-            roundPixels: true,
-          }),
-        );
+        painted.push({
+          lx: (x - x0) * size,
+          ly: (y - y0) * size,
+          texture,
+        });
       }
     }
 
-    // Empty chunks are common — the interior band is mostly nothing — and an empty
-    // container still costs a transform and a bounds check every frame.
-    if (container.children.length === 0) {
-      container.destroy();
-      this.chunks.delete(key);
+    let record = this.chunks.get(key);
+    if (painted.length === 0) {
+      if (record) {
+        this.releaseChunk(record);
+        this.chunks.delete(key);
+      }
       return;
     }
 
-    // A chunk only changes when it is patched, so let the renderer keep one texture for it
-    // rather than re-batching a few hundred sprites every frame.
-    container.cacheAsTexture(true);
-    container.cullable = true;
-    container.cullArea = new Rectangle(
-      x0 * size,
-      y0 * size,
-      (x1 - x0) * size,
-      (y1 - y0) * size,
-    );
+    if (!record) {
+      const container = new Container({
+        label: `chunk:${key}`,
+        x: x0 * size,
+        y: y0 * size,
+        eventMode: "none",
+        interactiveChildren: false,
+      });
+      record = { container, sprites: [], x0, y0, x1, y1 };
+      this.chunks.set(key, record);
+      this.root.addChild(container);
+    } else {
+      record.x0 = x0;
+      record.y0 = y0;
+      record.x1 = x1;
+      record.y1 = y1;
+    }
 
-    this.chunks.set(key, container);
-    this.root.addChild(container);
+    const { container, sprites } = record;
+    const width = (x1 - x0) * size;
+    const height = (y1 - y0) * size;
+    container.boundsArea = new Rectangle(0, 0, width, height);
+    container.cullable = true;
+    container.cullArea = new Rectangle(0, 0, width, height);
+    container.visible = this.chunkShown(record);
+
+    for (let i = 0; i < painted.length; i++) {
+      const cell = painted[i]!;
+      let sprite = sprites[i];
+      if (!sprite) {
+        sprite = new Sprite({
+          texture: cell.texture,
+          roundPixels: true,
+          eventMode: "none",
+        });
+        sprites[i] = sprite;
+        container.addChild(sprite);
+      }
+      sprite.texture = cell.texture;
+      sprite.x = cell.lx;
+      sprite.y = cell.ly;
+      sprite.visible = true;
+    }
+    for (let i = painted.length; i < sprites.length; i++) {
+      const spare = sprites[i]!;
+      spare.visible = false;
+      spare.x = 0;
+      spare.y = 0;
+    }
+
+    if (container.isCachedAsTexture) {
+      container.updateCacheTexture();
+    } else {
+      // Nearest is load-bearing: the default cache is linear, and worldRoot scales 3×.
+      container.cacheAsTexture(CACHE);
+    }
   }
 
   /**
@@ -178,19 +271,14 @@ export class TilemapView {
 
   /** After a cycle reset, when the world is back to how the Lord left it. */
   refreshAll(): void {
-    for (const container of this.chunks.values()) {
-      this.root.removeChild(container);
-      container.destroy({ children: true });
-    }
-    this.chunks.clear();
-
     for (let cy = 0; cy < this.chunksHigh; cy++) {
       for (let cx = 0; cx < this.chunksWide; cx++) this.buildChunk(cx, cy);
     }
   }
 
   destroy(): void {
-    this.root.destroy({ children: true });
+    for (const record of this.chunks.values()) this.releaseChunk(record);
     this.chunks.clear();
+    this.root.destroy({ children: true });
   }
 }

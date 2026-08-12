@@ -19,6 +19,9 @@ export interface JournalEntry {
   cycle: number;
   at: string;
   text: string;
+  personId?: string;
+  personName?: string;
+  kind?: "person" | "tell" | "clue" | "world";
 }
 
 /**
@@ -67,6 +70,33 @@ export class Journal {
     this.persist();
   }
 
+  addPerson(
+    cycle: number,
+    personId: string,
+    personName: string,
+    text: string,
+    kind: "person" | "tell" = "person",
+  ): void {
+    if (
+      this.entries.some(
+        (entry) =>
+          entry.cycle === cycle &&
+          entry.personId === personId &&
+          entry.text === text,
+      )
+    )
+      return;
+    this.entries.push({
+      cycle,
+      at: new Date().toISOString(),
+      text,
+      personId,
+      personName,
+      kind,
+    });
+    this.persist();
+  }
+
   all(): readonly JournalEntry[] {
     return this.entries;
   }
@@ -99,6 +129,13 @@ export class Cycle {
 
   get expired(): boolean {
     return this.remainingMs <= 0;
+  }
+
+  get progress(): number {
+    return Math.min(
+      1,
+      Math.max(0, 1 - this.remainingMs / this.artifact.cycle.durationMs),
+    );
   }
 
   /** @returns true on the frame the cycle runs out. */

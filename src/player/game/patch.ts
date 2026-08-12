@@ -10,7 +10,8 @@
  * engine work; deciding whether a route should survive is the sleeper's prompt.
  */
 
-import type { Rect, Room } from "../../shared/dream";
+import { decodeTiles, type Rect, type Room } from "../../shared/dream";
+import type { DreamPopulation, InterestSeed } from "../../shared/ai";
 import {
   TERRAINS,
   type MapPatch,
@@ -19,7 +20,14 @@ import {
 import type { DoorTypeName } from "../../shared/tilecodes";
 import { Tile, doorTile, isFloorTile } from "../../shared/tilecodes";
 import { makeRng } from "../../shared/rng";
-import { buildDoorIndex, doorTiles, type WorldState } from "./world";
+import {
+  buildDoorIndex,
+  cloneFigureState,
+  doorTiles,
+  type FigureState,
+  type InterestState,
+  type WorldState,
+} from "./world";
 
 export type { MapPatch } from "../../shared/map-patch";
 
@@ -38,6 +46,148 @@ const refuse = (refusal: string): PatchResult => ({
   refusal,
   affectedRooms: [],
 });
+
+function floorPosition(
+  world: WorldState,
+  roomId: string,
+  seed: string,
+  occupied: ReadonlySet<string>,
+): { x: number; y: number } | null {
+  const room = world.roomById.get(roomId);
+  if (!room || room.kind !== "room") return null;
+  const candidates: Array<{ x: number; y: number }> = [];
+  for (let y = room.rect.y + 2; y < room.rect.y + room.rect.h - 2; y++) {
+    for (let x = room.rect.x + 2; x < room.rect.x + room.rect.w - 2; x++) {
+      if (!isFloorTile(world.tiles[y * world.width + x] ?? Tile.VOID)) continue;
+      if (occupied.has(`${x},${y}`)) continue;
+      candidates.push({ x, y });
+    }
+  }
+  if (candidates.length === 0) return null;
+  return makeRng(seed).pick(candidates);
+}
+
+function profileState(
+  world: WorldState,
+  profile: DreamPopulation["figures"][number],
+  occupied: Set<string>,
+): FigureState | null {
+  const authored = world.artifact.figures.find(
+    (figure) => figure.id === profile.id,
+  );
+  const authoredUsable =
+    authored?.roomId === profile.homeRoomId &&
+    isFloorTile(
+      world.tiles[authored.y * world.width + authored.x] ?? Tile.VOID,
+    ) &&
+    !occupied.has(`${authored.x},${authored.y}`);
+  const position = authoredUsable
+    ? { x: authored.x, y: authored.y }
+    : floorPosition(
+        world,
+        profile.homeRoomId,
+        `figure:${profile.id}`,
+        occupied,
+      );
+  if (!position) return null;
+  occupied.add(`${position.x},${position.y}`);
+  const first = profile.agenda.find((stop) => stop.phase === "early");
+  return {
+    id: profile.id,
+    name: profile.name,
+    archetypeId: profile.archetypeId,
+    roomId: profile.homeRoomId,
+    x: position.x,
+    y: position.y,
+    holdsShardId: profile.holdsShardId,
+    facing: "s",
+    revision: 0,
+    role: profile.role,
+    voice: profile.voice,
+    desire: profile.desire,
+    fear: profile.fear,
+    taboo: profile.taboo,
+    agenda: profile.agenda.map((stop) => ({ ...stop })),
+    activity: first?.activity ?? "занят своим делом",
+    agendaPhase: "early",
+    targetX: null,
+    targetY: null,
+    walkWait: 1.5 + makeRng(`walk:${profile.id}`).next() * 2.5,
+    walkTime: 0,
+    walking: false,
+  };
+}
+
+function placeInterestState(
+  world: WorldState,
+  interest: InterestSeed,
+  occupied: Set<string>,
+): InterestState | null {
+  const position = floorPosition(
+    world,
+    interest.roomId,
+    `interest:${interest.id}`,
+    occupied,
+  );
+  if (!position) return null;
+  const index = position.y * world.width + position.x;
+  const state: InterestState = {
+    ...interest,
+    ...position,
+    underTile: world.tiles[index]!,
+  };
+  world.tiles[index] = interest.solid ? Tile.PROP_SOLID : Tile.PROP;
+  occupied.add(`${position.x},${position.y}`);
+  return state;
+}
+
+/** Install the model-authored population and make it the in-place cycle reset point. */
+export function installPopulation(
+  world: WorldState,
+  population: DreamPopulation,
+): PatchResult {
+  // Reinstalling replaces an earlier population from the authored artifact, not the live
+  // cycle. This is called before play starts, but keeping it idempotent makes debug reloads
+  // safe and preserves patch.ts as the only writer to tiles.
+  world.tiles = decodeTiles(
+    world.artifact.map.tiles,
+    world.artifact.map.width * world.artifact.map.height,
+  );
+  const occupied = new Set<string>([
+    `${world.artifact.map.spawn.x},${world.artifact.map.spawn.y}`,
+    ...world.artifact.map.warps.flatMap((warp) => [
+      `${warp.x},${warp.y}`,
+      `${warp.toX},${warp.toY}`,
+    ]),
+  ]);
+  const figures = population.figures
+    .map((profile) => profileState(world, profile, occupied))
+    .filter((figure): figure is FigureState => figure !== null);
+  const interests = population.interests
+    .map((interest) => placeInterestState(world, interest, occupied))
+    .filter((interest): interest is InterestState => interest !== null);
+
+  world.figures.length = 0;
+  world.figures.push(...figures);
+  world.interests.length = 0;
+  world.interests.push(...interests);
+  world.population = {
+    ...population,
+    figures: population.figures.map((profile) => ({
+      ...profile,
+      agenda: profile.agenda.map((stop) => ({ ...stop })),
+    })),
+    interests: population.interests.map((interest) => ({ ...interest })),
+    roomMoods: { ...population.roomMoods },
+  };
+  world.baseTiles = world.tiles.slice();
+  world.baseFigures = figures.map(cloneFigureState);
+  world.baseInterests = interests.map((interest) => ({ ...interest }));
+  return {
+    ok: true,
+    affectedRooms: [...new Set(interests.map((interest) => interest.roomId))],
+  };
+}
 
 function writeDoorTiles(
   world: WorldState,
@@ -165,6 +315,81 @@ function moveFigure(
   return refuse("nowhere to stand in that room");
 }
 
+function removeInterest(world: WorldState, interestId: string): PatchResult {
+  const index = world.interests.findIndex(
+    (interest) => interest.id === interestId,
+  );
+  if (index < 0) return refuse(`no interest ${interestId}`);
+  const interest = world.interests[index]!;
+  world.tiles[interest.y * world.width + interest.x] = interest.underTile;
+  world.interests.splice(index, 1);
+  return {
+    ok: true,
+    affectedRooms: [interest.roomId],
+    note: `${interest.name} исчезло, пока ты не смотрел.`,
+  };
+}
+
+function moveInterest(
+  world: WorldState,
+  interestId: string,
+  toRoomId: string,
+): PatchResult {
+  const interest = world.interests.find(
+    (candidate) => candidate.id === interestId,
+  );
+  if (!interest) return refuse(`no interest ${interestId}`);
+  if (interest.roomId === toRoomId) return refuse("already there");
+  const occupied = new Set([
+    ...world.figures.map(
+      (figure) => `${Math.round(figure.x)},${Math.round(figure.y)}`,
+    ),
+    ...world.interests
+      .filter((candidate) => candidate.id !== interestId)
+      .map((candidate) => `${candidate.x},${candidate.y}`),
+  ]);
+  const position = floorPosition(
+    world,
+    toRoomId,
+    `move-interest:${interestId}:${toRoomId}`,
+    occupied,
+  );
+  if (!position) return refuse("nowhere to place interest");
+
+  const fromRoomId = interest.roomId;
+  world.tiles[interest.y * world.width + interest.x] = interest.underTile;
+  const index = position.y * world.width + position.x;
+  interest.roomId = toRoomId;
+  interest.x = position.x;
+  interest.y = position.y;
+  interest.underTile = world.tiles[index]!;
+  world.tiles[index] = interest.solid ? Tile.PROP_SOLID : Tile.PROP;
+  return {
+    ok: true,
+    affectedRooms: [fromRoomId, toRoomId],
+    note: `${interest.name} теперь лежит в другом месте.`,
+  };
+}
+
+function placeInterest(world: WorldState, seed: InterestSeed): PatchResult {
+  if (world.interests.some((interest) => interest.id === seed.id))
+    return refuse(`interest ${seed.id} already exists`);
+  const occupied = new Set([
+    ...world.figures.map(
+      (figure) => `${Math.round(figure.x)},${Math.round(figure.y)}`,
+    ),
+    ...world.interests.map((interest) => `${interest.x},${interest.y}`),
+  ]);
+  const state = placeInterestState(world, seed, occupied);
+  if (!state) return refuse("nowhere to place interest");
+  world.interests.push(state);
+  return {
+    ok: true,
+    affectedRooms: [seed.roomId],
+    note: `Появилось что-то новое: ${seed.name}.`,
+  };
+}
+
 function relocateShard(
   world: WorldState,
   shardId: string,
@@ -216,15 +441,20 @@ function retileRoom(
   const heavy = indoors ? Tile.PROP_SOLID : Tile.FLOWERS;
 
   const movable = new Set<number>([light, heavy, base]);
+  const interestTiles = new Set(
+    world.interests.map((interest) => `${interest.x},${interest.y}`),
+  );
 
   for (let y = rect.y + 2; y < rect.y + rect.h - 2; y++) {
     for (let x = rect.x + 2; x < rect.x + rect.w - 2; x++) {
+      if (interestTiles.has(`${x},${y}`)) continue;
       const index = y * world.width + x;
       if (movable.has(world.tiles[index]!)) world.tiles[index] = base;
     }
   }
   for (let y = rect.y + 2; y < rect.y + rect.h - 2; y++) {
     for (let x = rect.x + 2; x < rect.x + rect.w - 2; x++) {
+      if (interestTiles.has(`${x},${y}`)) continue;
       const index = y * world.width + x;
       if (world.tiles[index] !== base) continue;
       if (!rng.chance(indoors ? 0.07 : 0.2)) continue;
@@ -271,6 +501,14 @@ function swapRooms(world: WorldState, aId: string, bId: string): PatchResult {
     figure.y = to.rect.y + (figure.y - from.rect.y);
     figure.roomId = to.id;
     figure.revision++;
+  }
+  for (const interest of world.interests) {
+    if (interest.roomId !== aId && interest.roomId !== bId) continue;
+    const from = interest.roomId === aId ? a : b;
+    const to = interest.roomId === aId ? b : a;
+    interest.x = to.rect.x + (interest.x - from.rect.x);
+    interest.y = to.rect.y + (interest.y - from.rect.y);
+    interest.roomId = to.id;
   }
 
   return {
@@ -322,6 +560,10 @@ function growTerrain(
       if (x >= rect.x + rect.w - 2 || y >= rect.y + rect.h - 2) continue;
       if (Math.hypot(x - cx, y - cy) > radius) continue;
       const index = y * world.width + x;
+      if (
+        world.interests.some((interest) => interest.x === x && interest.y === y)
+      )
+        continue;
       const current = world.tiles[index]!;
       if (!isFloorTile(current)) continue;
       before.push({ index, tile: current });
@@ -350,6 +592,12 @@ export function applyPatch(world: WorldState, patch: MapPatch): PatchResult {
       return retypeDoor(world, patch.doorId, patch.to);
     case "moveFigure":
       return moveFigure(world, patch.figureId, patch.toRoomId);
+    case "moveInterest":
+      return moveInterest(world, patch.interestId, patch.toRoomId);
+    case "removeInterest":
+      return removeInterest(world, patch.interestId);
+    case "placeInterest":
+      return placeInterest(world, patch.interest);
     case "relocateShard":
       return relocateShard(world, patch.shardId, patch.toFigureId);
     case "retileRoom":
@@ -374,6 +622,20 @@ export function patchTouches(patch: MapPatch, world: WorldState): string[] {
       const figure = world.figures.find((f) => f.id === patch.figureId);
       return figure ? [figure.roomId, patch.toRoomId] : [patch.toRoomId];
     }
+    case "moveInterest": {
+      const interest = world.interests.find(
+        (candidate) => candidate.id === patch.interestId,
+      );
+      return interest ? [interest.roomId, patch.toRoomId] : [patch.toRoomId];
+    }
+    case "removeInterest": {
+      const interest = world.interests.find(
+        (candidate) => candidate.id === patch.interestId,
+      );
+      return interest ? [interest.roomId] : [];
+    }
+    case "placeInterest":
+      return [patch.interest.roomId];
     case "retileRoom":
     case "growTerrain":
       return [patch.roomId];

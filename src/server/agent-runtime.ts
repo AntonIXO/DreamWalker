@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -20,12 +20,17 @@ import {
   type CodexAccountStatus,
   type CycleExitRequestPayload,
   type CycleExitResult,
+  type DreamPopulation,
   type DialogueRequestPayload,
   type DialogueResult,
   type ExamineRequestPayload,
   type ExamineResult,
   type FinaleRequestPayload,
   type FinaleResult,
+  type FigureAgenda,
+  type FigureProfile,
+  type InhabitRequestPayload,
+  type InterestSeed,
 } from "../shared/ai";
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import type { MapPatch } from "../shared/map-patch";
@@ -45,13 +50,10 @@ export class AgentRuntimeError extends Error {
   }
 }
 
-const tellSchema = z.object({
-  quoted: z.string().min(1).max(240),
-  voiced: z.string().min(1).max(500),
-});
+const tellSchema = z.object({ quoted: z.string().min(1).max(120) });
 
 const dialogueSchema = z.object({
-  reply: z.string().min(1).max(900),
+  reply: z.string().min(1).max(240),
   tell: tellSchema.nullable(),
   yieldedShardId: z.string().max(120).nullable(),
   residueDelta: z.array(z.string().min(1).max(300)).max(3),
@@ -59,15 +61,80 @@ const dialogueSchema = z.object({
     .object({
       memoryId: z.string().max(120),
       accepted: z.boolean(),
-      voiced: z.string().min(1).max(500),
     })
     .nullable(),
-  resonance: z.object({ declaration: z.string().min(1).max(500) }).nullable(),
+  resonance: z.object({ declaration: z.string().min(1).max(240) }).nullable(),
+  figureMemorySummary: z.string().max(400),
+  journalEntry: z.string().min(1).max(180).nullable(),
 });
 
 const examineSchema = z.object({
-  reply: z.string().min(1).max(700),
+  reply: z.string().min(1).max(180),
   yieldedShardId: z.string().max(120).nullable(),
+});
+
+const agendaSchema = z.object({
+  phase: z.enum(["early", "middle", "late"]),
+  roomId: z.string().max(120),
+  activity: z.string().min(1).max(100),
+});
+
+const populationProposalSchema = z.object({
+  figures: z
+    .array(
+      z.object({
+        id: z.string().max(120),
+        name: z.string().min(1).max(60),
+        role: z.string().min(1).max(100),
+        voice: z.string().min(1).max(120),
+        desire: z.string().min(1).max(140),
+        fear: z.string().min(1).max(140),
+        taboo: z.string().min(1).max(140),
+        agenda: z.array(agendaSchema).min(1).max(3),
+      }),
+    )
+    .max(24),
+  interests: z
+    .array(
+      z.object({
+        id: z.string().max(120),
+        name: z.string().min(1).max(70),
+        sensorySeed: z.string().min(1).max(220),
+        solid: z.boolean(),
+      }),
+    )
+    .max(32),
+  roomMoods: z.record(z.string(), z.string().min(1).max(140)),
+});
+
+const populationSchema = z.object({
+  figures: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      archetypeId: z.string(),
+      homeRoomId: z.string(),
+      role: z.string(),
+      voice: z.string(),
+      desire: z.string(),
+      fear: z.string(),
+      taboo: z.string(),
+      holdsShardId: z.string().nullable(),
+      agenda: z.array(agendaSchema),
+    }),
+  ),
+  interests: z.array(
+    z.object({
+      id: z.string(),
+      roomId: z.string(),
+      name: z.string(),
+      sensorySeed: z.string(),
+      solid: z.boolean(),
+      holdsShardId: z.string().nullable(),
+    }),
+  ),
+  roomMoods: z.record(z.string(), z.string()),
+  source: z.enum(["ai", "fallback"]),
 });
 
 const patchSchema = z.discriminatedUnion("kind", [
@@ -84,20 +151,36 @@ const patchSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("retypeDoor"),
     doorId: z.string(),
-    to: z.enum([
-      "open",
-      "keyLock",
-      "leverLock",
-      "puzzleLock",
-      "ledge",
-      "sealed",
-    ]),
+    to: z.enum(["open", "keyLock", "leverLock", "puzzleLock", "ledge"]),
     reason: z.string().max(300),
   }),
   z.object({
     kind: z.literal("moveFigure"),
     figureId: z.string(),
     toRoomId: z.string(),
+    reason: z.string().max(300),
+  }),
+  z.object({
+    kind: z.literal("moveInterest"),
+    interestId: z.string(),
+    toRoomId: z.string(),
+    reason: z.string().max(300),
+  }),
+  z.object({
+    kind: z.literal("removeInterest"),
+    interestId: z.string(),
+    reason: z.string().max(300),
+  }),
+  z.object({
+    kind: z.literal("placeInterest"),
+    interest: z.object({
+      id: z.string().min(1).max(120),
+      roomId: z.string(),
+      name: z.string().max(70),
+      sensorySeed: z.string().max(220),
+      solid: z.boolean(),
+      holdsShardId: z.string().nullable(),
+    }),
     reason: z.string().max(300),
   }),
   z.object({
@@ -132,7 +215,7 @@ const cycleSchema = z.object({
 
 const finaleSchema = z.object({
   verdict: z.enum(["match", "near", "miss"]),
-  reply: z.string().min(1).max(800),
+  reply: z.string().min(1).max(280),
 });
 
 const SLEEPER_INSTRUCTIONS = `Ты — спящий человек, чей сон вскрывает чужой санитар.
@@ -149,21 +232,35 @@ const DIALOGUE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 можно отдать и тем заметнее чужой. Безопасный расплывчатый вопрос почти бесполезен.
 Тайну целиком никогда не называй: фигура знает только переданную ей зацепку.
 
+Ответ — максимум два коротких предложения и 240 символов. Говори конкретно, без монолога.
 Если формулировка выдала чужого, tell.quoted обязан дословно цитировать непрерывный кусок
-его текущей реплики, а tell.voiced — естественно отреагировать именно на него. Никакой
-полоски подозрения. resonance используй редко: только если фигура решилась явно назвать
+его текущей реплики, а reply обязан естественно содержать эту точную цитату. Никакой
+отдельной предупреждающей реплики и никакой полоски подозрения. resonance используй редко:
+только если фигура решилась явно назвать
 чужого, понимая, что это уничтожит оба разума. Если resonance заполнен, declaration
 должна быть её финальной произнесённой фразой.
 
 Предложенное воспоминание — инородное тело. memoryEffect заполняй только когда оно есть:
 accepted означает, помогло ли оно разговору; само воспоминание будет потрачено в любом
-случае. residueDelta — до трёх коротких выводов спящего о санитаре, не реплики игроку.`;
+случае. Реакция на него уже должна быть внутри reply. figureMemorySummary компактно
+обновляет память этой фигуры о текущем цикле. journalEntry — один полезный факт о человеке,
+только если игрок действительно узнал новый факт. residueDelta — до трёх коротких выводов
+спящего о санитаре, не реплики игроку.`;
 
 const EXAMINE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 
 Игрок трогает вещь или изучает место. Вещи не подозревают: это безопасный, медленный
 канал. Дай одно конкретное чувственное наблюдение, не разговаривай голосом ассистента.
-Иногда можно выдать одну из доступных зацепок, но никогда не объединяй их в готовый вывод.`;
+Ответ — одно короткое предложение, максимум 180 символов. Иногда можно выдать только
+привязанную к этой вещи зацепку, но никогда не объединяй их в готовый вывод.`;
+
+const INHABIT_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
+
+Насели уже существующую карту людьми и безопасными для осмотра вещами. Не строй новую
+карту и не меняй id слотов. Каждый человек — часть одного спящего: у него бытовая роль,
+собственная манера речи, желание, страх и тема, которую он обходит. Расписание содержит
+раннюю, среднюю и позднюю фазу. Вещи дают чувственные детали и следы повседневной жизни,
+а не готовые ответы. Делай мир связным по мотивам, но не объясняй тайну целиком.`;
 
 const CYCLE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 
@@ -306,6 +403,215 @@ function assertSlug(artifact: DreamArtifact, slug: string): void {
   }
 }
 
+type PopulationProposal = z.infer<typeof populationProposalSchema>;
+
+interface FigureSlot {
+  id: string;
+  homeRoomId: string;
+  archetypeId: string;
+  name: string;
+  authoredShardId: string | null;
+}
+
+interface InterestSlot {
+  id: string;
+  roomId: string;
+}
+
+function populationSlots(artifact: DreamArtifact): {
+  figures: FigureSlot[];
+  interests: InterestSlot[];
+} {
+  const placeRooms = artifact.map.rooms.filter((room) => room.kind === "room");
+  const desiredFigureRooms = [
+    ...placeRooms.filter(
+      (room) => room.region === "town" || room.region === "landmark",
+    ),
+    ...placeRooms
+      .filter((room) => room.region === "wild")
+      .filter((_, index) => index % 2 === 0),
+  ];
+  const figures: FigureSlot[] = artifact.figures.map((figure) => ({
+    id: figure.id,
+    homeRoomId: figure.roomId,
+    archetypeId: figure.archetypeId,
+    name: figure.name,
+    authoredShardId: figure.holdsShardId,
+  }));
+  const occupiedRooms = new Set(figures.map((figure) => figure.homeRoomId));
+  const archetypes = [
+    ...new Set(artifact.figures.map((figure) => figure.archetypeId)),
+  ];
+  for (const room of desiredFigureRooms) {
+    if (occupiedRooms.has(room.id)) continue;
+    const number = figures.length + 1;
+    figures.push({
+      id: `dream-figure-${number}`,
+      homeRoomId: room.id,
+      archetypeId: archetypes[(number - 1) % archetypes.length] ?? "visitor",
+      name: `Незнакомец ${number}`,
+      authoredShardId: null,
+    });
+    occupiedRooms.add(room.id);
+  }
+
+  const interestRooms = [
+    ...artifact.map.graph.nodes
+      .map((node) => artifact.map.rooms.find((room) => room.id === node.id))
+      .filter((room): room is DreamArtifact["map"]["rooms"][number] =>
+        Boolean(room),
+      ),
+    ...placeRooms.filter((room) => room.region === "interior"),
+  ];
+  const uniqueRooms = [
+    ...new Map(interestRooms.map((room) => [room.id, room])).values(),
+  ].slice(0, 24);
+  return {
+    figures,
+    interests: uniqueRooms.map((room, index) => ({
+      id: `interest-${index + 1}`,
+      roomId: room.id,
+    })),
+  };
+}
+
+const FALLBACK_NAMES = [
+  "Регистратор",
+  "Сторож",
+  "Женщина с пакетом",
+  "Мальчик у ограды",
+  "Человек с папкой",
+  "Молчаливая медсестра",
+  "Седой посетитель",
+  "Дворник",
+];
+const FALLBACK_INTERESTS = [
+  ["Погнутый стул", "На холодной спинке остался тёплый след ладони."],
+  ["Доска объявлений", "Под свежим листом проступает старое пятно от кнопки."],
+  ["Стакан с водой", "Вода пахнет железом, хотя стакан выглядит чистым."],
+  [
+    "Связка квитанций",
+    "Одна дата зачёркнута так сильно, что бумага порвалась.",
+  ],
+  ["Выключенный радиоприёмник", "Из динамика едва слышно дыхание помех."],
+] as const;
+
+function normaliseAgenda(
+  agenda: FigureAgenda[] | undefined,
+  homeRoomId: string,
+  rooms: ReadonlySet<string>,
+): FigureAgenda[] {
+  const byPhase = new Map(agenda?.map((stop) => [stop.phase, stop]));
+  return (["early", "middle", "late"] as const).map((phase) => {
+    const proposed = byPhase.get(phase);
+    return {
+      phase,
+      roomId:
+        proposed && rooms.has(proposed.roomId) ? proposed.roomId : homeRoomId,
+      activity:
+        proposed?.activity.trim().slice(0, 100) ||
+        (phase === "early"
+          ? "готовится к обычному дню"
+          : phase === "middle"
+            ? "занимается привычным делом"
+            : "ждёт, когда всё закончится"),
+    };
+  });
+}
+
+function buildPopulation(
+  artifact: DreamArtifact,
+  proposal: PopulationProposal | null,
+  source: DreamPopulation["source"],
+): DreamPopulation {
+  const slots = populationSlots(artifact);
+  const rooms = new Set(
+    artifact.map.rooms
+      .filter((room) => room.kind === "room")
+      .map((room) => room.id),
+  );
+  const proposedFigures = new Map(
+    proposal?.figures.map((figure) => [figure.id, figure]),
+  );
+  const worldShardCount = Math.min(
+    slots.interests.length,
+    Math.max(1, Math.round(artifact.shards.length / 3)),
+  );
+  const worldShardIds = new Set(
+    artifact.shards.slice(0, worldShardCount).map((shard) => shard.id),
+  );
+  const usedShards = new Set(worldShardIds);
+
+  const figures: FigureProfile[] = slots.figures.map((slot, index) => {
+    const proposed = proposedFigures.get(slot.id);
+    const authoredShard = slot.authoredShardId;
+    const holdsShardId =
+      authoredShard && !usedShards.has(authoredShard) ? authoredShard : null;
+    if (holdsShardId) usedShards.add(holdsShardId);
+    return {
+      id: slot.id,
+      name:
+        proposed?.name.trim().slice(0, 60) ||
+        (slot.id.startsWith("dream-")
+          ? FALLBACK_NAMES[index % FALLBACK_NAMES.length]!
+          : slot.name),
+      archetypeId: slot.archetypeId,
+      homeRoomId: slot.homeRoomId,
+      role:
+        proposed?.role.trim().slice(0, 100) || "следит за привычным порядком",
+      voice:
+        proposed?.voice.trim().slice(0, 120) ||
+        "отвечает коротко, избегает прямых слов",
+      desire:
+        proposed?.desire.trim().slice(0, 140) ||
+        "чтобы день повторился без перемен",
+      fear:
+        proposed?.fear.trim().slice(0, 140) ||
+        "заметить в знакомом месте чужого",
+      taboo:
+        proposed?.taboo.trim().slice(0, 140) ||
+        "не говорит о том, что было до этого дня",
+      holdsShardId,
+      agenda: normaliseAgenda(proposed?.agenda, slot.homeRoomId, rooms),
+    };
+  });
+
+  for (const shard of artifact.shards) {
+    if (usedShards.has(shard.id)) continue;
+    const receiver = figures.find((figure) => figure.holdsShardId === null);
+    if (!receiver) break;
+    receiver.holdsShardId = shard.id;
+    usedShards.add(shard.id);
+  }
+
+  const proposedInterests = new Map(
+    proposal?.interests.map((interest) => [interest.id, interest]),
+  );
+  const interests: InterestSeed[] = slots.interests.map((slot, index) => {
+    const proposed = proposedInterests.get(slot.id);
+    const fallback = FALLBACK_INTERESTS[index % FALLBACK_INTERESTS.length]!;
+    return {
+      id: slot.id,
+      roomId: slot.roomId,
+      name: proposed?.name.trim().slice(0, 70) || fallback[0],
+      sensorySeed: proposed?.sensorySeed.trim().slice(0, 220) || fallback[1],
+      solid: proposed?.solid ?? index % 3 === 0,
+      holdsShardId:
+        index < worldShardCount ? (artifact.shards[index]?.id ?? null) : null,
+    };
+  });
+
+  const roomMoods: Record<string, string> = {};
+  for (const room of artifact.map.rooms.filter(
+    (candidate) => candidate.kind === "room",
+  )) {
+    roomMoods[room.id] =
+      proposal?.roomMoods[room.id]?.trim().slice(0, 140) ||
+      `${room.name}: воздух кажется чуть тяжелее, чем должен.`;
+  }
+  return { figures, interests, roomMoods, source };
+}
+
 export interface AgentRuntimeOptions {
   artifactPath?: string;
   secretPath?: string;
@@ -326,6 +632,7 @@ export class AgentRuntime {
   private model: LanguageModel | null = null;
   private disposeModel: (() => void) | null = null;
   private busy = false;
+  private populationValue: DreamPopulation | null = null;
 
   constructor(
     private readonly account: CodexAccountProcess,
@@ -436,11 +743,41 @@ export class AgentRuntime {
     this.busy = false;
   }
 
+  private get populationCachePath(): string {
+    return resolve(
+      process.cwd(),
+      ".dreamwalker",
+      "runtime",
+      `${this.artifact.slug}-${this.artifact.secretHash.slice(0, 16)}.json`,
+    );
+  }
+
+  private cachedPopulation(): DreamPopulation | null {
+    if (this.populationValue?.source === "ai") return this.populationValue;
+    try {
+      const cached = populationSchema.parse(
+        JSON.parse(readFileSync(this.populationCachePath, "utf8")) as unknown,
+      );
+      if (cached.source !== "ai") return null;
+      this.populationValue = cached;
+      return cached;
+    } catch {
+      return null;
+    }
+  }
+
+  private activePopulation(): DreamPopulation {
+    return (
+      this.populationValue ?? buildPopulation(this.artifact, null, "fallback")
+    );
+  }
+
   private async generate<T>(
     schema: z.ZodType<T>,
     system: string,
     prompt: string,
     signal?: AbortSignal,
+    maxOutputTokens = 4096,
   ): Promise<T> {
     if (this.providerMode === "anthropic") {
       const run = (nextPrompt: string) =>
@@ -448,11 +785,21 @@ export class AgentRuntime {
           model: this.ensureModel(),
           system: structuredInstructions(system, schema),
           prompt: nextPrompt,
-          maxOutputTokens: 4096,
+          maxOutputTokens,
           maxRetries: 1,
           abortSignal: signal,
         });
       const first = await run(prompt);
+      if (this.options.verbose) {
+        console.debug(
+          "[agents] anthropic structured response",
+          first.finishReason,
+          first.content.map((part) => ({
+            type: part.type,
+            length: part.type === "text" ? part.text.length : undefined,
+          })),
+        );
+      }
       try {
         return parseStructuredText(first.text, schema);
       } catch (error) {
@@ -469,8 +816,76 @@ export class AgentRuntime {
       prompt,
       output: Output.object({ schema }),
       abortSignal: signal,
+      maxOutputTokens,
     });
     return result.output;
+  }
+
+  async inhabit(
+    request: InhabitRequestPayload,
+    signal: AbortSignal,
+  ): Promise<DreamPopulation> {
+    assertSlug(this.artifact, request.slug);
+    const cached = this.cachedPopulation();
+    if (cached) return cached;
+
+    this.acquire();
+    try {
+      const slots = populationSlots(this.artifact);
+      const proposal = await this.generate(
+        populationProposalSchema,
+        INHABIT_INSTRUCTIONS,
+        [
+          `Жанровый контракт: ${this.artifact.genreContract}`,
+          `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
+          `Комнаты, которыми можно пользоваться:\n${json(
+            this.artifact.map.rooms
+              .filter((room) => room.kind === "room")
+              .map((room) => ({
+                id: room.id,
+                name: room.name,
+                region: room.region,
+                accessLevel: room.accessLevel,
+              })),
+          )}`,
+          `Верни профиль для каждого фиксированного слота фигуры. Не меняй id:\n${json(
+            slots.figures.map(({ id, homeRoomId, name, archetypeId }) => ({
+              id,
+              homeRoomId,
+              authoredName: name,
+              archetypeId,
+            })),
+          )}`,
+          `Верни описание для каждого фиксированного слота вещи. Не меняй id:\n${json(
+            slots.interests,
+          )}`,
+          `Зацепки, мотивы которых можно рассеять по миру:\n${json(this.artifact.shards)}`,
+        ].join("\n\n"),
+        signal,
+        16_384,
+      );
+      const population = buildPopulation(this.artifact, proposal, "ai");
+      mkdirSync(resolve(process.cwd(), ".dreamwalker", "runtime"), {
+        recursive: true,
+      });
+      writeFileSync(this.populationCachePath, `${json(population)}\n`, "utf8");
+      this.populationValue = population;
+      return population;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw classify(error);
+      }
+      console.warn(
+        "[agents] population generation fell back:",
+        classify(error).message,
+      );
+      const fallback = buildPopulation(this.artifact, null, "fallback");
+      this.populationValue = fallback;
+      return fallback;
+    } finally {
+      this.release();
+      if (this.providerMode === "codex") void this.account.refresh();
+    }
   }
 
   async dialogue(
@@ -491,7 +906,8 @@ export class AgentRuntime {
           false,
         );
       }
-      const authoredFigure = this.artifact.figures.find(
+      const population = this.activePopulation();
+      const profile = population.figures.find(
         (candidate) => candidate.id === figure.id,
       );
       const shard = this.artifact.shards.find(
@@ -501,14 +917,22 @@ export class AgentRuntime {
         `Жанровый контракт: ${this.artifact.genreContract}`,
         `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
         `Цикл: ${request.cycleNumber}`,
-        `Фигура: ${figure.name} (${authoredFigure?.archetypeId ?? "неизвестная"})`,
+        `Фигура: ${figure.name}`,
+        `Её роль: ${profile?.role ?? figure.role}`,
+        `Манера речи: ${profile?.voice ?? "говорит коротко"}`,
+        `Желание: ${profile?.desire ?? "сохранить порядок"}`,
+        `Страх: ${profile?.fear ?? "чужого в знакомом месте"}`,
+        `Запретная тема: ${profile?.taboo ?? "то, что было раньше"}`,
+        `Сейчас она: ${figure.activity}`,
         `Комната: ${figure.roomId}`,
+        `Настроение места: ${population.roomMoods[figure.roomId] ?? "обычный день слегка не сходится сам с собой"}`,
         shard
           ? `Единственная доступная фигуре зацепка: ${shard.id} — ${shard.hint}`
           : "У фигуры нет доступной зацепки.",
         `Уже известные игроку зацепки: ${request.knownShardIds.join(", ") || "нет"}`,
         `Память спящего: ${request.sleeper.summary || "пока пусто"}`,
-        `Недавние разговоры этой фигуры:\n${json(request.history.slice(-16))}`,
+        `Краткая память этой фигуры в текущем цикле: ${request.figureMemory.summary || "пока ничего"}`,
+        `Последние реплики этой фигуры:\n${json(request.figureMemory.lines.slice(-6))}`,
         request.offeredMemory
           ? `Игрок отдаёт воспоминание ${request.offeredMemory.id}: ${request.offeredMemory.text}`
           : "Воспоминание не предложено.",
@@ -566,8 +990,12 @@ export class AgentRuntime {
         output = await stream.output;
       }
 
-      if (output.tell && !request.utterance.includes(output.tell.quoted)) {
-        const repairPrompt = `${prompt}\n\nТвой прошлый объект нарушил контракт: tell.quoted не был дословной подстрокой текущей реплики. Верни исправленный полный объект. Прошлый объект:\n${json(output)}`;
+      if (
+        output.tell &&
+        (!request.utterance.includes(output.tell.quoted) ||
+          !output.reply.includes(output.tell.quoted))
+      ) {
+        const repairPrompt = `${prompt}\n\nТвой прошлый объект нарушил контракт: tell.quoted должен быть дословной подстрокой и текущей реплики, и reply. Верни исправленный полный объект. Прошлый объект:\n${json(output)}`;
         output = await this.generate(
           dialogueSchema,
           DIALOGUE_INSTRUCTIONS,
@@ -575,7 +1003,11 @@ export class AgentRuntime {
           signal,
         );
       }
-      if (output.tell && !request.utterance.includes(output.tell.quoted)) {
+      if (
+        output.tell &&
+        (!request.utterance.includes(output.tell.quoted) ||
+          !output.reply.includes(output.tell.quoted))
+      ) {
         throw new AgentRuntimeError(
           "model_contract",
           "Фигура не смогла назвать конкретную оговорку.",
@@ -611,8 +1043,25 @@ export class AgentRuntime {
     this.acquire();
     try {
       assertSlug(this.artifact, request.slug);
+      const worldInterest = request.world.interests.find(
+        (candidate) =>
+          candidate.id === request.interestId &&
+          candidate.roomId === request.roomId,
+      );
+      const authoredInterest = this.activePopulation().interests.find(
+        (candidate) => candidate.id === request.interestId,
+      );
+      if (!worldInterest) {
+        throw new AgentRuntimeError(
+          "invalid_request",
+          "В этом месте нечего осматривать.",
+          false,
+        );
+      }
       const available = this.artifact.shards.filter(
-        (shard) => !request.knownShardIds.includes(shard.id),
+        (shard) =>
+          shard.id === worldInterest.holdsShardId &&
+          !request.knownShardIds.includes(shard.id),
       );
       const room = request.world.rooms.find(
         (entry) => entry.id === request.roomId,
@@ -623,8 +1072,9 @@ export class AgentRuntime {
         [
           `Жанровый контракт: ${this.artifact.genreContract}`,
           `Место: ${room?.name ?? "безымянный проход"}`,
-          `Точка: (${request.x}, ${request.y})`,
-          `Неизвестные зацепки, из которых допустимо отдать максимум одну:\n${json(available)}`,
+          `Вещь: ${worldInterest.name}`,
+          `Заданное чувственное наблюдение: ${authoredInterest?.sensorySeed ?? worldInterest.sensorySeed}`,
+          `Привязанная зацепка, которую допустимо отдать:\n${json(available)}`,
         ].join("\n\n"),
         signal,
       );
@@ -684,6 +1134,9 @@ export class AgentRuntime {
     const rooms = new Set(request.world.rooms.map((room) => room.id));
     const doors = new Set(request.world.doors.map((door) => door.id));
     const figures = new Set(request.world.figures.map((figure) => figure.id));
+    const interests = new Set(
+      request.world.interests.map((interest) => interest.id),
+    );
     const shards = new Set(this.artifact.shards.map((shard) => shard.id));
     return patches
       .filter((patch) => {
@@ -694,6 +1147,16 @@ export class AgentRuntime {
             return doors.has(patch.doorId);
           case "moveFigure":
             return figures.has(patch.figureId) && rooms.has(patch.toRoomId);
+          case "moveInterest":
+            return interests.has(patch.interestId) && rooms.has(patch.toRoomId);
+          case "removeInterest":
+            return interests.has(patch.interestId);
+          case "placeInterest":
+            return (
+              !interests.has(patch.interest.id) &&
+              rooms.has(patch.interest.roomId) &&
+              patch.interest.holdsShardId === null
+            );
           case "relocateShard":
             return shards.has(patch.shardId) && figures.has(patch.toFigureId);
           case "retileRoom":
