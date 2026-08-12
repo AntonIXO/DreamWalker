@@ -15,8 +15,10 @@
  *   2. **Head detail** separates front from back within the symmetric pair: a face has
  *      eyes and more colours than the back of a head. This is the same distinction
  *      `silhouettes.ts` draws by hand for the placeholder sprites.
- *   3. **Eye position** separates left from right: the darkest pixel in the head band
- *      sits forward of centre, so which side it is on is which way they face.
+ *   3. **Skin position** separates left from right: in a profile the face protrudes
+ *      toward the direction of travel, so the warm bright pixels sit ahead of the head's
+ *      own centre. (A darkest-pixel test was tried first and mirrored a walk+idle sheet,
+ *      where the darkest pixel is hood shadow on the far side of the head.)
  *
  * Everything here is pure and offline, so it costs nothing to run and can be unit-tested
  * against a fixture instead of against the API.
@@ -139,29 +141,38 @@ function headDetail(frame: DecodedImage): number {
   return seen.size;
 }
 
-/** Horizontal centroid of the darkest pixels in the head band, as -1..1 from centre. */
-function eyeBias(frame: DecodedImage): number {
-  const band = Math.max(1, Math.round(frame.height * 0.4));
-  let darkest = 255 * 3;
-  const points: number[] = [];
+/**
+ * How far the face sits from the centre of the head, in pixels. Positive is east.
+ *
+ * The first version of this looked for the *darkest* pixel in the head band, on the
+ * theory that it would be an eye. It was right on a walking sheet and wrong on a walk+idle
+ * sheet of the same character, where the darkest pixel is hood shadow on the far side of
+ * the head — which would have mirrored every profile frame in the game.
+ *
+ * Skin is the better cue and it is the one that survives: in a profile the face
+ * protrudes toward the direction of travel, so the mean x of warm bright pixels sits
+ * ahead of the head's own centre. Verified against two independently generated sheets,
+ * both of which it reads correctly.
+ */
+function skinBias(frame: DecodedImage): number {
+  const band = Math.max(1, Math.round(frame.height * 0.45));
+  const headXs: number[] = [];
+  const skinXs: number[] = [];
   for (let y = 0; y < band; y++) {
     for (let x = 0; x < frame.width; x++) {
       if (!opaque(frame, x, y)) continue;
+      headXs.push(x);
       const i = (y * frame.width + x) * 4;
-      const sum =
-        (frame.data[i] ?? 0) +
-        (frame.data[i + 1] ?? 0) +
-        (frame.data[i + 2] ?? 0);
-      if (sum < darkest - 30) {
-        darkest = sum;
-        points.length = 0;
-      }
-      if (sum <= darkest + 30) points.push(x);
+      const r = frame.data[i] ?? 0;
+      const g = frame.data[i + 1] ?? 0;
+      const b = frame.data[i + 2] ?? 0;
+      // Bright and warmer than it is cool: skin under this palette, not hood or hair.
+      if (r > 200 && g > 180 && b > 140 && r - b > 25) skinXs.push(x);
     }
   }
-  if (points.length === 0) return 0;
-  const mean = points.reduce((a, b) => a + b, 0) / points.length;
-  return (mean - (frame.width - 1) / 2) / ((frame.width - 1) / 2);
+  if (headXs.length === 0 || skinXs.length === 0) return 0;
+  const centre = (Math.min(...headXs) + Math.max(...headXs)) / 2;
+  return skinXs.reduce((a, b) => a + b, 0) / skinXs.length - centre;
 }
 
 /**
@@ -188,7 +199,7 @@ export function guessDirections(sheet: WalkSheet): DirectionGuess {
       ? [facing[0]!, facing[1]!]
       : [facing[1]!, facing[0]!];
 
-  const bias = first.map(eyeBias);
+  const bias = first.map(skinBias);
   const [east, west] =
     bias[profile[0]!]! >= bias[profile[1]!]!
       ? [profile[0]!, profile[1]!]
@@ -206,7 +217,8 @@ export function guessDirections(sheet: WalkSheet): DirectionGuess {
   const detailGap =
     Math.abs(detail[south]! - detail[north]!) /
     Math.max(1, Math.max(detail[south]!, detail[north]!));
-  const biasGap = Math.min(1, Math.abs(bias[east]! - bias[west]!));
+  // Bias is in pixels now; a couple of pixels of separation is already decisive.
+  const biasGap = Math.min(1, Math.abs(bias[east]! - bias[west]!) / 3);
   const confidence = Math.min(
     1,
     (Math.min(1, symmetryGap * 4) + detailGap + biasGap) / 3,

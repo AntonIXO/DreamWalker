@@ -1,0 +1,187 @@
+/**
+ * What Retro Diffusion charges, and which style is the right one to charge it for.
+ *
+ * The style catalogue (`GET /v1/styles/selector`) publishes sizes, batch ceilings and
+ * reference support — but **not prices**. Prices come from `check_cost`, which is free,
+ * so the rule is: price every batch before running it, and memoise, because the cost of
+ * a job depends only on `(style, width, height, num_images)`.
+ *
+ * Every number below was measured against the live API on 2026-08-12, and several of
+ * them are surprising enough to change what the pipeline should generate:
+ *
+ * **`num_images` is not always a multiplier.** `rd_animation__small_sprites` costs
+ * $0.07 whether you ask for one sprite or sixteen — 32×32, batch 16, so a sheet of
+ * sixteen link objects is $0.0044 each rather than $0.07 each. Image models *do* scale
+ * linearly, so the same instinct is wrong in the other direction there.
+ *
+ * **Two animation styles cost the same and one gives more.**
+ * `four_angle_walking` and `four_angle_walking_idle` are both $0.07 at 48×48; the idle
+ * variant returns an idle pose as well. There is no reason to buy the plain one.
+ *
+ * **The expensive animations are the ones that take reference images.**
+ * `any_animation`, `big_animation` and `8_dir_rotation` are $0.25 and accept
+ * `reference_images`; everything else in the family is $0.07 and does not.
+ */
+
+import type {
+  RetroDiffusionClient,
+  RetroInferenceRequest,
+} from "./retroDiffusion";
+
+/** A measured price. `flat` means `num_images` does not change it. */
+export interface PriceNote {
+  usd: number;
+  flat: boolean;
+  note?: string;
+}
+
+/**
+ * Measured prices, for planning and for cross-checking the live estimate.
+ *
+ * Never used to *charge* — `check_cost` is authoritative and free. This table exists so
+ * a batch plan can be costed offline, and so a silent price change shows up as a warning
+ * rather than as a drained balance.
+ */
+export const MEASURED: Record<string, PriceNote> = {
+  // --- animation, 1 image
+  "rd_animation__four_angle_walking@48x48": { usd: 0.07, flat: true },
+  "rd_animation__four_angle_walking_idle@48x48": {
+    usd: 0.07,
+    flat: true,
+    note: "same price as four_angle_walking and includes an idle pose — prefer this",
+  },
+  "rd_animation__large_walking_idle@64x64": { usd: 0.07, flat: true },
+  "rd_animation__battle_sprites@64x64": { usd: 0.07, flat: true },
+  "rd_animation__dinoki@48x48": { usd: 0.07, flat: true },
+  "rd_animation__vfx@24x24": { usd: 0.07, flat: true },
+  "rd_animation__small_sprites@32x32": {
+    usd: 0.07,
+    flat: true,
+    note: "batch up to 16 for the same $0.07 — $0.0044 a sprite, the cheapest art here",
+  },
+  // --- animation, reference-capable and four times the price
+  "rd_animation__any_animation@64x64": { usd: 0.25, flat: true },
+  "rd_animation__big_animation@128x128": { usd: 0.25, flat: true },
+  "rd_animation__8_dir_rotation@80x80": { usd: 0.25, flat: true },
+  // --- portraits
+  "rd_plus__default@128x128": { usd: 0.033, flat: false },
+  "rd_fast__default@128x128": { usd: 0.0194, flat: false },
+  "rd_pro__default@128x128": { usd: 0.18, flat: false },
+  // --- room backdrops
+  "rd_plus__environment@320x176": { usd: 0.053, flat: false },
+  "rd_fast__game_asset@320x176": { usd: 0.026, flat: false },
+};
+
+/** RD's published formulas, for a size that was never measured directly. */
+export function estimateLocally(
+  style: string,
+  width: number,
+  height: number,
+  numImages: number,
+): number {
+  const area = width * height;
+  const prefix = style.split("__")[0];
+  if (prefix === "rd_animation") return 0.07;
+  if (prefix === "rd_advanced_animation") return 0.14;
+  if (prefix === "rd_tile") return 0.1;
+  if (prefix === "rd_pro") return 0.18 * numImages;
+  if (style.includes("low_res") || style.includes("mc_")) {
+    return Math.max(0.02, (area + 13_700) / 600_000) * numImages;
+  }
+  if (prefix === "rd_plus") {
+    return Math.max(0.025, (area + 50_000) / 2_000_000) * numImages;
+  }
+  return Math.max(0.015, (area + 100_000) / 6_000_000) * numImages;
+}
+
+export interface PricedJob {
+  key: string;
+  request: RetroInferenceRequest;
+  usd: number;
+}
+
+export interface BudgetPlan {
+  jobs: PricedJob[];
+  totalUsd: number;
+  balanceUsd: number;
+  reserveUsd: number;
+  capUsd: number;
+}
+
+function shapeKey(request: RetroInferenceRequest): string {
+  return `${request.prompt_style}|${request.width}x${request.height}|${request.num_images}`;
+}
+
+/**
+ * Cost a batch before running any of it.
+ *
+ * Memoised by shape, because price depends on nothing else: twenty-nine room backdrops
+ * at the same size and style cost **one** dry run, not twenty-nine.
+ */
+export async function priceBatch(
+  client: RetroDiffusionClient,
+  jobs: Array<{ key: string; request: RetroInferenceRequest }>,
+  options: { capUsd?: number; reserveUsd?: number } = {},
+): Promise<BudgetPlan> {
+  const seen = new Map<string, number>();
+  const priced: PricedJob[] = [];
+
+  for (const job of jobs) {
+    const shape = shapeKey(job.request);
+    let usd = seen.get(shape);
+    if (usd === undefined) {
+      const estimate = await client.estimate({
+        ...job.request,
+        num_images: job.request.num_images,
+      });
+      usd = estimate.balance_cost;
+      seen.set(shape, usd);
+
+      // A quiet price change is the failure mode that drains a balance, so say so.
+      const local = estimateLocally(
+        job.request.prompt_style,
+        job.request.width,
+        job.request.height,
+        job.request.num_images,
+      );
+      if (local > 0 && Math.abs(local - usd) / Math.max(local, usd) > 0.01) {
+        console.warn(
+          `[rd] ${shape} priced at $${usd.toFixed(4)}, formula says $${local.toFixed(4)}`,
+        );
+      }
+    }
+    priced.push({ key: job.key, request: job.request, usd });
+  }
+
+  const { balance } = await client.credits();
+  const reserveUsd = options.reserveUsd ?? 0.25;
+  const capUsd = Math.min(options.capUsd ?? Infinity, balance - reserveUsd);
+  return {
+    jobs: priced,
+    totalUsd: priced.reduce((sum, job) => sum + job.usd, 0),
+    balanceUsd: balance,
+    reserveUsd,
+    capUsd,
+  };
+}
+
+/** Refuse a plan that cannot be paid for, before the first job runs. */
+export function assertAffordable(plan: BudgetPlan): void {
+  if (plan.totalUsd <= plan.capUsd) return;
+  throw new Error(
+    `batch costs $${plan.totalUsd.toFixed(3)} but only $${Math.max(0, plan.capUsd).toFixed(3)} is available ` +
+      `(balance $${plan.balanceUsd.toFixed(3)} less $${plan.reserveUsd.toFixed(2)} reserve) — ` +
+      `raise --budget, top up, or generate fewer candidates`,
+  );
+}
+
+/** A table for `--check-cost`, so the author sees what they are about to spend. */
+export function describePlan(plan: BudgetPlan): string {
+  const lines = plan.jobs.map(
+    (job) => `  ${job.key.padEnd(38)} $${job.usd.toFixed(4)}`,
+  );
+  lines.push(
+    `  ${"TOTAL".padEnd(38)} $${plan.totalUsd.toFixed(3)}  of $${plan.balanceUsd.toFixed(3)}`,
+  );
+  return lines.join("\n");
+}

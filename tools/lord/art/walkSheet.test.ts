@@ -21,9 +21,12 @@ import {
   readWalkSheet,
 } from "./walkSheet";
 
-const sheetImage = decodePng(
-  readFileSync(join(import.meta.dir, "__fixtures__", "walk-kirill-48.png")),
-);
+const load = (name: string) =>
+  decodePng(readFileSync(join(import.meta.dir, "__fixtures__", name)));
+
+/** Two independently generated sheets of the same character, from two styles. */
+const sheetImage = load("walk-kirill-48.png");
+const idleImage = load("walkidle-kirill-48.png");
 
 describe("readWalkSheet", () => {
   test("a real four-angle walk is a 4x4 grid of 48px frames", () => {
@@ -44,10 +47,22 @@ describe("guessDirections", () => {
 
   test("measures the order RD ships, without being told it", () => {
     // Verified by eye: row 0 is the back of a head, row 2 is a face, and rows 1 and 3
-    // are mirrors with the eye on the right and left respectively. That is RD's
+    // are mirrors with the face turned right and left respectively. That is RD's
     // undocumented "up, right, down, left" — but it is measured here, not assumed, so a
     // future model that reorders its output fails this test instead of the game.
     expect(guessDirections(sheet).order).toEqual(["n", "e", "s", "w"]);
+  });
+
+  test("reads a second style the same way", () => {
+    // rd_animation__four_angle_walking_idle, same character and seed. This is the sheet
+    // that killed the darkest-pixel heuristic: it used to come back n,w,s,e and would
+    // have mirrored every profile in the game.
+    expect(guessDirections(readWalkSheet(idleImage, 48)).order).toEqual([
+      "n",
+      "e",
+      "s",
+      "w",
+    ]);
   });
 
   test("reports low confidence on a sheet whose profiles barely differ", () => {
