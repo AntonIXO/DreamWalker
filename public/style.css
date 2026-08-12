@@ -1,0 +1,603 @@
+/* The shell around the canvas. Everything in here is chrome; the dream itself is Pixi. */
+
+:root {
+    --ink: #d7d3cc;
+    --ink-dim: #6f6a63;
+    --ground: #07070a;
+    --edge: #1b1a20;
+    --warn: #b8564f;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+    /* The dream is pixel art. Never let the browser smooth it. */
+    image-rendering: pixelated;
+}
+
+#app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#pixi-container canvas {
+    display: block;
+}
+
+/* UI sits above the canvas but must not eat input unless a panel is open. */
+#ui-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#ui-layer > * {
+    pointer-events: auto;
+}
+
+#boot-error {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    background: var(--ground);
+    z-index: 100;
+}
+
+#boot-error[hidden] {
+    display: none;
+}
+
+#boot-error h1 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--warn);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+#boot-error p {
+    margin: 0;
+    max-width: 46ch;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ink-dim);
+}
+
+#boot-error code {
+    color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- HUD
+   Almost nothing, on purpose. There is deliberately no suspicion meter:
+   being noticed has to arrive as something a figure says (§3). */
+
+.hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.hud-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 1.25rem;
+    align-items: baseline;
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent);
+}
+
+.hud-room {
+    color: var(--ink);
+}
+
+.hud-clock {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+.hud-clock.urgent {
+    color: var(--warn);
+}
+
+.hud-whisper {
+    position: absolute;
+    left: 50%;
+    bottom: 2.5rem;
+    transform: translateX(-50%);
+    max-width: min(46ch, 80vw);
+    padding: 0.5rem 0.9rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: rgba(8, 8, 11, 0.82);
+    border: 1px solid var(--edge);
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.hud-whisper.visible {
+    opacity: 1;
+}
+
+/* ----------------------------------------------------------- Dialogue
+   Free text, because the wording is the game (§3). */
+
+.dialogue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%);
+    width: min(58ch, 92vw);
+    padding: 0.9rem 1rem;
+    background: rgba(8, 8, 11, 0.94);
+    border: 1px solid var(--edge);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.dialogue[hidden] {
+    display: none;
+}
+
+.dialogue-name {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+}
+
+.dialogue-log {
+    max-height: 34vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+}
+
+.dialogue-log p {
+    margin: 0;
+}
+
+.said-by-you {
+    color: var(--ink-dim);
+}
+
+.said-by-you::before {
+    content: "> ";
+}
+
+.said-by-them {
+    color: var(--ink);
+}
+
+/* Waiting on an answer. Dim and breathing rather than a spinner — a figure taking their
+   time is part of the fiction; a loading indicator is not. */
+.said-by-them.pending {
+    color: var(--ink-dim);
+    animation: dialogue-pending 1.4s ease-in-out infinite;
+}
+
+@keyframes dialogue-pending {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .said-by-them.pending {
+        animation: none;
+        opacity: 0.6;
+    }
+}
+
+/* The tell. Styled as speech, never as a warning — the moment it reads as UI
+   it stops being a conversation and starts being a meter. */
+.said-by-them.tell {
+    color: #d8b46a;
+}
+
+.dialogue-input {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--ink);
+    background: #0e0e12;
+    border: 1px solid var(--edge);
+    outline: none;
+}
+
+.dialogue-input:focus {
+    border-color: #3a3a45;
+}
+
+.dialogue-input:disabled {
+    color: var(--ink-dim);
+    cursor: default;
+}
+
+.dialogue-hint {
+    font-size: 0.6875rem;
+    color: var(--ink-dim);
+}
+
+/* -------------------------------------------------------------- Panels
+   One vocabulary for the three things that cover the dream: the start menu,
+   the controls, and the connection form.
+
+   They are chrome, not fiction, so they are allowed to look like an interface —
+   the game proper is not. But they are the first thing anyone sees after
+   following a link into a stranger's dream, so "looks like an interface" has to
+   mean deliberate, not default. The rules: one panel at a time, dimmed
+   background so nothing competes with it, a hairline rule under the title, and
+   a single measure for every gap. */
+
+:root {
+    --panel-bg: #0b0b10;
+    --panel-line: #24232c;
+    --panel-focus: #4a4857;
+    --gap: 0.75rem;
+}
+
+.panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(46rem, calc(100vw - 3rem));
+    max-height: min(46rem, calc(100vh - 3rem));
+    overflow-y: auto;
+    padding: 1.75rem 2rem 1.5rem;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-line);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    /* A scrim without a second element: the shadow spreads far enough to cover
+       any viewport, so the panel dims the world behind it by existing. */
+    box-shadow:
+        0 0 0 100vmax rgba(4, 4, 8, 0.72),
+        0 1.5rem 4rem rgba(0, 0, 0, 0.5);
+}
+
+.panel[hidden] {
+    display: none;
+}
+
+.panel h2 {
+    margin: 0;
+    padding-bottom: var(--gap);
+    border-bottom: 1px solid var(--panel-line);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+}
+
+.panel h3 {
+    margin: 0.4rem 0 -0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+}
+
+.panel p {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    color: var(--ink-dim);
+}
+
+.panel code {
+    color: var(--ink);
+}
+
+.panel .notes {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-width: 62ch;
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: var(--ink-dim);
+}
+
+.panel .notes li::marker {
+    color: var(--panel-focus);
+}
+
+/* --- key table.
+   A two-column grid rather than flex with a fixed basis, so the descriptions
+   line up whatever the longest binding turns out to be — which changes the
+   moment anyone rebinds a key. */
+
+.keys {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1.5rem;
+    align-items: baseline;
+    font-size: 0.8125rem;
+}
+
+.keys-row {
+    display: contents;
+}
+
+.keys-row kbd {
+    font: inherit;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: var(--ink);
+}
+
+.keys-row span {
+    color: var(--ink-dim);
+}
+
+/* Debug bindings sit apart: a player who cannot tell them from the real
+   controls will hit one by accident and never trust what they saw after. */
+.keys.dim kbd {
+    color: var(--ink-dim);
+}
+
+.keys.dim span {
+    color: var(--panel-focus);
+}
+
+/* --- controls */
+
+.panel .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+    padding-top: var(--gap);
+    border-top: 1px solid var(--panel-line);
+}
+
+.panel button {
+    padding: 0.5rem 1.1rem;
+    font: inherit;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    color: var(--ground);
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition:
+        background 120ms ease,
+        border-color 120ms ease,
+        color 120ms ease;
+}
+
+.panel button:hover {
+    background: #fff;
+    border-color: #fff;
+}
+
+.panel button:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px;
+}
+
+.panel button.ghost {
+    color: var(--ink-dim);
+    background: transparent;
+    border-color: var(--panel-line);
+}
+
+.panel button.ghost:hover {
+    color: var(--ink);
+    border-color: var(--panel-focus);
+}
+
+/* Pushes everything after it to the right edge of the row. */
+.panel button.end {
+    margin-left: auto;
+}
+
+.panel .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-width: 34rem;
+}
+
+.panel .field > span {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+}
+
+.panel input,
+.panel select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    font: inherit;
+    font-size: 0.8125rem;
+    color: var(--ink);
+    background: #07070b;
+    border: 1px solid var(--panel-line);
+    outline: none;
+    transition: border-color 120ms ease;
+}
+
+.panel input:focus,
+.panel select:focus {
+    border-color: var(--panel-focus);
+}
+
+.panel input::placeholder {
+    color: #3d3b46;
+}
+
+/* --- connection */
+
+.connect-status {
+    min-height: 1.3em;
+    font-size: 0.78125rem;
+    color: var(--ink-dim);
+}
+
+.connect-status.ok {
+    color: #5fd68a;
+}
+
+.connect-status.bad {
+    color: var(--warn);
+}
+
+/* --- start menu */
+
+.panel h2.menu-title {
+    font-size: 0.9375rem;
+    letter-spacing: 0.18em;
+}
+
+/* The genre contract is the one promise the world makes about itself (§6), so
+   it is the brightest thing on screen after the title. */
+.panel p.menu-contract {
+    font-size: 0.875rem;
+    color: var(--ink);
+}
+
+.panel p.menu-mind {
+    margin-top: -0.2rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+}
+
+.menu-journal:empty {
+    display: none;
+}
+
+.menu-journal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--gap) 0 0;
+    border-top: 1px solid var(--panel-line);
+}
+
+@media (max-width: 34rem) {
+    .panel {
+        padding: 1.25rem 1.25rem 1rem;
+    }
+
+    .keys {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+    }
+
+    .keys-row kbd {
+        margin-top: 0.35rem;
+    }
+}
+
+
+/* -------------------------------------------------------------- Debug */
+
+.debug {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: min(30rem, 42vw);
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 0.75rem;
+    background: rgba(6, 6, 9, 0.93);
+    border-left: 1px solid var(--edge);
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    color: var(--ink-dim);
+}
+
+.debug[hidden] {
+    display: none;
+}
+
+.debug-head {
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+}
+
+.debug-map {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border: 1px solid var(--edge);
+    margin-bottom: 0.5rem;
+}
+
+.debug-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.debug-row b {
+    color: var(--ink);
+    font-weight: 500;
+    text-align: right;
+}
+
+.debug-log {
+    margin-top: 0.6rem;
+    border-top: 1px solid var(--edge);
+    padding-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.debug-entry b {
+    font-weight: 600;
+}
+
+.debug-entry i {
+    color: #55505a;
+    font-style: normal;
+}
+
+.debug-entry.applied b {
+    color: #5fd68a;
+}
+
+/* Refusals are the point of this log: they are the §6 invariant doing its job. */
+.debug-entry.refused b {
+    color: #a06a6a;
+}
