@@ -105,11 +105,23 @@ export async function loadExternalTextures(
   const textures = new Map<string, Texture>();
   await Promise.all(
     sources.map(async ({ id, path }) => {
-      const texture: Texture = await Assets.load({
-        src: `${baseUrl}/${path}`,
-        alias: `dream-external:${id}`,
-        data: { scaleMode: "nearest" },
-      });
+      const url = `${baseUrl}/${path}`;
+      const texture = await Assets.load<Texture | undefined>(
+        {
+          src: url,
+          alias: `dream-external:${id}`,
+          data: { scaleMode: "nearest" },
+        },
+        {
+          // Generated clue art and authored room backdrops are optional decoration.
+          // A stale dev server, missing file, or bad image must not prevent the dream
+          // and its atlas-backed fallbacks from opening.
+          strategy: "skip",
+          onError: (error) =>
+            console.warn(`[dream] optional image skipped: ${url}`, error),
+        },
+      );
+      if (!texture) return;
       texture.source.scaleMode = "nearest";
       textures.set(id, texture);
     }),
