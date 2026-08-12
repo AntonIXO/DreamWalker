@@ -449,7 +449,11 @@ async function boot(): Promise<void> {
     apparatusTexture ?? null,
   );
   cameraRoot.addChild(lobby.scene.root);
-  await app.renderer.prepare.upload(lobby.scene.root);
+  // Deliberately not awaited. `prepare.upload` resolves on a ticker tick, and a
+  // backgrounded tab has no `requestAnimationFrame` — so awaiting it means the game
+  // never finishes booting until the tab is looked at, and `window.dreamWalker` is
+  // never exposed. Pre-uploading textures is an optimisation; boot is not.
+  void app.renderer.prepare.upload(lobby.scene.root);
   lobby.setMind(mindSettings);
 
   /**

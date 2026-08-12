@@ -3175,7 +3175,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/19-dvor-i-oranzhevye-lavochki.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },

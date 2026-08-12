@@ -170,6 +170,10 @@ async function main(): Promise<void> {
       const { importCommand } = await import("./commands/import");
       return importCommand(target ?? null, flags);
     }
+    case "backdrops": {
+      const { backdropsCommand } = await import("./commands/backdrops");
+      return backdropsCommand(target ?? null, flags);
+    }
     case "rooms": {
       const { roomsCommand } = await import("./commands/rooms");
       return roomsCommand(target ?? null, flags);

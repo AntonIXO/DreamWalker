@@ -65,11 +65,12 @@ export const MEASURED: Record<string, PriceNote> = {
   "rd_animation__8_dir_rotation@80x80": { usd: 0.25, flat: true },
   // --- portraits
   "rd_plus__default@128x128": { usd: 0.033, flat: false },
-  "rd_fast__default@128x128": { usd: 0.0194, flat: false },
+  // Not reachable on every key: this account's catalogue exposes only rd_fast__1_bit,
+  // __low_res, __mc_item and __mc_texture. Always check the catalogue, never the docs.
+  "rd_fast__low_res@128x128": { usd: 0.0194, flat: false },
   "rd_pro__default@128x128": { usd: 0.18, flat: false },
   // --- room backdrops
   "rd_plus__environment@320x176": { usd: 0.053, flat: false },
-  "rd_fast__game_asset@320x176": { usd: 0.026, flat: false },
 };
 
 /**
