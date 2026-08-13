@@ -212,7 +212,10 @@ export class ScriptedMind implements DreamMind {
         interest?.sensorySeed ??
         clue?.sensorySeed ??
         lines[hash % lines.length]!,
-      yieldedShardId: null,
+      // This was unconditionally null, which meant the safe channel never paid out at
+      // all when inference was down — a thing could carry a hook and looking at it would
+      // say "dust". It matters more now: what a dead carrier drops is exactly this.
+      yieldedShardId: interest?.holdsShardId ?? null,
       clueObservedId: clueId,
     };
   }

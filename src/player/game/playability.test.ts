@@ -7,9 +7,11 @@ import { fallbackPopulation } from "../../shared/population";
 import { blockedInRoom, cellAt, isSolidCell } from "../../shared/roomGrid";
 import { ScriptedMind } from "../mind/scripted";
 import { findTarget } from "./interact";
-import { installPopulation } from "./patch";
+import { applyPatch, installPopulation } from "./patch";
+import { fateOf } from "./fates";
+import { UNKILLABLE } from "../../shared/verbs";
 import { createPlayer, updatePlayer } from "./player";
-import { createWorld, doorDestination } from "./world";
+import { createWorld, doorDestination, resetWorld } from "./world";
 
 const artifact = validateDreamArtifact(
   JSON.parse(
@@ -263,5 +265,123 @@ describe("son is playable", () => {
       if (player.enteredDoorId) break;
     }
     expect(player.enteredDoorId).toBe("19-dvor-i-oranzhevye-lavochki--to-hub");
+  });
+});
+
+describe("a fate can move a hook, never delete one", () => {
+  /**
+   * The closest thing to the solver §6 refuses, and legitimate for exactly that reason:
+   * it tests an *engine guarantee*, not a route. §6 leaves reachability to the sleeper —
+   * a defending dream is allowed to make a cycle impossible. It does not license a word
+   * ceasing to exist, which is what killing a carrier used to mean.
+   */
+  test("every hook is still carried after the worst is done to whoever holds it", () => {
+    const world = createWorld(artifact);
+    installPopulation(world, fallbackPopulation(artifact));
+
+    // Whatever is carried *before*. Two of the six start on nobody — the dream places
+    // those itself — and the guarantee is that a fate does not delete a hook, not that
+    // every hook is dealt.
+    const carriedBefore = artifact.shards
+      .map((shard) => shard.id)
+      .filter(
+        (id) =>
+          world.figures.some((f) => f.holdsShardId === id) ||
+          world.interests.some((i) => i.holdsShardId === id),
+      );
+    expect(carriedBefore.length).toBeGreaterThan(0);
+
+    for (const shard of artifact.shards) {
+      const holder = world.figures.find((f) => f.holdsShardId === shard.id);
+      if (!holder) continue;
+      applyPatch(world, {
+        kind: "markFigure",
+        figureId: holder.id,
+        fate: UNKILLABLE.has(holder.id) ? "broken" : "dead",
+        quoted: null,
+        reason: "test",
+      });
+    }
+
+    for (const shardId of carriedBefore) {
+      const onSomebody = world.figures.some((f) => f.holdsShardId === shardId);
+      const onSomething = world.interests.some(
+        (interest) => interest.holdsShardId === shardId,
+      );
+      expect(onSomebody || onSomething).toBe(true);
+    }
+  });
+
+  test("killing everyone killable still leaves every dealt word somewhere", () => {
+    const world = createWorld(artifact);
+    installPopulation(world, fallbackPopulation(artifact));
+    const carriedBefore = artifact.shards
+      .map((shard) => shard.id)
+      .filter(
+        (id) =>
+          world.figures.some((f) => f.holdsShardId === id) ||
+          world.interests.some((i) => i.holdsShardId === id),
+      );
+    for (const figure of [...world.figures]) {
+      if (UNKILLABLE.has(figure.id)) continue;
+      applyPatch(world, {
+        kind: "markFigure",
+        figureId: figure.id,
+        fate: "dead",
+        quoted: null,
+        reason: "test",
+      });
+    }
+    for (const shardId of carriedBefore) {
+      const carried =
+        world.figures.some((f) => f.holdsShardId === shardId) ||
+        world.interests.some((i) => i.holdsShardId === shardId);
+      expect(carried).toBe(true);
+    }
+  });
+});
+
+describe("Кирилл", () => {
+  test("comes back whole and not remembering, and the history does not", () => {
+    // §1 of the bible and `kirill/SOUL.md`: «Убей его — вернётся в следующей комнате
+    // целым и не помнящим.» The one figure death does not remove — and the reason
+    // saying it out loud gives the sanitar away instantly.
+    const world = createWorld(artifact);
+    installPopulation(world, fallbackPopulation(artifact));
+    expect(world.figures.some((f) => f.id === "kirill")).toBe(true);
+
+    applyPatch(world, {
+      kind: "markFigure",
+      figureId: "kirill",
+      fate: "dead",
+      quoted: null,
+      reason: "test",
+    });
+    expect(world.figures.some((f) => f.id === "kirill")).toBe(false);
+
+    resetWorld(world, 2);
+    expect(world.figures.some((f) => f.id === "kirill")).toBe(true);
+    expect(fateOf(world, "kirill")).toBe("present");
+    // Nothing about him shows it. The ledger still does.
+    expect(
+      world.fateHistory.some((record) => record.figureId === "kirill"),
+    ).toBe(true);
+  });
+
+  test("nobody else does", () => {
+    const world = createWorld(artifact);
+    installPopulation(world, fallbackPopulation(artifact));
+    const mortal = world.figures.find(
+      (f) => f.id !== "kirill" && !UNKILLABLE.has(f.id),
+    )!;
+    applyPatch(world, {
+      kind: "markFigure",
+      figureId: mortal.id,
+      fate: "dead",
+      quoted: null,
+      reason: "test",
+    });
+    resetWorld(world, 2);
+    expect(world.figures.some((f) => f.id === mortal.id)).toBe(false);
   });
 });

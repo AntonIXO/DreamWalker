@@ -1,4 +1,5 @@
 import type { DoorTypeName } from "./tilecodes";
+import type { FigureFate } from "./verbs";
 
 /**
  * Closed vocabulary of structural changes the sleeper may ask the player runtime to
@@ -66,6 +67,35 @@ export type MapPatch =
       toRoomId: string;
       reason: string;
     }
+  /**
+   * A person's standing changes.
+   *
+   * Gameplay-only, and **deliberately absent from the sleeper's schema**. The dream
+   * defends itself by rearranging; the sanitar is the only thing in it that ends people.
+   * `session.escalateRevisit` is the precedent for a player action writing through the
+   * patch funnel rather than around it.
+   */
+  | {
+      kind: "markFigure";
+      figureId: string;
+      fate: FigureFate;
+      /** The sanitar's words, for a figure to quote back. Null for a kill. */
+      quoted: string | null;
+      reason: string;
+    }
+  /**
+   * Somebody comes back.
+   *
+   * Restricted the way `openDoor` is restricted to `sealHistory`: only a figure whose
+   * soul says they return, or one who was merely led away. §6 — the dream does not hand
+   * back a cheaper path than the one it destroyed, and that applies to people.
+   */
+  | {
+      kind: "reviveFigure";
+      figureId: string;
+      toRoomId: string;
+      reason: string;
+    }
   /** Swap a room's walk mask for one of its authored `cellVariants`. */
   | {
       kind: "shiftWalls";
@@ -96,6 +126,8 @@ export const PATCH_KINDS = [
   "removeInterest",
   "placeInterest",
   "relocateShard",
+  "markFigure",
+  "reviveFigure",
   "retargetDoor",
   "shiftWalls",
   "closeHotspot",

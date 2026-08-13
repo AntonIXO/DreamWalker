@@ -186,6 +186,14 @@ const patchSchema = z.discriminatedUnion("kind", [
     toRoomId: z.string(),
     reason: z.string().max(300),
   }),
+  // Somebody comes back. The sleeper may return a figure it moved out of reach — and
+  // Кирилл, who returns whatever happened to him. `applyPatch` refuses the rest.
+  z.object({
+    kind: z.literal("reviveFigure"),
+    figureId: z.string(),
+    toRoomId: z.string(),
+    reason: z.string().max(300),
+  }),
   // §13's halls rebuild «как камеры в Portal 2». Only masks the Lord authored, so the
   // sleeper cannot produce a room nobody can cross.
   z.object({
@@ -250,7 +258,10 @@ const EXAMINE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 Игрок трогает вещь или изучает место. Вещи не подозревают: это безопасный, медленный
 канал. Дай одно конкретное чувственное наблюдение, не разговаривай голосом ассистента.
 Ответ — одно короткое предложение, максимум 180 символов. Иногда можно выдать только
-привязанную к этой вещи зацепку, но никогда не объединяй их в готовый вывод.`;
+привязанную к этой вещи зацепку, но никогда не объединяй их в готовый вывод.
+
+Если вещь — это то, что осталось от человека, отдай привязанную зацепку без условий.
+С мёртвого берут молча: ни жалости, ни морали, ни объяснения, что случилось.`;
 
 const INHABIT_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 
@@ -1072,6 +1083,21 @@ export class AgentRuntime {
           case "closeHotspot":
           case "openHotspot":
             return rooms.has(patch.roomId);
+          // The dream rearranges. It does not end people — that is the sanitar's, and
+          // the asymmetry is the point. `markFigure` is absent from `patchSchema` too;
+          // this is the second gate, because one gate is one refactor from being none.
+          case "markFigure":
+            return false;
+          case "reviveFigure":
+            return rooms.has(patch.toRoomId);
+          // Not a fallthrough: an unknown kind used to return `undefined`, which
+          // `.filter` treats as false — silently correct by accident. The `never` makes
+          // the next kind added a build error instead of a patch that vanishes.
+          default: {
+            const unreachable: never = patch;
+            void unreachable;
+            return false;
+          }
         }
       })
       .slice(0, this.artifact.heartbeat.maxPatchesPerBeat);

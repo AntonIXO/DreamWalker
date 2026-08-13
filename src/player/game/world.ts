@@ -26,6 +26,7 @@ import type {
   InterestSeed,
 } from "../../shared/ai";
 import type { PortraitState } from "../../shared/content";
+import { applyFateLedger, type FateRecord } from "./fates";
 
 export interface FigureState extends FigurePlacement {
   facing: Direction;
@@ -120,6 +121,19 @@ export interface WorldState {
    * enforced rather than merely intended.
    */
   sealHistory: Map<string, DoorTypeName>;
+
+  /**
+   * What the sanitar has done to people, and what he holds over them.
+   *
+   * All three are **deliberately not cleared by `resetWorld`**, for the same reason
+   * `visitCounts` is not: the dream forgets the conversation, the sanitar does not.
+   * `fates` is the current standing, `fateHistory` is append-only and is what the Eye
+   * reads («Помнит, кого санитар убил и сколько раз»), and `leverage` is what one figure
+   * let slip about another. See `game/fates.ts`.
+   */
+  fates: Map<string, FateRecord>;
+  fateHistory: FateRecord[];
+  leverage: Map<string, Set<string>>;
 }
 
 function cloneRoom(room: DreamRoom): RoomState {
@@ -188,6 +202,9 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     visited: new Set(),
     visitCounts: new Map(),
     sealHistory: new Map(),
+    fates: new Map(),
+    fateHistory: [],
+    leverage: new Map(),
   };
 }
 
@@ -239,7 +256,7 @@ export function cloneFigureState(figure: FigureState): FigureState {
  * The installed population snapshot is the source of truth; nothing here has to undo
  * individual patches. Before population arrives that snapshot is simply the artifact.
  */
-export function resetWorld(world: WorldState): void {
+export function resetWorld(world: WorldState, cycle = 1): void {
   const authoredById = new Map(
     world.artifact.rooms.map((room) => [room.id, room]),
   );
@@ -263,6 +280,8 @@ export function resetWorld(world: WorldState): void {
   world.interests.push(
     ...world.baseInterests.map((interest) => ({ ...interest })),
   );
+  // The rebuild above resurrects everybody. This puts back what was done to them.
+  applyFateLedger(world, cycle);
 
   world.currentRoomId = world.artifact.spawn.roomId;
 

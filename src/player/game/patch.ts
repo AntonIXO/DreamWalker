@@ -14,6 +14,14 @@ import type { DreamPopulation, InterestSeed } from "../../shared/ai";
 import type { MapPatch } from "../../shared/map-patch";
 import { entryRegion, pickSlot } from "../../shared/placement";
 import { padRect, type TileRect } from "../../shared/rect";
+import {
+  RETURNS_WHOLE,
+  UNKILLABLE,
+  UNLEADABLE,
+  type FigureFate,
+} from "../../shared/verbs";
+import { clueIdForShard } from "../../shared/yield";
+import { fateOf, setFate } from "./fates";
 import { makeRng } from "../../shared/rng";
 import type { DoorTypeName } from "../../shared/tilecodes";
 import {
@@ -393,6 +401,110 @@ function relocateShard(
 }
 
 /**
+ * A fate may move a hook. It may never delete one.
+ *
+ * Stated once, here, because the two halves are not obvious together. A killed carrier
+ * drops what they had — that much is expected. A **broken** one drops it too, and that is
+ * the load-bearing half: somebody who will never speak again is a harder wall than a
+ * corpse, because nothing in the world says so. The thing slips out of the story rather
+ * than out of the figure.
+ *
+ * The remains are an ordinary interest, which means this works end to end with no server
+ * change at all: `interestHotspots` turns any interest into a `look` hotspot, `main.ts`
+ * routes it to `mind.examine`, and the examine agent already computes what is available
+ * from `holdsShardId`. The body's pocket is the examine path that already exists.
+ *
+ * §6 refuses a solvability solver and this is not one. It does not decide whether a route
+ * survives; it only refuses to let a word stop existing.
+ */
+function dropRemains(world: WorldState, figure: FigureState): void {
+  if (!figure.holdsShardId) return;
+  const id = `remains:${figure.id}`;
+  if (world.interests.some((interest) => interest.id === id)) return;
+  const placed = placeInterestState(world, {
+    id,
+    roomId: figure.roomId,
+    name: "то, что осталось",
+    sensorySeed: "Карман вывернут наружу, но не им.",
+    solid: false,
+    holdsShardId: figure.holdsShardId,
+    clueId: clueIdForShard(figure.holdsShardId),
+  });
+  if (placed) world.interests.push(placed);
+}
+
+/**
+ * A person's standing changes. The only write for every one of them.
+ *
+ * The refusals here duplicate `availableVerbs`, on purpose. A defensive rule that lives
+ * in one place stops being enforced the first time somebody adds a second call site —
+ * which is exactly why `mayYieldShard` is checked on the client and again on the server.
+ */
+function markFigure(
+  world: WorldState,
+  figureId: string,
+  fate: FigureFate,
+  quoted: string | null,
+  cycle: number,
+): PatchResult {
+  const figure = world.figures.find((f) => f.id === figureId);
+  if (!figure) return refuse(`no figure ${figureId}`);
+  if (fate === "dead" && UNKILLABLE.has(figureId)) {
+    return refuse(`${figureId} does not die here`);
+  }
+  if (fate === "led" && UNLEADABLE.has(figureId)) {
+    return refuse(`${figureId} does not follow anybody`);
+  }
+  if (fateOf(world, figureId) === fate) return refuse("already so");
+
+  const roomId = figure.roomId;
+  setFate(world, {
+    figureId,
+    fate,
+    cycle,
+    roomId,
+    by: fate === "dead" ? "kill" : fate === "led" ? "lead" : "press",
+    quoted,
+  });
+
+  if (fate === "dead" || fate === "broken") dropRemains(world, figure);
+  if (fate === "dead" || fate === "gone") {
+    const index = world.figures.indexOf(figure);
+    if (index >= 0) world.figures.splice(index, 1);
+  }
+  return {
+    ok: true,
+    affectedRooms: [roomId],
+    note:
+      fate === "dead" ? `${figure.name} больше не там, где был.` : undefined,
+  };
+}
+
+/** Only somebody whose soul says they return, or somebody merely led away. */
+function reviveFigure(
+  world: WorldState,
+  figureId: string,
+  toRoomId: string,
+): PatchResult {
+  const record = world.fates.get(figureId);
+  if (!record) return refuse(`${figureId} is where they were`);
+  if (record.fate === "dead" && !RETURNS_WHOLE.has(figureId)) {
+    return refuse("the dream does not hand people back");
+  }
+  const room = world.roomById.get(toRoomId);
+  if (!room) return refuse(`no room ${toRoomId}`);
+  if (room.kind === "meta") return refuse("a meta-space holds no figures");
+  const base = world.baseFigures.find((f) => f.id === figureId);
+  if (!base) return refuse(`no figure ${figureId}`);
+
+  world.fates.delete(figureId);
+  if (!world.figures.some((f) => f.id === figureId)) {
+    world.figures.push(cloneFigureState({ ...base, roomId: toRoomId }));
+  }
+  return { ok: true, affectedRooms: [toRoomId] };
+}
+
+/**
  * The sleeper points a rift somewhere else.
  *
  * §4.1 — «комнаты соединяются без логики, но переход всегда через порог». The archway is
@@ -474,7 +586,12 @@ function setHotspotClosed(
   return { ok: true, affectedRooms: [roomId] };
 }
 
-export function applyPatch(world: WorldState, patch: MapPatch): PatchResult {
+export function applyPatch(
+  world: WorldState,
+  patch: MapPatch,
+  /** Which cycle this is happening in, for the fate ledger. */
+  cycle = 1,
+): PatchResult {
   switch (patch.kind) {
     case "sealDoor":
       return sealDoor(world, patch.doorId);
@@ -492,6 +609,10 @@ export function applyPatch(world: WorldState, patch: MapPatch): PatchResult {
       return placeInterest(world, patch.interest);
     case "relocateShard":
       return relocateShard(world, patch.shardId, patch.toFigureId);
+    case "markFigure":
+      return markFigure(world, patch.figureId, patch.fate, patch.quoted, cycle);
+    case "reviveFigure":
+      return reviveFigure(world, patch.figureId, patch.toRoomId);
     case "retargetDoor":
       return retargetDoor(world, patch.doorId, patch.toRoomId);
     case "shiftWalls":
@@ -589,6 +710,12 @@ export function patchTouches(patch: MapPatch, world: WorldState): PatchScope[] {
     // holder's room used to block a whole room for a change nobody could observe.
     case "relocateShard":
       return [];
+    case "markFigure": {
+      const figure = world.figures.find((f) => f.id === patch.figureId);
+      return figure ? [around(figure.roomId, figure.x, figure.y)] : [];
+    }
+    case "reviveFigure":
+      return slotScopes(world, patch.toRoomId);
     case "closeHotspot":
     case "openHotspot": {
       const room = world.roomById.get(patch.roomId);
