@@ -35,6 +35,7 @@ export class DebugOverlay {
      * only way to tell a clamped counter from one that is about to wrap.
      */
     private readonly tonusAt?: () => TonusDelta,
+    private readonly fxAt?: () => { preset: string; phase: string },
   ) {
     this.root = document.createElement("div");
     this.root.className = "debug";
@@ -186,6 +187,10 @@ export class DebugOverlay {
       ["doors", `${doors.length}, ${sealed} sealed`],
       ["links", String(links)],
       ["tonus", this.tonusAt ? formatTonus(this.tonusAt()) : "—"],
+      [
+        "glitch",
+        this.fxAt ? `${this.fxAt().preset} · ${this.fxAt().phase}` : "—",
+      ],
       [
         "population",
         `${this.world.figures.length} people, ${this.world.interests.length} interests`,

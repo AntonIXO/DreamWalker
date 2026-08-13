@@ -150,6 +150,10 @@ export interface RoomGraphics {
    * 640×360 frame, which is what a meta-space is — one picture, no edges.
    */
   backdropFit: "cells" | "screen";
+  /**
+   * Live in the player as `DreamFx`. Same four looks for every dream; the Lord
+   * only picks which room wears which.
+   */
   glitchPreset: "none" | "split" | "double-edge" | "wrong-palette";
 }
 

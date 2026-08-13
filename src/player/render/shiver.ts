@@ -19,6 +19,8 @@ export class Shiver {
   private remaining = 0;
   private strength = 1;
   private phase = 0;
+  /** Optional shader tear. The shake stays here; the bands live on `DreamFx`. */
+  onTrigger: ((intensity: number) => void) | null = null;
 
   constructor(private readonly camera: Camera) {}
 
@@ -31,6 +33,7 @@ export class Shiver {
     this.remaining = DURATION;
     this.strength = Math.max(this.strength, Math.min(1, intensity));
     this.phase = 0;
+    this.onTrigger?.(this.strength);
   }
 
   update(deltaSeconds: number): void {

@@ -21,6 +21,7 @@ import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
 import { Camera, DEFAULT_CAMERA } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
+import { DreamFx } from "./render/dreamFx";
 import { RoomScene } from "./render/roomScene";
 import { Shiver } from "./render/shiver";
 import { ActorLayer, WalkerSprite } from "./render/walkerView";
@@ -213,6 +214,13 @@ async function boot(): Promise<void> {
     DEFAULT_CAMERA,
   );
   const shiver = new Shiver(camera);
+  const dreamFx = new DreamFx(
+    app.stage,
+    app.screen.width,
+    app.screen.height,
+    artifact.palette,
+  );
+  shiver.onTrigger = (intensity) => dreamFx.burst(intensity);
   const transition = new EnterTransition(uiLayer);
 
   /**
@@ -241,6 +249,7 @@ async function boot(): Promise<void> {
       onOverflow: () => {
         // Everything got as bad as the counter can hold and came out the other side.
         shiver.trigger(1);
+        dreamFx.overflow();
         hud.whisper("Стало легко. Ничего не изменилось.", 6);
       },
       onRefusedLink: (note) => hud.whisper(note, 4),
@@ -341,6 +350,7 @@ async function boot(): Promise<void> {
     world,
     heartbeat,
     () => session.tonus.position,
+    () => dreamFx.debugState,
   );
   const input = new Input();
   input.attach();
@@ -496,6 +506,7 @@ async function boot(): Promise<void> {
    */
   const layoutView = (): void => {
     camera.resize(app.screen.width, app.screen.height);
+    dreamFx.resize(app.screen.width, app.screen.height);
     if (phase === "lobby" || phase === "enteringDream") {
       camera.setWorldSize(lobby.definition.width, lobby.definition.height);
       camera.fit(lobby.definition.width, lobby.definition.height);
@@ -600,6 +611,7 @@ async function boot(): Promise<void> {
     session,
     atlas,
     lobby,
+    dreamFx,
     get tonus(): unknown {
       return session.tonus.position;
     },
@@ -637,6 +649,7 @@ async function boot(): Promise<void> {
       }
       if (phase === "lobby") lobby.update(input, delta, panelOpen);
       else camera.update(delta);
+      dreamFx.setEnabled(false);
       const heldNow =
         connect.isOpen ||
         controls.isOpen ||
@@ -792,6 +805,10 @@ async function boot(): Promise<void> {
     if (!simulationPaused && cycle.update(delta)) void restartCycle();
     shiver.update(delta);
     camera.update(delta);
+    dreamFx.setEnabled(true);
+    dreamFx.setPreset(room.graphics.glitchPreset);
+    dreamFx.setTonus(session.tonus.position);
+    dreamFx.update(delta);
 
     // --- draw
     const walker = session.player;
