@@ -1,4 +1,5 @@
 import { Journal, type JournalEntry } from "../game/cycle";
+import { setMarkdown } from "./markdown";
 
 export interface JournalCallbacks {
   onClose(): void;
@@ -49,7 +50,7 @@ export class JournalPanel {
       const cycle = document.createElement("span");
       cycle.textContent = `цикл ${entry.cycle}`;
       const text = document.createElement("span");
-      text.textContent = entry.text;
+      setMarkdown(text, entry.text);
       item.append(cycle, text);
       list.appendChild(item);
     }

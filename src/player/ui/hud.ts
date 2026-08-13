@@ -11,6 +11,7 @@
  */
 
 import { formatClock } from "../game/cycle";
+import { setMarkdown } from "./markdown";
 
 export interface HudModel {
   title: string;
@@ -29,6 +30,7 @@ export class Hud {
   private readonly cycleEl: HTMLElement;
   private readonly whisperEl: HTMLElement;
   private whisperUntil = 0;
+  private whisperSource: string | null = null;
 
   constructor(parent: HTMLElement) {
     this.root = document.createElement("div");
@@ -51,8 +53,9 @@ export class Hud {
 
   /** Says something once, briefly. Repeats of the same line do not restack. */
   whisper(text: string, seconds = 3.5): void {
-    if (this.whisperEl.textContent === text && this.whisperUntil > 0) return;
-    this.whisperEl.textContent = text;
+    if (this.whisperSource === text && this.whisperUntil > 0) return;
+    this.whisperSource = text;
+    setMarkdown(this.whisperEl, text);
     this.whisperEl.classList.toggle("visible", !this.muted);
     this.whisperUntil = seconds;
   }

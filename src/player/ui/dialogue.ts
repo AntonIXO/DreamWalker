@@ -15,6 +15,7 @@ import type { FigureState } from "../game/world";
 import type { DreamMind, TurnResponse } from "../mind/types";
 import type { DreamArtifact } from "../../shared/dream";
 import type { AtlasTextures } from "../render/atlasTextures";
+import { setMarkdown } from "./markdown";
 import type { ModelThinkingIndicator } from "./modelThinking";
 
 export interface DialogueCallbacks {
@@ -154,7 +155,7 @@ export class DialoguePanel {
   private line(text: string, className: string): HTMLElement {
     const node = document.createElement("p");
     node.className = className;
-    node.textContent = text;
+    setMarkdown(node, text);
     this.logEl.appendChild(node);
     this.logEl.scrollTop = this.logEl.scrollHeight;
     return node;
@@ -186,7 +187,7 @@ export class DialoguePanel {
             { figureId: figure.id, utterance, offeredMemoryId },
             (partial) => {
               if (this.figure !== figure) return;
-              pending.textContent = partial || "…";
+              setMarkdown(pending, partial || "…");
             },
           ),
       );
@@ -209,7 +210,7 @@ export class DialoguePanel {
       return;
     }
 
-    pending.textContent = response.reply;
+    setMarkdown(pending, response.reply);
     pending.className = "said-by-them";
     // «Уровень 3 не откатывается» — suspicion is a ratchet, so a figure that has worked
     // it out cannot be talked back down into being merely curious. The Eye is the one

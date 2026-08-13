@@ -144,11 +144,31 @@ body {
     text-align: center;
     font-size: 0.8125rem;
     line-height: 1.5;
+    white-space: pre-line;
     color: var(--ink);
     background: rgba(8, 8, 11, 0.82);
     border: 1px solid var(--edge);
     opacity: 0;
     transition: opacity 180ms ease;
+}
+
+.hud-whisper strong,
+.dialogue-log strong,
+.inspect-body strong,
+.clue-observation strong,
+.journal-list strong,
+.finale-reply strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.hud-whisper em,
+.dialogue-log em,
+.inspect-body em,
+.clue-observation em,
+.journal-list em,
+.finale-reply em {
+    font-style: italic;
 }
 
 .hud-whisper.visible {

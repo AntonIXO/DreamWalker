@@ -2,6 +2,8 @@
  * Short diegetic readouts. Not a menu: the player already chose the object in the room.
  */
 
+import { setMarkdown } from "../ui/markdown";
+
 export interface InspectAction {
   label: string;
   kind?: "primary" | "ghost";
@@ -53,7 +55,7 @@ export class InspectPanel {
   open(spec: InspectSpec): void {
     this.titleEl.textContent = spec.title;
     this.categoryEl.textContent = spec.category;
-    this.bodyEl.textContent = spec.body;
+    setMarkdown(this.bodyEl, spec.body);
     this.actionsEl.replaceChildren();
 
     const actions = spec.actions ?? [];

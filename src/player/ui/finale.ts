@@ -1,6 +1,7 @@
 import type { DreamArtifact } from "../../shared/dream";
 import type { WordNotebook } from "../game/wordNotebook";
 import type { DreamMind } from "../mind/types";
+import { setMarkdown } from "./markdown";
 import type { ModelThinkingIndicator } from "./modelThinking";
 
 /**
@@ -163,7 +164,7 @@ export class FinalePanel {
         );
         return;
       }
-      this.reply.textContent = result.reply;
+      setMarkdown(this.reply, result.reply);
     } catch (error) {
       this.reply.textContent =
         error instanceof Error ? error.message : String(error);
@@ -199,7 +200,7 @@ export class FinalePanel {
 
   private showEnding(text: string, kind: EndingKind): void {
     this.ended = true;
-    this.reply.textContent = text;
+    setMarkdown(this.reply, text);
     this.reply.style.whiteSpace = "pre-line";
     this.form.hidden = true;
     this.submit.hidden = true;

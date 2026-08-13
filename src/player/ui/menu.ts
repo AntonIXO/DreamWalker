@@ -14,6 +14,7 @@
 import type { DreamArtifact } from "../../shared/dream";
 import type { JournalEntry } from "../game/cycle";
 import { describeMind, type MindSettings } from "../mind/settings";
+import { renderMarkdown } from "./markdown";
 
 export interface MenuCallbacks {
   onStart(): void;
@@ -87,7 +88,7 @@ export class StartMenu {
     this.journalEl.innerHTML = `
       <h3>Ты уже был здесь</h3>
       <ul class="notes">${recent
-        .map((entry) => `<li>${escapeHtml(entry.text)}</li>`)
+        .map((entry) => `<li>${renderMarkdown(entry.text)}</li>`)
         .join("")}</ul>
     `;
   }
@@ -125,11 +126,4 @@ export class StartMenu {
   destroy(): void {
     this.root.remove();
   }
-}
-
-/** Journal lines are the Lord's text and the player's own words, so never trust them raw. */
-function escapeHtml(text: string): string {
-  const node = document.createElement("span");
-  node.textContent = text;
-  return node.innerHTML;
 }

@@ -1,4 +1,5 @@
 import type { ClueDefinition } from "../../shared/content";
+import { setMarkdown } from "./markdown";
 
 export class ClueInspectPanel {
   private readonly root: HTMLElement;
@@ -43,7 +44,7 @@ export class ClueInspectPanel {
   }
 
   open(clue: ClueDefinition, observation: string): void {
-    this.observation.textContent = observation;
+    setMarkdown(this.observation, observation);
     this.placeholder.textContent = `ВРЕМЕННЫЙ АССЕТ\n${clue.marker}`;
     this.placeholder.hidden = false;
     this.image.hidden = true;
