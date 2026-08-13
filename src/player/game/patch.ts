@@ -12,6 +12,7 @@
 
 import type { DreamPopulation, InterestSeed } from "../../shared/ai";
 import type { MapPatch } from "../../shared/map-patch";
+import { entryRegion, pickSlot } from "../../shared/placement";
 import { padRect, type TileRect } from "../../shared/rect";
 import { makeRng } from "../../shared/rng";
 import type { DoorTypeName } from "../../shared/tilecodes";
@@ -125,21 +126,60 @@ function profileState(
  * Where an interest stands.
  *
  * There is no tile to overwrite and nothing to restore — an interest is a hotspot now,
- * so it is placed next to a free figure slot or, failing that, in the middle of the room.
+ * so the only question is which free slot it claims.
+ *
+ * It used to be `rng.pick(room.figureSlots)` offset by one tile, with no check that the
+ * result was walkable, inside the room, or free. Every room has exactly two slots, so
+ * every clue in the dream landed on one of two tiles and could sit inside a wall or on
+ * top of somebody. `pickSlot` asks `placement.ts` instead, which is the same code
+ * `lord rooms --check` runs, so a placement the author cannot see is a placement the
+ * build can refuse.
  */
 function placeInterestState(
   world: WorldState,
   interest: InterestSeed,
+  ignoreInterestId?: string,
 ): InterestState | null {
   const room = world.roomById.get(interest.roomId);
   if (!room || room.kind === "meta") return null;
-  const rng = makeRng(`interest:${interest.id}`);
-  const spot = room.figureSlots.length > 0 ? rng.pick(room.figureSlots) : null;
+
+  const taken = new Set<string>();
+  for (const figure of world.figures) {
+    if (figure.roomId === room.id) taken.add(figure.slotId);
+  }
+  for (const other of world.interests) {
+    if (other.roomId !== room.id) continue;
+    if (other.id === ignoreInterestId || other.id === interest.id) continue;
+    if (other.slotId) taken.add(other.slotId);
+  }
+
+  const slot = pickSlot(
+    room,
+    room.figureSlots,
+    taken,
+    `interest:${interest.id}`,
+  );
+  if (slot) {
+    return {
+      ...interest,
+      roomId: room.id,
+      slotId: slot.id,
+      x: slot.x,
+      y: slot.y,
+    };
+  }
+
+  // Nowhere authored is free. Rather than stack two things on one tile, fall back to any
+  // reachable floor — deterministically, so a reload puts it back in the same place.
+  const region = [...entryRegion(room)];
+  if (region.length === 0) return null;
+  const tile = makeRng(`interest-loose:${interest.id}`).pick(region);
   return {
     ...interest,
     roomId: room.id,
-    x: spot ? spot.x + 1 : room.width / 2,
-    y: spot ? spot.y : room.height / 2,
+    slotId: null,
+    x: tile % room.width,
+    y: Math.floor(tile / room.width),
   };
 }
 
@@ -154,14 +194,19 @@ export function installPopulation(
   const figures = population.figures
     .map((profile) => profileState(world, profile, taken))
     .filter((figure): figure is FigureState => figure !== null);
-  const interests = population.interests
-    .map((interest) => placeInterestState(world, interest))
-    .filter((interest): interest is InterestState => interest !== null);
 
+  // Order matters twice over, and both used to be wrong. The figures have to be *in* the
+  // world before anything is placed, or `placeInterestState` reads the previous cycle's
+  // roster and seats a clue on somebody's head; and each interest has to be pushed before
+  // the next is placed, or two of them claim the same slot.
   world.figures.length = 0;
   world.figures.push(...figures);
   world.interests.length = 0;
-  world.interests.push(...interests);
+  for (const seed of population.interests) {
+    const placed = placeInterestState(world, seed);
+    if (placed) world.interests.push(placed);
+  }
+  const interests: InterestState[] = [...world.interests];
   world.population = {
     ...population,
     figures: population.figures.map((profile) => ({

@@ -64,6 +64,11 @@ export interface FigureState extends FigurePlacement {
  */
 export interface InterestState extends InterestSeed {
   roomId: string;
+  /**
+   * Which authored slot it claimed, so the next arrival does not claim the same one.
+   * Null when nothing was free and it fell back to loose floor.
+   */
+  slotId: string | null;
   /** Tile coordinates, fractional. */
   x: number;
   y: number;
