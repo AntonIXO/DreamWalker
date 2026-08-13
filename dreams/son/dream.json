@@ -1,5 +1,5 @@
 {
-  "format": 4,
+  "format": 5,
   "slug": "son",
   "title": "Сон",
   "genreContract": "Сон, который знает, что его используют",
@@ -135,7 +135,6 @@
           "reach": 1.4,
           "prompt": "три тысячи номерков",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -154,7 +153,6 @@
             "roomId": "07-bassein-i-odnostoronnii-lift",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -173,7 +171,6 @@
             "roomId": "07-bassein-i-odnostoronnii-lift",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -188,7 +185,6 @@
           "reach": 1.4,
           "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -203,7 +199,6 @@
           "reach": 1.4,
           "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -218,7 +213,6 @@
           "reach": 1.4,
           "prompt": "ведро и швабра уборщика",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -550,10 +544,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 2,
-        "y": 1
-      },
       "revisit": {
         "escalates": false,
         "note": "Красиво, но ты тут никто"
@@ -602,7 +592,6 @@
           "reach": 1.4,
           "prompt": "парты",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -617,7 +606,6 @@
           "reach": 1.4,
           "prompt": "листочки, на которых текст меняется, если отвести взгляд",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -635,7 +623,6 @@
             "to": "refuse",
             "note": "недостижима, при попытке трогать камера отъезжает назад"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -654,7 +641,6 @@
             "roomId": "07-bassein-i-odnostoronnii-lift",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -705,10 +691,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -3,
-        "y": -2
-      },
       "revisit": {
         "escalates": false,
         "note": "(−3, −2). Классический Downer Static"
@@ -757,7 +739,6 @@
             "to": "refuse",
             "note": "Мета-пространство «ЛЕСТНИЦА»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -772,7 +753,6 @@
           "reach": 1.4,
           "prompt": "визитки, которые не берутся в руку",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -787,7 +767,6 @@
           "reach": 1.4,
           "prompt": "теодолит, показывающий одно и то же число независимо от направления",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -802,7 +781,6 @@
           "reach": 1.4,
           "prompt": "камень с ровно отпиленной гранью",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -853,10 +831,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 1,
-        "y": 3
-      },
       "revisit": {
         "escalates": false,
         "note": "Высоко, ветрено, дёргано"
@@ -902,7 +876,6 @@
           "reach": 1.4,
           "prompt": "плита",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -921,7 +894,6 @@
             "roomId": "16-norvezhskaia-derevnia-i-pogreb",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -936,7 +908,6 @@
           "reach": 1.4,
           "prompt": "телефон с одним контактом «Лёша»",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -955,7 +926,6 @@
             "roomId": "m2-miasnaia-geometriia",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1006,10 +976,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -2,
-        "y": 1
-      },
       "revisit": {
         "escalates": false,
         "note": "(−2, +1)"
@@ -1059,7 +1025,6 @@
             "roomId": "m3-sklad-ostavlennogo",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1074,7 +1039,6 @@
           "reach": 1.4,
           "prompt": "надпись на краю полки",
           "link": null,
-          "tonus": null,
           "clueId": "clue-1",
           "action": null,
           "once": false,
@@ -1092,7 +1056,6 @@
             "roomId": "06-kanava-garazhi-podvorotni",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1107,7 +1070,6 @@
           "reach": 1.4,
           "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1122,7 +1084,6 @@
           "reach": 1.4,
           "prompt": "корзина с чем-то, что не читается",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1173,10 +1134,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -4,
-        "y": 2
-      },
       "revisit": {
         "escalates": true,
         "note": "(−4, +2). Тут начинается насилие"
@@ -1224,7 +1181,6 @@
           "reach": 1.4,
           "prompt": "рюкзак",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1243,7 +1199,6 @@
             "roomId": "m1-korni",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1262,7 +1217,6 @@
             "roomId": "10-komnata-s-grobami",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1277,7 +1231,6 @@
           "reach": 1.4,
           "prompt": "следы шин, которых утром не было",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1328,10 +1281,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -6,
-        "y": 4
-      },
       "revisit": {
         "escalates": true,
         "note": "(−6, +4). Самая тёмная динамика в игре"
@@ -1380,7 +1329,6 @@
             "to": "refuse",
             "note": "Мета-пространство «ЧУЖОЙ СТЫД»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1397,7 +1345,6 @@
           "link": {
             "to": "up"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1412,7 +1359,6 @@
           "reach": 1.4,
           "prompt": "полотенце, ради которого пришёл, — не находится",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1427,7 +1373,6 @@
           "reach": 1.4,
           "prompt": "вода в чаше бассейна, слишком неподвижная",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1478,10 +1423,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -2,
-        "y": -1
-      },
       "revisit": {
         "escalates": false,
         "note": "(−2, −1)"
@@ -1532,7 +1473,6 @@
             "to": "refuse",
             "note": "Мета-пространство «МУЗЕЙ НОРМАЛЬНОГО»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1547,7 +1487,6 @@
           "reach": 1.4,
           "prompt": "чужие фотографии в твоих рамках",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1562,7 +1501,6 @@
           "reach": 1.4,
           "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1577,7 +1515,6 @@
           "reach": 1.4,
           "prompt": "чайник, который уже кипел",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1628,10 +1565,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -1,
-        "y": -3
-      },
       "revisit": {
         "escalates": false,
         "note": "(−1, −3). Downer Static в чистом виде"
@@ -1677,7 +1610,6 @@
           "reach": 1.4,
           "prompt": "ноутбуки с продавленными экранами",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1692,7 +1624,6 @@
           "reach": 1.4,
           "prompt": "одинаковые наушники",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1711,7 +1642,6 @@
             "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1726,7 +1656,6 @@
           "reach": 1.4,
           "prompt": "розовый гашиш в витрине",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1741,7 +1670,6 @@
           "reach": 1.4,
           "prompt": "пять тысяч наличными, которые уже отдал",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1792,10 +1720,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 3,
-        "y": 3
-      },
       "revisit": {
         "escalates": false,
         "note": "Единственная честно Upper Dynamic комната. Пользуйся"
@@ -1845,7 +1769,6 @@
             "roomId": "15-osennii-les-s-grobom",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1863,7 +1786,6 @@
             "to": "refuse",
             "note": "Мета-пространство «АРХИВ, КОТОРЫЙ ЗАШИФРОВАН»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1878,7 +1800,6 @@
           "reach": 1.4,
           "prompt": "ткань с кодами",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1893,7 +1814,6 @@
           "reach": 1.4,
           "prompt": "пакетики ФСБ",
           "link": null,
-          "tonus": null,
           "clueId": "clue-3",
           "action": null,
           "once": false,
@@ -1908,7 +1828,6 @@
           "reach": 1.4,
           "prompt": "телефон, камера открывается семь секунд",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -1959,10 +1878,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -5,
-        "y": -4
-      },
       "revisit": {
         "escalates": true,
         "note": "(−5, −4). Дно графика. Отсюда близко до переполнения"
@@ -2013,7 +1928,6 @@
             "to": "refuse",
             "note": "Мета-пространство «МАСШТАБ»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2028,7 +1942,6 @@
           "reach": 1.4,
           "prompt": "фонари, которые гасят при звуке",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2043,7 +1956,6 @@
           "reach": 1.4,
           "prompt": "расписание — не транспорта, а **безопасных часов**",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2062,7 +1974,6 @@
             "roomId": "01-otel-goticheskii-holl",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2113,10 +2024,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 0,
-        "y": -2
-      },
       "revisit": {
         "escalates": false,
         "note": "(0, −2). Тематическое сердце игры"
@@ -2162,7 +2069,6 @@
           "reach": 1.4,
           "prompt": "капуста, фрукты",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2181,7 +2087,6 @@
             "roomId": "19-dvor-i-oranzhevye-lavochki",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2200,7 +2105,6 @@
             "roomId": "m3-sklad-ostavlennogo",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2215,7 +2119,6 @@
           "reach": 1.4,
           "prompt": "пакет фасоли",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2230,7 +2133,6 @@
           "reach": 1.4,
           "prompt": "тётя, сидящая спиной",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2281,10 +2183,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 1,
-        "y": 2
-      },
       "revisit": {
         "escalates": false,
         "note": "Абсурдно лёгкая"
@@ -2333,7 +2231,6 @@
             "to": "refuse",
             "note": "Мета-пространство «МАСШТАБ»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2348,7 +2245,6 @@
           "reach": 1.4,
           "prompt": "трибуны",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2363,7 +2259,6 @@
           "reach": 1.4,
           "prompt": "рюкзак с фруктами и водкой",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2381,7 +2276,6 @@
             "to": "figure",
             "characterId": "liosha-gnedkov"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2396,7 +2290,6 @@
           "reach": 1.4,
           "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2447,10 +2340,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 2,
-        "y": 4
-      },
       "revisit": {
         "escalates": false,
         "note": null
@@ -2500,7 +2389,6 @@
             "roomId": "m2-miasnaia-geometriia",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2519,7 +2407,6 @@
             "roomId": "19-dvor-i-oranzhevye-lavochki",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2534,7 +2421,6 @@
           "reach": 1.4,
           "prompt": "кресло",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2549,7 +2435,6 @@
           "reach": 1.4,
           "prompt": "велосипедисты, проезжающие сквозь коридор",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2600,10 +2485,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -2,
-        "y": 1
-      },
       "revisit": {
         "escalates": false,
         "note": "(−2, +1)"
@@ -2653,7 +2534,6 @@
             "roomId": "10-komnata-s-grobami",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2672,7 +2552,6 @@
             "roomId": "07-bassein-i-odnostoronnii-lift",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2687,7 +2566,6 @@
           "reach": 1.4,
           "prompt": "листья, шуршащие не в такт шагам",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2702,7 +2580,6 @@
           "reach": 1.4,
           "prompt": "фотография классного руководителя, лица не разобрать",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2753,10 +2630,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -1,
-        "y": 2
-      },
       "revisit": {
         "escalates": false,
         "note": "(−1, +2). Смешно и невыносимо одновременно"
@@ -2806,7 +2679,6 @@
             "roomId": "m1-korni",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2821,7 +2693,6 @@
           "reach": 1.4,
           "prompt": "снег, который течёт",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2836,7 +2707,6 @@
           "reach": 1.4,
           "prompt": "отец на краю",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2851,7 +2721,6 @@
           "reach": 1.4,
           "prompt": "Кирилл рядом, молчит",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2902,10 +2771,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -8,
-        "y": 6
-      },
       "revisit": {
         "escalates": true,
         "note": "(−8, +6). Максимальный размах. **Отсюда чаще всего происходит переполнение графика**"
@@ -2951,7 +2816,6 @@
           "reach": 1.4,
           "prompt": "дверь",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2969,7 +2833,6 @@
             "to": "refuse",
             "note": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -2987,7 +2850,6 @@
             "to": "refuse",
             "note": "Мета-пространство «АРХИВ»"
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3038,10 +2900,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -4,
-        "y": -6
-      },
       "revisit": {
         "escalates": true,
         "note": "(−4, −6). Максимально Static. Комната-тупик как жанр"
@@ -3091,7 +2949,6 @@
             "roomId": "03-gory-startapery-i-uchenye",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3110,7 +2967,6 @@
             "roomId": "m2-miasnaia-geometriia",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3125,7 +2981,6 @@
           "reach": 1.4,
           "prompt": "звери",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3140,7 +2995,6 @@
           "reach": 1.4,
           "prompt": "снежное поле до горизонта",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3191,10 +3045,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -3,
-        "y": 5
-      },
       "revisit": {
         "escalates": false,
         "note": "(−3, +5)"
@@ -3240,7 +3090,6 @@
           "reach": 1.4,
           "prompt": "оранжевые лавочки",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3259,7 +3108,6 @@
             "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3278,7 +3126,6 @@
             "roomId": "m4-razvilka-gde-ty-ostalsia",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": true,
@@ -3293,7 +3140,6 @@
           "reach": 1.4,
           "prompt": "урна, набитая аккуратно",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3344,10 +3190,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 1,
-        "y": -4
-      },
       "revisit": {
         "escalates": false,
         "note": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции"
@@ -3397,7 +3239,6 @@
             "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3412,7 +3253,6 @@
           "reach": 1.4,
           "prompt": "широкий монитор с чем-то корпоративным",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3427,7 +3267,6 @@
           "reach": 1.4,
           "prompt": "бейджи на шнурках",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3442,7 +3281,6 @@
           "reach": 1.4,
           "prompt": "лифт",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3461,7 +3299,6 @@
             "roomId": "21-komnata-niliufar",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3512,10 +3349,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 2,
-        "y": -2
-      },
       "revisit": {
         "escalates": false,
         "note": "(+2, −2)"
@@ -3561,7 +3394,6 @@
           "reach": 1.4,
           "prompt": "кровать",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3580,7 +3412,6 @@
             "roomId": "m4-razvilka-gde-ty-ostalsia",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3595,7 +3426,6 @@
           "reach": 1.4,
           "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3610,7 +3440,6 @@
           "reach": 1.4,
           "prompt": "вещи танцевальной группы",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3661,10 +3490,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 0,
-        "y": -5
-      },
       "revisit": {
         "escalates": false,
         "note": "(0, −5). Абсолютный ноль по горизонтали. Ни вверх, ни вниз"
@@ -3714,7 +3539,6 @@
             "roomId": "13-podzemnye-zaly-cu",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3729,7 +3553,6 @@
           "reach": 1.4,
           "prompt": "накрытые столы",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3744,7 +3567,6 @@
           "reach": 1.4,
           "prompt": "спасательные круги",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3759,7 +3581,6 @@
           "reach": 1.4,
           "prompt": "вода за бортом, слишком близко к палубе",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3810,10 +3631,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -1,
-        "y": 1
-      },
       "revisit": {
         "escalates": false,
         "note": "(−1, +1)"
@@ -3859,7 +3676,6 @@
           "reach": 1.4,
           "prompt": "колонны",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3878,7 +3694,6 @@
             "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3893,7 +3708,6 @@
           "reach": 1.4,
           "prompt": "бейдж конференции с нечитаемым названием",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3908,7 +3722,6 @@
           "reach": 1.4,
           "prompt": "отель, у которого внутренний объём меньше внешнего",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -3959,10 +3772,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 1,
-        "y": 2
-      },
       "revisit": {
         "escalates": false,
         "note": null
@@ -4008,7 +3817,6 @@
           "reach": 1.4,
           "prompt": "какао",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4023,7 +3831,6 @@
           "reach": 1.4,
           "prompt": "кусок мяса, назначенный бомбой",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4042,7 +3849,6 @@
             "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4057,7 +3863,6 @@
           "reach": 1.4,
           "prompt": "телефон с камерой, которая не успевает",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4108,10 +3913,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -7,
-        "y": 3
-      },
       "revisit": {
         "escalates": true,
         "note": "(−7, +3)"
@@ -4161,7 +3962,6 @@
             "roomId": "m4-razvilka-gde-ty-ostalsia",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4176,7 +3976,6 @@
           "reach": 1.4,
           "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4191,7 +3990,6 @@
           "reach": 1.4,
           "prompt": "коробка с голосом",
           "link": null,
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4210,7 +4008,6 @@
             "roomId": "m3-sklad-ostavlennogo",
             "entryId": null
           },
-          "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
@@ -4261,10 +4058,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -3,
-        "y": 4
-      },
       "revisit": {
         "escalates": false,
         "note": "(−3, +4)"
@@ -4321,19 +4114,13 @@
         "glitchPreset": "wrong-palette"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 0,
-        "y": 0
-      },
       "revisit": {
         "escalates": false,
         "note": ", но **удваивает предыдущий сдвиг**. Если пришёл с −6, станет −12, и вот тут начинается конверсия"
       },
       "meta": {
         "minMs": 8000,
-        "maxMs": 40000,
-        "doublesPrevious": true,
-        "overflow": true
+        "maxMs": 40000
       },
       "description": "Ты не идёшь — ты **внутри**. Погреб из норвежского сна вывернулся и стал средой: корни толщиной с руку, толщиной с ногу, толщиной с коридор, и они пульсируют с периодом дыхания, и ты через какое-то время ловишь себя на том, что дышишь с ними в такт. Это нервная система спящего великана, и ты в ней **не пассажир, а сигнал**. Никакой угрозы. Ни одной. Именно поэтому отсюда хочется выйти сильнее, чем из комнаты с убийцей.",
       "atmosphere": ", но **удваивает предыдущий сдвиг**. Если пришёл с −6, станет −12, и вот тут начинается конверсия",
@@ -4388,19 +4175,13 @@
         "glitchPreset": "wrong-palette"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -4,
-        "y": 4
-      },
       "revisit": {
         "escalates": true,
         "note": "(−4, +4)"
       },
       "meta": {
         "minMs": 8000,
-        "maxMs": 40000,
-        "doublesPrevious": false,
-        "overflow": true
+        "maxMs": 40000
       },
       "description": "Кусок мяса, который назначили бомбой, вырос до размеров помещения. Это плоть, но она **соблюдает архитектуру** — прямые углы, дверные проёмы, лестничные марши, всё на месте, всё по СНиПу, всё из мяса. Выдранный зуб размером со шкаф в углу. Слизень, которого можно бить только когда откроет рот, здесь размером с автобус, и рот у него открывается по расписанию. Мокро, тепло, чисто. Убирались.",
       "atmosphere": "(−4, +4)",
@@ -4455,19 +4236,13 @@
         "glitchPreset": "wrong-palette"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -2,
-        "y": -6
-      },
       "revisit": {
         "escalates": false,
         "note": "(−2, −6). Максимальный Static"
       },
       "meta": {
         "minMs": 8000,
-        "maxMs": 40000,
-        "doublesPrevious": false,
-        "overflow": true
+        "maxMs": 40000
       },
       "description": "Полка для оставленных вещей из Пятёрочки, продолженная до горизонта. На ней лежит **всё, что ты за игру выронил, отдал, не подобрал или забыл**. И ещё много чужого. Рюкзаки с пятого класса. Пакет фасоли. Телефон, который так и не прошили. Ноут с продавленным экраном. Спальник. Полотенце, которое ты искал в бассейне и не нашёл, — вот оно, тут, но взять нельзя. Тётя сидит спиной, метрах в двадцати. Не поворачивается. Она сидит тут всегда и она тебя не заметит.",
       "atmosphere": "(−2, −6). Максимальный Static",
@@ -4522,19 +4297,13 @@
         "glitchPreset": "wrong-palette"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -5,
-        "y": -5
-      },
       "revisit": {
         "escalates": true,
         "note": "(−5, −5). Прямо в угол. Отсюда до конверсии один шаг"
       },
       "meta": {
         "minMs": 8000,
-        "maxMs": 40000,
-        "doublesPrevious": false,
-        "overflow": true
+        "maxMs": 40000
       },
       "description": "Самое короткое и самое неприятное. Двор с оранжевыми лавочками, только их **две штуки, одинаковых, и они стоят напротив**. На одной сидит Турышев с бутылкой. На другой — тоже Турышев, но в скафандре, и рядом с ним какая-то аппаратура, и он смотрит вниз, на планету, которой тут нет. Между ними полтора метра. Оба тебя не видят. Это комната про одну развилку в 2019 году, и её нельзя ни решить, ни объяснить, ни пройти. Через двадцать секунд тебя вынесет. Появляется редко — раз за прохождение, случайно, без предупреждения, — и лучше всего работает, если игрок так и не поймёт, что это было.",
       "atmosphere": "(−5, −5). Прямо в угол. Отсюда до конверсии один шаг",
@@ -4689,10 +4458,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/anton.md",
-        "tonus": {
-          "x": -3,
-          "y": -3
-        },
         "suspicionMonotone": true
       },
       {
@@ -4715,10 +4480,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/babushka-nadya.md",
-        "tonus": {
-          "x": 0,
-          "y": -3
-        },
         "suspicionMonotone": true
       },
       {
@@ -4741,10 +4502,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/dolzhniki.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -4767,10 +4524,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/glaz.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": false
       },
       {
@@ -4793,10 +4546,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/hudozhnik.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -4819,10 +4568,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/kirill.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -4845,10 +4590,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/kripto-bro.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -4871,10 +4612,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/liosha-gnedkov.md",
-        "tonus": {
-          "x": -4,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -4897,10 +4634,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/mama.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -4923,10 +4656,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/nilufar.md",
-        "tonus": {
-          "x": 0,
-          "y": -5
-        },
         "suspicionMonotone": true
       },
       {
@@ -4949,10 +4678,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/papa.md",
-        "tonus": {
-          "x": -1,
-          "y": -1
-        },
         "suspicionMonotone": true
       },
       {
@@ -4975,10 +4700,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/tetya.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -5001,10 +4722,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/turyshev.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       },
       {
@@ -5027,10 +4744,6 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/ubiitsa.md",
-        "tonus": {
-          "x": 0,
-          "y": 0
-        },
         "suspicionMonotone": true
       }
     ],

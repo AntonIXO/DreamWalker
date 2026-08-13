@@ -18,9 +18,5 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/papa.md",
-  "tonus": {
-    "x": -1,
-    "y": -1
-  },
   "suspicionMonotone": true
 }

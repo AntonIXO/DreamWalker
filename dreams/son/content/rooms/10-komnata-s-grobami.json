@@ -33,7 +33,6 @@
         "roomId": "15-osennii-les-s-grobom",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -51,7 +50,6 @@
         "to": "refuse",
         "note": "Мета-пространство «АРХИВ, КОТОРЫЙ ЗАШИФРОВАН»"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -66,7 +64,6 @@
       "reach": 1.4,
       "prompt": "ткань с кодами",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -81,7 +78,6 @@
       "reach": 1.4,
       "prompt": "пакетики ФСБ",
       "link": null,
-      "tonus": null,
       "clueId": "clue-3",
       "action": null,
       "once": false,
@@ -96,7 +92,6 @@
       "reach": 1.4,
       "prompt": "телефон, камера открывается семь секунд",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -147,10 +142,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -5,
-    "y": -4
-  },
   "revisit": {
     "escalates": true,
     "note": "(−5, −4). Дно графика. Отсюда близко до переполнения"

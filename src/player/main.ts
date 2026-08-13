@@ -32,7 +32,8 @@ import { updateFigures } from "./game/figures";
 import { applyPopulationRelinks, installPopulation } from "./game/patch";
 import { walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
-import { createWorld, currentRoom, resetWorld } from "./game/world";
+import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
+import { computePressure, type DreamPressure } from "./game/pressure";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
@@ -224,7 +225,7 @@ async function boot(): Promise<void> {
   const transition = new EnterTransition(uiLayer);
 
   /**
-   * Walking, doors, links, meta-spaces and the tonus coordinate.
+   * Walking, doors, links and meta-spaces.
    *
    * Everything that used to be inline in this ticker as a warp block lives here now,
    * because there are four ways out of a room instead of one.
@@ -246,12 +247,6 @@ async function boot(): Promise<void> {
         if (line) hud.whisper(line, 4);
       },
       onRefused: (doorId) => observations.noteRefusal(doorId),
-      onOverflow: () => {
-        // Everything got as bad as the counter can hold and came out the other side.
-        shiver.trigger(1);
-        dreamFx.overflow();
-        hud.whisper("Стало легко. Ничего не изменилось.", 6);
-      },
       onRefusedLink: (note) => hud.whisper(note, 4),
     },
     transition,
@@ -294,6 +289,15 @@ async function boot(): Promise<void> {
     () => ({ roomId: world.currentRoomId, rect: camera.visibleTiles() }),
   );
 
+  const pressureNow = (): DreamPressure =>
+    computePressure({
+      figures: world.figures,
+      cycleNumber: cycle.number,
+      maxCycles: artifact.cycle.maxCycles,
+      beats: observations.snapshot(world).beatsThisCycle,
+      visitsHere: visitCount(world, world.currentRoomId),
+    });
+
   const noteShard = (shardId: string): void => {
     mindMemory.learnShard(shardId);
     observations.noteLearned(shardId);
@@ -329,6 +333,19 @@ async function boot(): Promise<void> {
         "tell",
       );
     },
+    onKnows: (figure) => {
+      // The picture agreeing with the face. This used to fire on the тонус counter
+      // wrapping — arithmetic nobody could see; now it fires when somebody has you.
+      shiver.trigger(1);
+      dreamFx.surge();
+      journal.addPerson(
+        cycle.number,
+        figure.id,
+        figure.name,
+        "Понял и молчит.",
+        "tell",
+      );
+    },
     onShard: noteShard,
     onMemorySpent: () => {
       journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
@@ -351,7 +368,7 @@ async function boot(): Promise<void> {
     uiLayer,
     world,
     heartbeat,
-    () => session.tonus.position,
+    pressureNow,
     () => dreamFx.debugState,
     () => camera.visibleTiles(),
   );
@@ -615,8 +632,8 @@ async function boot(): Promise<void> {
     atlas,
     lobby,
     dreamFx,
-    get tonus(): unknown {
-      return session.tonus.position;
+    get pressure(): DreamPressure {
+      return pressureNow();
     },
     get phase(): AppPhase {
       return phase;
@@ -810,7 +827,7 @@ async function boot(): Promise<void> {
     camera.update(delta);
     dreamFx.setEnabled(true);
     dreamFx.setPreset(room.graphics.glitchPreset);
-    dreamFx.setTonus(session.tonus.position);
+    dreamFx.setPressure(pressureNow());
     dreamFx.update(delta);
 
     // --- draw

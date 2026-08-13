@@ -17,23 +17,19 @@
  *     mechanic; Osamu Sato built it out of crashing into walls in racing games). A link
  *     is authored per object, so poking the world stops being purely safe: it costs you
  *     your position instead of your cover.
- *   - **Тонус** — every room and every object nudges the hidden coordinate in
- *     `src/shared/tonus.ts`.
  *
  * Must stay free of DOM *and* node APIs — the CLI and the browser both import it.
  */
 
 import type { CellGrid, Direction, SolidRect } from "./roomGrid";
 import type { DoorTypeName } from "./tilecodes";
-import type { TonusDelta } from "./tonus";
 
 /**
  * A place, or one of the four gaps between places.
  *
  * `meta` rooms are the parts of a dream nobody remembers — the ones you fall into when
- * you touch the wrong thing. They have no figures and no doors, you leave on a timer
- * rather than through anything, and they are the only rooms where the tonus counter is
- * allowed to overflow.
+ * you touch the wrong thing. They have no figures and no doors of their own, and you
+ * leave on a timer rather than through anything.
  */
 export type RoomKind = "place" | "meta";
 
@@ -78,8 +74,6 @@ export interface RoomHotspot {
   /** Russian, shown as `E — <prompt>`. */
   prompt: string;
   link: RoomLink | null;
-  /** Applied when touched, before any teleport. */
-  tonus: TonusDelta | null;
   /** Set when `kind === "clue"`. */
   clueId: string | null;
   /** A loose PNG under `assets/`, once the object has been drawn. */
@@ -161,13 +155,6 @@ export interface MetaConfig {
   /** §Part II — «от восьми до сорока секунд». */
   minMs: number;
   maxMs: number;
-  /**
-   * М1 КОРНИ: «(0, 0), но удваивает предыдущий сдвиг». Arriving with −6 leaves with
-   * −12, which is how a meta-space becomes the place an overflow finally happens.
-   */
-  doublesPrevious: boolean;
-  /** Whether the tonus counter may wrap here. Everywhere else it clamps. */
-  overflow: boolean;
 }
 
 /** Where a figure stands. Named, so a patch can move someone without arithmetic. */
@@ -204,8 +191,6 @@ export interface DreamRoom extends CellGrid {
   graphics: RoomGraphics;
   /** `frame` snaps the camera to the whole room; `follow` tracks the walker. */
   camera: "frame" | "follow";
-  /** Applied on entry, scaled by how many times you have been here. */
-  tonus: TonusDelta;
   /**
    * §4.3 — «второй визит хуже первого». The canonical case is §06: the same ditch, but
    * this time there are two of them. Not a punishment; arithmetic.

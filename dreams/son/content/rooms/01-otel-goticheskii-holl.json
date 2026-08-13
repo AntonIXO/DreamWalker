@@ -29,7 +29,6 @@
       "reach": 1.4,
       "prompt": "три тысячи номерков",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -48,7 +47,6 @@
         "roomId": "07-bassein-i-odnostoronnii-lift",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -67,7 +65,6 @@
         "roomId": "07-bassein-i-odnostoronnii-lift",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -82,7 +79,6 @@
       "reach": 1.4,
       "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -97,7 +93,6 @@
       "reach": 1.4,
       "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -112,7 +107,6 @@
       "reach": 1.4,
       "prompt": "ведро и швабра уборщика",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -444,10 +438,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": 2,
-    "y": 1
-  },
   "revisit": {
     "escalates": false,
     "note": "Красиво, но ты тут никто"

@@ -30,7 +30,11 @@ describe("parseRoomsDocument", () => {
   });
 });
 
-describe("tonus", () => {
+describe("the bible's mood line", () => {
+  // The Upper/Downer chart is gone from the engine (`game/pressure.ts`), but the line is
+  // still authored writing and still the only place the corpus says how bad a room is.
+  // The importer reads it to decide which rooms escalate on a revisit, and to fill
+  // `atmosphere`, and then throws the numbers away.
   test("reads U+2212 MINUS SIGN, which is what the document actually uses", () => {
     // `Number("−3")` is NaN. Getting this wrong turns every downer room into an upper one.
     expect(normaliseMinus("(−3, −2)")).toBe("(-3, -2)");
@@ -38,28 +42,28 @@ describe("tonus", () => {
   });
 
   test("reads a leading plus", () => {
-    // The first version of the regex was /-?\d+/, so `(+2, +1)` silently became (0, 0)
-    // and only rooms that were negative on both axes survived. Twenty of twenty-nine
-    // rooms were quietly flattened, and nothing failed.
+    // The first version of the regex was /-?\d+/, so `(+2, +1)` silently became 0 and
+    // only rooms negative on both axes survived. Twenty of twenty-nine were quietly
+    // flattened, and nothing failed.
     const hackathon = parsed.find((room) => room.id.startsWith("09"))!;
-    expect(hackathon.tonus).toEqual({ x: 3, y: 3 });
+    expect(hackathon.moodDowner).toBe(3);
   });
 
-  test("reads a mixed pair", () => {
+  test("reads a mixed pair, and keeps the prose after it", () => {
     // §16, the deepest room in the game: «(−8, +6). Максимальный размах.»
     const norway = parsed.find((room) => room.id.startsWith("16"))!;
-    expect(norway.tonus).toEqual({ x: -8, y: 6 });
+    expect(norway.moodDowner).toBe(-8);
+    expect(norway.moodNote).toContain("размах");
     // §06, the ditch: the room the escalation rule was written for.
     const ditch = parsed.find((room) => room.id.startsWith("06"))!;
-    expect(ditch.tonus).toEqual({ x: -6, y: 4 });
+    expect(ditch.moodDowner).toBe(-6);
   });
 
-  test("every room carries a tonus the bible actually stated", () => {
-    // Only the hotel is genuinely (0, 0)-ish; a sweep of zeros means the parse broke.
-    const zeroed = parsed.filter(
-      (room) => room.tonus.x === 0 && room.tonus.y === 0,
-    );
-    expect(zeroed.length).toBeLessThan(3);
+  test("only the deep rooms escalate on a revisit", () => {
+    const escalating = parsed.filter((room) => room.moodDowner <= -4);
+    expect(escalating.some((room) => room.id.startsWith("06"))).toBe(true);
+    expect(escalating.length).toBeGreaterThan(0);
+    expect(escalating.length).toBeLessThan(parsed.length);
   });
 });
 
@@ -138,9 +142,10 @@ describe("toRoomCards", () => {
     }
   });
 
-  test("М1 is the one that doubles the previous shift", () => {
+  test("a meta-space is a timer, and nothing else", () => {
     const korni = rooms.find((room) => room.id === "m1-korni")!;
-    expect(korni.meta!.doublesPrevious).toBe(true);
+    expect(korni.meta).toEqual({ minMs: 8000, maxMs: 40000 });
+    expect(korni.doors).toEqual([]);
   });
 
   test("an unmatched target is reported and becomes an authored refusal", () => {

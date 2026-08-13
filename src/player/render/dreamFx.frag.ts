@@ -43,9 +43,9 @@ uniform vec4 uInputClamp;
 
 uniform float uTime;
 uniform float uBurst;
-uniform float uOverflow;
+uniform float uSurge;
 uniform int uPreset;
-uniform vec2 uTonus;
+uniform vec2 uPressure;
 uniform float uReduced;
 uniform vec3 uCream;
 uniform vec3 uLive;
@@ -97,7 +97,9 @@ void main()
         clamp(outline * edgeAmt * 1.6, 0.0, 0.62)
     );
 
-    float staticAmt = max(0.0, -uTonus.y) * 0.55 + uBurst * 0.22;
+    // Still and dreadful smears; dreadful and churning does not. A room that has gone
+    // quiet on you is worse than one that is visibly coming apart.
+    float staticAmt = (1.0 - uPressure.y) * uPressure.x * 0.55 + uBurst * 0.22;
     if (spatial > 0.5 && staticAmt > 0.01)
     {
         vec4 smear = sampleAt(uv + px(1.0, 0.0));
@@ -112,7 +114,9 @@ void main()
         color.rgb = mix(color.rgb, leaked, leakAmt);
     }
 
-    float upper = uTonus.x;
+    // 1 at rest, -1 at full dread: the dream's own accent drains to grey as it works
+    // out who you are.
+    float upper = 1.0 - 2.0 * uPressure.x;
     float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     if (upper > 0.0)
     {
@@ -123,18 +127,18 @@ void main()
         color.rgb = mix(color.rgb, vec3(luma) * 0.82, (-upper) * 0.18);
     }
 
-    float dyn = max(0.0, uTonus.y);
+    float dyn = uPressure.y;
     float scan = sin(vTextureCoord.y * uInputSize.y * 3.14159 + uTime * 8.0);
     color.rgb *= 1.0 - dyn * 0.035 * (0.5 + 0.5 * scan);
 
-    color.rgb = mix(color.rgb, 1.0 - color.rgb, uOverflow);
-    color.rgb = mix(color.rgb, uCream, uOverflow * 0.42);
+    color.rgb = mix(color.rgb, 1.0 - color.rgb, uSurge);
+    color.rgb = mix(color.rgb, uCream, uSurge * 0.42);
     color.rgb = mix(color.rgb, uTint, uBurst * 0.2);
 
     if (uReduced > 0.5)
     {
         color.rgb *= 1.0 - uBurst * 0.14;
-        color.rgb = mix(color.rgb, uCream, uOverflow * 0.2);
+        color.rgb = mix(color.rgb, uCream, uSurge * 0.2);
     }
 
     finalColor = color;

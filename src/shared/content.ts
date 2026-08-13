@@ -90,11 +90,9 @@ export interface CharacterDefinition {
    * reads it from disk, the way it already reads `secret.local.txt`.
    */
   soulPath?: string | null;
-  /** Applied when this figure's suspicion rises a rung. */
-  tonus?: { x: number; y: number } | null;
   /**
    * Whether suspicion is one-way. True everywhere except the Eye, whose scale is
-   * replaced by «сколько правды санитар сказал» and whose tonus axis is switched off.
+   * replaced by «сколько правды санитар сказал».
    */
   suspicionMonotone?: boolean;
 }

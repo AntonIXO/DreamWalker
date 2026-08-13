@@ -18,9 +18,5 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/nilufar.md",
-  "tonus": {
-    "x": 0,
-    "y": -5
-  },
   "suspicionMonotone": true
 }

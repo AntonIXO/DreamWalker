@@ -18,9 +18,5 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/liosha-gnedkov.md",
-  "tonus": {
-    "x": -4,
-    "y": 0
-  },
   "suspicionMonotone": true
 }

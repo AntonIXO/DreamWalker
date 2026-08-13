@@ -23,7 +23,6 @@ import type {
   RoomHotspot,
   RoomLink,
 } from "../../../src/shared/room";
-import type { TonusDelta } from "../../../src/shared/tonus";
 
 export interface ParsedRoom {
   id: string;
@@ -37,8 +36,17 @@ export interface ParsedRoom {
   sound: string;
   /** Raw «left → right» pairs, unresolved. */
   links: Array<{ from: string; to: string }>;
-  tonus: TonusDelta;
-  tonusNote: string;
+  /**
+   * The bible's «Тонус» line, kept as prose and as one signal.
+   *
+   * The Upper/Downer chart itself is gone (see `game/pressure.ts`), but the line is
+   * still authored writing — «Красиво, но ты тут никто» — and it is still the only place
+   * the corpus says how bad a room is. So the numbers are read here, used to decide
+   * whether the room escalates on a revisit, and then thrown away rather than stored.
+   */
+  moodNote: string;
+  /** How far into Downer the bible put this room. Author-time only. */
+  moodDowner: number;
 }
 
 /** ASCII hyphen for U+2212 MINUS SIGN and U+2013 EN DASH, so `Number` can read them. */
@@ -101,7 +109,7 @@ function section(body: string, label: string): string {
   return match?.[1]?.trim() ?? "";
 }
 
-function parseTonus(body: string): { tonus: TonusDelta; note: string } {
+function parseMood(body: string): { downer: number; note: string } {
   const raw = section(body, "Тонус");
   const match = normaliseMinus(raw).match(
     /\(\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*\)/,
@@ -109,10 +117,7 @@ function parseTonus(body: string): { tonus: TonusDelta; note: string } {
   const note = raw
     .replace(/^\(?\s*[+-]?\d+\s*,\s*[+-]?\d+\s*\)?\.?\s*/, "")
     .trim();
-  return {
-    tonus: { x: Number(match?.[1] ?? 0), y: Number(match?.[2] ?? 0) },
-    note,
-  };
+  return { downer: Number(match?.[1] ?? 0), note };
 }
 
 /** «канат → Бассейн (третий этаж). Штаны → Раздевалка» */
@@ -160,7 +165,7 @@ export function parseRoomsDocument(markdown: string): ParsedRoom[] {
       .join(" ")
       .trim();
 
-    const { tonus, note } = parseTonus(body);
+    const { downer, note } = parseMood(body);
     rooms.push({
       id: `${ordinal.toLowerCase().replace("м", "m")}-${slugify(name)}`,
       ordinal,
@@ -171,8 +176,8 @@ export function parseRoomsDocument(markdown: string): ParsedRoom[] {
       animations: section(body, "Анимации"),
       sound: section(body, "Звук"),
       links: parseLinks(body),
-      tonus,
-      tonusNote: note,
+      moodNote: note,
+      moodDowner: downer,
     });
   });
 
@@ -399,7 +404,6 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
         reach: 1.4,
         prompt: label,
         link,
-        tonus: null,
         clueId: null,
         action: null,
         once: false,
@@ -436,22 +440,14 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
         glitchPreset: isMeta ? ("wrong-palette" as const) : ("none" as const),
       },
       camera: "frame" as const,
-      tonus: room.tonus,
       revisit: {
-        // §06's ditch is the canonical case, and it says so in its own tonus note.
-        escalates: room.tonus.x <= -4,
-        note: room.tonusNote || null,
+        // §06's ditch is the canonical case, and it says so in its own mood line.
+        escalates: room.moodDowner <= -4,
+        note: room.moodNote || null,
       },
-      meta: isMeta
-        ? {
-            minMs: 8000,
-            maxMs: 40000,
-            doublesPrevious: room.id.startsWith("m1"),
-            overflow: true,
-          }
-        : null,
+      meta: isMeta ? { minMs: 8000, maxMs: 40000 } : null,
       description: room.description.slice(0, 900),
-      atmosphere: room.tonusNote || room.sound.slice(0, 200),
+      atmosphere: room.moodNote || room.sound.slice(0, 200),
       personality: room.animations.slice(0, 300),
       tags: isMeta ? ["meta"] : [],
       copy: {

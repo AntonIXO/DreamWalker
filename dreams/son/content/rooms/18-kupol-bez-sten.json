@@ -33,7 +33,6 @@
         "roomId": "03-gory-startapery-i-uchenye",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -52,7 +51,6 @@
         "roomId": "m2-miasnaia-geometriia",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -67,7 +65,6 @@
       "reach": 1.4,
       "prompt": "звери",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -82,7 +79,6 @@
       "reach": 1.4,
       "prompt": "снежное поле до горизонта",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -133,10 +129,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -3,
-    "y": 5
-  },
   "revisit": {
     "escalates": false,
     "note": "(−3, +5)"

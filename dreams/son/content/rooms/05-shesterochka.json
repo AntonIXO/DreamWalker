@@ -33,7 +33,6 @@
         "roomId": "m3-sklad-ostavlennogo",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -48,7 +47,6 @@
       "reach": 1.4,
       "prompt": "надпись на краю полки",
       "link": null,
-      "tonus": null,
       "clueId": "clue-1",
       "action": null,
       "once": false,
@@ -66,7 +64,6 @@
         "roomId": "06-kanava-garazhi-podvorotni",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -81,7 +78,6 @@
       "reach": 1.4,
       "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -96,7 +92,6 @@
       "reach": 1.4,
       "prompt": "корзина с чем-то, что не читается",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -147,10 +142,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -4,
-    "y": 2
-  },
   "revisit": {
     "escalates": true,
     "note": "(−4, +2). Тут начинается насилие"

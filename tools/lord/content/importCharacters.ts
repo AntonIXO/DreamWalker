@@ -3,7 +3,7 @@
  *
  * A soul is written for a model, not for a schema: `characters/README.md` says it «идёт
  * в системный промпт как есть». So the file is copied whole and used verbatim, and only
- * the handful of fields the *engine* needs — a name, a voice, a desire, a tonus — are
+ * the handful of fields the *engine* needs — a name, a voice, a desire — are
  * lifted out of its sections.
  *
  * The soul itself is never published. `dream.json` is served at `/dream/dream.json`, and
@@ -15,7 +15,6 @@ import type {
   CharacterDefinition,
   PortraitFrames,
 } from "../../../src/shared/content";
-import { normaliseMinus } from "./importRooms";
 
 export interface ParsedSoul {
   id: string;
@@ -28,7 +27,6 @@ export interface ParsedSoul {
   taboo: string;
   activity: string;
   personality: string;
-  tonus: { x: number; y: number };
 }
 
 /** `## ГОЛОС` … up to the next `##`. */
@@ -55,18 +53,39 @@ function section(markdown: string, label: string): string {
  * whole. Preferring the fence when present and falling back to the file is what
  * `characters/README.md` describes.
  */
+/**
+ * Sections the engine no longer has a mechanic for.
+ *
+ * The whole soul is appended to the dialogue system prompt (`agent-runtime.soulFor`), so
+ * a section describing something that does not exist is not dead text — it is an
+ * instruction about a rule the model will then try to honour. `## ТОНУС` is the
+ * Upper/Downer chart, which `game/pressure.ts` replaced.
+ *
+ * Stripped here rather than in `dream-walker-new/characters/*.md`: those are the author's
+ * writing, and the day a mechanic comes back the line is still there.
+ */
+const RETIRED_SECTIONS = ["ТОНУС"];
+
+function dropRetiredSections(markdown: string): string {
+  let text = markdown;
+  for (const heading of RETIRED_SECTIONS) {
+    text = text.replace(
+      new RegExp(`^##\\s*${heading}\\s*$[\\s\\S]*?(?=^##\\s|\\z)`, "m"),
+      "",
+    );
+  }
+  return text.replace(/\n{3,}/g, "\n\n").trim();
+}
+
 export function systemPrompt(markdown: string): string {
   const fenced = markdown.match(/```\s*\n([\s\S]*?)```/);
   const afterHeading = markdown.match(/^##\s*СИСТЕМНЫЙ ПРОМПТ\s*$/m);
-  if (afterHeading && fenced) return fenced[1]!.trim();
-  return markdown.trim();
+  if (afterHeading && fenced) return dropRetiredSections(fenced[1]!.trim());
+  return dropRetiredSections(markdown.trim());
 }
 
 export function parseSoul(id: string, markdown: string): ParsedSoul {
   const title = markdown.match(/^#\s+(.+?)\s*$/m)?.[1]?.trim() ?? id;
-  const tonusRaw = normaliseMinus(section(markdown, "ТОНУС"));
-  const tonus = tonusRaw.match(/\(\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*\)/);
-
   return {
     id,
     // Titles carry an italic gloss after the name on some souls; the name is the first line.
@@ -78,7 +97,6 @@ export function parseSoul(id: string, markdown: string): ParsedSoul {
     taboo: section(markdown, "НЕЛЬЗЯ").slice(0, 300),
     activity: section(markdown, "ФИЗИКА").slice(0, 300),
     personality: section(markdown, "КТО").slice(0, 600),
-    tonus: { x: Number(tonus?.[1] ?? 0), y: Number(tonus?.[2] ?? 0) },
   };
 }
 
@@ -113,7 +131,6 @@ export function toCharacterCard(
     portraitImages: null,
     spriteSheet: null,
     soulPath: `souls/${soul.id}.md`,
-    tonus: soul.tonus,
     // The Eye's scale is «сколько правды санитар сказал», not suspicion, and its axis is
     // switched off — so it is the one figure the generic ratchet must not apply to.
     suspicionMonotone: soul.id !== "glaz",

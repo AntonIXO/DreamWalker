@@ -32,7 +32,6 @@
         "to": "refuse",
         "note": "Мета-пространство «ЧУЖОЙ СТЫД»"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -49,7 +48,6 @@
       "link": {
         "to": "up"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -64,7 +62,6 @@
       "reach": 1.4,
       "prompt": "полотенце, ради которого пришёл, — не находится",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -79,7 +76,6 @@
       "reach": 1.4,
       "prompt": "вода в чаше бассейна, слишком неподвижная",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -130,10 +126,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -2,
-    "y": -1
-  },
   "revisit": {
     "escalates": false,
     "note": "(−2, −1)"

@@ -33,7 +33,6 @@
         "roomId": "m1-korni",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -48,7 +47,6 @@
       "reach": 1.4,
       "prompt": "снег, который течёт",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -63,7 +61,6 @@
       "reach": 1.4,
       "prompt": "отец на краю",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -78,7 +75,6 @@
       "reach": 1.4,
       "prompt": "Кирилл рядом, молчит",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -129,10 +125,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -8,
-    "y": 6
-  },
   "revisit": {
     "escalates": true,
     "note": "(−8, +6). Максимальный размах. **Отсюда чаще всего происходит переполнение графика**"

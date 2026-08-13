@@ -29,7 +29,6 @@
       "reach": 1.4,
       "prompt": "ноутбуки с продавленными экранами",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -44,7 +43,6 @@
       "reach": 1.4,
       "prompt": "одинаковые наушники",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -63,7 +61,6 @@
         "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -78,7 +75,6 @@
       "reach": 1.4,
       "prompt": "розовый гашиш в витрине",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -93,7 +89,6 @@
       "reach": 1.4,
       "prompt": "пять тысяч наличными, которые уже отдал",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -144,10 +139,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": 3,
-    "y": 3
-  },
   "revisit": {
     "escalates": false,
     "note": "Единственная честно Upper Dynamic комната. Пользуйся"

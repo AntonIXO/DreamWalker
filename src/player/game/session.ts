@@ -25,7 +25,6 @@ import {
   updatePlayer,
   type PlayerState,
 } from "./player";
-import { Tonus } from "./tonus";
 import {
   currentRoom,
   noteVisit,
@@ -41,7 +40,6 @@ export type ArrivalStyle = "door" | "link" | "meta-exit" | "cut";
 export interface SessionCallbacks {
   onEnterRoom(room: RoomState, visits: number): void;
   onRefused(doorId: string, text: string): void;
-  onOverflow(): void;
   /** A `refuse` link fired — «достать её нельзя, это проверено». */
   onRefusedLink(note: string): void;
 }
@@ -52,11 +50,7 @@ interface MetaVisit {
   returnTo: { roomId: string; entryId: string | null };
 }
 
-/** How much of a room's tonus a repeat visit is worth. Capped so it cannot run away. */
-const MAX_VISIT_SCALE = 3;
-
 export class DreamSession {
-  readonly tonus = new Tonus();
   player: PlayerState;
 
   private meta: MetaVisit | null = null;
@@ -165,10 +159,6 @@ export class DreamSession {
 
   private fire(hotspot: RoomHotspot): void {
     const room = this.room;
-    if (hotspot.tonus) {
-      const step = this.tonus.apply(hotspot.tonus, this.canOverflow(room));
-      if (step.overflowed) this.callbacks.onOverflow();
-    }
     if (hotspot.once) room.closedHotspotIds.add(hotspot.id);
     if (!hotspot.link) return;
 
@@ -224,7 +214,6 @@ export class DreamSession {
       this.dwellMs.clear();
 
       const visits = noteVisit(this.world, roomId);
-      this.applyArrivalTonus(room, visits);
       this.escalateRevisit(room, visits);
       if (style !== "cut") this.shiver.trigger(style === "link" ? 0.6 : 0.3);
       this.callbacks.onEnterRoom(room, visits);
@@ -290,29 +279,5 @@ export class DreamSession {
       },
       reason: "second visit worse",
     });
-  }
-
-  private applyArrivalTonus(room: RoomState, visits: number): void {
-    const overflow = this.canOverflow(room);
-    // М1 КОРНИ carries nothing of its own and doubles whatever you walked in with.
-    const step = room.meta?.doublesPrevious
-      ? this.tonus.applyDoubled(overflow)
-      : this.tonus.applyScaled(
-          room.tonus,
-          Math.min(visits, MAX_VISIT_SCALE),
-          overflow,
-        );
-    if (step.overflowed) this.callbacks.onOverflow();
-  }
-
-  /**
-   * Only a meta-space lets the counter wrap.
-   *
-   * Part II — «мета-пространство — единственное место, где график может переполниться».
-   * Everywhere else it clamps, so the pressure accumulates against the floor and goes
-   * off later, somewhere nobody remembers.
-   */
-  private canOverflow(room: RoomState): boolean {
-    return room.kind === "meta" && room.meta?.overflow === true;
   }
 }

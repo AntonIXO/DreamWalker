@@ -33,7 +33,6 @@
         "roomId": "13-podzemnye-zaly-cu",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -48,7 +47,6 @@
       "reach": 1.4,
       "prompt": "накрытые столы",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -63,7 +61,6 @@
       "reach": 1.4,
       "prompt": "спасательные круги",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -78,7 +75,6 @@
       "reach": 1.4,
       "prompt": "вода за бортом, слишком близко к палубе",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -129,10 +125,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -1,
-    "y": 1
-  },
   "revisit": {
     "escalates": false,
     "note": "(−1, +1)"

@@ -18,9 +18,5 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/anton.md",
-  "tonus": {
-    "x": -3,
-    "y": -3
-  },
   "suspicionMonotone": true
 }

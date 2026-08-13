@@ -29,7 +29,6 @@
       "reach": 1.4,
       "prompt": "парты",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -44,7 +43,6 @@
       "reach": 1.4,
       "prompt": "листочки, на которых текст меняется, если отвести взгляд",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -62,7 +60,6 @@
         "to": "refuse",
         "note": "недостижима, при попытке трогать камера отъезжает назад"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -81,7 +78,6 @@
         "roomId": "07-bassein-i-odnostoronnii-lift",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -132,10 +128,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -3,
-    "y": -2
-  },
   "revisit": {
     "escalates": false,
     "note": "(−3, −2). Классический Downer Static"

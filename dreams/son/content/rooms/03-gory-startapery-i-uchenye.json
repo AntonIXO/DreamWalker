@@ -32,7 +32,6 @@
         "to": "refuse",
         "note": "Мета-пространство «ЛЕСТНИЦА»"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -47,7 +46,6 @@
       "reach": 1.4,
       "prompt": "визитки, которые не берутся в руку",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -62,7 +60,6 @@
       "reach": 1.4,
       "prompt": "теодолит, показывающий одно и то же число независимо от направления",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -77,7 +74,6 @@
       "reach": 1.4,
       "prompt": "камень с ровно отпиленной гранью",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -128,10 +124,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": 1,
-    "y": 3
-  },
   "revisit": {
     "escalates": false,
     "note": "Высоко, ветрено, дёргано"

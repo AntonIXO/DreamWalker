@@ -22,6 +22,8 @@ export interface DialogueCallbacks {
   onOpen(figure: FigureState): void;
   onClose(): void;
   onTell(figure: FigureState, quoted: string): void;
+  /** Fired once, the turn a figure reaches «знает». Not fired again while it holds. */
+  onKnows?(figure: FigureState): void;
   onShard(shardId: string): void;
   onMemorySpent(memoryId: string): void;
   onJournal(figure: FigureState, text: string): void;
@@ -224,6 +226,12 @@ export class DialoguePanel {
         ? response.portraitState
         : highestPortraitState(before, response.portraitState);
     this.renderPortrait();
+
+    // The rung that matters. Announced once, on the way up, so the picture can agree
+    // with the face — «портрет "знает" — самый важный ассет в игре».
+    if (before !== "knows" && figure.portraitState === "knows") {
+      this.callbacks.onKnows?.(figure);
+    }
 
     // A tell is already woven into the reply. Keeping it as metadata makes the cause
     // journalable without producing the unexplained yellow second sentence the old UI did.

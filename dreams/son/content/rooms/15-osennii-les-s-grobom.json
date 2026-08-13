@@ -33,7 +33,6 @@
         "roomId": "10-komnata-s-grobami",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -52,7 +51,6 @@
         "roomId": "07-bassein-i-odnostoronnii-lift",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -67,7 +65,6 @@
       "reach": 1.4,
       "prompt": "листья, шуршащие не в такт шагам",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -82,7 +79,6 @@
       "reach": 1.4,
       "prompt": "фотография классного руководителя, лица не разобрать",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -133,10 +129,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -1,
-    "y": 2
-  },
   "revisit": {
     "escalates": false,
     "note": "(−1, +2). Смешно и невыносимо одновременно"

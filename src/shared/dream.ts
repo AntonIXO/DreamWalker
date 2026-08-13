@@ -22,9 +22,8 @@ import type { StyleProfile } from "./art/style";
 import type { DreamContent } from "./content";
 import type { DreamRoom, DreamSpawn, RoomLink } from "./room";
 import { DOOR_TYPES, type DoorTypeName } from "./tilecodes";
-import { TONUS_MAX, TONUS_MIN } from "./tonus";
 
-export const DREAM_FORMAT_VERSION = 4;
+export const DREAM_FORMAT_VERSION = 5;
 
 /** Tile-space rectangle. Still the unit the camera frames a room in. */
 export interface Rect {
@@ -244,16 +243,6 @@ function optionalStr(value: unknown, path: string): string | null {
   return str(value, path);
 }
 
-function tonusAt(value: unknown, path: string): void {
-  const delta = obj(value, path);
-  for (const axis of ["x", "y"] as const) {
-    const component = num(delta[axis], `${path}.${axis}`);
-    if (component < TONUS_MIN || component > TONUS_MAX) {
-      fail(`${path}.${axis}`, `expected ${TONUS_MIN}..${TONUS_MAX}`);
-    }
-  }
-}
-
 /** Collected on the first pass so links and doors can be checked on the second. */
 interface RoomIndex {
   entryIds: Map<string, Set<string>>;
@@ -425,9 +414,6 @@ function validateRoomShape(
     if (hotspot.dwellMs !== null && hotspot.dwellMs !== undefined) {
       num(hotspot.dwellMs, `${path}.hotspots[${i}].dwellMs`);
     }
-    if (hotspot.tonus !== null && hotspot.tonus !== undefined) {
-      tonusAt(hotspot.tonus, `${path}.hotspots[${i}].tonus`);
-    }
   });
 
   const doorIds = new Set<string>();
@@ -475,7 +461,6 @@ function validateRoomShape(
     fail(`${path}.camera`, `expected "frame" or "follow", got ${camera}`);
   }
 
-  tonusAt(room.tonus, `${path}.tonus`);
   const revisit = obj(room.revisit, `${path}.revisit`);
   bool(revisit.escalates, `${path}.revisit.escalates`);
   optionalStr(revisit.note, `${path}.revisit.note`);
@@ -500,8 +485,6 @@ function validateRoomShape(
         `expected 0 < minMs <= maxMs, got ${minMs}..${maxMs}`,
       );
     }
-    bool(meta.doublesPrevious, `${path}.meta.doublesPrevious`);
-    bool(meta.overflow, `${path}.meta.overflow`);
     if (doorIds.size > 0) {
       fail(`${path}.doors`, "a meta-space has no doors — you leave on a timer");
     }

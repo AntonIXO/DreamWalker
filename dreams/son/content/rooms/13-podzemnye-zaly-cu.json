@@ -32,7 +32,6 @@
         "to": "refuse",
         "note": "Мета-пространство «МАСШТАБ»"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -47,7 +46,6 @@
       "reach": 1.4,
       "prompt": "трибуны",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -62,7 +60,6 @@
       "reach": 1.4,
       "prompt": "рюкзак с фруктами и водкой",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -80,7 +77,6 @@
         "to": "figure",
         "characterId": "liosha-gnedkov"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -95,7 +91,6 @@
       "reach": 1.4,
       "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -146,10 +141,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": 2,
-    "y": 4
-  },
   "revisit": {
     "escalates": false,
     "note": null

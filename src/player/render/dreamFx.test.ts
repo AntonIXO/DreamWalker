@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
-import { TONUS_MAX, TONUS_MIN } from "../../shared/tonus";
+import { CALM } from "../game/pressure";
 import { DREAM_FX_FRAGMENT, DREAM_FX_VERTEX } from "./dreamFx.frag";
 import {
   BURST_SECONDS,
-  OVERFLOW_SECONDS,
-  TONUS_ATTACH,
+  PRESSURE_ATTACH,
+  SURGE_SECONDS,
   burstTint,
   envelope,
   hexToRgb01,
@@ -19,9 +19,9 @@ describe("shader source", () => {
     for (const name of [
       "uTime",
       "uBurst",
-      "uOverflow",
+      "uSurge",
       "uPreset",
-      "uTonus",
+      "uPressure",
       "uReduced",
       "uCream",
       "uLive",
@@ -51,9 +51,9 @@ describe("envelope", () => {
   });
 
   test("overflow lasts longer than a burst", () => {
-    expect(OVERFLOW_SECONDS).toBeGreaterThan(BURST_SECONDS);
-    expect(envelope(BURST_SECONDS, OVERFLOW_SECONDS)).toBeLessThan(1);
-    expect(envelope(OVERFLOW_SECONDS, OVERFLOW_SECONDS)).toBe(1);
+    expect(SURGE_SECONDS).toBeGreaterThan(BURST_SECONDS);
+    expect(envelope(BURST_SECONDS, SURGE_SECONDS)).toBeLessThan(1);
+    expect(envelope(SURGE_SECONDS, SURGE_SECONDS)).toBe(1);
   });
 });
 
@@ -103,48 +103,52 @@ describe("burstTint", () => {
   const cream = new Float32Array([0.95, 0.96, 0.96]);
   const live = new Float32Array([0.64, 0.16, 0.4]);
 
-  test("upper-dynamic is the live colour — a bright link", () => {
-    expect([...burstTint({ x: 8, y: 4 }, cream, live)]).toEqual([...live]);
+  test("a calm dream flashes its own accent", () => {
+    expect([...burstTint(CALM, cream, live)]).toEqual([...live]);
   });
 
-  test("downer-dynamic is the complement, the way overflow reads as the other side", () => {
-    const tint = burstTint({ x: -8, y: 4 }, cream, live);
-    expect(tint[0]).toBeCloseTo(1 - live[0]!);
-    expect(tint[1]).toBeCloseTo(1 - live[1]!);
-    expect(tint[2]).toBeCloseTo(1 - live[2]!);
+  test("a dreadful one flashes the negative of its cream", () => {
+    const tint = burstTint({ dread: 1, unrest: 0 }, cream, live);
+    expect(tint[0]).toBeCloseTo(1 - cream[0]!);
+    expect(tint[1]).toBeCloseTo(1 - cream[1]!);
+    expect(tint[2]).toBeCloseTo(1 - cream[2]!);
   });
 
-  test("static halves mix toward cream or its inverse", () => {
-    const upper = burstTint({ x: 4, y: -2 }, cream, live);
-    expect(upper[0]).toBeGreaterThan(live[0]!);
-    const downer = burstTint({ x: -4, y: -2 }, cream, live);
-    expect(downer[0]).toBeLessThan(0.5);
+  test("and crosses continuously between them", () => {
+    const half = burstTint({ dread: 0.5, unrest: 0 }, cream, live);
+    expect(half[0]).toBeCloseTo((live[0]! + (1 - cream[0]!)) / 2);
+  });
+
+  test("unrest does not touch the colour", () => {
+    expect([...burstTint({ dread: 0, unrest: 1 }, cream, live)]).toEqual([
+      ...live,
+    ]);
   });
 });
 
 describe("shouldAttach", () => {
-  const origin = { x: 0, y: 0 };
+  const origin = CALM;
 
-  test("stays off in an ordinary room at the origin", () => {
+  test("stays off in an ordinary room while nothing is wrong", () => {
     expect(
       shouldAttach({
         enabled: true,
         preset: "none",
         burst: 0,
-        overflow: 0,
-        tonus: origin,
+        surge: 0,
+        pressure: origin,
       }),
     ).toBe(false);
   });
 
-  test("turns on for an authored preset, a burst, or an overflow", () => {
+  test("turns on for an authored preset, a burst, or a surge", () => {
     expect(
       shouldAttach({
         enabled: true,
         preset: "wrong-palette",
         burst: 0,
-        overflow: 0,
-        tonus: origin,
+        surge: 0,
+        pressure: origin,
       }),
     ).toBe(true);
     expect(
@@ -152,8 +156,8 @@ describe("shouldAttach", () => {
         enabled: true,
         preset: "none",
         burst: 1,
-        overflow: 0,
-        tonus: origin,
+        surge: 0,
+        pressure: origin,
       }),
     ).toBe(true);
     expect(
@@ -161,34 +165,33 @@ describe("shouldAttach", () => {
         enabled: true,
         preset: "none",
         burst: 0,
-        overflow: 1,
-        tonus: origin,
+        surge: 1,
+        pressure: origin,
       }),
     ).toBe(true);
   });
 
-  test("turns on only once the marker is far from the origin", () => {
-    const justUnder = {
-      x: Math.floor((TONUS_ATTACH - 0.05) * TONUS_MAX),
-      y: 0,
-    };
-    const over = { x: TONUS_MIN, y: 0 };
+  test("turns on only once the dream is measurably going wrong", () => {
+    const justUnder = { dread: PRESSURE_ATTACH - 0.05, unrest: 0 };
+    const over = { dread: 0, unrest: PRESSURE_ATTACH };
     expect(
       shouldAttach({
         enabled: true,
         preset: "none",
         burst: 0,
-        overflow: 0,
-        tonus: justUnder,
+        surge: 0,
+        pressure: justUnder,
       }),
     ).toBe(false);
+    // Either axis on its own is enough — a still room that has worked you out and a
+    // calm one being rearranged are both worth grading.
     expect(
       shouldAttach({
         enabled: true,
         preset: "none",
         burst: 0,
-        overflow: 0,
-        tonus: over,
+        surge: 0,
+        pressure: over,
       }),
     ).toBe(true);
   });
@@ -199,8 +202,8 @@ describe("shouldAttach", () => {
         enabled: false,
         preset: "wrong-palette",
         burst: 1,
-        overflow: 1,
-        tonus: { x: TONUS_MIN, y: TONUS_MIN },
+        surge: 1,
+        pressure: { dread: 1, unrest: 1 },
       }),
     ).toBe(false);
   });

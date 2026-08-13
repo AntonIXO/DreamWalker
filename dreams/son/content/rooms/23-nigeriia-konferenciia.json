@@ -29,7 +29,6 @@
       "reach": 1.4,
       "prompt": "колонны",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -48,7 +47,6 @@
         "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -63,7 +61,6 @@
       "reach": 1.4,
       "prompt": "бейдж конференции с нечитаемым названием",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -78,7 +75,6 @@
       "reach": 1.4,
       "prompt": "отель, у которого внутренний объём меньше внешнего",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -129,10 +125,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": 1,
-    "y": 2
-  },
   "revisit": {
     "escalates": false,
     "note": null

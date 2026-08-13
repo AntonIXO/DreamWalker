@@ -29,7 +29,6 @@
       "reach": 1.4,
       "prompt": "какао",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -44,7 +43,6 @@
       "reach": 1.4,
       "prompt": "кусок мяса, назначенный бомбой",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -63,7 +61,6 @@
         "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -78,7 +75,6 @@
       "reach": 1.4,
       "prompt": "телефон с камерой, которая не успевает",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -129,10 +125,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -7,
-    "y": 3
-  },
   "revisit": {
     "escalates": true,
     "note": "(−7, +3)"

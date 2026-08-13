@@ -12,7 +12,7 @@
 
 import type { TileRect } from "../../shared/rect";
 import { cellAt } from "../../shared/roomGrid";
-import type { TonusDelta } from "../../shared/tonus";
+import type { DreamPressure } from "../game/pressure";
 import type { BeatEntry, Heartbeat } from "../mind/heartbeat";
 import type { WorldState } from "../game/world";
 
@@ -30,12 +30,12 @@ export class DebugOverlay {
     private readonly world: WorldState,
     private readonly heartbeat: Heartbeat,
     /**
-     * The chart position, if the session is running.
+     * How badly it is going, if the session is running.
      *
      * The player is never shown a number (§3 — no meters, ever). Behind F1 it is the
-     * only way to tell a clamped counter from one that is about to wrap.
+     * only way to check that the grade on screen matches what is actually happening.
      */
-    private readonly tonusAt?: () => TonusDelta,
+    private readonly pressureAt?: () => DreamPressure,
     private readonly fxAt?: () => { preset: string; phase: string },
     /** The tile rect the heartbeat treats as off limits — `camera.visibleTiles()`. */
     private readonly viewAt?: () => TileRect,
@@ -204,7 +204,7 @@ export class DebugOverlay {
       ["rooms", `${rooms.length}, ${this.world.visited.size} seen this cycle`],
       ["doors", `${doors.length}, ${sealed} sealed`],
       ["links", String(links)],
-      ["tonus", this.tonusAt ? formatTonus(this.tonusAt()) : "—"],
+      ["давление", this.pressureAt ? formatPressure(this.pressureAt()) : "—"],
       [
         "glitch",
         this.fxAt ? `${this.fxAt().preset} · ${this.fxAt().phase}` : "—",
@@ -263,7 +263,7 @@ function renderEntry(entry: BeatEntry): HTMLElement {
   return node;
 }
 
-function formatTonus(position: TonusDelta): string {
-  const sign = (n: number): string => (n > 0 ? `+${n}` : String(n));
-  return `${sign(position.x)}, ${sign(position.y)}`;
+function formatPressure(pressure: DreamPressure): string {
+  const pct = (value: number): string => `${Math.round(value * 100)}%`;
+  return `страх ${pct(pressure.dread)} · возня ${pct(pressure.unrest)}`;
 }

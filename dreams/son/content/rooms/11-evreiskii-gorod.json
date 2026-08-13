@@ -32,7 +32,6 @@
         "to": "refuse",
         "note": "Мета-пространство «МАСШТАБ»"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -47,7 +46,6 @@
       "reach": 1.4,
       "prompt": "фонари, которые гасят при звуке",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -62,7 +60,6 @@
       "reach": 1.4,
       "prompt": "расписание — не транспорта, а **безопасных часов**",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -81,7 +78,6 @@
         "roomId": "01-otel-goticheskii-holl",
         "entryId": null
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -132,10 +128,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": 0,
-    "y": -2
-  },
   "revisit": {
     "escalates": false,
     "note": "(0, −2). Тематическое сердце игры"

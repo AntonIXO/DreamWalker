@@ -7,7 +7,7 @@
  * room whose walls have been drawn survives a re-import.
  *
  * What it does *not* do is invent geometry. Every room lands as a blank 20×11 box with
- * its objects, links and tonus already filled in; the ASCII is drawn by a person.
+ * its objects and links already filled in; the ASCII is drawn by a person.
  */
 
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
@@ -149,7 +149,7 @@ export async function importCommand(
       const links = room.hotspots.filter((h) => h.link).length;
       console.log(
         `  ${color.bold(room.id.padEnd(34))} ${String(room.hotspots.length).padStart(2)} objects  ` +
-          `${links} links  (${room.tonus.x}, ${room.tonus.y})`,
+          `${links} links`,
       );
     }
   }

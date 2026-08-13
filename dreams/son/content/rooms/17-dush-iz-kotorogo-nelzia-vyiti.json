@@ -29,7 +29,6 @@
       "reach": 1.4,
       "prompt": "дверь",
       "link": null,
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -47,7 +46,6 @@
         "to": "refuse",
         "note": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -65,7 +63,6 @@
         "to": "refuse",
         "note": "Мета-пространство «АРХИВ»"
       },
-      "tonus": null,
       "clueId": null,
       "action": null,
       "once": false,
@@ -116,10 +113,6 @@
     "glitchPreset": "none"
   },
   "camera": "frame",
-  "tonus": {
-    "x": -4,
-    "y": -6
-  },
   "revisit": {
     "escalates": true,
     "note": "(−4, −6). Максимально Static. Комната-тупик как жанр"

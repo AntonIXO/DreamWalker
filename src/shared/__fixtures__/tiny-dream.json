@@ -1,5 +1,5 @@
 {
-  "format": 4,
+  "format": 5,
   "slug": "tiny",
   "title": "Крошечный сон",
   "genreContract": "Сон, где всё узнаваемо и ничего не сходится.",
@@ -110,10 +110,6 @@
             "roomId": "m1",
             "entryId": null
           },
-          "tonus": {
-            "x": -2,
-            "y": 1
-          },
           "clueId": null,
           "action": null,
           "once": false,
@@ -127,7 +123,6 @@
           "reach": 1.2,
           "prompt": "прочитать надпись",
           "link": null,
-          "tonus": null,
           "clueId": "clue-1",
           "action": null,
           "once": false,
@@ -172,10 +167,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 0,
-        "y": 0
-      },
       "revisit": {
         "escalates": false,
         "note": null
@@ -269,10 +260,6 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": -3,
-        "y": 2
-      },
       "revisit": {
         "escalates": true,
         "note": "Их стало двое."
@@ -334,19 +321,13 @@
         "glitchPreset": "none"
       },
       "camera": "frame",
-      "tonus": {
-        "x": 0,
-        "y": 0
-      },
       "revisit": {
         "escalates": false,
         "note": null
       },
       "meta": {
         "minMs": 8000,
-        "maxMs": 40000,
-        "doublesPrevious": true,
-        "overflow": true
+        "maxMs": 40000
       },
       "description": "",
       "atmosphere": "",

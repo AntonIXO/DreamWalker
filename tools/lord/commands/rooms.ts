@@ -85,7 +85,6 @@ export function blankRoom(id: string, name: string): DreamRoom {
       glitchPreset: "none",
     },
     camera: "frame",
-    tonus: { x: 0, y: 0 },
     revisit: { escalates: false, note: null },
     meta: null,
     description: "",
@@ -282,8 +281,8 @@ export async function roomsCommand(
     console.log(
       `  ${color.bold(room.id.padEnd(22))} ${room.name.padEnd(26)} ` +
         color.grey(
-          `${room.width}x${room.height} · ${room.doors.length}d ${links}l ` +
-            `(${room.tonus.x}, ${room.tonus.y})${marks.length ? " · " + marks.join(" ") : ""}`,
+          `${room.width}x${room.height} · ${room.doors.length}d ${links}l` +
+            `${marks.length ? " · " + marks.join(" ") : ""}`,
         ),
     );
   }

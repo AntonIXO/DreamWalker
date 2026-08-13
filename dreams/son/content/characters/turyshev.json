@@ -18,9 +18,5 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/turyshev.md",
-  "tonus": {
-    "x": 0,
-    "y": 0
-  },
   "suspicionMonotone": true
 }
