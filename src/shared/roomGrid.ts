@@ -15,6 +15,8 @@
  * Must stay free of DOM *and* node APIs — the CLI and the browser both import it.
  */
 
+import { rectContainsPoint } from "./rect";
+
 /** Which way a walker faces. Four, because the sprites are four. */
 export type Direction = "n" | "e" | "s" | "w";
 
@@ -120,14 +122,7 @@ export function rectBlocks(
 ): boolean {
   for (const rect of rects) {
     if (!rect.solid) continue;
-    if (
-      tx >= rect.x &&
-      tx < rect.x + rect.w &&
-      ty >= rect.y &&
-      ty < rect.y + rect.h
-    ) {
-      return true;
-    }
+    if (rectContainsPoint(rect, tx, ty)) return true;
   }
   return false;
 }
