@@ -19,6 +19,14 @@ export interface FinaleCallbacks {
   onOpen(): void;
   onClose(): void;
   onEnded(kind: EndingKind): void;
+  /**
+   * What the sanitar spent to get here, one flat line each.
+   *
+   * `endings.md` asks for it in as many words on both «Взял» and «Пусто», and the two
+   * screens are the same correct phrase in two different worlds — so the list is the
+   * part that is identical, and the number is the part that is not.
+   */
+  whatWasPaid?(): string[];
 }
 
 export class FinalePanel {
@@ -156,10 +164,16 @@ export class FinalePanel {
         // dry one holds on screen longer than is comfortable, because the doc asks for
         // exactly that: the number is the point, and so is how long you look at it.
         const dry = result.wallet === "dry";
+        const paid = this.callbacks.whatWasPaid?.() ?? [];
+        // `endings.md`: «Потом список того, что ты за неё отдал, тем же кеглем.» Same
+        // size, no adjectives, no moral — the register is flat constatation. This is the
+        // one place the ledger is shown to the player at all, and it is the moment the
+        // whole thing is for.
+        const ledger = paid.length > 0 ? `\n\n${paid.join("\n")}` : "";
         this.showEnding(
           dry
-            ? `${result.reply}\n\n0.00000000`
-            : `${result.reply}\n\nЗа это отдано:`,
+            ? `${result.reply}\n\n0.00000000${ledger}`
+            : `${result.reply}${ledger}`,
           dry ? "empty" : "match",
         );
         return;

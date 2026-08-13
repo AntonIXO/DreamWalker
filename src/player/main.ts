@@ -470,6 +470,23 @@ async function boot(): Promise<void> {
     {
       onOpen: () => input.setCaptured(true),
       onClose: () => input.setCaptured(false),
+      whatWasPaid: () =>
+        world.fateHistory.map((record) => {
+          const name =
+            world.baseFigures.find((f) => f.id === record.figureId)?.name ??
+            record.figureId;
+          const what =
+            record.fate === "dead"
+              ? "убит"
+              : record.fate === "broken"
+                ? "замолчал"
+                : record.fate === "gone"
+                  ? "уведён"
+                  : record.fate === "leveraged"
+                    ? "сломан"
+                    : "";
+          return `${name} — ${what}, цикл ${record.cycle}.`;
+        }),
       onEnded: (kind) => {
         input.setCaptured(true);
         journal.add(
