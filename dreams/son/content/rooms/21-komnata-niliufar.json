@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "krovat",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/21-komnata-niliufar--krovat.png"
+    },
+    {
+      "id": "okno-s-vidom",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
+    },
+    {
+      "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
+    },
+    {
+      "id": "veschi-tancevalnoi-gruppy",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "krovat",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "кровать",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--krovat.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "krovat"
     },
     {
       "id": "okno-s-vidom",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "окно с видом",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "okno-s-vidom"
     },
     {
       "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "dver-kotoraia-mozhet-byt-otkryta-ili-zak"
     },
     {
       "id": "veschi-tancevalnoi-gruppy",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "вещи танцевальной группы",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "veschi-tancevalnoi-gruppy"
     }
   ],
   "entries": [

@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "plita",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
+    },
+    {
+      "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
+    },
+    {
+      "id": "telefon-s-odnim-kontaktom-lesha",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
+    },
+    {
+      "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "plita",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "плита",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--plita.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "plita"
     },
     {
       "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "отодвинутый кусок стены с чёрным проёмом",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "otodvinutyi-kusok-steny-s-chernym-proemo"
     },
     {
       "id": "telefon-s-odnim-kontaktom-lesha",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "телефон с одним контактом «Лёша»",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "telefon-s-odnim-kontaktom-lesha"
     },
     {
       "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "goluboi-lipkii-slizen-na-lestnice-bit-mo"
     }
   ],
   "entries": [

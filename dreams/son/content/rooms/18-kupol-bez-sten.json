@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "karkas-kupola-bez-sten",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
+    },
+    {
+      "id": "koliuchaia-provoloka",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
+    },
+    {
+      "id": "zveri",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/18-kupol-bez-sten--zveri.png"
+    },
+    {
+      "id": "snezhnoe-pole-do-gorizonta",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "karkas-kupola-bez-sten",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "каркас купола без стен",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "karkas-kupola-bez-sten"
     },
     {
       "id": "koliuchaia-provoloka",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "колючая проволока",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "koliuchaia-provoloka"
     },
     {
       "id": "zveri",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "звери",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--zveri.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "zveri"
     },
     {
       "id": "snezhnoe-pole-do-gorizonta",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "снежное поле до горизонта",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "snezhnoe-pole-do-gorizonta"
     }
   ],
   "entries": [

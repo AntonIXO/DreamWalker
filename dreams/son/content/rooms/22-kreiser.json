@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "scena-mikrofon",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/22-kreiser--scena-mikrofon.png"
+    },
+    {
+      "id": "nakrytye-stoly",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
+    },
+    {
+      "id": "spasatelnye-krugi",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
+    },
+    {
+      "id": "voda-za-bortom-slishkom-blizko-k-palube",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "scena-mikrofon",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "сцена, микрофон",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--scena-mikrofon.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "scena-mikrofon"
     },
     {
       "id": "nakrytye-stoly",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "накрытые столы",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--nakrytye-stoly.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "nakrytye-stoly"
     },
     {
       "id": "spasatelnye-krugi",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "спасательные круги",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--spasatelnye-krugi.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "spasatelnye-krugi"
     },
     {
       "id": "voda-za-bortom-slishkom-blizko-k-palube",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "вода за бортом, слишком близко к палубе",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "voda-za-bortom-slishkom-blizko-k-palube"
     }
   ],
   "entries": [

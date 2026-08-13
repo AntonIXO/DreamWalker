@@ -19,77 +19,128 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "kapusta-frukty",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
+    },
+    {
+      "id": "dyrka-v-zabore",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
+    },
+    {
+      "id": "piatimetrovyi-stellazh",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
+    },
+    {
+      "id": "paket-fasoli",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
+    },
+    {
+      "id": "tetia-sidiaschaia-spinoi",
+      "x": 13,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "kapusta-frukty",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "капуста, фрукты",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kapusta-frukty"
     },
     {
       "id": "dyrka-v-zabore",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "дырка в заборе",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "dyrka-v-zabore"
     },
     {
       "id": "piatimetrovyi-stellazh",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "пятиметровый стеллаж",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "piatimetrovyi-stellazh"
     },
     {
       "id": "paket-fasoli",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "пакет фасоли",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "paket-fasoli"
     },
     {
       "id": "tetia-sidiaschaia-spinoi",
       "kind": "look",
-      "x": 13,
-      "y": 4,
+      "x": 14,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "тётя, сидящая спиной",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "tetia-sidiaschaia-spinoi"
     }
   ],
   "entries": [

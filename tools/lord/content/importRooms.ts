@@ -405,6 +405,7 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
         prompt: label,
         refusal: target.refusal,
         clueId: null,
+        propId: null,
         action: null,
         once: false,
         dwellMs: null,

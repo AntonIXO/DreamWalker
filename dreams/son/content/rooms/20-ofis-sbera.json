@@ -19,77 +19,128 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "elt-s-morrowind",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
+    },
+    {
+      "id": "shirokii-monitor-s-chem-to-korporativnym",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
+    },
+    {
+      "id": "beidzhi-na-shnurkah",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
+    },
+    {
+      "id": "lift",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/20-ofis-sbera--lift.png"
+    },
+    {
+      "id": "zakrytaia-dver-v-konce-koridora",
+      "x": 13,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "elt-s-morrowind",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "ЭЛТ с Morrowind",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "elt-s-morrowind"
     },
     {
       "id": "shirokii-monitor-s-chem-to-korporativnym",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "широкий монитор с чем-то корпоративным",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "shirokii-monitor-s-chem-to-korporativnym"
     },
     {
       "id": "beidzhi-na-shnurkah",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "бейджи на шнурках",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "beidzhi-na-shnurkah"
     },
     {
       "id": "lift",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "лифт",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--lift.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "lift"
     },
     {
       "id": "zakrytaia-dver-v-konce-koridora",
       "kind": "look",
-      "x": 13,
-      "y": 4,
+      "x": 14,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "закрытая дверь в конце коридора",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "zakrytaia-dver-v-konce-koridora"
     }
   ],
   "entries": [

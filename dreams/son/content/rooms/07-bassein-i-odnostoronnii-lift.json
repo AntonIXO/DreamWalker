@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "bele-na-stenah",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
+    },
+    {
+      "id": "panel-lifta-bez-knopki-vniz",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
+    },
+    {
+      "id": "polotence-radi-kotorogo-prishel-ne-nahod",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
+    },
+    {
+      "id": "voda-v-chashe-basseina-slishkom-nepodviz",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "bele-na-stenah",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "бельё на стенах",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "bele-na-stenah"
     },
     {
       "id": "panel-lifta-bez-knopki-vniz",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "панель лифта без кнопки «вниз»",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "panel-lifta-bez-knopki-vniz"
     },
     {
       "id": "polotence-radi-kotorogo-prishel-ne-nahod",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "полотенце, ради которого пришёл, — не находится",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "polotence-radi-kotorogo-prishel-ne-nahod"
     },
     {
       "id": "voda-v-chashe-basseina-slishkom-nepodviz",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "вода в чаше бассейна, слишком неподвижная",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "voda-v-chashe-basseina-slishkom-nepodviz"
     }
   ],
   "entries": [

@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "bumazhnaia-skulptura",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
+    },
+    {
+      "id": "chuzhie-fotografii-v-tvoih-ramkah",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
+    },
+    {
+      "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
+    },
+    {
+      "id": "chainik-kotoryi-uzhe-kipel",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "bumazhnaia-skulptura",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "бумажная скульптура",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "bumazhnaia-skulptura"
     },
     {
       "id": "chuzhie-fotografii-v-tvoih-ramkah",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "чужие фотографии в твоих рамках",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "chuzhie-fotografii-v-tvoih-ramkah"
     },
     {
       "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "mercaiuschee-v-vozduhe-elektrichestvo-pr"
     },
     {
       "id": "chainik-kotoryi-uzhe-kipel",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "чайник, который уже кипел",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "chainik-kotoryi-uzhe-kipel"
     }
   ],
   "entries": [

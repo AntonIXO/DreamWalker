@@ -127,10 +127,8 @@ async function boot(): Promise<void> {
   const objectTextures = await loadExternalTextures(
     DREAM_URL,
     artifact.rooms.flatMap((room) =>
-      room.hotspots.flatMap((hotspot) =>
-        hotspot.image
-          ? [{ id: `${room.id}:${hotspot.id}`, path: hotspot.image }]
-          : [],
+      room.props.flatMap((prop) =>
+        prop.image ? [{ id: `${room.id}:${prop.id}`, path: prop.image }] : [],
       ),
     ),
   );

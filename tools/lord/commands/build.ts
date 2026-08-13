@@ -201,19 +201,19 @@ export async function buildCommand(
   // Object art lives beside backdrops under content/assets, so the wholesale copy below
   // carries it. Validate the paths here so a typo fails the build rather than the game.
   for (const room of draft.rooms) {
-    for (const hotspot of room.hotspots) {
-      const image = hotspot.image;
+    for (const prop of room.props) {
+      const image = prop.image;
       if (!image) continue;
       if (!image.startsWith("assets/") || image.includes("..")) {
         throw new Error(
-          `${room.id}/${hotspot.id} image must be inside published assets/`,
+          `${room.id}/${prop.id} image must be inside published assets/`,
         );
       }
       try {
         await access(join(dir, "content", image));
       } catch {
         throw new Error(
-          `${room.id}/${hotspot.id} image is missing: content/${image}`,
+          `${room.id}/${prop.id} image is missing: content/${image}`,
         );
       }
     }

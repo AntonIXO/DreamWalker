@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
+    },
+    {
+      "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
+    },
+    {
+      "id": "korobka-s-golosom",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
+    },
+    {
+      "id": "chuzhie-sumki-na-platforme",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "табло с расписанием, где номера меняются",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "tablo-s-raspisaniem-gde-nomera-meniaiuts"
     },
     {
       "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "telefon-s-zagruzhaiuschimsia-tor-progres"
     },
     {
       "id": "korobka-s-golosom",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "коробка с голосом",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "korobka-s-golosom"
     },
     {
       "id": "chuzhie-sumki-na-platforme",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "чужие сумки на платформе",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "chuzhie-sumki-na-platforme"
     }
   ],
   "entries": [

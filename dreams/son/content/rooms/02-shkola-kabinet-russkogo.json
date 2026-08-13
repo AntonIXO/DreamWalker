@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "party",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/02-shkola-kabinet-russkogo--party.png"
+    },
+    {
+      "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
+    },
+    {
+      "id": "grusha-za-steklom",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png"
+    },
+    {
+      "id": "mat-v-uglu-s-rasstelennoi-posteliu",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "party",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "парты",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--party.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "party"
     },
     {
       "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "листочки, на которых текст меняется, если отвести взгляд",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "listochki-na-kotoryh-tekst-meniaetsia-es"
     },
     {
       "id": "grusha-za-steklom",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "груша за стеклом",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png",
-      "refusal": "недостижима, при попытке трогать камера отъезжает назад"
+      "refusal": "недостижима, при попытке трогать камера отъезжает назад",
+      "propId": "grusha-za-steklom"
     },
     {
       "id": "mat-v-uglu-s-rasstelennoi-posteliu",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "мат в углу с расстеленной постелью",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "mat-v-uglu-s-rasstelennoi-posteliu"
     }
   ],
   "entries": [

@@ -19,77 +19,128 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "noutbuki-s-prodavlennymi-ekranami",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png"
+    },
+    {
+      "id": "odinakovye-naushniki",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
+    },
+    {
+      "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png"
+    },
+    {
+      "id": "rozovyi-gashish-v-vitrine",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png"
+    },
+    {
+      "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
+      "x": 13,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "noutbuki-s-prodavlennymi-ekranami",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "ноутбуки с продавленными экранами",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "noutbuki-s-prodavlennymi-ekranami"
     },
     {
       "id": "odinakovye-naushniki",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "одинаковые наушники",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "odinakovye-naushniki"
     },
     {
       "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "demo-stend-na-kotorom-rabotaet-chto-to-c"
     },
     {
       "id": "rozovyi-gashish-v-vitrine",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "розовый гашиш в витрине",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "rozovyi-gashish-v-vitrine"
     },
     {
       "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
       "kind": "look",
-      "x": 13,
-      "y": 4,
+      "x": 14,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "пять тысяч наличными, которые уже отдал",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "piat-tysiach-nalichnymi-kotorye-uzhe-otd"
     }
   ],
   "entries": [

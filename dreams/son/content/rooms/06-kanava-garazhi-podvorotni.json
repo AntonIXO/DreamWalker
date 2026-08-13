@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "riukzak",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
+    },
+    {
+      "id": "liuk-v-kanalizaciiu",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
+    },
+    {
+      "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
+    },
+    {
+      "id": "sledy-shin-kotoryh-utrom-ne-bylo",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "riukzak",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "рюкзак",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "riukzak"
     },
     {
       "id": "liuk-v-kanalizaciiu",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "люк в канализацию",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "liuk-v-kanalizaciiu"
     },
     {
       "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "chuzhaia-zhenschina-svalivshaiasia-siuda"
     },
     {
       "id": "sledy-shin-kotoryh-utrom-ne-bylo",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "следы шин, которых утром не было",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "sledy-shin-kotoryh-utrom-ne-bylo"
     }
   ],
   "entries": [

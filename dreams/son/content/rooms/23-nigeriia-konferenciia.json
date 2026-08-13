@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "kolonny",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
+    },
+    {
+      "id": "vr-shlemy-na-stoikah",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
+    },
+    {
+      "id": "beidzh-konferencii-s-nechitaemym-nazvani",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
+    },
+    {
+      "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "kolonny",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "колонны",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kolonny"
     },
     {
       "id": "vr-shlemy-na-stoikah",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "VR-шлемы на стойках",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "vr-shlemy-na-stoikah"
     },
     {
       "id": "beidzh-konferencii-s-nechitaemym-nazvani",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "бейдж конференции с нечитаемым названием",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "beidzh-konferencii-s-nechitaemym-nazvani"
     },
     {
       "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "отель, у которого внутренний объём меньше внешнего",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "otel-u-kotorogo-vnutrennii-obem-menshe-v"
     }
   ],
   "entries": [

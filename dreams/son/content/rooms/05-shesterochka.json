@@ -19,76 +19,128 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "polka-dlia-veschei",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
+    },
+    {
+      "id": "nadpis-na-polke",
+      "x": 5,
+      "y": 0,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": null
+    },
+    {
+      "id": "ballonchik-na-poiase-ohrannika",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
+    },
+    {
+      "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
+    },
+    {
+      "id": "korzina-s-chem-to-chto-ne-chitaetsia",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "polka-dlia-veschei",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "полка для вещей",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "polka-dlia-veschei"
     },
     {
       "id": "nadpis-na-polke",
       "kind": "clue",
-      "x": 3,
-      "y": 5.2,
+      "x": 6,
+      "y": 2.15,
       "reach": 1.4,
       "prompt": "надпись на краю полки",
       "clueId": "clue-1",
       "action": null,
       "once": false,
       "dwellMs": null,
-      "refusal": null
+      "refusal": null,
+      "propId": "nadpis-na-polke"
     },
     {
       "id": "ballonchik-na-poiase-ohrannika",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "баллончик на поясе охранника",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "ballonchik-na-poiase-ohrannika"
     },
     {
       "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "akcionnyi-cennik-na-kotorom-cena-meniaet"
     },
     {
       "id": "korzina-s-chem-to-chto-ne-chitaetsia",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "корзина с чем-то, что не читается",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "korzina-s-chem-to-chto-ne-chitaetsia"
     }
   ],
   "entries": [

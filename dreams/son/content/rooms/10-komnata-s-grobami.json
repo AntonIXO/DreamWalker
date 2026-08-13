@@ -19,77 +19,128 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "groby",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/10-komnata-s-grobami--groby.png"
+    },
+    {
+      "id": "schel-pod-potolkom",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
+    },
+    {
+      "id": "tkan-s-kodami",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
+    },
+    {
+      "id": "paketiki-fsb",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
+    },
+    {
+      "id": "telefon-kamera-otkryvaetsia-sem-sekund",
+      "x": 13,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "groby",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "гробы",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--groby.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "groby"
     },
     {
       "id": "schel-pod-potolkom",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "щель под потолком",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "schel-pod-potolkom"
     },
     {
       "id": "tkan-s-kodami",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "ткань с кодами",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "tkan-s-kodami"
     },
     {
       "id": "paketiki-fsb",
       "kind": "clue",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "пакетики ФСБ",
       "clueId": "clue-3",
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "paketiki-fsb"
     },
     {
       "id": "telefon-kamera-otkryvaetsia-sem-sekund",
       "kind": "look",
-      "x": 13,
-      "y": 4,
+      "x": 14,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "телефон, камера открывается семь секунд",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "telefon-kamera-otkryvaetsia-sem-sekund"
     }
   ],
   "entries": [

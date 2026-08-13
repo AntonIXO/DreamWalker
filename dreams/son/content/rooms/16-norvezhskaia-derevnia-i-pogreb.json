@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "pogreb-s-korniami",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png"
+    },
+    {
+      "id": "sneg-kotoryi-techet",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
+    },
+    {
+      "id": "otec-na-kraiu",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
+    },
+    {
+      "id": "kirill-riadom-molchit",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "pogreb-s-korniami",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "погреб с корнями",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "pogreb-s-korniami"
     },
     {
       "id": "sneg-kotoryi-techet",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "снег, который течёт",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "sneg-kotoryi-techet"
     },
     {
       "id": "otec-na-kraiu",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "отец на краю",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "otec-na-kraiu"
     },
     {
       "id": "kirill-riadom-molchit",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "Кирилл рядом, молчит",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kirill-riadom-molchit"
     }
   ],
   "entries": [

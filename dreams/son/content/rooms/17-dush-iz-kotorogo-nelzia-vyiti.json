@@ -19,49 +19,80 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "dver",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
+    },
+    {
+      "id": "ventil",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
+    },
+    {
+      "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "dver",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "дверь",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "dver"
     },
     {
       "id": "ventil",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "вентиль",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png",
-      "refusal": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
+      "refusal": "закрывает воду, тогда становится слышно, что снаружи кто-то есть",
+      "propId": "ventil"
     },
     {
       "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "кафель, на одной плитке которого что-то нацарапано",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kafel-na-odnoi-plitke-kotorogo-chto-to-n"
     }
   ],
   "entries": [

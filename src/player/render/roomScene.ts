@@ -189,13 +189,12 @@ export class RoomScene {
     doors.zIndex = 1.5;
     container.addChild(doors);
 
+    // One layer for everything standing in the room. Objects used to be a second layer
+    // at the same z, drawn after — so an object always covered a prop regardless of who
+    // was in front. They are the same kind of thing and now they sort against each other.
     const props = this.drawProps(room);
     props.zIndex = 2;
     container.addChild(props);
-
-    const objects = this.drawObjects(room);
-    objects.zIndex = 2;
-    container.addChild(objects);
 
     const actors = new Container({
       label: `room-actors:${room.id}`,
@@ -315,34 +314,6 @@ export class RoomScene {
    * you can sleep on — so once they have art it is drawn at the hotspot's own position,
    * anchored at its foot so a walker standing below it draws in front.
    */
-  private drawObjects(room: RoomState): Container {
-    const layer = new Container({
-      label: `room-objects:${room.id}`,
-      eventMode: "none",
-      sortableChildren: true,
-    });
-    for (const hotspot of room.hotspots) {
-      const texture = this.objects.get(`${room.id}:${hotspot.id}`);
-      if (!texture) continue;
-      const sprite = new Sprite({
-        texture,
-        roundPixels: true,
-        eventMode: "none",
-        anchor: { x: 0.5, y: 0.9 },
-        x: hotspot.x * room.tileSize,
-        y: hotspot.y * room.tileSize,
-      });
-      // Objects are generated on a 64px sheet cell but a tile is 16px, so a sprite drawn
-      // at native size is four tiles tall and swallows the room. Two tiles reads as a
-      // thing you can walk up to, and 64 -> 32 is an exact halving, so nothing smears.
-      const target = room.tileSize * 2;
-      sprite.setSize(target, target);
-      sprite.zIndex = Math.round(hotspot.y * room.tileSize);
-      layer.addChild(sprite);
-    }
-    return layer;
-  }
-
   private drawProps(room: RoomState): Container {
     const layer = new Container({
       label: `room-props:${room.id}`,
@@ -369,6 +340,23 @@ export class RoomScene {
             );
           }
         }
+      } else if (this.objects.has(`${room.id}:${prop.id}`)) {
+        // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
+        // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
+        // with square art reads as a square thing on a wide footprint, not a stretched
+        // one — and anchored on the bottom edge so the art stands on its own base.
+        const texture = this.objects.get(`${room.id}:${prop.id}`)!;
+        const box = Math.min(prop.w, prop.h) * size;
+        const sprite = new Sprite({
+          texture,
+          roundPixels: true,
+          eventMode: "none",
+          anchor: { x: 0.5, y: 1 },
+          x: (prop.w * size) / 2,
+          y: prop.h * size,
+        });
+        sprite.setSize(box, box);
+        node.addChild(sprite);
       } else {
         node.addChild(
           new Graphics({ eventMode: "none", roundPixels: true })
@@ -378,7 +366,9 @@ export class RoomScene {
       }
       node.x = prop.x * size;
       node.y = prop.y * size;
-      // Sort by the prop's foot, so a walker standing below it draws in front.
+      // Sort by the prop's foot, so a walker standing below it draws in front. The old
+      // object layer sorted by the *hotspot* — which is now the approach tile, a row
+      // lower — so objects and walkers disagreed about depth by most of a tile.
       node.zIndex = (prop.y + prop.h) * size;
       layer.addChild(node);
     }

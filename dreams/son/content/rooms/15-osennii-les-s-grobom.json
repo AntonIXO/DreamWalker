@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "grob",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
+    },
+    {
+      "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
+    },
+    {
+      "id": "listia-shurshaschie-ne-v-takt-shagam",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
+    },
+    {
+      "id": "fotografiia-klassnogo-rukovoditelia-lica",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "grob",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "гроб",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--grob.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "grob"
     },
     {
       "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "пирамида-туалет с советским кафелем внутри",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "piramida-tualet-s-sovetskim-kafelem-vnut"
     },
     {
       "id": "listia-shurshaschie-ne-v-takt-shagam",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "листья, шуршащие не в такт шагам",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "listia-shurshaschie-ne-v-takt-shagam"
     },
     {
       "id": "fotografiia-klassnogo-rukovoditelia-lica",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "фотография классного руководителя, лица не разобрать",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "fotografiia-klassnogo-rukovoditelia-lica"
     }
   ],
   "entries": [

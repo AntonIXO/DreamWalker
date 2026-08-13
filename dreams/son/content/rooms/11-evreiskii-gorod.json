@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "kinder-siurpriz-s-lavochku",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
+    },
+    {
+      "id": "fonari-kotorye-gasiat-pri-zvuke",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
+    },
+    {
+      "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
+    },
+    {
+      "id": "stavni-na-vsem",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "kinder-siurpriz-s-lavochku",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "киндер-сюрприз с лавочку",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kinder-siurpriz-s-lavochku"
     },
     {
       "id": "fonari-kotorye-gasiat-pri-zvuke",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "фонари, которые гасят при звуке",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "fonari-kotorye-gasiat-pri-zvuke"
     },
     {
       "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "расписание — не транспорта, а **безопасных часов**",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "raspisanie-ne-transporta-a-bezopasnyh-ch"
     },
     {
       "id": "stavni-na-vsem",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "ставни на всём",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "stavni-na-vsem"
     }
   ],
   "entries": [

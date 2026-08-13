@@ -223,8 +223,14 @@ export async function objectsCommand(
       const buffer = Buffer.from(base64, "base64");
       if (buffer.subarray(0, 4).toString("hex") !== "89504e47") continue;
       const name = `${entry.room.id}--${entry.hotspot.id}.png`;
+      // The art belongs to the *body*, not to the point you press E on. A hotspot with
+      // no body is a thing nobody drew yet, so there is nowhere to hang it.
+      const body = entry.room.props.find(
+        (prop) => prop.id === entry.hotspot.propId,
+      );
+      if (!body) continue;
       await writeFile(join(assetDir, name), buffer);
-      entry.hotspot.image = `assets/objects/${name}`;
+      body.image = `assets/objects/${name}`;
       touched.add(entry.room);
     }
     console.log(`$${result.balance_cost.toFixed(3)} · ${cells.length} cells`);

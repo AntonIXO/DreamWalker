@@ -19,77 +19,128 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "iaponskii-sidr",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
+    },
+    {
+      "id": "tribuny",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png"
+    },
+    {
+      "id": "riukzak-s-fruktami-i-vodkoi",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
+    },
+    {
+      "id": "divanchik-na-kotorom-spit-lesha",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png"
+    },
+    {
+      "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
+      "x": 13,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "iaponskii-sidr",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "японский сидр",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "iaponskii-sidr"
     },
     {
       "id": "tribuny",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "трибуны",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "tribuny"
     },
     {
       "id": "riukzak-s-fruktami-i-vodkoi",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "рюкзак с фруктами и водкой",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "riukzak-s-fruktami-i-vodkoi"
     },
     {
       "id": "divanchik-na-kotorom-spit-lesha",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "диванчик, на котором спит Лёша",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "divanchik-na-kotorom-spit-lesha"
     },
     {
       "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
       "kind": "look",
-      "x": 13,
-      "y": 4,
+      "x": 14,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "mazi-kotorymi-ty-predlagaesh-pomazatsia-"
     }
   ],
   "entries": [

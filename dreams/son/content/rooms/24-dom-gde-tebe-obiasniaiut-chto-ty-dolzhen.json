@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "kakao",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png"
+    },
+    {
+      "id": "kusok-miasa-naznachennyi-bomboi",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
+    },
+    {
+      "id": "korobka-s-golosom",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png"
+    },
+    {
+      "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "kakao",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "какао",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kakao"
     },
     {
       "id": "kusok-miasa-naznachennyi-bomboi",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "кусок мяса, назначенный бомбой",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kusok-miasa-naznachennyi-bomboi"
     },
     {
       "id": "korobka-s-golosom",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "коробка с голосом",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "korobka-s-golosom"
     },
     {
       "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "телефон с камерой, которая не успевает",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "telefon-s-kameroi-kotoraia-ne-uspevaet"
     }
   ],
   "entries": [

@@ -326,6 +326,7 @@ export function interestHotspots(
       prompt: interest.name,
       refusal: null,
       clueId: interest.clueId,
+      propId: null,
       action: null,
       once: false,
       dwellMs: null,

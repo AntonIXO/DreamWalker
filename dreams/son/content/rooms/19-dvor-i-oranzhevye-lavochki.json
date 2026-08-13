@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "oranzhevye-lavochki",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
+    },
+    {
+      "id": "podezdnaia-dver-s-domofonom",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
+    },
+    {
+      "id": "butylka-riadom-s-turyshevym-ne-pervaia",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
+    },
+    {
+      "id": "urna-nabitaia-akkuratno",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "oranzhevye-lavochki",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "оранжевые лавочки",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "oranzhevye-lavochki"
     },
     {
       "id": "podezdnaia-dver-s-domofonom",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "подъездная дверь с домофоном",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "podezdnaia-dver-s-domofonom"
     },
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 0.9,
       "prompt": "бутылка рядом с Турышевым, не первая",
       "clueId": null,
       "action": null,
       "once": true,
       "dwellMs": 9000,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "butylka-riadom-s-turyshevym-ne-pervaia"
     },
     {
       "id": "urna-nabitaia-akkuratno",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "урна, набитая аккуратно",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "urna-nabitaia-akkuratno"
     }
   ],
   "entries": [

@@ -211,12 +211,22 @@ describe("son is playable", () => {
     expect(world.currentRoomId).toBe("19-dvor-i-oranzhevye-lavochki");
   });
 
-  test("standing at the intercom offers the apartment link", () => {
+  test("the intercom is reached from in front of it, not from inside it", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get(world.currentRoomId)!;
     const player = createPlayer(room, artifact.spawn.entryId);
-    player.x = 5.5 * room.tileSize;
-    player.y = 4 * room.tileSize;
+    const intercom = room.hotspots.find(
+      (hotspot) => hotspot.id === "podezdnaia-dver-s-domofonom",
+    )!;
+    const body = room.props.find((prop) => prop.id === intercom.propId)!;
+
+    // The lobby convention: the hotspot sits just off the body's bottom edge, so the
+    // tile you press E from is a tile you can actually stand on.
+    expect(intercom.y).toBeCloseTo(body.y + body.h + 0.15);
+    expect(body.solid).toBe(true);
+
+    player.x = intercom.x * room.tileSize;
+    player.y = intercom.y * room.tileSize;
     const target = findTarget(world, room, player);
     expect(target?.kind).toBe("hotspot");
     if (target?.kind === "hotspot") {
@@ -224,6 +234,24 @@ describe("son is playable", () => {
       // Pressing E on it examines it. It is not a way out any more.
       expect(target.hotspot.refusal).toBeNull();
     }
+  });
+
+  test("you cannot walk through a thing that is drawn as solid", () => {
+    const world = createWorld(artifact);
+    const room = world.roomById.get(world.currentRoomId)!;
+    const player = createPlayer(room, artifact.spawn.entryId);
+    const bench = room.props.find((prop) => prop.id === "oranzhevye-lavochki")!;
+    expect(bench.solid).toBe(true);
+
+    // Stand directly below the bench and push north into it.
+    player.x = (bench.x + bench.w / 2) * room.tileSize;
+    player.y = (bench.y + bench.h + 0.6) * room.tileSize;
+    const before = player.y;
+    for (let i = 0; i < 60; i++) {
+      updatePlayer(player, room, world, { x: 0, y: -1 }, 1 / 30);
+    }
+    expect(player.y).toBeLessThan(before);
+    expect(player.y).toBeGreaterThan((bench.y + bench.h) * room.tileSize);
   });
 
   test("the courtyard door to the hotel is a walkable threshold", () => {

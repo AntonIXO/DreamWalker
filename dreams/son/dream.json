@@ -125,91 +125,152 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "tri-tysiachi-nomerkov",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
+        },
+        {
+          "id": "chuzhie-shtany-na-polu",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
+        },
+        {
+          "id": "kanat-do-svoda",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
+        },
+        {
+          "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
+        },
+        {
+          "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
+          "x": 13,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
+        },
+        {
+          "id": "vedro-i-shvabra-uborschika",
+          "x": 16,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "tri-tysiachi-nomerkov",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "три тысячи номерков",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "tri-tysiachi-nomerkov"
         },
         {
           "id": "chuzhie-shtany-na-polu",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "чужие штаны на полу",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "chuzhie-shtany-na-polu"
         },
         {
           "id": "kanat-do-svoda",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "канат до свода",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kanat-do-svoda"
         },
         {
           "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "telefon-na-sailfishos-kamera-otkryvaetsi"
         },
         {
           "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
           "kind": "look",
-          "x": 13,
-          "y": 4,
+          "x": 14,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn"
         },
         {
           "id": "vedro-i-shvabra-uborschika",
           "kind": "look",
-          "x": 15.5,
-          "y": 4,
+          "x": 17,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "ведро и швабра уборщика",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "vedro-i-shvabra-uborschika"
         }
       ],
       "entries": [
@@ -704,63 +765,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "party",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--party.png"
+        },
+        {
+          "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
+        },
+        {
+          "id": "grusha-za-steklom",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png"
+        },
+        {
+          "id": "mat-v-uglu-s-rasstelennoi-posteliu",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "party",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "парты",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--party.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "party"
         },
         {
           "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "листочки, на которых текст меняется, если отвести взгляд",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "listochki-na-kotoryh-tekst-meniaetsia-es"
         },
         {
           "id": "grusha-za-steklom",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "груша за стеклом",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png",
-          "refusal": "недостижима, при попытке трогать камера отъезжает назад"
+          "refusal": "недостижима, при попытке трогать камера отъезжает назад",
+          "propId": "grusha-za-steklom"
         },
         {
           "id": "mat-v-uglu-s-rasstelennoi-posteliu",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "мат в углу с расстеленной постелью",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "mat-v-uglu-s-rasstelennoi-posteliu"
         }
       ],
       "entries": [
@@ -863,63 +965,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "centroid",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
+        },
+        {
+          "id": "vizitki-kotorye-ne-berutsia-v-ruku",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
+        },
+        {
+          "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
+        },
+        {
+          "id": "kamen-s-rovno-otpilennoi-graniu",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "centroid",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "центроид",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "centroid"
         },
         {
           "id": "vizitki-kotorye-ne-berutsia-v-ruku",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "визитки, которые не берутся в руку",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "vizitki-kotorye-ne-berutsia-v-ruku"
         },
         {
           "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "теодолит, показывающий одно и то же число независимо от направления",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c"
         },
         {
           "id": "kamen-s-rovno-otpilennoi-graniu",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "камень с ровно отпиленной гранью",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kamen-s-rovno-otpilennoi-graniu"
         }
       ],
       "entries": [
@@ -1022,63 +1165,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "plita",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
+        },
+        {
+          "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
+        },
+        {
+          "id": "telefon-s-odnim-kontaktom-lesha",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
+        },
+        {
+          "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "plita",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "плита",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--plita.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "plita"
         },
         {
           "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "отодвинутый кусок стены с чёрным проёмом",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "otodvinutyi-kusok-steny-s-chernym-proemo"
         },
         {
           "id": "telefon-s-odnim-kontaktom-lesha",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон с одним контактом «Лёша»",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "telefon-s-odnim-kontaktom-lesha"
         },
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "goluboi-lipkii-slizen-na-lestnice-bit-mo"
         }
       ],
       "entries": [
@@ -1197,76 +1381,128 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "polka-dlia-veschei",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
+        },
+        {
+          "id": "nadpis-na-polke",
+          "x": 5,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": null
+        },
+        {
+          "id": "ballonchik-na-poiase-ohrannika",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
+        },
+        {
+          "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
+        },
+        {
+          "id": "korzina-s-chem-to-chto-ne-chitaetsia",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "polka-dlia-veschei",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "полка для вещей",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "polka-dlia-veschei"
         },
         {
           "id": "nadpis-na-polke",
           "kind": "clue",
-          "x": 3,
-          "y": 5.2,
+          "x": 6,
+          "y": 2.15,
           "reach": 1.4,
           "prompt": "надпись на краю полки",
           "clueId": "clue-1",
           "action": null,
           "once": false,
           "dwellMs": null,
-          "refusal": null
+          "refusal": null,
+          "propId": "nadpis-na-polke"
         },
         {
           "id": "ballonchik-na-poiase-ohrannika",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "баллончик на поясе охранника",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "ballonchik-na-poiase-ohrannika"
         },
         {
           "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "akcionnyi-cennik-na-kotorom-cena-meniaet"
         },
         {
           "id": "korzina-s-chem-to-chto-ne-chitaetsia",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "корзина с чем-то, что не читается",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "korzina-s-chem-to-chto-ne-chitaetsia"
         }
       ],
       "entries": [
@@ -1387,63 +1623,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "riukzak",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
+        },
+        {
+          "id": "liuk-v-kanalizaciiu",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
+        },
+        {
+          "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
+        },
+        {
+          "id": "sledy-shin-kotoryh-utrom-ne-bylo",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "riukzak",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "рюкзак",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "riukzak"
         },
         {
           "id": "liuk-v-kanalizaciiu",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "люк в канализацию",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "liuk-v-kanalizaciiu"
         },
         {
           "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "chuzhaia-zhenschina-svalivshaiasia-siuda"
         },
         {
           "id": "sledy-shin-kotoryh-utrom-ne-bylo",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "следы шин, которых утром не было",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "sledy-shin-kotoryh-utrom-ne-bylo"
         }
       ],
       "entries": [
@@ -1562,63 +1839,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "bele-na-stenah",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
+        },
+        {
+          "id": "panel-lifta-bez-knopki-vniz",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
+        },
+        {
+          "id": "polotence-radi-kotorogo-prishel-ne-nahod",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
+        },
+        {
+          "id": "voda-v-chashe-basseina-slishkom-nepodviz",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "bele-na-stenah",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "бельё на стенах",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "bele-na-stenah"
         },
         {
           "id": "panel-lifta-bez-knopki-vniz",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "панель лифта без кнопки «вниз»",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "panel-lifta-bez-knopki-vniz"
         },
         {
           "id": "polotence-radi-kotorogo-prishel-ne-nahod",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "полотенце, ради которого пришёл, — не находится",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "polotence-radi-kotorogo-prishel-ne-nahod"
         },
         {
           "id": "voda-v-chashe-basseina-slishkom-nepodviz",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "вода в чаше бассейна, слишком неподвижная",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "voda-v-chashe-basseina-slishkom-nepodviz"
         }
       ],
       "entries": [
@@ -1739,63 +2057,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "bumazhnaia-skulptura",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
+        },
+        {
+          "id": "chuzhie-fotografii-v-tvoih-ramkah",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
+        },
+        {
+          "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
+        },
+        {
+          "id": "chainik-kotoryi-uzhe-kipel",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "bumazhnaia-skulptura",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "бумажная скульптура",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "bumazhnaia-skulptura"
         },
         {
           "id": "chuzhie-fotografii-v-tvoih-ramkah",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "чужие фотографии в твоих рамках",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "chuzhie-fotografii-v-tvoih-ramkah"
         },
         {
           "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "mercaiuschee-v-vozduhe-elektrichestvo-pr"
         },
         {
           "id": "chainik-kotoryi-uzhe-kipel",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "чайник, который уже кипел",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "chainik-kotoryi-uzhe-kipel"
         }
       ],
       "entries": [
@@ -1898,77 +2257,128 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "noutbuki-s-prodavlennymi-ekranami",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png"
+        },
+        {
+          "id": "odinakovye-naushniki",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
+        },
+        {
+          "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png"
+        },
+        {
+          "id": "rozovyi-gashish-v-vitrine",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png"
+        },
+        {
+          "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
+          "x": 13,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "noutbuki-s-prodavlennymi-ekranami",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "ноутбуки с продавленными экранами",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "noutbuki-s-prodavlennymi-ekranami"
         },
         {
           "id": "odinakovye-naushniki",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "одинаковые наушники",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "odinakovye-naushniki"
         },
         {
           "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "demo-stend-na-kotorom-rabotaet-chto-to-c"
         },
         {
           "id": "rozovyi-gashish-v-vitrine",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "розовый гашиш в витрине",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "rozovyi-gashish-v-vitrine"
         },
         {
           "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
           "kind": "look",
-          "x": 13,
-          "y": 4,
+          "x": 14,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "пять тысяч наличными, которые уже отдал",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "piat-tysiach-nalichnymi-kotorye-uzhe-otd"
         }
       ],
       "entries": [
@@ -2071,77 +2481,128 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "groby",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/10-komnata-s-grobami--groby.png"
+        },
+        {
+          "id": "schel-pod-potolkom",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
+        },
+        {
+          "id": "tkan-s-kodami",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
+        },
+        {
+          "id": "paketiki-fsb",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
+        },
+        {
+          "id": "telefon-kamera-otkryvaetsia-sem-sekund",
+          "x": 13,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "groby",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "гробы",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/10-komnata-s-grobami--groby.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "groby"
         },
         {
           "id": "schel-pod-potolkom",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "щель под потолком",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "schel-pod-potolkom"
         },
         {
           "id": "tkan-s-kodami",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "ткань с кодами",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "tkan-s-kodami"
         },
         {
           "id": "paketiki-fsb",
           "kind": "clue",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "пакетики ФСБ",
           "clueId": "clue-3",
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "paketiki-fsb"
         },
         {
           "id": "telefon-kamera-otkryvaetsia-sem-sekund",
           "kind": "look",
-          "x": 13,
-          "y": 4,
+          "x": 14,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон, камера открывается семь секунд",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "telefon-kamera-otkryvaetsia-sem-sekund"
         }
       ],
       "entries": [
@@ -2262,63 +2723,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "kinder-siurpriz-s-lavochku",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
+        },
+        {
+          "id": "fonari-kotorye-gasiat-pri-zvuke",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
+        },
+        {
+          "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
+        },
+        {
+          "id": "stavni-na-vsem",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "kinder-siurpriz-s-lavochku",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "киндер-сюрприз с лавочку",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kinder-siurpriz-s-lavochku"
         },
         {
           "id": "fonari-kotorye-gasiat-pri-zvuke",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "фонари, которые гасят при звуке",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "fonari-kotorye-gasiat-pri-zvuke"
         },
         {
           "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "расписание — не транспорта, а **безопасных часов**",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "raspisanie-ne-transporta-a-bezopasnyh-ch"
         },
         {
           "id": "stavni-na-vsem",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "ставни на всём",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "stavni-na-vsem"
         }
       ],
       "entries": [
@@ -2437,77 +2939,128 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "kapusta-frukty",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
+        },
+        {
+          "id": "dyrka-v-zabore",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
+        },
+        {
+          "id": "piatimetrovyi-stellazh",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
+        },
+        {
+          "id": "paket-fasoli",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
+        },
+        {
+          "id": "tetia-sidiaschaia-spinoi",
+          "x": 13,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "kapusta-frukty",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "капуста, фрукты",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kapusta-frukty"
         },
         {
           "id": "dyrka-v-zabore",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "дырка в заборе",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "dyrka-v-zabore"
         },
         {
           "id": "piatimetrovyi-stellazh",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "пятиметровый стеллаж",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "piatimetrovyi-stellazh"
         },
         {
           "id": "paket-fasoli",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "пакет фасоли",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "paket-fasoli"
         },
         {
           "id": "tetia-sidiaschaia-spinoi",
           "kind": "look",
-          "x": 13,
-          "y": 4,
+          "x": 14,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "тётя, сидящая спиной",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "tetia-sidiaschaia-spinoi"
         }
       ],
       "entries": [
@@ -2626,77 +3179,128 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "iaponskii-sidr",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
+        },
+        {
+          "id": "tribuny",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png"
+        },
+        {
+          "id": "riukzak-s-fruktami-i-vodkoi",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
+        },
+        {
+          "id": "divanchik-na-kotorom-spit-lesha",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png"
+        },
+        {
+          "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
+          "x": 13,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "iaponskii-sidr",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "японский сидр",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "iaponskii-sidr"
         },
         {
           "id": "tribuny",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "трибуны",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "tribuny"
         },
         {
           "id": "riukzak-s-fruktami-i-vodkoi",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "рюкзак с фруктами и водкой",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "riukzak-s-fruktami-i-vodkoi"
         },
         {
           "id": "divanchik-na-kotorom-spit-lesha",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "диванчик, на котором спит Лёша",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "divanchik-na-kotorom-spit-lesha"
         },
         {
           "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
           "kind": "look",
-          "x": 13,
-          "y": 4,
+          "x": 14,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "mazi-kotorymi-ty-predlagaesh-pomazatsia-"
         }
       ],
       "entries": [
@@ -2815,63 +3419,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "vydrannyi-zub",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
+        },
+        {
+          "id": "iaschik-s-kapibarami-i-kotom",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png"
+        },
+        {
+          "id": "kreslo",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png"
+        },
+        {
+          "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "vydrannyi-zub",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "выдранный зуб",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "vydrannyi-zub"
         },
         {
           "id": "iaschik-s-kapibarami-i-kotom",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "ящик с капибарами и котом",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "iaschik-s-kapibarami-i-kotom"
         },
         {
           "id": "kreslo",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "кресло",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kreslo"
         },
         {
           "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "велосипедисты, проезжающие сквозь коридор",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "velosipedisty-proezzhaiuschie-skvoz-kori"
         }
       ],
       "entries": [
@@ -2990,63 +3635,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "grob",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
+        },
+        {
+          "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
+        },
+        {
+          "id": "listia-shurshaschie-ne-v-takt-shagam",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
+        },
+        {
+          "id": "fotografiia-klassnogo-rukovoditelia-lica",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "grob",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "гроб",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--grob.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "grob"
         },
         {
           "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "пирамида-туалет с советским кафелем внутри",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "piramida-tualet-s-sovetskim-kafelem-vnut"
         },
         {
           "id": "listia-shurshaschie-ne-v-takt-shagam",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "листья, шуршащие не в такт шагам",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "listia-shurshaschie-ne-v-takt-shagam"
         },
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "фотография классного руководителя, лица не разобрать",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "fotografiia-klassnogo-rukovoditelia-lica"
         }
       ],
       "entries": [
@@ -3165,63 +3851,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "pogreb-s-korniami",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png"
+        },
+        {
+          "id": "sneg-kotoryi-techet",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
+        },
+        {
+          "id": "otec-na-kraiu",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
+        },
+        {
+          "id": "kirill-riadom-molchit",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "pogreb-s-korniami",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "погреб с корнями",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "pogreb-s-korniami"
         },
         {
           "id": "sneg-kotoryi-techet",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "снег, который течёт",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "sneg-kotoryi-techet"
         },
         {
           "id": "otec-na-kraiu",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "отец на краю",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "otec-na-kraiu"
         },
         {
           "id": "kirill-riadom-molchit",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "Кирилл рядом, молчит",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kirill-riadom-molchit"
         }
       ],
       "entries": [
@@ -3324,49 +4051,80 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "dver",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
+        },
+        {
+          "id": "ventil",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
+        },
+        {
+          "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "dver",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "дверь",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "dver"
         },
         {
           "id": "ventil",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "вентиль",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png",
-          "refusal": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
+          "refusal": "закрывает воду, тогда становится слышно, что снаружи кто-то есть",
+          "propId": "ventil"
         },
         {
           "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "кафель, на одной плитке которого что-то нацарапано",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kafel-na-odnoi-plitke-kotorogo-chto-to-n"
         }
       ],
       "entries": [
@@ -3469,63 +4227,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "karkas-kupola-bez-sten",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
+        },
+        {
+          "id": "koliuchaia-provoloka",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
+        },
+        {
+          "id": "zveri",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/18-kupol-bez-sten--zveri.png"
+        },
+        {
+          "id": "snezhnoe-pole-do-gorizonta",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "karkas-kupola-bez-sten",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "каркас купола без стен",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "karkas-kupola-bez-sten"
         },
         {
           "id": "koliuchaia-provoloka",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "колючая проволока",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "koliuchaia-provoloka"
         },
         {
           "id": "zveri",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "звери",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/18-kupol-bez-sten--zveri.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "zveri"
         },
         {
           "id": "snezhnoe-pole-do-gorizonta",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "снежное поле до горизонта",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "snezhnoe-pole-do-gorizonta"
         }
       ],
       "entries": [
@@ -3644,63 +4443,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "oranzhevye-lavochki",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
+        },
+        {
+          "id": "podezdnaia-dver-s-domofonom",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
+        },
+        {
+          "id": "butylka-riadom-s-turyshevym-ne-pervaia",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
+        },
+        {
+          "id": "urna-nabitaia-akkuratno",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "oranzhevye-lavochki",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "оранжевые лавочки",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "oranzhevye-lavochki"
         },
         {
           "id": "podezdnaia-dver-s-domofonom",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "подъездная дверь с домофоном",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "podezdnaia-dver-s-domofonom"
         },
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 0.9,
           "prompt": "бутылка рядом с Турышевым, не первая",
           "clueId": null,
           "action": null,
           "once": true,
           "dwellMs": 9000,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "butylka-riadom-s-turyshevym-ne-pervaia"
         },
         {
           "id": "urna-nabitaia-akkuratno",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "урна, набитая аккуратно",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "urna-nabitaia-akkuratno"
         }
       ],
       "entries": [
@@ -3819,77 +4659,128 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "elt-s-morrowind",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
+        },
+        {
+          "id": "shirokii-monitor-s-chem-to-korporativnym",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
+        },
+        {
+          "id": "beidzhi-na-shnurkah",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
+        },
+        {
+          "id": "lift",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/20-ofis-sbera--lift.png"
+        },
+        {
+          "id": "zakrytaia-dver-v-konce-koridora",
+          "x": 13,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "elt-s-morrowind",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "ЭЛТ с Morrowind",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "elt-s-morrowind"
         },
         {
           "id": "shirokii-monitor-s-chem-to-korporativnym",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "широкий монитор с чем-то корпоративным",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "shirokii-monitor-s-chem-to-korporativnym"
         },
         {
           "id": "beidzhi-na-shnurkah",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "бейджи на шнурках",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "beidzhi-na-shnurkah"
         },
         {
           "id": "lift",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "лифт",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/20-ofis-sbera--lift.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "lift"
         },
         {
           "id": "zakrytaia-dver-v-konce-koridora",
           "kind": "look",
-          "x": 13,
-          "y": 4,
+          "x": 14,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "закрытая дверь в конце коридора",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "zakrytaia-dver-v-konce-koridora"
         }
       ],
       "entries": [
@@ -4008,63 +4899,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "krovat",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/21-komnata-niliufar--krovat.png"
+        },
+        {
+          "id": "okno-s-vidom",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
+        },
+        {
+          "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
+        },
+        {
+          "id": "veschi-tancevalnoi-gruppy",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "krovat",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "кровать",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/21-komnata-niliufar--krovat.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "krovat"
         },
         {
           "id": "okno-s-vidom",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "окно с видом",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "okno-s-vidom"
         },
         {
           "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "dver-kotoraia-mozhet-byt-otkryta-ili-zak"
         },
         {
           "id": "veschi-tancevalnoi-gruppy",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "вещи танцевальной группы",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "veschi-tancevalnoi-gruppy"
         }
       ],
       "entries": [
@@ -4167,63 +5099,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "scena-mikrofon",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/22-kreiser--scena-mikrofon.png"
+        },
+        {
+          "id": "nakrytye-stoly",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
+        },
+        {
+          "id": "spasatelnye-krugi",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
+        },
+        {
+          "id": "voda-za-bortom-slishkom-blizko-k-palube",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "scena-mikrofon",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "сцена, микрофон",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/22-kreiser--scena-mikrofon.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "scena-mikrofon"
         },
         {
           "id": "nakrytye-stoly",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "накрытые столы",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/22-kreiser--nakrytye-stoly.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "nakrytye-stoly"
         },
         {
           "id": "spasatelnye-krugi",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "спасательные круги",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/22-kreiser--spasatelnye-krugi.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "spasatelnye-krugi"
         },
         {
           "id": "voda-za-bortom-slishkom-blizko-k-palube",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "вода за бортом, слишком близко к палубе",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "voda-za-bortom-slishkom-blizko-k-palube"
         }
       ],
       "entries": [
@@ -4326,63 +5299,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "kolonny",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
+        },
+        {
+          "id": "vr-shlemy-na-stoikah",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
+        },
+        {
+          "id": "beidzh-konferencii-s-nechitaemym-nazvani",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
+        },
+        {
+          "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "kolonny",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "колонны",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kolonny"
         },
         {
           "id": "vr-shlemy-na-stoikah",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "VR-шлемы на стойках",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "vr-shlemy-na-stoikah"
         },
         {
           "id": "beidzh-konferencii-s-nechitaemym-nazvani",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "бейдж конференции с нечитаемым названием",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "beidzh-konferencii-s-nechitaemym-nazvani"
         },
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "отель, у которого внутренний объём меньше внешнего",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "otel-u-kotorogo-vnutrennii-obem-menshe-v"
         }
       ],
       "entries": [
@@ -4485,63 +5499,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "kakao",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png"
+        },
+        {
+          "id": "kusok-miasa-naznachennyi-bomboi",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
+        },
+        {
+          "id": "korobka-s-golosom",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png"
+        },
+        {
+          "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "kakao",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "какао",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kakao"
         },
         {
           "id": "kusok-miasa-naznachennyi-bomboi",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "кусок мяса, назначенный бомбой",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "kusok-miasa-naznachennyi-bomboi"
         },
         {
           "id": "korobka-s-golosom",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "коробка с голосом",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "korobka-s-golosom"
         },
         {
           "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон с камерой, которая не успевает",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "telefon-s-kameroi-kotoraia-ne-uspevaet"
         }
       ],
       "entries": [
@@ -4644,63 +5699,104 @@
         "####################"
       ],
       "cellVariants": {},
-      "props": [],
+      "props": [
+        {
+          "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
+        },
+        {
+          "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
+        },
+        {
+          "id": "korobka-s-golosom",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
+        },
+        {
+          "id": "chuzhie-sumki-na-platforme",
+          "x": 11,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
+        }
+      ],
       "hotspots": [
         {
           "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
           "kind": "look",
-          "x": 3,
-          "y": 4,
+          "x": 4,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "табло с расписанием, где номера меняются",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "tablo-s-raspisaniem-gde-nomera-meniaiuts"
         },
         {
           "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
           "kind": "look",
-          "x": 5.5,
-          "y": 4,
+          "x": 7,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "telefon-s-zagruzhaiuschimsia-tor-progres"
         },
         {
           "id": "korobka-s-golosom",
           "kind": "look",
-          "x": 8,
-          "y": 4,
+          "x": 9,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "коробка с голосом",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "korobka-s-golosom"
         },
         {
           "id": "chuzhie-sumki-na-platforme",
           "kind": "look",
-          "x": 10.5,
-          "y": 4,
+          "x": 12,
+          "y": 5.15,
           "reach": 1.4,
           "prompt": "чужие сумки на платформе",
           "clueId": null,
           "action": null,
           "once": false,
           "dwellMs": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png",
-          "refusal": null
+          "refusal": null,
+          "propId": "chuzhie-sumki-na-platforme"
         }
       ],
       "entries": [

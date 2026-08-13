@@ -19,63 +19,104 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "centroid",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
+    },
+    {
+      "id": "vizitki-kotorye-ne-berutsia-v-ruku",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
+    },
+    {
+      "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
+    },
+    {
+      "id": "kamen-s-rovno-otpilennoi-graniu",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "centroid",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "центроид",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "centroid"
     },
     {
       "id": "vizitki-kotorye-ne-berutsia-v-ruku",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "визитки, которые не берутся в руку",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "vizitki-kotorye-ne-berutsia-v-ruku"
     },
     {
       "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "теодолит, показывающий одно и то же число независимо от направления",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c"
     },
     {
       "id": "kamen-s-rovno-otpilennoi-graniu",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "камень с ровно отпиленной гранью",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kamen-s-rovno-otpilennoi-graniu"
     }
   ],
   "entries": [

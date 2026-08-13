@@ -60,8 +60,16 @@ export interface RoomHotspot {
   refusal: string | null;
   /** Set when `kind === "clue"`. */
   clueId: string | null;
-  /** A loose PNG under `assets/`, once the object has been drawn. */
-  image?: string | null;
+  /**
+   * The body this hotspot belongs to, if it has one.
+   *
+   * A hotspot is a point with a reach — it never occupied space and never blocked
+   * anybody. The *thing* is a `RoomProp`, which already is a `SolidRect`, already
+   * collides and already draws; the hotspot is the tile you stand on to reach it. That
+   * split is the lobby's convention (`player/lobby/definition.ts`), the one room in this
+   * repo a person actually drew, and it is what `roomGrid.ts` was extracted from.
+   */
+  propId: string | null;
   /** Set when `kind === "ui"` — which panel to open. */
   action: string | null;
   /** Whether it fires once per cycle or every time. */
@@ -75,10 +83,16 @@ export interface RoomHotspot {
   dwellMs: number | null;
 }
 
-/** A thing standing in the room. Larger than a tile, unlike an atlas prop. */
+/**
+ * A thing standing in the room. Larger than a tile, unlike an atlas prop.
+ *
+ * This is where object art lives: the 64px PNGs cannot go in the atlas (every frame is
+ * `tileSize × tileSize` and `bakeAtlas` throws otherwise), so they ride as loose files,
+ * and the rect is what the walker and the figures actually bump into.
+ */
 export interface RoomProp extends SolidRect {
   id: string;
-  /** An atlas role to tile it with, or null when the backdrop already draws it. */
+  /** An atlas role to tile it with, or null when a loose PNG or the backdrop draws it. */
   role: string | null;
   /** A loose PNG under `assets/`, for props too big or too specific for the atlas. */
   image: string | null;

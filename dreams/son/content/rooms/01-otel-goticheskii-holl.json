@@ -19,91 +19,152 @@
     "####################"
   ],
   "cellVariants": {},
-  "props": [],
+  "props": [
+    {
+      "id": "tri-tysiachi-nomerkov",
+      "x": 3,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
+    },
+    {
+      "id": "chuzhie-shtany-na-polu",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
+    },
+    {
+      "id": "kanat-do-svoda",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
+    },
+    {
+      "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
+      "x": 11,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
+    },
+    {
+      "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
+      "x": 13,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
+    },
+    {
+      "id": "vedro-i-shvabra-uborschika",
+      "x": 16,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "solid": true,
+      "role": null,
+      "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
+    }
+  ],
   "hotspots": [
     {
       "id": "tri-tysiachi-nomerkov",
       "kind": "look",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "три тысячи номерков",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "tri-tysiachi-nomerkov"
     },
     {
       "id": "chuzhie-shtany-na-polu",
       "kind": "look",
-      "x": 5.5,
-      "y": 4,
+      "x": 7,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "чужие штаны на полу",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "chuzhie-shtany-na-polu"
     },
     {
       "id": "kanat-do-svoda",
       "kind": "look",
-      "x": 8,
-      "y": 4,
+      "x": 9,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "канат до свода",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "kanat-do-svoda"
     },
     {
       "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
       "kind": "look",
-      "x": 10.5,
-      "y": 4,
+      "x": 12,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "telefon-na-sailfishos-kamera-otkryvaetsi"
     },
     {
       "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
       "kind": "look",
-      "x": 13,
-      "y": 4,
+      "x": 14,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn"
     },
     {
       "id": "vedro-i-shvabra-uborschika",
       "kind": "look",
-      "x": 15.5,
-      "y": 4,
+      "x": 17,
+      "y": 5.15,
       "reach": 1.4,
       "prompt": "ведро и швабра уборщика",
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png",
-      "refusal": null
+      "refusal": null,
+      "propId": "vedro-i-shvabra-uborschika"
     }
   ],
   "entries": [
