@@ -100,20 +100,16 @@
       "hotspots": [
         {
           "id": "rope",
-          "kind": "link",
+          "kind": "look",
           "x": 2,
           "y": 4,
           "reach": 1.5,
           "prompt": "дёрнуть канат",
-          "link": {
-            "to": "room",
-            "roomId": "m1",
-            "entryId": null
-          },
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "refusal": null
         },
         {
           "id": "shelf",
@@ -122,11 +118,11 @@
           "y": 4,
           "reach": 1.2,
           "prompt": "прочитать надпись",
-          "link": null,
           "clueId": "clue-1",
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "refusal": null
         }
       ],
       "entries": [
@@ -148,6 +144,42 @@
           "toEntryId": "default",
           "type": "keyLock",
           "keyId": "key1",
+          "prompt": null,
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null
+        },
+        {
+          "id": "a--rift-rope",
+          "x": 2,
+          "y": 2,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m1",
+          "toEntryId": null,
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "канат до свода"
+        },
+        {
+          "id": "a--stair-up",
+          "x": 9,
+          "y": 2,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "b",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "stair",
+          "levelDelta": 1,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
           "prompt": null
         }
       ],
@@ -178,7 +210,9 @@
       "tags": [
         "clue-compatible"
       ],
-      "copy": {}
+      "copy": {},
+      "buildingId": "tower",
+      "level": 1
     },
     {
       "id": "b",
@@ -241,7 +275,11 @@
           "toEntryId": "default",
           "type": "open",
           "keyId": null,
-          "prompt": null
+          "prompt": null,
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null
         }
       ],
       "figureSlots": [
@@ -269,7 +307,9 @@
       "atmosphere": "",
       "personality": "",
       "tags": [],
-      "copy": {}
+      "copy": {},
+      "buildingId": "tower",
+      "level": 2
     },
     {
       "id": "m1",
@@ -333,7 +373,9 @@
       "atmosphere": "",
       "personality": "",
       "tags": [],
-      "copy": {}
+      "copy": {},
+      "buildingId": null,
+      "level": 0
     }
   ],
   "spawn": {

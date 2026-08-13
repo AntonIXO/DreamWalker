@@ -117,7 +117,7 @@ async function statusCommand(slug: string | undefined): Promise<void> {
       `  ${mark(status.hasRooms)} rooms     ${color.grey(
         draft.rooms.length > 0
           ? `${draft.rooms.length} authored · ${draft.rooms.reduce((n, room) => n + room.doors.length, 0)} doors · ` +
-              `${draft.rooms.reduce((n, room) => n + room.hotspots.filter((h) => h.link).length, 0)} links`
+              `${draft.rooms.reduce((n, room) => n + room.doors.filter((d) => d.threshold === "rift").length, 0)} rifts`
           : "not drawn",
       )}`,
     );

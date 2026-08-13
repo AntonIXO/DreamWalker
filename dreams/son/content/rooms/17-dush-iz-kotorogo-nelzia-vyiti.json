@@ -28,29 +28,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "дверь",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
+      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png",
+      "refusal": null
     },
     {
       "id": "ventil",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "вентиль",
-      "link": {
-        "to": "refuse",
-        "note": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
+      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png",
+      "refusal": "закрывает воду, тогда становится слышно, что снаружи кто-то есть"
     },
     {
       "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
@@ -59,15 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "кафель, на одной плитке которого что-то нацарапано",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «АРХИВ»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
+      "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -89,7 +83,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "17-dush-iz-kotorogo-nelzia-vyiti--rift-kafel-na-odnoi-plitke-kotorogo-chto-to-n",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "кафель, на одной плитке которого что-то нацарапано",
+      "toRoomId": "m3-sklad-ostavlennogo"
     }
   ],
   "figureSlots": [
@@ -125,5 +139,7 @@
   "copy": {
     "animations": "пар клубится; счётчик проходов через дверь **нигде не показан, но с шестого раза геометрия начинает мельчать** — комната сжимается на 3% за проход",
     "sound": "вода, ровно, без вариаций; собственное дыхание, которое становится слышно после четвёртого прохода; на восьмом — **вода звучит на октаву ниже**"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

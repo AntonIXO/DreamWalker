@@ -28,30 +28,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "колонны",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
+      "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png",
+      "refusal": null
     },
     {
       "id": "vr-shlemy-na-stoikah",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "VR-шлемы на стойках",
-      "link": {
-        "to": "room",
-        "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
+      "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png",
+      "refusal": null
     },
     {
       "id": "beidzh-konferencii-s-nechitaemym-nazvani",
@@ -60,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "бейдж конференции с нечитаемым названием",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
+      "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png",
+      "refusal": null
     },
     {
       "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
@@ -74,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "отель, у которого внутренний объём меньше внешнего",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
+      "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -101,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "23-nigeriia-konferenciia--rift-vr-shlemy-na-stoikah",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "VR-шлемы на стойках",
+      "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
     }
   ],
   "figureSlots": [
@@ -137,5 +153,7 @@
   "copy": {
     "animations": "люди в шлемах **водят руками в пустоте** синхронно, все одинаково; торчки в подворотне двигаются на 0.7 скорости; тень от колонн падает не в ту сторону",
     "sound": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

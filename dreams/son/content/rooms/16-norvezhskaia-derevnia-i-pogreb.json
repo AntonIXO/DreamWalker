@@ -23,21 +23,17 @@
   "hotspots": [
     {
       "id": "pogreb-s-korniami",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "погреб с корнями",
-      "link": {
-        "to": "room",
-        "roomId": "m1-korni",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png"
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png",
+      "refusal": null
     },
     {
       "id": "sneg-kotoryi-techet",
@@ -46,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "снег, который течёт",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png",
+      "refusal": null
     },
     {
       "id": "otec-na-kraiu",
@@ -60,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "отец на краю",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png",
+      "refusal": null
     },
     {
       "id": "kirill-riadom-molchit",
@@ -74,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "Кирилл рядом, молчит",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
+      "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -101,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "16-norvezhskaia-derevnia-i-pogreb--rift-pogreb-s-korniami",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "погреб с корнями",
+      "toRoomId": "m1-korni"
     }
   ],
   "figureSlots": [
@@ -137,5 +153,7 @@
   "copy": {
     "animations": "**снежная лавина на 15% нормальной скорости** — не эффектная, а медленная и неотменяемая; корни в погребе пульсируют с периодом дыхания, около 4 секунд; рука отца остаётся видна на полсекунды дольше, чем должна",
     "sound": "гул усилителя, 50 Гц с гармониками, ровный, никогда не смолкающий; полное отсутствие ветра при видимом снегопаде; в момент падения — **всё, кроме гула, вырезается**"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

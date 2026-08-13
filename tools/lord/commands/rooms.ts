@@ -10,7 +10,7 @@
  *
  *   lord rooms <slug>            list the catalogue
  *   lord rooms <slug> --scaffold write a blank 20x11 room for each id in rooms.md
- *   lord rooms <slug> --rebind   re-attach bible links without touching the ASCII
+ *   lord rooms <slug> --rifts    list the bible's connections and where they are not yet built
  *   lord rooms <slug> --check    walk the door and link graph from the spawn
  *
  * The scaffold deliberately writes an *empty box*. No parser can read a floor plan out of
@@ -28,7 +28,7 @@ import {
 } from "../../../src/shared/doors";
 import type { DreamRoom } from "../../../src/shared/room";
 import { loadRoomFiles, loadRoomSettings } from "../content/files";
-import { parseRoomsDocument, rebindRoomLinks } from "../content/importRooms";
+import { parseRoomsDocument, toRoomCards } from "../content/importRooms";
 import { dreamDir, loadDraft, REPO_ROOT, saveDraft } from "../project";
 import { color, heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
@@ -85,6 +85,8 @@ export function blankRoom(id: string, name: string): DreamRoom {
       glitchPreset: "none",
     },
     camera: "frame",
+    buildingId: null,
+    level: 0,
     revisit: { escalates: false, note: null },
     meta: null,
     description: "",
@@ -119,14 +121,11 @@ export function reachableRooms(
       // map while the walker could not stand on any of the 48 rects.
       if (doorIsUsable(room, door)) queue.push(door.toRoomId);
     }
-    for (const hotspot of room.hotspots) {
-      if (hotspot.link?.to === "room") queue.push(hotspot.link.roomId);
-    }
   }
   return seen;
 }
 
-/** Links and doors that name a room nobody authored. */
+/** Thresholds that name a room nobody authored. */
 export function danglingTargets(
   rooms: readonly DreamRoom[],
 ): Array<{ from: string; via: string; to: string }> {
@@ -136,11 +135,6 @@ export function danglingTargets(
     for (const door of room.doors) {
       if (!ids.has(door.toRoomId)) {
         bad.push({ from: room.id, via: door.id, to: door.toRoomId });
-      }
-    }
-    for (const hotspot of room.hotspots) {
-      if (hotspot.link?.to === "room" && !ids.has(hotspot.link.roomId)) {
-        bad.push({ from: room.id, via: hotspot.id, to: hotspot.link.roomId });
       }
     }
   }
@@ -207,6 +201,10 @@ export async function roomsCommand(
           toRoomId: hub.id,
           toEntryId: "default",
           type: "open",
+          threshold: "door",
+          levelDelta: 0,
+          facing: null,
+          toFigureId: null,
           keyId: null,
           prompt: null,
         });
@@ -231,6 +229,10 @@ export async function roomsCommand(
           toRoomId: room.id,
           toEntryId: "default",
           type: "open",
+          threshold: "door",
+          levelDelta: 0,
+          facing: null,
+          toFigureId: null,
           keyId: null,
           prompt: null,
         });
@@ -245,23 +247,48 @@ export async function roomsCommand(
     ok(`wired ${wired} rooms through ${hub.id}`);
   }
 
-  if (flags.rebind) {
+  // What the bible connects, against what the floor plans actually build.
+  //
+  // This replaced `--rebind`, which rewrote every room file to re-attach object links.
+  // A rift is architecture now: it has to go in a wall somebody drew, so the tool's job
+  // is to say what is missing rather than to invent a doorway and call it done.
+  if (flags.rifts) {
     const markdown = await readFile(
       join(REPO_ROOT, "dream-walker-new", "rooms.md"),
       "utf8",
     );
     const parsed = parseRoomsDocument(markdown);
+    const { rifts } = toRoomCards(parsed);
     const loaded = await loadRoomFiles(slug);
-    const { rooms: rebound, rebound: count } = rebindRoomLinks(loaded, parsed);
-    const dir = join(dreamDir(slug), "content", "rooms");
-    for (const room of rebound) {
-      const opened = punchDoorThresholds(room);
-      await writeFile(
-        join(dir, `${opened.id}.json`),
-        `${JSON.stringify(opened, null, 2)}\n`,
+    // Any threshold counts. §07's lift is a `lift`, not a rift, and it is still the way
+    // the pool connects to the hotel — the question is whether a walk exists, not which
+    // flavour of doorway somebody chose.
+    const built = new Set(
+      loaded.flatMap((room) =>
+        room.doors.map((door) => `${room.id}→${door.toRoomId}`),
+      ),
+    );
+    heading(`${rifts.length} connection(s) stated by the bible`);
+    let missing = 0;
+    for (const rift of rifts) {
+      const to = rift.toFigureId
+        ? `wherever ${rift.toFigureId} is`
+        : (rift.toRoomId ?? "?");
+      const has =
+        rift.toFigureId !== null || built.has(`${rift.room}→${rift.toRoomId}`);
+      if (!has) missing++;
+      console.log(
+        `  ${has ? color.grey("built  ") : color.bold("MISSING")} ` +
+          `${rift.room.padEnd(34)} ${rift.label.slice(0, 28).padEnd(30)} → ${to}`,
       );
     }
-    ok(`rebound ${count} link(s) and opened door thresholds`);
+    if (missing > 0) {
+      warn(
+        `${missing} connection(s) have no threshold yet — draw one and wire it`,
+      );
+    } else {
+      ok("every connection the bible states has a way through");
+    }
   }
 
   draft.rooms = await loadRoomFiles(slug);
@@ -272,7 +299,7 @@ export async function roomsCommand(
 
   heading(`${draft.rooms.length} room(s) in ${slug}`);
   for (const room of draft.rooms) {
-    const links = room.hotspots.filter((hotspot) => hotspot.link).length;
+    const rifts = room.doors.filter((door) => door.threshold === "rift").length;
     const marks = [
       room.kind === "meta" ? "meta" : null,
       room.graphics.backdropImage ? "art" : null,
@@ -281,7 +308,7 @@ export async function roomsCommand(
     console.log(
       `  ${color.bold(room.id.padEnd(22))} ${room.name.padEnd(26)} ` +
         color.grey(
-          `${room.width}x${room.height} · ${room.doors.length}d ${links}l` +
+          `${room.width}x${room.height} · ${room.doors.length}d ${rifts}r` +
             `${marks.length ? " · " + marks.join(" ") : ""}`,
         ),
     );

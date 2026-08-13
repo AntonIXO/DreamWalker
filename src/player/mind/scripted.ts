@@ -317,24 +317,18 @@ export class ScriptedMind implements DreamMind {
       const rewireable = this.world.rooms.flatMap((room) =>
         room.id === observation.currentRoomId
           ? []
-          : room.hotspots
-              .filter(
-                (hotspot) =>
-                  hotspot.link !== null && hotspot.link.to === "room",
-              )
-              .map((hotspot) => ({ roomId: room.id, hotspotId: hotspot.id })),
+          : room.doors.filter((door) => door.threshold === "rift"),
       );
       const victim = rng.maybePick(rewireable);
       const destination = rng.maybePick(
         this.world.rooms.filter(
-          (room) => room.kind === "place" && room.id !== victim?.roomId,
+          (room) => room.kind === "place" && room.id !== victim?.toRoomId,
         ),
       );
       if (victim && destination) {
         patches.push({
-          kind: "relink",
-          roomId: victim.roomId,
-          hotspotId: victim.hotspotId,
+          kind: "retargetDoor",
+          doorId: victim.id,
           toRoomId: destination.id,
           reason: "the player has been through here before",
         });

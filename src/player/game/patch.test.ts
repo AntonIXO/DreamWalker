@@ -55,7 +55,7 @@ const POPULATION: DreamPopulation = {
     },
   ],
   roomMoods: { a: "Светло и неуместно подробно." },
-  relinks: [],
+  retargets: [],
   source: "fallback",
 };
 
@@ -160,29 +160,24 @@ describe("installPopulation", () => {
   });
 });
 
-describe("relink", () => {
-  test("rewires where an object throws you", () => {
+describe("retargetDoor", () => {
+  test("rewires where a rift comes out", () => {
     const world = makeWorld();
     const result = applyPatch(world, {
-      kind: "relink",
-      roomId: "a",
-      hotspotId: "rope",
+      kind: "retargetDoor",
+      doorId: "a--rift-rope",
       toRoomId: "b",
       reason: "test",
     });
     expect(result.ok).toBe(true);
-    const rope = world.roomById
-      .get("a")!
-      .hotspots.find((h) => h.id === "rope")!;
-    expect(rope.link).toEqual({ to: "room", roomId: "b", entryId: null });
+    expect(world.doorById.get("a--rift-rope")!.toRoomId).toBe("b");
   });
 
   test("is refused when the destination does not exist", () => {
     const world = makeWorld();
     const result = applyPatch(world, {
-      kind: "relink",
-      roomId: "a",
-      hotspotId: "rope",
+      kind: "retargetDoor",
+      doorId: "a--rift-rope",
       toRoomId: "nowhere",
       reason: "test",
     });
@@ -190,15 +185,26 @@ describe("relink", () => {
     expect(result.refusal).toContain("nowhere");
   });
 
-  test("is refused on a hotspot that leads nowhere by design", () => {
+  test("is refused on a staircase, which is the whole point", () => {
     const world = makeWorld();
-    // The clue shelf has no link; turning a described object into a door would be the
-    // sleeper inventing geometry the author did not authorise.
+    // §4.1 forbids «телепорт на ровном месте». A rift may lead anywhere; the vertical
+    // map is the one thing in this dream that has to hold.
     const result = applyPatch(world, {
-      kind: "relink",
-      roomId: "a",
-      hotspotId: "shelf",
-      toRoomId: "b",
+      kind: "retargetDoor",
+      doorId: "a--stair-up",
+      toRoomId: "m1",
+      reason: "test",
+    });
+    expect(result.ok).toBe(false);
+    expect(result.refusal).toContain("stair");
+  });
+
+  test("is refused on an ordinary door too", () => {
+    const world = makeWorld();
+    const result = applyPatch(world, {
+      kind: "retargetDoor",
+      doorId: "a-to-b",
+      toRoomId: "m1",
       reason: "test",
     });
     expect(result.ok).toBe(false);

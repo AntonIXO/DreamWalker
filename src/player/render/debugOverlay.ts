@@ -143,8 +143,16 @@ export class DebugOverlay {
     }
 
     // Doors first, then what they became: a sealed one is why you opened this panel.
+    // Colour is the lock, hue is the threshold — a rift is the one you want to spot.
     for (const door of room.doors) {
-      this.ctx.fillStyle = door.type === "sealed" ? "#ff4444" : "#e6c164";
+      this.ctx.fillStyle =
+        door.type === "sealed"
+          ? "#ff4444"
+          : door.threshold === "rift"
+            ? "#c98ade"
+            : door.threshold === "stair" || door.threshold === "lift"
+              ? "#7fd18a"
+              : "#e6c164";
       this.ctx.fillRect(
         door.x * scale,
         door.y * scale,
@@ -155,7 +163,7 @@ export class DebugOverlay {
 
     for (const hotspot of room.hotspots) {
       if (room.closedHotspotIds.has(hotspot.id)) continue;
-      this.ctx.fillStyle = hotspot.link ? "#c98ade" : "#5cc6d1";
+      this.ctx.fillStyle = hotspot.refusal ? "#8a8a8a" : "#5cc6d1";
       this.ctx.fillRect(hotspot.x * scale - 1, hotspot.y * scale - 1, 3, 3);
     }
 
@@ -182,11 +190,7 @@ export class DebugOverlay {
     const rooms = this.world.rooms;
     const doors = [...this.world.doorById.values()];
     const sealed = doors.filter((door) => door.type === "sealed").length;
-    const links = rooms.reduce(
-      (total, room) =>
-        total + room.hotspots.filter((hotspot) => hotspot.link).length,
-      0,
-    );
+    const rifts = doors.filter((door) => door.threshold === "rift").length;
     const held = this.world.figures.filter((f) => f.holdsShardId).length;
     const worldHooks = this.world.interests.filter((interest) =>
       Boolean(interest.holdsShardId),
@@ -203,7 +207,7 @@ export class DebugOverlay {
       ],
       ["rooms", `${rooms.length}, ${this.world.visited.size} seen this cycle`],
       ["doors", `${doors.length}, ${sealed} sealed`],
-      ["links", String(links)],
+      ["rifts", String(rifts)],
       ["давление", this.pressureAt ? formatPressure(this.pressureAt()) : "—"],
       [
         "glitch",

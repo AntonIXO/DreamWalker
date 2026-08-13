@@ -28,12 +28,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "какао",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png"
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png",
+      "refusal": null
     },
     {
       "id": "kusok-miasa-naznachennyi-bomboi",
@@ -42,30 +42,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "кусок мяса, назначенный бомбой",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png",
+      "refusal": null
     },
     {
       "id": "korobka-s-golosom",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "коробка с голосом",
-      "link": {
-        "to": "room",
-        "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png"
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png",
+      "refusal": null
     },
     {
       "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
@@ -74,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "телефон с камерой, которая не успевает",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
+      "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -101,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--rift-korobka-s-golosom",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "коробка с голосом",
+      "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot"
     }
   ],
   "figureSlots": [
@@ -137,5 +153,7 @@
   "copy": {
     "animations": "мясо **лежит и слегка оседает**, как оседает мясо; молния бьёт в окне ровно тогда, когда камера не готова, зациклено; фигуры подходят ближе на каждой реплике, по 20 см",
     "sound": "гроза за стеклом; голос из коробки, бубнящий исторический нарратив, разборчиво процентов на семьдесят; **отсутствие музыки**, только комната"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

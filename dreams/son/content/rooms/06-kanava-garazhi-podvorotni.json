@@ -28,48 +28,40 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "рюкзак",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png",
+      "refusal": null
     },
     {
       "id": "liuk-v-kanalizaciiu",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "люк в канализацию",
-      "link": {
-        "to": "room",
-        "roomId": "m1-korni",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png",
+      "refusal": null
     },
     {
       "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
-      "link": {
-        "to": "room",
-        "roomId": "10-komnata-s-grobami",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png",
+      "refusal": null
     },
     {
       "id": "sledy-shin-kotoryh-utrom-ne-bylo",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "следы шин, которых утром не было",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
+      "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "06-kanava-garazhi-podvorotni--rift-liuk-v-kanalizaciiu",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "люк в канализацию",
+      "toRoomId": "m1-korni"
+    },
+    {
+      "id": "06-kanava-garazhi-podvorotni--rift-chuzhaia-zhenschina-svalivshaiasia-siuda",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
+      "toRoomId": "10-komnata-s-grobami"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "дождь, не попадающий в канаву; фары разворачиваются по стене гаража **до того, как слышен мотор**; Кирилл трогает люк каждые 20 секунд",
     "sound": "мотор на холостых, приближается неравномерно; хлюпанье; тишина в момент, когда открывается дверь машины — **вырезать весь звук на 1.5 секунды**, это дешевле любого крика"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

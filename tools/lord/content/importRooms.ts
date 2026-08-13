@@ -18,11 +18,7 @@
  *     match is *reported*, never guessed.
  */
 
-import type {
-  DreamRoom,
-  RoomHotspot,
-  RoomLink,
-} from "../../../src/shared/room";
+import type { DreamRoom, RoomHotspot } from "../../../src/shared/room";
 
 export interface ParsedRoom {
   id: string;
@@ -266,10 +262,13 @@ export function linkMatchesObject(from: string, label: string): boolean {
   );
 }
 
-/** Lift / floor-up is a direction, not a room name. */
+/** Lift / floor-up is a direction, not a room name. §07's one-way lift. */
 export function isUpTarget(target: string): boolean {
   return /этаж\s+выше|только\s+вверх|всегда\s+на\s+этаж/iu.test(target);
 }
+
+/** «диванчик → там, где Лёша». */
+const FOLLOWS_A_PERSON = /там,?\s+где\s+(\S+)/iu;
 
 /**
  * Russian first names in the bible to the character-folder ids they belong to.
@@ -311,80 +310,70 @@ function blankCells(): string[] {
 export interface ConversionReport {
   rooms: DreamRoom[];
   unresolved: Array<{ room: string; target: string }>;
+  /**
+   * Every «X → Y» the bible states, resolved to ids where possible.
+   *
+   * These used to become `link` hotspots — touch the rope, wake up in the pool. Travel
+   * goes through thresholds now (§4.1), and a rift is *architecture*: it belongs in the
+   * floor plan, at a position only a person can choose. So the importer reports them
+   * instead of inventing geometry, and `lord floors` is where they become doors.
+   */
+  rifts: RiftBinding[];
 }
 
-function resolveObjectLink(
-  linked: { from: string; to: string } | undefined,
-  parsed: readonly ParsedRoom[],
-): { link: RoomLink | null; unresolvedTarget: string | null } {
-  if (!linked) return { link: null, unresolvedTarget: null };
-  // «диванчик → там, где Лёша» is a link to a *person*, who moves.
-  const follows = linked.to.match(/там,?\s+где\s+(\S+)/iu);
-  if (follows) {
-    return {
-      link: { to: "figure", characterId: characterIdFor(follows[1]!) },
-      unresolvedTarget: null,
-    };
-  }
-  if (isUpTarget(linked.to)) {
-    return { link: { to: "up" }, unresolvedTarget: null };
-  }
-  const toId = resolveTarget(linked.to, parsed);
-  if (toId) {
-    return {
-      link: { to: "room", roomId: toId, entryId: null },
-      unresolvedTarget: null,
-    };
-  }
-  // «достать её нельзя, это проверено» — an unmatched target is more likely an
-  // authored refusal than a typo, so it becomes one and is reported either way.
-  return {
-    link: { to: "refuse", note: linked.to },
-    unresolvedTarget: linked.to,
-  };
+export interface RiftBinding {
+  room: string;
+  objectId: string;
+  label: string;
+  toRoomId: string | null;
+  toFigureId: string | null;
+  rawTarget: string;
 }
 
 /**
- * Re-attach bible links to rooms that were imported under the old prefix matcher.
+ * Where the bible says an object leads, without deciding how you get there.
  *
- * Positions, images, doors and the ASCII stay. Only `kind` / `link` change, so a
- * drawn courtyard does not lose its backdrop when the intercom starts working.
+ * «достать её нельзя, это проверено» — an unmatched target is more likely an authored
+ * refusal than a typo, so it becomes one and is reported either way.
  */
-export function rebindRoomLinks(
-  rooms: DreamRoom[],
+function resolveObjectTarget(
+  linked: { from: string; to: string } | undefined,
   parsed: readonly ParsedRoom[],
-): { rooms: DreamRoom[]; rebound: number } {
-  const byId = new Map(parsed.map((room) => [room.id, room]));
-  let rebound = 0;
-  for (const room of rooms) {
-    const source = byId.get(room.id);
-    if (!source) continue;
-    for (const hotspot of room.hotspots) {
-      const linked = source.links.find((entry) =>
-        linkMatchesObject(entry.from, hotspot.prompt),
-      );
-      const { link } = resolveObjectLink(linked, parsed);
-      const before = JSON.stringify(hotspot.link);
-      const after = JSON.stringify(link);
-      if (before === after) continue;
-      hotspot.link = link;
-      if (link && link.to !== "refuse") hotspot.kind = "link";
-      rebound++;
-    }
+): {
+  toRoomId: string | null;
+  toFigureId: string | null;
+  refusal: string | null;
+  unresolvedTarget: string | null;
+} {
+  const empty = {
+    toRoomId: null,
+    toFigureId: null,
+    refusal: null,
+    unresolvedTarget: null,
+  };
+  if (!linked) return empty;
+  // «диванчик → там, где Лёша» goes to a *person*, who moves.
+  const follows = linked.to.match(FOLLOWS_A_PERSON);
+  if (follows) {
+    return { ...empty, toFigureId: characterIdFor(follows[1]!) };
   }
-  return { rooms, rebound };
+  const toId = resolveTarget(linked.to, parsed);
+  if (toId) return { ...empty, toRoomId: toId };
+  return { ...empty, refusal: linked.to, unresolvedTarget: linked.to };
 }
 
 /**
  * Parsed rooms into room cards.
  *
- * Objects become `look` hotspots laid out along the middle of the room. Anything the
- * bible gives a link becomes a `link` hotspot instead. The positions are placeholders —
- * the author moves them when they draw the walls — but the *ids and prompts* are real,
- * so the writing survives the redraw.
+ * Every object becomes a `look` hotspot laid out along the middle of the room. Where the
+ * bible says an object leads somewhere, that is reported as a rift for the author to
+ * place — it is a doorway, and a doorway goes in a wall somebody drew. The positions
+ * here are placeholders, but the *ids and prompts* are real, so the writing survives the
+ * redraw.
  */
 export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
   const unresolved: ConversionReport["unresolved"] = [];
+  const rifts: RiftBinding[] = [];
 
   const rooms = parsed.map((room) => {
     const hotspots: RoomHotspot[] = room.objects.map((phrase, index) => {
@@ -392,18 +381,29 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
       const linked = room.links.find((entry) =>
         linkMatchesObject(entry.from, label),
       );
-      const { link, unresolvedTarget } = resolveObjectLink(linked, parsed);
-      if (unresolvedTarget) {
-        unresolved.push({ room: room.id, target: unresolvedTarget });
+      const target = resolveObjectTarget(linked, parsed);
+      const objectId = slugify(label) || `object-${index + 1}`;
+      if (target.unresolvedTarget) {
+        unresolved.push({ room: room.id, target: target.unresolvedTarget });
+      }
+      if (target.toRoomId || target.toFigureId) {
+        rifts.push({
+          room: room.id,
+          objectId,
+          label,
+          toRoomId: target.toRoomId,
+          toFigureId: target.toFigureId,
+          rawTarget: linked!.to,
+        });
       }
       return {
-        id: slugify(label) || `object-${index + 1}`,
-        kind: link ? "link" : "look",
+        id: objectId,
+        kind: "look",
         x: 3 + (index % 6) * 2.5,
         y: 4 + Math.floor(index / 6) * 2,
         reach: 1.4,
         prompt: label,
-        link,
+        refusal: target.refusal,
         clueId: null,
         action: null,
         once: false,
@@ -440,6 +440,8 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
         glitchPreset: isMeta ? ("wrong-palette" as const) : ("none" as const),
       },
       camera: "frame" as const,
+      buildingId: null,
+      level: 0,
       revisit: {
         // §06's ditch is the canonical case, and it says so in its own mood line.
         escalates: room.moodDowner <= -4,
@@ -457,5 +459,5 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
     } satisfies DreamRoom;
   });
 
-  return { rooms, unresolved };
+  return { rooms, unresolved, rifts };
 }

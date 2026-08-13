@@ -9,7 +9,7 @@ import { ScriptedMind } from "../mind/scripted";
 import { findTarget } from "./interact";
 import { installPopulation } from "./patch";
 import { createPlayer, updatePlayer } from "./player";
-import { createWorld, resolveLink } from "./world";
+import { createWorld, doorDestination } from "./world";
 
 const artifact = validateDreamArtifact(
   JSON.parse(
@@ -34,18 +34,47 @@ describe("son is playable", () => {
     ).toBe(false);
   });
 
-  test("the intercom is a link to the apartment", () => {
+  test("the intercom archway is a rift into the apartment", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get("19-dvor-i-oranzhevye-lavochki")!;
+    // The intercom itself is a thing to look at again — the way through is the doorway.
     const intercom = room.hotspots.find((hotspot) =>
       hotspot.prompt.includes("домофон"),
+    )!;
+    expect(intercom.kind).toBe("look");
+    expect("link" in intercom).toBe(false);
+
+    const rift = room.doors.find((door) =>
+      door.id.endsWith("podezdnaia-dver-s-domofonom"),
+    )!;
+    expect(rift.threshold).toBe("rift");
+    expect(doorDestination(world, rift).roomId).toBe(
+      "08-kvartira-v-kotoroi-zhivut-drugie",
     );
-    expect(intercom?.link?.to).toBe("room");
-    if (intercom?.link?.to === "room") {
-      expect(resolveLink(world, intercom.link)?.roomId).toBe(
-        "08-kvartira-v-kotoroi-zhivut-drugie",
-      );
+  });
+
+  test("nothing in the dream moves the player by being touched", () => {
+    // The flagship invariant of the change: travel is thresholds, full stop. A hotspot
+    // can close itself and it can refuse; it cannot relocate anybody.
+    for (const room of artifact.rooms) {
+      for (const hotspot of room.hotspots) {
+        expect("link" in hotspot).toBe(false);
+        expect(hotspot.kind).not.toBe("link");
+      }
     }
+  });
+
+  test("every meta-space is still reachable, by rift and only by rift", () => {
+    const world = createWorld(artifact);
+    const rifts = artifact.rooms.flatMap((room) =>
+      room.doors.filter((door) => door.threshold === "rift"),
+    );
+    for (const meta of artifact.rooms.filter((room) => room.kind === "meta")) {
+      expect(meta.doors).toEqual([]);
+      expect(rifts.some((door) => door.toRoomId === meta.id)).toBe(true);
+    }
+    expect(rifts.length).toBeGreaterThan(0);
+    expect(world.rooms.length).toBe(artifact.rooms.length);
   });
 
   test("walking the courtyard floor does not warp", () => {
@@ -157,18 +186,21 @@ describe("son is playable", () => {
     );
   });
 
-  test("the pool lift goes up a floor into the hotel", () => {
+  test("the pool lift only goes up, and comes out in the hotel", () => {
     const world = createWorld(artifact);
-    world.currentRoomId = "07-bassein-i-odnostoronnii-lift";
-    const pool = world.roomById.get(world.currentRoomId)!;
-    const lift = pool.hotspots.find(
-      (hotspot) => hotspot.link?.to === "up",
-    )?.link;
-    expect(lift).toBeDefined();
-    expect(resolveLink(world, lift!)?.roomId).toBe("01-otel-goticheskii-holl");
+    const pool = world.roomById.get("07-bassein-i-odnostoronnii-lift")!;
+    const hotel = world.roomById.get("01-otel-goticheskii-holl")!;
+    const lift = pool.doors.find((door) => door.threshold === "lift")!;
+    expect(lift.levelDelta).toBeGreaterThan(0);
+    expect(doorDestination(world, lift).roomId).toBe(hotel.id);
+    // §07 to the letter: «Третий этаж», and the lift arrives *lower* than it left. Only
+    // a staircase is held to the geometry; a lift is allowed to lie about it.
+    expect(pool.buildingId).toBe("otel");
+    expect(hotel.buildingId).toBe("otel");
+    expect(pool.level).toBeGreaterThan(hotel.level);
   });
 
-  test("walking past the bottle does not throw you into M4", () => {
+  test("walking past the bottle does not throw you anywhere", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get(world.currentRoomId)!;
     const player = createPlayer(room, artifact.spawn.entryId);
@@ -189,7 +221,8 @@ describe("son is playable", () => {
     expect(target?.kind).toBe("hotspot");
     if (target?.kind === "hotspot") {
       expect(target.hotspot.id).toBe("podezdnaia-dver-s-domofonom");
-      expect(target.hotspot.link?.to).toBe("room");
+      // Pressing E on it examines it. It is not a way out any more.
+      expect(target.hotspot.refusal).toBeNull();
     }
   });
 

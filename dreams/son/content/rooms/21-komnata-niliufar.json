@@ -28,30 +28,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "кровать",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--krovat.png"
+      "image": "assets/objects/21-komnata-niliufar--krovat.png",
+      "refusal": null
     },
     {
       "id": "okno-s-vidom",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "окно с видом",
-      "link": {
-        "to": "room",
-        "roomId": "m4-razvilka-gde-ty-ostalsia",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
+      "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png",
+      "refusal": null
     },
     {
       "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
@@ -60,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
+      "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png",
+      "refusal": null
     },
     {
       "id": "veschi-tancevalnoi-gruppy",
@@ -74,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "вещи танцевальной группы",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
+      "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -101,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "21-komnata-niliufar--rift-okno-s-vidom",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "окно с видом",
+      "toRoomId": "m4-razvilka-gde-ty-ostalsia"
     }
   ],
   "figureSlots": [
@@ -137,5 +153,7 @@
   "copy": {
     "animations": "штора у окна; **больше ничего**. Она не двигается, пока не заговорят",
     "sound": "комнатный тон, тёплый; город за окном, далеко; **музыки нет вообще**. Единственная комната без саундтрека, и на контрасте это громче любого трека"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

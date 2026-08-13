@@ -28,15 +28,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "японский сидр",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «МАСШТАБ»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
+      "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png",
+      "refusal": null
     },
     {
       "id": "tribuny",
@@ -45,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "трибуны",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png"
+      "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png",
+      "refusal": null
     },
     {
       "id": "riukzak-s-fruktami-i-vodkoi",
@@ -59,29 +56,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "рюкзак с фруктами и водкой",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
+      "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png",
+      "refusal": null
     },
     {
       "id": "divanchik-na-kotorom-spit-lesha",
-      "kind": "link",
+      "kind": "look",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "диванчик, на котором спит Лёша",
-      "link": {
-        "to": "figure",
-        "characterId": "liosha-gnedkov"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png"
+      "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png",
+      "refusal": null
     },
     {
       "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
@@ -90,12 +84,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
+      "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -117,7 +111,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "13-podzemnye-zaly-cu--rift-iaponskii-sidr",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "японский сидр",
+      "toRoomId": "m2-miasnaia-geometriia"
+    },
+    {
+      "id": "13-podzemnye-zaly-cu--rift-divanchik-na-kotorom-spit-lesha",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": "liosha-gnedkov",
+      "keyId": null,
+      "prompt": "диванчик, на котором спит Лёша",
+      "toRoomId": "13-podzemnye-zaly-cu"
     }
   ],
   "figureSlots": [
@@ -153,5 +183,7 @@
   "copy": {
     "animations": "**стены едут** — секции пола и потолка перестраиваются по фоновому таймеру, беззвучно, всегда за спиной; трибуны заполняются людьми, которых не видно входящими",
     "sound": "гул большого зала, ревер 4 секунды; механические перестроения без звука механизмов (**это важно — стены двигаются в тишине**); поверх — объявление о начале игр, зациклено"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

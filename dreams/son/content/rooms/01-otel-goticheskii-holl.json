@@ -28,48 +28,40 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "три тысячи номерков",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
+      "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png",
+      "refusal": null
     },
     {
       "id": "chuzhie-shtany-na-polu",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "чужие штаны на полу",
-      "link": {
-        "to": "room",
-        "roomId": "07-bassein-i-odnostoronnii-lift",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
+      "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
+      "refusal": null
     },
     {
       "id": "kanat-do-svoda",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "канат до свода",
-      "link": {
-        "to": "room",
-        "roomId": "07-bassein-i-odnostoronnii-lift",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
+      "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png",
+      "refusal": null
     },
     {
       "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
+      "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png",
+      "refusal": null
     },
     {
       "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
@@ -92,12 +84,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
+      "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png",
+      "refusal": null
     },
     {
       "id": "vedro-i-shvabra-uborschika",
@@ -106,12 +98,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "ведро и швабра уборщика",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
+      "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -133,7 +125,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-03-gory-startapery-i-uchenye",
@@ -145,7 +141,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-04-dacha-gnedkovyh",
@@ -157,7 +157,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-05-shesterochka",
@@ -169,7 +173,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-06-kanava-garazhi-podvorotni",
@@ -181,7 +189,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-07-bassein-i-odnostoronnii-lift",
@@ -193,7 +205,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-08-kvartira-v-kotoroi-zhivut-drugie",
@@ -205,7 +221,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-09-hakaton-tretii-po-schetu",
@@ -217,7 +237,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-10-komnata-s-grobami",
@@ -229,7 +253,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-11-evreiskii-gorod",
@@ -241,7 +269,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-12-tiurma-na-ovoschah",
@@ -253,7 +285,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-13-podzemnye-zaly-cu",
@@ -265,7 +301,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-14-poliklinika-v-kaluge",
@@ -277,7 +317,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-15-osennii-les-s-grobom",
@@ -289,7 +333,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-16-norvezhskaia-derevnia-i-pogreb",
@@ -301,7 +349,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-17-dush-iz-kotorogo-nelzia-vyiti",
@@ -313,7 +365,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-18-kupol-bez-sten",
@@ -325,7 +381,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-19-dvor-i-oranzhevye-lavochki",
@@ -337,7 +397,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-20-ofis-sbera",
@@ -349,7 +413,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-21-komnata-niliufar",
@@ -361,7 +429,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-22-kreiser",
@@ -373,7 +445,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-23-nigeriia-konferenciia",
@@ -385,7 +461,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
@@ -397,7 +477,11 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
     },
     {
       "id": "hub--to-25-metro-i-poezd-kotoryi-ne-tot",
@@ -409,7 +493,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "01-otel-goticheskii-holl--rift-chuzhie-shtany-na-polu",
+      "x": 7,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "чужие штаны на полу",
+      "toRoomId": "07-bassein-i-odnostoronnii-lift"
+    },
+    {
+      "id": "01-otel-goticheskii-holl--rift-kanat-do-svoda",
+      "x": 9,
+      "y": 10,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "канат до свода",
+      "toRoomId": "07-bassein-i-odnostoronnii-lift"
     }
   ],
   "figureSlots": [
@@ -453,5 +573,7 @@
   "copy": {
     "animations": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
     "sound": "реверб пустого собора, время затухания около семи секунд; поверх — записанный на диктофон хохот компании из соседней комнаты, зациклен неровно, с разной длиной паузы; ни одного разборчивого слова. Референс: Уильям Басински, «The Disintegration Loops», но с людьми"
-  }
+  },
+  "buildingId": "otel",
+  "level": 1
 }

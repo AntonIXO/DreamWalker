@@ -28,48 +28,40 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "оранжевые лавочки",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png",
+      "refusal": null
     },
     {
       "id": "podezdnaia-dver-s-domofonom",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "подъездная дверь с домофоном",
-      "link": {
-        "to": "room",
-        "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png",
+      "refusal": null
     },
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 0.9,
       "prompt": "бутылка рядом с Турышевым, не первая",
-      "link": {
-        "to": "room",
-        "roomId": "m4-razvilka-gde-ty-ostalsia",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": true,
       "dwellMs": 9000,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png",
+      "refusal": null
     },
     {
       "id": "urna-nabitaia-akkuratno",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "урна, набитая аккуратно",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
+      "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "19-dvor-i-oranzhevye-lavochki--rift-podezdnaia-dver-s-domofonom",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "подъездная дверь с домофоном",
+      "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie"
+    },
+    {
+      "id": "19-dvor-i-oranzhevye-lavochki--rift-butylka-riadom-s-turyshevym-ne-pervaia",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "бутылка рядом с Турышевым, не первая",
+      "toRoomId": "m4-razvilka-gde-ty-ostalsia"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "ничего не происходит. Специально. **Единственная комната без фоновых анимаций**, кроме дыхания персонажей — и это читается как неправильность",
     "sound": "двор днём, дети где-то далеко, машина заводится через дом; **ни одного тревожного слоя** — и от чистоты микса становится не по себе"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

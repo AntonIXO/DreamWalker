@@ -28,12 +28,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "ноутбуки с продавленными экранами",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png"
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png",
+      "refusal": null
     },
     {
       "id": "odinakovye-naushniki",
@@ -42,30 +42,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "одинаковые наушники",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png",
+      "refusal": null
     },
     {
       "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
-      "link": {
-        "to": "room",
-        "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png"
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png",
+      "refusal": null
     },
     {
       "id": "rozovyi-gashish-v-vitrine",
@@ -74,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "розовый гашиш в витрине",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png"
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png",
+      "refusal": null
     },
     {
       "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
@@ -88,12 +84,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "пять тысяч наличными, которые уже отдал",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
+      "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -115,7 +111,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "09-hakaton-tretii-po-schetu--rift-demo-stend-na-kotorom-rabotaet-chto-to-c",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
+      "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
     }
   ],
   "figureSlots": [
@@ -151,5 +167,7 @@
   "copy": {
     "animations": "прогресс-бар, который идёт назад, если смотреть больше пяти секунд; люди хлопают **асинхронно**, каждый в своём темпе; экран демо-стенда показывает твоё же лицо с задержкой в кадр",
     "sound": "гул из трёхсот разговоров, ни одного разборчивого; кулеры; чей-то доклад через плохой микрофон с клиппингом на согласных"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

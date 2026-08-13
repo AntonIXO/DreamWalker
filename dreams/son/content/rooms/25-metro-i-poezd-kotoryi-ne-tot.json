@@ -23,21 +23,17 @@
   "hotspots": [
     {
       "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "табло с расписанием, где номера меняются",
-      "link": {
-        "to": "room",
-        "roomId": "m4-razvilka-gde-ty-ostalsia",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png",
+      "refusal": null
     },
     {
       "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
@@ -46,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png",
+      "refusal": null
     },
     {
       "id": "korobka-s-golosom",
@@ -60,30 +56,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "коробка с голосом",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png",
+      "refusal": null
     },
     {
       "id": "chuzhie-sumki-na-platforme",
-      "kind": "link",
+      "kind": "look",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "чужие сумки на платформе",
-      "link": {
-        "to": "room",
-        "roomId": "m3-sklad-ostavlennogo",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
+      "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "25-metro-i-poezd-kotoryi-ne-tot--rift-tablo-s-raspisaniem-gde-nomera-meniaiuts",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "табло с расписанием, где номера меняются",
+      "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+    },
+    {
+      "id": "25-metro-i-poezd-kotoryi-ne-tot--rift-chuzhie-sumki-na-platforme",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "чужие сумки на платформе",
+      "toRoomId": "m3-sklad-ostavlennogo"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "поезд проходит **не останавливаясь**, три раза подряд, с интервалом 40 секунд; толпа поворачивает головы синхронно; на табло время идёт назад в одной строке",
     "sound": "объявления диктора, слова сливаются, интонация штатная; грохот прохода состава; гул платформы. Референс: тот самый звук метро, записанный слишком близко к рельсу"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

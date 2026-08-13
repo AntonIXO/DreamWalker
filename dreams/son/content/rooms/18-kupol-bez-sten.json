@@ -23,39 +23,31 @@
   "hotspots": [
     {
       "id": "karkas-kupola-bez-sten",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "каркас купола без стен",
-      "link": {
-        "to": "room",
-        "roomId": "03-gory-startapery-i-uchenye",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
+      "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png",
+      "refusal": null
     },
     {
       "id": "koliuchaia-provoloka",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "колючая проволока",
-      "link": {
-        "to": "room",
-        "roomId": "m2-miasnaia-geometriia",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
+      "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png",
+      "refusal": null
     },
     {
       "id": "zveri",
@@ -64,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "звери",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--zveri.png"
+      "image": "assets/objects/18-kupol-bez-sten--zveri.png",
+      "refusal": null
     },
     {
       "id": "snezhnoe-pole-do-gorizonta",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "снежное поле до горизонта",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
+      "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "18-kupol-bez-sten--rift-karkas-kupola-bez-sten",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "каркас купола без стен",
+      "toRoomId": "03-gory-startapery-i-uchenye"
+    },
+    {
+      "id": "18-kupol-bez-sten--rift-koliuchaia-provoloka",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "колючая проволока",
+      "toRoomId": "m2-miasnaia-geometriia"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "**звери танцуют** — не анимация зверя, а анимация человека, натянутая на скелет зверя, с неправильными суставами. Это тот случай, когда кривой ретаргет — художественное решение; проволока покачивается",
     "sound": "ветер поля; поверх — что-то вроде плясовой, сыгранной на расстроенном инструменте с плавающим темпом; ни одного звериного звука. **Звери молчат, пока танцуют**"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

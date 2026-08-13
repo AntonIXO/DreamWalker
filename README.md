@@ -69,8 +69,9 @@ src/server/        OAuth/account RPC, AI agents, API, and static production serv
 
 There is no generated overworld. The diary in `dream-walker-bible.md` / `dream-walker-new/`
 *is* the mission: 25 places, 4 meta-spaces, 14 figures. Rooms are ASCII boxes with
-authored links. You leave a room by touching a thing (LSD linking) or by walking into a
-hotel-style threshold. Inhabit deals every card into a new arrangement each run;
+authored connections. You leave a room by walking into a threshold — a door, a staircase,
+a one-way lift, or a `rift`, which is a doorway that comes out somewhere it should not.
+Inhabit deals every card into a new arrangement each run;
 training does the same shuffle locally so the game starts without a model.
 
 Every rule application is validated and rolled back if it would make the dream

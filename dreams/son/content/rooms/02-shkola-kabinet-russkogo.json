@@ -28,12 +28,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "парты",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--party.png"
+      "image": "assets/objects/02-shkola-kabinet-russkogo--party.png",
+      "refusal": null
     },
     {
       "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
@@ -42,47 +42,40 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "листочки, на которых текст меняется, если отвести взгляд",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
+      "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png",
+      "refusal": null
     },
     {
       "id": "grusha-za-steklom",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "груша за стеклом",
-      "link": {
-        "to": "refuse",
-        "note": "недостижима, при попытке трогать камера отъезжает назад"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png"
+      "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png",
+      "refusal": "недостижима, при попытке трогать камера отъезжает назад"
     },
     {
       "id": "mat-v-uglu-s-rasstelennoi-posteliu",
-      "kind": "link",
+      "kind": "look",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "мат в углу с расстеленной постелью",
-      "link": {
-        "to": "room",
-        "roomId": "07-bassein-i-odnostoronnii-lift",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
+      "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -104,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "02-shkola-kabinet-russkogo--rift-mat-v-uglu-s-rasstelennoi-posteliu",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "мат в углу с расстеленной постелью",
+      "toRoomId": "07-bassein-i-odnostoronnii-lift"
     }
   ],
   "figureSlots": [
@@ -140,5 +153,7 @@
   "copy": {
     "animations": "плоды груши качаются от ветра, которого нет; текст на листочке перебирает варианты, когда камера не на нём; учитель ходит между рядами по маршруту, который замыкается сам на себя",
     "sound": "батарея гудит на 50 Гц; тиканье часов, которое **опережает секунду процента на три** — на слух незаметно, но через минуту начинает бесить; скрип мела вне поля зрения. Референс: ранний Boards of Canada, где плёнка чуть плывёт по высоте тона"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

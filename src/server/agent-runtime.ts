@@ -112,11 +112,10 @@ const populationProposalSchema = z.object({
       }),
     )
     .max(32),
-  relinks: z
+  retargets: z
     .array(
       z.object({
-        roomId: z.string().max(120),
-        hotspotId: z.string().max(120),
+        doorId: z.string().max(120),
         toRoomId: z.string().max(120),
       }),
     )
@@ -178,12 +177,12 @@ const patchSchema = z.discriminatedUnion("kind", [
     toFigureId: z.string(),
     reason: z.string().max(300),
   }),
-  // §4.1 — «комнаты соединяются без логики». Where an object throws you is the most
-  // in-genre thing the sleeper can change, and the object itself stays where it was.
+  // §4.1 — «комнаты соединяются без логики». Where a rift comes out is the most
+  // in-genre thing the sleeper can change, and the archway itself stays where it was.
+  // Rifts only; `applyPatch` refuses a staircase even if this schema let one through.
   z.object({
-    kind: z.literal("relink"),
-    roomId: z.string(),
-    hotspotId: z.string(),
+    kind: z.literal("retargetDoor"),
+    doorId: z.string(),
     toRoomId: z.string(),
     reason: z.string().max(300),
   }),
@@ -677,13 +676,13 @@ export class AgentRuntime {
     this.acquire();
     try {
       const slots = populationSlots(this.artifact);
-      const linkables = this.artifact.rooms.flatMap((room) =>
-        room.hotspots
-          .filter((hotspot) => hotspot.link !== null)
-          .map((hotspot) => ({
-            roomId: room.id,
-            hotspotId: hotspot.id,
-            prompt: hotspot.prompt,
+      const rifts = this.artifact.rooms.flatMap((room) =>
+        room.doors
+          .filter((door) => door.threshold === "rift")
+          .map((door) => ({
+            doorId: door.id,
+            inRoomId: room.id,
+            prompt: door.prompt,
           })),
       );
       const proposal = await this.generate(
@@ -710,8 +709,8 @@ export class AgentRuntime {
               archetypeId,
             })),
           )}`,
-          `Авторские линки, которые можно перенаправить через relinks (id не выдумывать):\n${json(
-            linkables,
+          `Разрывы, которые можно перенаправить через retargets (id не выдумывать; лестницы и лифты трогать нельзя):\n${json(
+            rifts,
           )}`,
           `Верни описание для каждого фиксированного слота вещи. Не меняй id:\n${json(
             slots.interests,
@@ -1003,9 +1002,9 @@ export class AgentRuntime {
               atmosphere: room.atmosphere,
               // Only these can be shifted or rewired, so the model sees its own options.
               variants: Object.keys(room.cellVariants),
-              links: room.hotspots
-                .filter((hotspot) => hotspot.link)
-                .map((hotspot) => hotspot.id),
+              rifts: room.doors
+                .filter((door) => door.threshold === "rift")
+                .map((door) => door.id),
             })),
           )}`,
           `Допустимые seed-зацепки:\n${json(this.artifact.shards)}`,
@@ -1030,6 +1029,16 @@ export class AgentRuntime {
   ): MapPatch[] {
     const rooms = new Set(request.world.rooms.map((room) => room.id));
     const doors = new Set(request.world.doors.map((door) => door.id));
+    // Only a rift may be retargeted. Checked here as well as in `applyPatch`, because a
+    // rule that lives in one place stops being enforced the first time somebody adds a
+    // second call site — the same reason `mayYieldShard` is duplicated.
+    const rifts = new Set(
+      this.artifact.rooms.flatMap((room) =>
+        room.doors
+          .filter((door) => door.threshold === "rift")
+          .map((door) => door.id),
+      ),
+    );
     const figures = new Set(request.world.figures.map((figure) => figure.id));
     const interests = new Set(
       request.world.interests.map((interest) => interest.id),
@@ -1057,8 +1066,8 @@ export class AgentRuntime {
             );
           case "relocateShard":
             return shards.has(patch.shardId) && figures.has(patch.toFigureId);
-          case "relink":
-            return rooms.has(patch.roomId) && rooms.has(patch.toRoomId);
+          case "retargetDoor":
+            return rifts.has(patch.doorId) && rooms.has(patch.toRoomId);
           case "shiftWalls":
           case "closeHotspot":
           case "openHotspot":

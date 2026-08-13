@@ -23,36 +23,31 @@
   "hotspots": [
     {
       "id": "bele-na-stenah",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "бельё на стенах",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «ЧУЖОЙ СТЫД»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png",
+      "refusal": null
     },
     {
       "id": "panel-lifta-bez-knopki-vniz",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "панель лифта без кнопки «вниз»",
-      "link": {
-        "to": "up"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png",
+      "refusal": null
     },
     {
       "id": "polotence-radi-kotorogo-prishel-ne-nahod",
@@ -61,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "полотенце, ради которого пришёл, — не находится",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png",
+      "refusal": null
     },
     {
       "id": "voda-v-chashe-basseina-slishkom-nepodviz",
@@ -75,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "вода в чаше бассейна, слишком неподвижная",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
+      "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -102,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "07-bassein-i-odnostoronnii-lift--rift-bele-na-stenah",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "бельё на стенах",
+      "toRoomId": "m3-sklad-ostavlennogo"
+    },
+    {
+      "id": "07-bassein-i-odnostoronnii-lift--rift-panel-lifta-bez-knopki-vniz",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "lift",
+      "levelDelta": 1,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "панель лифта без кнопки «вниз»",
+      "toRoomId": "01-otel-goticheskii-holl"
     }
   ],
   "figureSlots": [
@@ -140,5 +171,7 @@
   "copy": {
     "animations": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
     "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
-  }
+  },
+  "buildingId": "otel",
+  "level": 3
 }

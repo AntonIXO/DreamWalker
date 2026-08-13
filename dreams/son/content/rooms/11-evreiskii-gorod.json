@@ -23,20 +23,17 @@
   "hotspots": [
     {
       "id": "kinder-siurpriz-s-lavochku",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "киндер-сюрприз с лавочку",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «МАСШТАБ»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
+      "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png",
+      "refusal": null
     },
     {
       "id": "fonari-kotorye-gasiat-pri-zvuke",
@@ -45,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "фонари, которые гасят при звуке",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
+      "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png",
+      "refusal": null
     },
     {
       "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
@@ -59,30 +56,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "расписание — не транспорта, а **безопасных часов**",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
+      "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png",
+      "refusal": null
     },
     {
       "id": "stavni-na-vsem",
-      "kind": "link",
+      "kind": "look",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "ставни на всём",
-      "link": {
-        "to": "room",
-        "roomId": "01-otel-goticheskii-holl",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
+      "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -104,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "11-evreiskii-gorod--rift-kinder-siurpriz-s-lavochku",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "киндер-сюрприз с лавочку",
+      "toRoomId": "m2-miasnaia-geometriia"
+    },
+    {
+      "id": "11-evreiskii-gorod--rift-stavni-na-vsem",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "ставни на всём",
+      "toRoomId": "01-otel-goticheskii-holl"
     }
   ],
   "figureSlots": [
@@ -140,5 +169,7 @@
   "copy": {
     "animations": "жители синхронно замирают при любом громком звуке, включая твой; тени великанов проходят по фасадам сверху, самих великанов не видно; киндер медленно вращается",
     "sound": "город на приглушёнке, все говорят вполголоса; шаги сверху, огромные, с интервалом в 4 секунды; при твоём громком действии — **общая пауза на две секунды**, и все смотрят"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

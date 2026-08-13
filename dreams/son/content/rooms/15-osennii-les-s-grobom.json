@@ -23,39 +23,31 @@
   "hotspots": [
     {
       "id": "grob",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "гроб",
-      "link": {
-        "to": "room",
-        "roomId": "10-komnata-s-grobami",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
+      "image": "assets/objects/15-osennii-les-s-grobom--grob.png",
+      "refusal": null
     },
     {
       "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "пирамида-туалет с советским кафелем внутри",
-      "link": {
-        "to": "room",
-        "roomId": "07-bassein-i-odnostoronnii-lift",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
+      "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png",
+      "refusal": null
     },
     {
       "id": "listia-shurshaschie-ne-v-takt-shagam",
@@ -64,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "листья, шуршащие не в такт шагам",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
+      "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png",
+      "refusal": null
     },
     {
       "id": "fotografiia-klassnogo-rukovoditelia-lica",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "фотография классного руководителя, лица не разобрать",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
+      "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "15-osennii-les-s-grobom--rift-grob",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "гроб",
+      "toRoomId": "10-komnata-s-grobami"
+    },
+    {
+      "id": "15-osennii-les-s-grobom--rift-piramida-tualet-s-sovetskim-kafelem-vnut",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "пирамида-туалет с советским кафелем внутри",
+      "toRoomId": "07-bassein-i-odnostoronnii-lift"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "процессия **приплясывает**, шаг с подбросом, зациклено; гроб покачивается; листья падают снизу вверх в одном углу кадра, если приглядеться",
     "sound": "та самая труба из мема, но замедленная в четыре раза и пропущенная через ревер, до состояния, где мелодия почти не узнаётся — узнавание должно приходить на третьей секунде и бить под дых"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

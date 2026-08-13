@@ -29,7 +29,7 @@ import { Cycle, Journal } from "./game/cycle";
 import { WordNotebook } from "./game/wordNotebook";
 import { Action, Input } from "./game/input";
 import { updateFigures } from "./game/figures";
-import { applyPopulationRelinks, installPopulation } from "./game/patch";
+import { applyPopulationRetargets, installPopulation } from "./game/patch";
 import { walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
@@ -247,7 +247,6 @@ async function boot(): Promise<void> {
         if (line) hud.whisper(line, 4);
       },
       onRefused: (doorId) => observations.noteRefusal(doorId),
-      onRefusedLink: (note) => hud.whisper(note, 4),
     },
     transition,
   );
@@ -587,7 +586,7 @@ async function boot(): Promise<void> {
         heartbeat.planCycleExit(),
       );
       resetWorld(world);
-      applyPopulationRelinks(world);
+      applyPopulationRetargets(world);
       heartbeat.applyCyclePlan(plan);
       observations.reset();
       heartbeat.resetCycle();
@@ -776,9 +775,11 @@ async function boot(): Promise<void> {
         dialogue.open(target.figure);
       } else if (target?.kind === "hotspot") {
         const hotspot = target.hotspot;
-        // A link is a place, not a thing to look at: touching it moves you.
-        if (hotspot.kind === "link" || hotspot.link) {
+        // An authored refusal is the answer — «достать её нельзя, это проверено». It
+        // never reaches the model, which has nothing to add to a rule.
+        if (hotspot.refusal) {
           session.use(hotspot);
+          hud.whisper(hotspot.refusal, 4);
         } else {
           void thinking
             .run("Рассматривает деталь мира", () =>

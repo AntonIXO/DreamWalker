@@ -23,39 +23,31 @@
   "hotspots": [
     {
       "id": "vydrannyi-zub",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "выдранный зуб",
-      "link": {
-        "to": "room",
-        "roomId": "m2-miasnaia-geometriia",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
+      "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png",
+      "refusal": null
     },
     {
       "id": "iaschik-s-kapibarami-i-kotom",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "ящик с капибарами и котом",
-      "link": {
-        "to": "room",
-        "roomId": "19-dvor-i-oranzhevye-lavochki",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png"
+      "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png",
+      "refusal": null
     },
     {
       "id": "kreslo",
@@ -64,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "кресло",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png"
+      "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png",
+      "refusal": null
     },
     {
       "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "велосипедисты, проезжающие сквозь коридор",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
+      "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "14-poliklinika-v-kaluge--rift-vydrannyi-zub",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "выдранный зуб",
+      "toRoomId": "m2-miasnaia-geometriia"
+    },
+    {
+      "id": "14-poliklinika-v-kaluge--rift-iaschik-s-kapibarami-i-kotom",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "ящик с капибарами и котом",
+      "toRoomId": "19-dvor-i-oranzhevye-lavochki"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "кот трогает капибару лапой каждые 3 секунды, бесконечно; капибары не реагируют; зуб в лотке **подрагивает**, когда на него не смотрят",
     "sound": "бормашина, длинная, никогда не заканчивающаяся; звонки велосипедов, приближающиеся по коридору; папин голос, чуть громче, чем позволяет помещение"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

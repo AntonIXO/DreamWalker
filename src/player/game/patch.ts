@@ -218,7 +218,7 @@ export function installPopulation(
   };
   world.baseFigures = figures.map(cloneFigureState);
   world.baseInterests = interests.map((interest) => ({ ...interest }));
-  const affected = applyPopulationRelinks(world, population);
+  const affected = applyPopulationRetargets(world, population);
   for (const interest of interests) affected.add(interest.roomId);
   return {
     ok: true,
@@ -226,18 +226,17 @@ export function installPopulation(
   };
 }
 
-/** Re-deal this run's object-links. Safe to call after `resetWorld`. */
-export function applyPopulationRelinks(
+/** Re-deal this run's rifts. Safe to call after `resetWorld`. */
+export function applyPopulationRetargets(
   world: WorldState,
   population: DreamPopulation | null = world.population,
 ): Set<string> {
   const affected = new Set<string>();
-  for (const relink of population?.relinks ?? []) {
+  for (const retarget of population?.retargets ?? []) {
     const result = applyPatch(world, {
-      kind: "relink",
-      roomId: relink.roomId,
-      hotspotId: relink.hotspotId,
-      toRoomId: relink.toRoomId,
+      kind: "retargetDoor",
+      doorId: retarget.doorId,
+      toRoomId: retarget.toRoomId,
       reason: "inhabit",
     });
     if (result.ok) {
@@ -394,39 +393,38 @@ function relocateShard(
 }
 
 /**
- * The sleeper rewires where an object throws you.
+ * The sleeper points a rift somewhere else.
  *
- * §4.1 — «комнаты соединяются без логики, но переход всегда через порог». The rope is
- * still hanging there; it simply arrives somewhere else now. This is `retileRoom`'s
- * successor and it is a far better use of a beat: repainting a floor is decoration,
- * moving where a door goes is the dream.
+ * §4.1 — «комнаты соединяются без логики, но переход всегда через порог». The archway is
+ * still where it was; it simply arrives somewhere else now. Repainting a floor is
+ * decoration; moving where a doorway goes is the dream.
+ *
+ * Rifts only, and that is the load-bearing part. A staircase that could be rewired would
+ * make the vertical map a lie, and the vertical map is the one thing in this dream that
+ * is supposed to hold — the same reason `openDoor` is restricted to `sealHistory`.
  */
-function relink(
+function retargetDoor(
   world: WorldState,
-  roomId: string,
-  hotspotId: string,
+  doorId: string,
   toRoomId: string,
 ): PatchResult {
-  const room = world.roomById.get(roomId);
-  if (!room) return refuse(`no room ${roomId}`);
+  const door = world.doorById.get(doorId);
+  if (!door) return refuse(`no door ${doorId}`);
+  const home = world.roomIdByDoorId.get(doorId);
+  if (!home) return refuse(`door ${doorId} belongs to no room`);
   if (!world.roomById.has(toRoomId)) return refuse(`no room ${toRoomId}`);
-  const hotspot = room.hotspots.find((h) => h.id === hotspotId);
-  if (!hotspot) return refuse(`no hotspot ${hotspotId} in ${roomId}`);
-  if (hotspot.kind !== "link" || hotspot.link === null) {
-    return refuse(`${hotspotId} does not lead anywhere to begin with`);
+  if (door.threshold !== "rift") {
+    return refuse(`${doorId} is a ${door.threshold}, and those do not move`);
   }
-  // A refusal is authored on purpose («достать её нельзя, это проверено»); turning one
-  // into a working door would undo the point of the object.
-  if (hotspot.link.to === "refuse") {
-    return refuse(`${hotspotId} is a refusal, not a passage`);
-  }
-  if (hotspot.link.to === "room" && hotspot.link.roomId === toRoomId) {
+  if (door.toRoomId === toRoomId && !door.toFigureId) {
     return refuse("already leads there");
   }
-  hotspot.link = { to: "room", roomId: toRoomId, entryId: null };
+  door.toRoomId = toRoomId;
+  door.toEntryId = null;
+  door.toFigureId = null;
   return {
     ok: true,
-    affectedRooms: [roomId],
+    affectedRooms: [home],
     note: "Что-то ведёт не туда, куда вело.",
   };
 }
@@ -494,8 +492,8 @@ export function applyPatch(world: WorldState, patch: MapPatch): PatchResult {
       return placeInterest(world, patch.interest);
     case "relocateShard":
       return relocateShard(world, patch.shardId, patch.toFigureId);
-    case "relink":
-      return relink(world, patch.roomId, patch.hotspotId, patch.toRoomId);
+    case "retargetDoor":
+      return retargetDoor(world, patch.doorId, patch.toRoomId);
     case "shiftWalls":
       return shiftWalls(world, patch.roomId, patch.variantId);
     case "closeHotspot":
@@ -562,7 +560,8 @@ export function patchTouches(patch: MapPatch, world: WorldState): PatchScope[] {
   switch (patch.kind) {
     case "sealDoor":
     case "openDoor":
-    case "retypeDoor": {
+    case "retypeDoor":
+    case "retargetDoor": {
       const door = world.doorById.get(patch.doorId);
       const home = world.roomIdByDoorId.get(patch.doorId);
       if (!door || !home) return [];
@@ -590,7 +589,6 @@ export function patchTouches(patch: MapPatch, world: WorldState): PatchScope[] {
     // holder's room used to block a whole room for a change nobody could observe.
     case "relocateShard":
       return [];
-    case "relink":
     case "closeHotspot":
     case "openHotspot": {
       const room = world.roomById.get(patch.roomId);

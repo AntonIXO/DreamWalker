@@ -9,10 +9,14 @@ A top-down web game where a "sanitar" infiltrates a sleeping person's dream.
 is the AI/engine seam. This repo is the technical foundation: world editor, artifact
 format, player, heartbeat, and the model.
 
-The world is **29 authored rooms, not a generated overworld**. Travel is LSD linking
-(touch a thing, hard cut) plus a few real hotel thresholds. The sleeper does not invent
-rooms — it deals the catalog (all 25 places, 4 meta-spaces, 14 figures) into a new
-arrangement each run.
+The world is **29 authored rooms, not a generated overworld**. Travel is always through a
+threshold you walk into — §4.1: «Никаких телепортов на ровном месте — всегда есть створ,
+через который прошли.» What the destinations lose in logic they keep: a `rift` is a
+doorway that does not lead where it should, and it is what LSD-style linking became.
+`RoomDoor.threshold` (`door` / `stair` / `lift` / `rift`) is orthogonal to
+`RoomDoor.type`, which is only ever a lock policy. The sleeper does not invent rooms — it
+deals the catalog (all 25 places, 4 meta-spaces, 14 figures) into a new arrangement each
+run, and it may retarget a rift but never a staircase.
 
 Comments throughout reference the concept doc by section (`§3`, `§6`, …). When changing
 behaviour those sections describe, read them first — several non-obvious decisions
@@ -140,11 +144,23 @@ author-time — never runtime.
 
 ## Things that will bite you
 
-- **Hotel hub doors stay on the wall face.** Punching `_` under them turns the first
-  floor row into a warp carpet. `punchDoorThresholds` skips y=1 and the south wall;
-  the walker presses into the solid cell (`doorIsUsable`).
-- **Links are the map.** `--wire` is a backup spine, not the grammar. The courtyard
-  exit is the intercom, not the bottle (bottle → М4 is once, close-range, optional).
+- **A door set into a wall stays solid.** Punching `_` under the hotel's ring turns the
+  first floor row into a warp carpet. `punchDoorThresholds` asks the mask — a door
+  standing on anything solid is skipped — and the walker presses into that solid cell
+  (`player.ts` fires the door on the tile *ahead*). The old rule was `y <= 1 ||
+  y >= height - 1`, a proxy for "on the outer ring" that stops being true the moment a
+  floor has an interior wall.
+- **`settleDoor` returns an authored door untouched** when it is already usable and
+  overlaps nothing. It is a repair pass for generated geometry, and `--wire`/`--rebind`
+  used to run it over every door in every room and write the files back, so a
+  hand-placed door survived exactly until the next command.
+- **Rifts are the map.** `--wire` is a backup spine, not the grammar. The courtyard exit
+  is the archway by the intercom. A meta-space authors no doors of its own, so an inbound
+  rift somewhere else is its only way in — the validator requires one per meta room, or
+  its art ships to nobody.
+- **Only a staircase is held to the geometry.** `stair` must land at `level + levelDelta`
+  in the same `buildingId`. A `lift` that goes up and arrives *lower* is §07's joke, and a
+  rift is illogical by definition; those two are allowed to lie about where they go.
 - **Frame names are a cross-module string contract**: `tools/lord/art/silhouettes.ts`
   writes `player_<dir>_<frame>` / `figure_<archetype>_<dir>_<frame>`, and
   `src/player/render/walkerView.ts` reconstructs them. Atlas frames must all be

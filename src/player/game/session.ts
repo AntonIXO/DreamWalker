@@ -2,14 +2,16 @@
  * Walking the dream: which room we are in, and what happens when we leave it.
  *
  * This is the piece format 3 kept inline in `main.ts` as a nine-line warp block. It grew
- * because rooms are discrete now and there are four different ways out of one — a door,
- * a link, a timer, and the sleeper moving something while you were not looking.
+ * because rooms are discrete now and there are three different ways out of one — a
+ * threshold, a timer, and the sleeper moving something while you were not looking.
  *
- * **Linking** is the mechanic from LSD: Dream Emulator. Osamu Sato built it out of being
- * bad at racing games: he kept hitting walls, and wondered what would happen if hitting
- * something *was* the point and it threw you somewhere else. Here it means poking the
- * world — the safe channel, the thing that never gives the sanitar away — stops being
- * free. It cannot cost you your cover, so instead it costs you your position.
+ * Touching a thing used to be a fourth: LSD: Dream Emulator's linking, which Osamu Sato
+ * built out of being bad at racing games — he kept hitting walls and wondered what would
+ * happen if hitting something *was* the point. It is gone. What it bought, the map
+ * connecting without logic, is bought instead by the `rift` threshold, and §4.1 is the
+ * reason: «Никаких телепортов на ровном месте — всегда есть створ, через который прошли.»
+ * Poking the world is a safe channel again, and being thrown somewhere costs you the walk
+ * into the doorway that threw you.
  */
 
 import type { RoomHotspot } from "../../shared/room";
@@ -27,21 +29,19 @@ import {
 } from "./player";
 import {
   currentRoom,
+  doorDestination,
   noteVisit,
-  resolveLink,
   visitCount,
   type RoomState,
   type WorldState,
 } from "./world";
 
-/** How the arrival should feel. A door is continuous; a link is not. */
-export type ArrivalStyle = "door" | "link" | "meta-exit" | "cut";
+/** How the arrival should feel. A door is continuous; a rift is not. */
+export type ArrivalStyle = "door" | "rift" | "meta-exit" | "cut";
 
 export interface SessionCallbacks {
   onEnterRoom(room: RoomState, visits: number): void;
   onRefused(doorId: string, text: string): void;
-  /** A `refuse` link fired — «достать её нельзя, это проверено». */
-  onRefusedLink(note: string): void;
 }
 
 interface MetaVisit {
@@ -100,7 +100,12 @@ export class DreamSession {
     if (this.player.enteredDoorId) {
       const door = this.world.doorById.get(this.player.enteredDoorId);
       if (door) {
-        void this.enterRoom(door.toRoomId, door.toEntryId, "door");
+        const to = doorDestination(this.world, door);
+        void this.enterRoom(
+          to.roomId,
+          to.entryId,
+          door.threshold === "rift" ? "rift" : "door",
+        );
         return;
       }
     }
@@ -157,26 +162,22 @@ export class DreamSession {
     this.fire(hotspot);
   }
 
+  /**
+   * Standing near a thing long enough for it to go off by itself.
+   *
+   * This used to be able to teleport — the courtyard bottle threw you into М4 after nine
+   * seconds. Nothing here moves the player any more; a thing can only close itself.
+   */
   private fire(hotspot: RoomHotspot): void {
-    const room = this.room;
-    if (hotspot.once) room.closedHotspotIds.add(hotspot.id);
-    if (!hotspot.link) return;
-
-    if (hotspot.link.to === "refuse") {
-      this.callbacks.onRefusedLink(hotspot.link.note);
-      return;
-    }
-    const destination = resolveLink(this.world, hotspot.link);
-    if (!destination) return;
-    void this.enterRoom(destination.roomId, destination.entryId, "link");
+    if (hotspot.once) this.room.closedHotspotIds.add(hotspot.id);
   }
 
   /**
    * Arrive somewhere.
    *
    * Doors are continuous, so they get no wipe: you walked through, and the room changing
-   * under you is the whole of it. A link is a cut, and gets the transition and a harder
-   * shiver, because being thrown is supposed to read as being thrown.
+   * under you is the whole of it. A rift is a cut, and gets the transition and a harder
+   * shiver, because arriving somewhere that does not follow is supposed to read as such.
    */
   async enterRoom(
     roomId: string,
@@ -188,7 +189,7 @@ export class DreamSession {
 
     this.transitioning = true;
     try {
-      if (style === "link" || style === "meta-exit") {
+      if (style === "rift" || style === "meta-exit") {
         await this.transition?.play();
       }
 
@@ -215,7 +216,7 @@ export class DreamSession {
 
       const visits = noteVisit(this.world, roomId);
       this.escalateRevisit(room, visits);
-      if (style !== "cut") this.shiver.trigger(style === "link" ? 0.6 : 0.3);
+      if (style !== "cut") this.shiver.trigger(style === "rift" ? 0.6 : 0.3);
       this.callbacks.onEnterRoom(room, visits);
     } finally {
       this.transitioning = false;

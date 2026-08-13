@@ -23,21 +23,17 @@
   "hotspots": [
     {
       "id": "elt-s-morrowind",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "ЭЛТ с Morrowind",
-      "link": {
-        "to": "room",
-        "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
+      "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png",
+      "refusal": null
     },
     {
       "id": "shirokii-monitor-s-chem-to-korporativnym",
@@ -46,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "широкий монитор с чем-то корпоративным",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
+      "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png",
+      "refusal": null
     },
     {
       "id": "beidzhi-na-shnurkah",
@@ -60,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "бейджи на шнурках",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
+      "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
+      "refusal": null
     },
     {
       "id": "lift",
@@ -74,30 +70,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "лифт",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--lift.png"
+      "image": "assets/objects/20-ofis-sbera--lift.png",
+      "refusal": null
     },
     {
       "id": "zakrytaia-dver-v-konce-koridora",
-      "kind": "link",
+      "kind": "look",
       "x": 13,
       "y": 4,
       "reach": 1.4,
       "prompt": "закрытая дверь в конце коридора",
-      "link": {
-        "to": "room",
-        "roomId": "21-komnata-niliufar",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
+      "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -119,7 +111,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "20-ofis-sbera--rift-elt-s-morrowind",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "ЭЛТ с Morrowind",
+      "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+    },
+    {
+      "id": "20-ofis-sbera--rift-zakrytaia-dver-v-konce-koridora",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "закрытая дверь в конце коридора",
+      "toRoomId": "21-komnata-niliufar"
     }
   ],
   "figureSlots": [
@@ -155,5 +183,7 @@
   "copy": {
     "animations": "на ЭЛТ **идёт настоящий геймплей** — персонаж стоит в Балморе, камера чуть покачивается, как будто кто-то держит стик; строчная развёртка мерцает; двери лифта открываются на этаж позже вызова",
     "sound": "пятнадцатикилогерцовый писк строчной развёртки (те, кто слышит, услышат, остальные почувствуют); кондиционер; **музыка Morrowind, доносящаяся тихо** — Джереми Соул через динамик кинескопа, самый безжалостный ностальгический удар из доступных"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

@@ -102,31 +102,25 @@ describe("links", () => {
     expect(linkMatchesObject("домофон", "оранжевые лавочки")).toBe(false);
   });
 
-  test("the courtyard intercom throws you into the apartment", () => {
-    const yard = toRoomCards(parsed).rooms.find((room) =>
-      room.id.startsWith("19"),
-    )!;
-    const intercom = yard.hotspots.find((hotspot) =>
-      hotspot.prompt.includes("домофон"),
+  test("the courtyard intercom is reported as a way into the apartment", () => {
+    // Reported, not built. A rift is a doorway and a doorway goes in a wall somebody
+    // drew, so the importer says what connects and `lord floors` says where.
+    const { rifts, rooms } = toRoomCards(parsed);
+    const intercom = rifts.find(
+      (rift) => rift.room.startsWith("19") && rift.label.includes("домофон"),
     );
-    expect(intercom?.link).toEqual({
-      to: "room",
-      roomId: "08-kvartira-v-kotoroi-zhivut-drugie",
-      entryId: null,
-    });
+    expect(intercom?.toRoomId).toBe("08-kvartira-v-kotoroi-zhivut-drugie");
+
+    const yard = rooms.find((room) => room.id.startsWith("19"))!;
+    const hotspot = yard.hotspots.find((h) => h.prompt.includes("домофон"))!;
+    expect(hotspot.kind).toBe("look");
   });
 
-  test("«там, где Лёша» becomes a link to a person, not a place", () => {
-    const halls = toRoomCards(parsed).rooms.find((room) =>
-      room.id.startsWith("13"),
-    )!;
-    const couch = halls.hotspots.find(
-      (hotspot) => hotspot.link?.to === "figure",
-    );
-    expect(couch?.link).toEqual({
-      to: "figure",
-      characterId: "liosha-gnedkov",
-    });
+  test("«там, где Лёша» is reported against a person, not a place", () => {
+    const { rifts } = toRoomCards(parsed);
+    const couch = rifts.find((rift) => rift.toFigureId !== null);
+    expect(couch?.toFigureId).toBe("liosha-gnedkov");
+    expect(couch?.toRoomId).toBeNull();
   });
 });
 
@@ -150,10 +144,17 @@ describe("toRoomCards", () => {
 
   test("an unmatched target is reported and becomes an authored refusal", () => {
     expect(unresolved.length).toBeGreaterThan(0);
+    const refusals = rooms.flatMap((room) =>
+      room.hotspots.filter((hotspot) => hotspot.refusal !== null),
+    );
+    expect(refusals.length).toBe(unresolved.length);
+    for (const hotspot of refusals) expect(hotspot.refusal).toBeTruthy();
+  });
+
+  test("no object leads anywhere by itself any more", () => {
     for (const room of rooms) {
       for (const hotspot of room.hotspots) {
-        if (hotspot.link?.to === "refuse")
-          expect(hotspot.link.note).toBeTruthy();
+        expect("link" in hotspot).toBe(false);
       }
     }
   });

@@ -16,12 +16,7 @@
  */
 
 import type { DreamArtifact, FigurePlacement } from "../../shared/dream";
-import type {
-  DreamRoom,
-  RoomDoor,
-  RoomHotspot,
-  RoomLink,
-} from "../../shared/room";
+import type { DreamRoom, RoomDoor, RoomHotspot } from "../../shared/room";
 import type { Direction } from "../../shared/roomGrid";
 import type { DoorTypeName } from "../../shared/tilecodes";
 import type {
@@ -329,7 +324,7 @@ export function interestHotspots(
       y: interest.y,
       reach: 1.4,
       prompt: interest.name,
-      link: null,
+      refusal: null,
       clueId: interest.clueId,
       action: null,
       once: false,
@@ -409,41 +404,20 @@ export function doorAtTile(
   return null;
 }
 
-/** Where a link points, resolved against the live world. Null means "nowhere right now". */
-export function resolveLink(
+/**
+ * Where a threshold actually lands.
+ *
+ * Only a rift can be indirect, and only in one way: §13's «диванчик, на котором спит
+ * Лёша» follows Лёша wherever the heartbeat moved him. Everything else is the door's own
+ * `toRoomId` — a staircase that needed resolving would not be a staircase.
+ */
+export function doorDestination(
   world: WorldState,
-  link: RoomLink,
-): { roomId: string; entryId: string | null } | null {
-  switch (link.to) {
-    case "room":
-      return { roomId: link.roomId, entryId: link.entryId };
-    case "figure": {
-      const figure = world.figures.find((f) => f.id === link.characterId);
-      return figure ? { roomId: figure.roomId, entryId: null } : null;
-    }
-    case "up": {
-      // §07 — the lift only goes up. One floor higher than wherever we are, and the
-      // hotel is the top, so there is always somewhere for it to arrive.
-      const here = world.roomById.get(world.currentRoomId);
-      const floor = floorOf(here);
-      const above = world.rooms.find((room) => floorOf(room) === floor + 1);
-      return {
-        roomId: (above ?? here)?.id ?? world.currentRoomId,
-        entryId: null,
-      };
-    }
-    case "refuse":
-      return null;
+  door: RoomDoor,
+): { roomId: string; entryId: string | null } {
+  if (door.toFigureId) {
+    const figure = world.figures.find((f) => f.id === door.toFigureId);
+    if (figure) return { roomId: figure.roomId, entryId: null };
   }
-}
-
-function floorOf(room: RoomState | undefined): number {
-  if (!room) return 0;
-  for (const tag of room.tags) {
-    if (tag.startsWith("floor-")) {
-      const level = Number(tag.slice("floor-".length));
-      if (Number.isFinite(level)) return level;
-    }
-  }
-  return 0;
+  return { roomId: door.toRoomId, entryId: door.toEntryId };
 }

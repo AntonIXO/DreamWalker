@@ -90,9 +90,8 @@ export interface InterestSeed {
   clueId: string | null;
 }
 
-export interface PopulationRelink {
-  roomId: string;
-  hotspotId: string;
+export interface PopulationRetarget {
+  doorId: string;
   toRoomId: string;
 }
 
@@ -101,10 +100,10 @@ export interface DreamPopulation {
   interests: InterestSeed[];
   roomMoods: Record<string, string>;
   /**
-   * How this run rewires authored object-links. Empty means the bible bindings stand.
-   * The sleeper composes a new deal each inhabit; cycle-exit may add more later.
+   * How this run rewires the rifts. Empty means the authored bindings stand. The sleeper
+   * composes a new deal each inhabit; cycle-exit may add more later.
    */
-  relinks: PopulationRelink[];
+  retargets: PopulationRetarget[];
   source: "ai" | "fallback";
 }
 

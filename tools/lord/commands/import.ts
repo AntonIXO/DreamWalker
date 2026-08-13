@@ -146,10 +146,8 @@ export async function importCommand(
   if (flags.verbose) {
     console.log();
     for (const room of rooms) {
-      const links = room.hotspots.filter((h) => h.link).length;
       console.log(
-        `  ${color.bold(room.id.padEnd(34))} ${String(room.hotspots.length).padStart(2)} objects  ` +
-          `${links} links`,
+        `  ${color.bold(room.id.padEnd(34))} ${String(room.hotspots.length).padStart(2)} objects`,
       );
     }
   }

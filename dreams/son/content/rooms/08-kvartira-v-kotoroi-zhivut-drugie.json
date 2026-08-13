@@ -28,15 +28,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "бумажная скульптура",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «МУЗЕЙ НОРМАЛЬНОГО»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png",
+      "refusal": null
     },
     {
       "id": "chuzhie-fotografii-v-tvoih-ramkah",
@@ -45,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "чужие фотографии в твоих рамках",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png",
+      "refusal": null
     },
     {
       "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
@@ -59,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png",
+      "refusal": null
     },
     {
       "id": "chainik-kotoryi-uzhe-kipel",
@@ -73,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "чайник, который уже кипел",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
+      "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -100,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "08-kvartira-v-kotoroi-zhivut-drugie--rift-bumazhnaia-skulptura",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "бумажная скульптура",
+      "toRoomId": "m4-razvilka-gde-ty-ostalsia"
     }
   ],
   "figureSlots": [
@@ -136,5 +153,7 @@
   "copy": {
     "animations": "разряды в воздухе, тонкие, редкие, беззвучные; скульптура **слегка колышется от сквозняка**, что хуже, чем если бы она висела неподвижно",
     "sound": "чужой телевизор за стеной на чужом языке; тиканье, идущее не от часов; в момент открытия окна — **резкое падение всех частот выше 2 кГц**, как будто накрыли одеялом"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

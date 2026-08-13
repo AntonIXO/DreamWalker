@@ -11,7 +11,7 @@ import type {
   FigureAgenda,
   FigureProfile,
   InterestSeed,
-  PopulationRelink,
+  PopulationRetarget,
 } from "./ai";
 import type { DreamArtifact } from "./dream";
 import { makeRng } from "./rng";
@@ -36,7 +36,7 @@ export interface PopulationProposal {
     sensorySeed: string;
     solid: boolean;
   }>;
-  relinks?: PopulationRelink[];
+  retargets?: PopulationRetarget[];
   roomMoods: Record<string, string>;
 }
 
@@ -182,21 +182,24 @@ function dealHomes(
   return homes;
 }
 
-function sanitiseRelinks(
+function sanitiseRetargets(
   artifact: DreamArtifact,
-  relinks: PopulationProposal["relinks"],
-): DreamPopulation["relinks"] {
+  retargets: PopulationProposal["retargets"],
+): DreamPopulation["retargets"] {
   const rooms = new Set(artifact.rooms.map((room) => room.id));
-  return (relinks ?? []).filter((relink) => {
-    const room = artifact.rooms.find((entry) => entry.id === relink.roomId);
-    return (
-      room !== undefined &&
-      rooms.has(relink.toRoomId) &&
-      room.hotspots.some(
-        (hotspot) => hotspot.id === relink.hotspotId && hotspot.link !== null,
-      )
-    );
-  });
+  // Rifts only, checked here as well as in `applyPatch`: the model is not trusted to be
+  // polite about a staircase, and neither half of the pair is allowed to be the only one
+  // that knows the rule.
+  const rifts = new Set(
+    artifact.rooms.flatMap((room) =>
+      room.doors
+        .filter((door) => door.threshold === "rift")
+        .map((door) => door.id),
+    ),
+  );
+  return (retargets ?? []).filter(
+    (retarget) => rifts.has(retarget.doorId) && rooms.has(retarget.toRoomId),
+  );
 }
 
 export function buildPopulation(
@@ -324,7 +327,7 @@ export function buildPopulation(
     figures,
     interests,
     roomMoods,
-    relinks: sanitiseRelinks(artifact, proposal?.relinks),
+    retargets: sanitiseRetargets(artifact, proposal?.retargets),
     source,
   };
 }

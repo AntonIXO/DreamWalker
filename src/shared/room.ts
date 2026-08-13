@@ -11,12 +11,9 @@
  * grid plus rects plus hotspots — because that room was hand-authored from the start and
  * turned out to be the right shape for all of them.
  *
- * Two mechanics from `dream-walker-new/rooms.md` live in this file rather than in code:
- *
- *   - **Линк** — touching a thing throws you somewhere else (LSD: Dream Emulator's
- *     mechanic; Osamu Sato built it out of crashing into walls in racing games). A link
- *     is authored per object, so poking the world stops being purely safe: it costs you
- *     your position instead of your cover.
+ * Touching a thing used to throw you somewhere else — LSD: Dream Emulator's linking,
+ * which Osamu Sato built out of crashing into walls in racing games. That is gone. The
+ * destinations survive it: they are `rift` thresholds now, and you walk through them.
  *
  * Must stay free of DOM *and* node APIs — the CLI and the browser both import it.
  */
@@ -33,29 +30,9 @@ import type { DoorTypeName } from "./tilecodes";
  */
 export type RoomKind = "place" | "meta";
 
-/** Where a link throws you. */
-export type RoomLink =
-  /** Another room, optionally at a named entry. */
-  | { to: "room"; roomId: string; entryId: string | null }
-  /**
-   * Wherever a figure currently is — «диванчик, на котором спит Лёша» follows Лёша
-   * when the heartbeat moves him.
-   */
-  | { to: "figure"; characterId: string }
-  /**
-   * Nothing happens, on purpose. §02's pear behind the classroom glass: «достать её
-   * нельзя, это проверено». A refusal that is authored reads as a rule; a refusal that
-   * is missing reads as a bug.
-   */
-  | { to: "refuse"; note: string }
-  /** §07's one-way lift: always one floor up, never down. */
-  | { to: "up" };
-
 export type HotspotKind =
   /** Look at it. The safe channel — costs nothing but time. */
   | "look"
-  /** Touching it moves you. */
-  | "link"
   /** Carries one of the six words. */
   | "clue"
   /** A figure stands here. */
@@ -73,7 +50,14 @@ export interface RoomHotspot {
   reach: number;
   /** Russian, shown as `E — <prompt>`. */
   prompt: string;
-  link: RoomLink | null;
+  /**
+   * Shown instead of examining it, when the answer is authored refusal.
+   *
+   * §02's pear behind the classroom glass: «достать её нельзя, это проверено». A refusal
+   * that is authored reads as a rule; a refusal that is missing reads as a bug. It never
+   * reaches the model — there is nothing for it to add.
+   */
+  refusal: string | null;
   /** Set when `kind === "clue"`. */
   clueId: string | null;
   /** A loose PNG under `assets/`, once the object has been drawn. */
@@ -110,6 +94,35 @@ export interface RoomEntry {
 }
 
 /**
+ * What kind of threshold this is — orthogonal to whether it is locked.
+ *
+ * Deliberately not folded into `DoorTypeName`, which answers exactly one question:
+ * "does it let the sanitar through *right now*". All six of its values are lock policy.
+ * Mixing the two would mean you could never author a locked lift or a lever-gated
+ * staircase, and — worse — `retypeDoor` is in the sleeper's vocabulary, so the first
+ * time it retyped a rift the схизо-створ would quietly become an ordinary door and take
+ * the band-tear with it. `sealDoor` → `sealHistory` → `openDoor` round-trips through
+ * `type` too, so the two concepts would corrupt each other.
+ */
+export type ThresholdKind =
+  /** An ordinary way through. Continuous: you walked, and the room changed. */
+  | "door"
+  /** Up or down one floor of the same building. The honest part of the map. */
+  | "stair"
+  /** §07: «кнопки вниз физически нет». One way, always up. */
+  | "lift"
+  /**
+   * The створ that does not lead where it should — what every LSD link became.
+   *
+   * §4.1: «Комнаты соединяются без логики, но переход всегда через порог. Дверь,
+   * лестница, лифт… Никаких телепортов на ровном месте — всегда есть створ, через
+   * который прошли.» The destination stays illogical; only the way in changed.
+   */
+  | "rift";
+
+export const THRESHOLD_KINDS = ["door", "stair", "lift", "rift"] as const;
+
+/**
  * A threshold you walk through, rather than a tile you step on.
  *
  * Format 3 spread a door across nine tiles of a shared grid; a rect is the same idea
@@ -126,6 +139,23 @@ export interface RoomDoor {
   toRoomId: string;
   toEntryId: string | null;
   type: DoorTypeName;
+  threshold: ThresholdKind;
+  /**
+   * Floors climbed. 0 for a door or a rift, ±1 for a staircase, +1 for a lift.
+   *
+   * Only a `stair` is checked against the destination's `level`. A lift that goes up and
+   * arrives lower is §07's joke, not a bug, and a rift is illogical by definition.
+   */
+  levelDelta: number;
+  /** Which side the walker comes from. Null means any side that is walkable. */
+  facing: Direction | null;
+  /**
+   * A rift only: follow a figure instead of a fixed room.
+   *
+   * §13's «диванчик, на котором спит Лёша» goes wherever Лёша went. Resolved live, with
+   * `toRoomId` as the fallback for when he is no longer anywhere.
+   */
+  toFigureId: string | null;
   /** For `keyLock` doors, which key passes. */
   keyId: string | null;
   /** Russian; overrides the default refusal line. */
@@ -170,6 +200,15 @@ export interface DreamRoom extends CellGrid {
   /** Shown in the HUD. */
   name: string;
   kind: RoomKind;
+  /**
+   * Which structure this room belongs to, or null for anywhere with no upstairs.
+   *
+   * Twenty of twenty-nine rooms are not in a building — the autumn forest, the mountain,
+   * the metro, the dome with no walls — so null is a first-class answer, not a gap.
+   */
+  buildingId: string | null;
+  /** Floor within the building. 0 outside one. Ground level is 1 where it is named. */
+  level: number;
   tileSize: number;
   width: number;
   height: number;

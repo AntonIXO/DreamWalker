@@ -28,48 +28,40 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "капуста, фрукты",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
+      "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png",
+      "refusal": null
     },
     {
       "id": "dyrka-v-zabore",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "дырка в заборе",
-      "link": {
-        "to": "room",
-        "roomId": "19-dvor-i-oranzhevye-lavochki",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
+      "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png",
+      "refusal": null
     },
     {
       "id": "piatimetrovyi-stellazh",
-      "kind": "link",
+      "kind": "look",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "пятиметровый стеллаж",
-      "link": {
-        "to": "room",
-        "roomId": "m3-sklad-ostavlennogo",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
+      "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png",
+      "refusal": null
     },
     {
       "id": "paket-fasoli",
@@ -78,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "пакет фасоли",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
+      "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png",
+      "refusal": null
     },
     {
       "id": "tetia-sidiaschaia-spinoi",
@@ -92,12 +84,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "тётя, сидящая спиной",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
+      "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -119,7 +111,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "12-tiurma-na-ovoschah--rift-dyrka-v-zabore",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "дырка в заборе",
+      "toRoomId": "19-dvor-i-oranzhevye-lavochki"
+    },
+    {
+      "id": "12-tiurma-na-ovoschah--rift-piatimetrovyi-stellazh",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "пятиметровый стеллаж",
+      "toRoomId": "m3-sklad-ostavlennogo"
     }
   ],
   "figureSlots": [
@@ -155,5 +183,7 @@
   "copy": {
     "animations": "тётя не поворачивается **никогда**, даже если шуметь — проверка скрытности, у которой нет провала, и это страшнее провала; снег наметает на дырку в реальном времени, минут за пять",
     "sound": "капель с потолка; хруст овощей под весом; полное отсутствие тюремных звуков — ни решёток, ни голосов, ни шагов конвоя"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

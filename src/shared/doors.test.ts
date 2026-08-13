@@ -18,6 +18,10 @@ function door(over: Partial<RoomDoor> & { id: string }): RoomDoor {
     toRoomId: "x",
     toEntryId: null,
     type: "open",
+    threshold: "door",
+    levelDelta: 0,
+    facing: null,
+    toFigureId: null,
     keyId: null,
     prompt: null,
     ...over,
@@ -73,20 +77,7 @@ function partitioned(doors: RoomDoor[]) {
 describe("punchDoorThresholds", () => {
   test("keeps a wall-face hub door on the wall so the floor stays walkable", () => {
     const opened = punchDoorThresholds(
-      box([
-        {
-          id: "hub--to-x",
-          x: 3,
-          y: 1,
-          w: 1,
-          h: 1,
-          toRoomId: "x",
-          toEntryId: "default",
-          type: "open",
-          keyId: null,
-          prompt: null,
-        },
-      ]),
+      box([door({ id: "hub--to-x", x: 3, y: 1 })]),
     );
     expect(opened.doors[0]!.y).toBe(1);
     expect(doorHasWalkableCell(opened, opened.doors[0]!)).toBe(false);
@@ -95,32 +86,7 @@ describe("punchDoorThresholds", () => {
 
   test("does not stack two hub doors on the same tile", () => {
     const opened = punchDoorThresholds(
-      box([
-        {
-          id: "a",
-          x: 1,
-          y: 1,
-          w: 1,
-          h: 1,
-          toRoomId: "a",
-          toEntryId: null,
-          type: "open",
-          keyId: null,
-          prompt: null,
-        },
-        {
-          id: "b",
-          x: 1,
-          y: 1,
-          w: 1,
-          h: 1,
-          toRoomId: "b",
-          toEntryId: null,
-          type: "open",
-          keyId: null,
-          prompt: null,
-        },
-      ]),
+      box([door({ id: "a" }), door({ id: "b" })]),
     );
     expect(
       opened.doors[0]!.x === opened.doors[1]!.x &&

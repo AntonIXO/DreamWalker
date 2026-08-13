@@ -28,30 +28,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "плита",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
+      "image": "assets/objects/04-dacha-gnedkovyh--plita.png",
+      "refusal": null
     },
     {
       "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "отодвинутый кусок стены с чёрным проёмом",
-      "link": {
-        "to": "room",
-        "roomId": "16-norvezhskaia-derevnia-i-pogreb",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
+      "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png",
+      "refusal": null
     },
     {
       "id": "telefon-s-odnim-kontaktom-lesha",
@@ -60,30 +56,26 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "телефон с одним контактом «Лёша»",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
+      "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png",
+      "refusal": null
     },
     {
       "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
-      "kind": "link",
+      "kind": "look",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
-      "link": {
-        "to": "room",
-        "roomId": "m2-miasnaia-geometriia",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
+      "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -105,7 +97,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "04-dacha-gnedkovyh--rift-otodvinutyi-kusok-steny-s-chernym-proemo",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "отодвинутый кусок стены с чёрным проёмом",
+      "toRoomId": "16-norvezhskaia-derevnia-i-pogreb"
+    },
+    {
+      "id": "04-dacha-gnedkovyh--rift-goluboi-lipkii-slizen-na-lestnice-bit-mo",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
+      "toRoomId": "m2-miasnaia-geometriia"
     }
   ],
   "figureSlots": [
@@ -141,5 +169,7 @@
   "copy": {
     "animations": "пламя горелки колеблется в противофазе с сипением; слизень пульсирует, рот открывается на 0.8 секунды каждые шесть; из проёма в стене тянет сквозняком, шевелящим занавеску",
     "sound": "сип на 340 Гц с дрожанием; сварка, которая **начинается раньше, чем сварщик достаёт аппарат**; собака за три двора. Референс: полевые записи Криса Уотсона, дом ночью"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

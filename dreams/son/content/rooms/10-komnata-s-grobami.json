@@ -23,38 +23,31 @@
   "hotspots": [
     {
       "id": "groby",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "гробы",
-      "link": {
-        "to": "room",
-        "roomId": "15-osennii-les-s-grobom",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--groby.png"
+      "image": "assets/objects/10-komnata-s-grobami--groby.png",
+      "refusal": null
     },
     {
       "id": "schel-pod-potolkom",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "щель под потолком",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «АРХИВ, КОТОРЫЙ ЗАШИФРОВАН»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
+      "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png",
+      "refusal": null
     },
     {
       "id": "tkan-s-kodami",
@@ -63,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "ткань с кодами",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
+      "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png",
+      "refusal": null
     },
     {
       "id": "paketiki-fsb",
@@ -77,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "пакетики ФСБ",
-      "link": null,
       "clueId": "clue-3",
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
+      "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png",
+      "refusal": null
     },
     {
       "id": "telefon-kamera-otkryvaetsia-sem-sekund",
@@ -91,12 +84,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "телефон, камера открывается семь секунд",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
+      "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -118,7 +111,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "10-komnata-s-grobami--rift-groby",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "гробы",
+      "toRoomId": "15-osennii-les-s-grobom"
+    },
+    {
+      "id": "10-komnata-s-grobami--rift-schel-pod-potolkom",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "щель под потолком",
+      "toRoomId": "m3-sklad-ostavlennogo"
     }
   ],
   "figureSlots": [
@@ -156,5 +185,7 @@
   "copy": {
     "animations": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
     "sound": "абсолютная сухая тишина, ноль реверберации, как в заглушенной камере — от этого физически некомфортно; собственные шаги слишком громкие; в момент входа людей — щелчок и **комнатный тон появляется**, будто до этого звук был выключен"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

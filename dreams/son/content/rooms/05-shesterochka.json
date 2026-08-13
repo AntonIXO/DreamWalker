@@ -23,21 +23,17 @@
   "hotspots": [
     {
       "id": "polka-dlia-veschei",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "полка для вещей",
-      "link": {
-        "to": "room",
-        "roomId": "m3-sklad-ostavlennogo",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
+      "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png",
+      "refusal": null
     },
     {
       "id": "nadpis-na-polke",
@@ -46,29 +42,25 @@
       "y": 5.2,
       "reach": 1.4,
       "prompt": "надпись на краю полки",
-      "link": null,
       "clueId": "clue-1",
       "action": null,
       "once": false,
-      "dwellMs": null
+      "dwellMs": null,
+      "refusal": null
     },
     {
       "id": "ballonchik-na-poiase-ohrannika",
-      "kind": "link",
+      "kind": "look",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "баллончик на поясе охранника",
-      "link": {
-        "to": "room",
-        "roomId": "06-kanava-garazhi-podvorotni",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
+      "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png",
+      "refusal": null
     },
     {
       "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
@@ -77,12 +69,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
+      "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png",
+      "refusal": null
     },
     {
       "id": "korzina-s-chem-to-chto-ne-chitaetsia",
@@ -91,12 +83,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "корзина с чем-то, что не читается",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
+      "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -118,7 +110,43 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "05-shesterochka--rift-polka-dlia-veschei",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "полка для вещей",
+      "toRoomId": "m3-sklad-ostavlennogo"
+    },
+    {
+      "id": "05-shesterochka--rift-ballonchik-na-poiase-ohrannika",
+      "x": 3,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "баллончик на поясе охранника",
+      "toRoomId": "06-kanava-garazhi-podvorotni"
     }
   ],
   "figureSlots": [
@@ -156,5 +184,7 @@
   "copy": {
     "animations": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
     "sound": "пищание кассы, ускоряющееся к концу цикла; объявление по громкой связи, слова разобрать нельзя, интонация приветливая; гул холодильника с мясом, доминирует над всем"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

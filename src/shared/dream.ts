@@ -20,7 +20,7 @@
 
 import type { StyleProfile } from "./art/style";
 import type { DreamContent } from "./content";
-import type { DreamRoom, DreamSpawn, RoomLink } from "./room";
+import { THRESHOLD_KINDS, type DreamRoom, type DreamSpawn } from "./room";
 import { DOOR_TYPES, type DoorTypeName } from "./tilecodes";
 
 export const DREAM_FORMAT_VERSION = 5;
@@ -193,7 +193,7 @@ export interface AtlasManifest {
 
 /**
  * Hand-written rather than schema-driven, because the useful errors here are
- * relational — a link pointing at a room that does not exist, a door arriving at an
+ * relational — a threshold pointing at a room that does not exist, a door arriving at an
  * entry nobody authored — and those read better as prose than as a schema violation path.
  */
 export class DreamValidationError extends Error {
@@ -243,44 +243,13 @@ function optionalStr(value: unknown, path: string): string | null {
   return str(value, path);
 }
 
-/** Collected on the first pass so links and doors can be checked on the second. */
+/** Collected on the first pass so doors can be checked on the second. */
 interface RoomIndex {
   entryIds: Map<string, Set<string>>;
   slotIds: Map<string, Set<string>>;
   kinds: Map<string, string>;
-}
-
-function validateLink(
-  value: unknown,
-  path: string,
-  index: RoomIndex,
-  characterIds: Set<string>,
-): void {
-  const link = obj(value, path);
-  const to = str(link.to, `${path}.to`);
-  if (to === "room") {
-    const roomId = str(link.roomId, `${path}.roomId`);
-    const entries = index.entryIds.get(roomId);
-    if (!entries) fail(`${path}.roomId`, `no room ${roomId}`);
-    const entryId = optionalStr(link.entryId, `${path}.entryId`);
-    if (entryId !== null && !entries.has(entryId)) {
-      fail(`${path}.entryId`, `room ${roomId} has no entry ${entryId}`);
-    }
-    return;
-  }
-  if (to === "figure") {
-    const characterId = str(link.characterId, `${path}.characterId`);
-    if (!characterIds.has(characterId)) {
-      fail(`${path}.characterId`, `no figure ${characterId}`);
-    }
-    return;
-  }
-  if (to === "refuse") {
-    str(link.note, `${path}.note`);
-    return;
-  }
-  if (to === "up") return;
-  fail(`${path}.to`, `unknown link target ${to}`);
+  levels: Map<string, number>;
+  buildings: Map<string, string | null>;
 }
 
 /**
@@ -436,6 +405,46 @@ function validateRoomShape(
     }
     optionalStr(door.keyId, `${path}.doors[${i}].keyId`);
     optionalStr(door.prompt, `${path}.doors[${i}].prompt`);
+
+    const threshold = str(door.threshold, `${path}.doors[${i}].threshold`);
+    if (
+      !THRESHOLD_KINDS.includes(threshold as (typeof THRESHOLD_KINDS)[number])
+    ) {
+      fail(`${path}.doors[${i}].threshold`, `unknown threshold ${threshold}`);
+    }
+    const delta = num(door.levelDelta, `${path}.doors[${i}].levelDelta`);
+    if (threshold === "stair" && delta !== 1 && delta !== -1) {
+      fail(
+        `${path}.doors[${i}].levelDelta`,
+        "a staircase climbs exactly one floor",
+      );
+    }
+    // §07: «кнопки вниз физически нет».
+    if (threshold === "lift" && delta <= 0) {
+      fail(`${path}.doors[${i}].levelDelta`, "a lift only goes up");
+    }
+    if ((threshold === "door" || threshold === "rift") && delta !== 0) {
+      fail(
+        `${path}.doors[${i}].levelDelta`,
+        `a ${threshold} stays on its floor`,
+      );
+    }
+    const facing = optionalStr(door.facing, `${path}.doors[${i}].facing`);
+    if (facing !== null && !["n", "e", "s", "w"].includes(facing)) {
+      fail(`${path}.doors[${i}].facing`, `unknown facing ${facing}`);
+    }
+    const toFigure = optionalStr(
+      door.toFigureId,
+      `${path}.doors[${i}].toFigureId`,
+    );
+    // §13's «диванчик, на котором спит Лёша». Only a rift may chase somebody; a
+    // staircase that moved would stop being architecture.
+    if (toFigure !== null && threshold !== "rift") {
+      fail(
+        `${path}.doors[${i}].toFigureId`,
+        `a ${threshold} does not follow anybody`,
+      );
+    }
   });
 
   const graphics = obj(room.graphics, `${path}.graphics`);
@@ -459,6 +468,13 @@ function validateRoomShape(
   const camera = str(room.camera, `${path}.camera`);
   if (camera !== "frame" && camera !== "follow") {
     fail(`${path}.camera`, `expected "frame" or "follow", got ${camera}`);
+  }
+
+  const buildingId = optionalStr(room.buildingId, `${path}.buildingId`);
+  const level = num(room.level, `${path}.level`);
+  if (!Number.isInteger(level)) fail(`${path}.level`, "expected a whole floor");
+  if (buildingId === null && level !== 0) {
+    fail(`${path}.level`, "a room outside a building is on floor 0");
   }
 
   const revisit = obj(room.revisit, `${path}.revisit`);
@@ -588,6 +604,8 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     entryIds: new Map(),
     slotIds: new Map(),
     kinds: new Map(),
+    levels: new Map(),
+    buildings: new Map(),
   };
   const shaped = rooms.map((value, i) => {
     const room = validateRoomShape(value, `dream.rooms[${i}]`);
@@ -603,6 +621,8 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
       new Set((room.figureSlots as { id: string }[]).map((slot) => slot.id)),
     );
     index.kinds.set(id, room.kind as string);
+    index.levels.set(id, room.level as number);
+    index.buildings.set(id, (room.buildingId as string | null) ?? null);
     return room;
   });
   const roomIds = new Set(index.entryIds.keys());
@@ -647,21 +667,31 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
   });
 
   // --- rooms, second pass: everything that points at another room
+  //
+  // Door ids are checked for uniqueness across the *whole* dream here, not just within a
+  // room. `buildDoorIndexes` flattens every door into one map and every patch addresses a
+  // door by bare id, so two rooms owning a `groby` would silently share a door.
+  const allDoorIds = new Set<string>();
+  const riftTargets = new Set<string>();
   shaped.forEach((room, i) => {
     const path = `dream.rooms[${i}]`;
-    (room.hotspots as unknown[]).forEach((value, j) => {
-      const hotspot = value as { link?: unknown };
-      if (hotspot.link !== null && hotspot.link !== undefined) {
-        validateLink(
-          hotspot.link,
-          `${path}.hotspots[${j}].link`,
-          index,
-          figureIds,
+    (room.doors as unknown[]).forEach((value, j) => {
+      const door = value as {
+        id: string;
+        toRoomId: string;
+        toEntryId: string | null;
+        toFigureId: string | null;
+        threshold: string;
+        levelDelta: number;
+      };
+      if (allDoorIds.has(door.id)) {
+        fail(
+          `${path}.doors[${j}].id`,
+          `door ${door.id} exists in another room`,
         );
       }
-    });
-    (room.doors as unknown[]).forEach((value, j) => {
-      const door = value as { toRoomId: string; toEntryId: string | null };
+      allDoorIds.add(door.id);
+
       const entries = index.entryIds.get(door.toRoomId);
       if (!entries)
         fail(`${path}.doors[${j}].toRoomId`, `no room ${door.toRoomId}`);
@@ -671,8 +701,53 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
           `room ${door.toRoomId} has no entry ${door.toEntryId}`,
         );
       }
+      if (door.toFigureId !== null && !figureIds.has(door.toFigureId)) {
+        fail(`${path}.doors[${j}].toFigureId`, `no figure ${door.toFigureId}`);
+      }
+
+      if (door.threshold === "rift") riftTargets.add(door.toRoomId);
+
+      // Only a staircase is held to the geometry. A lift that goes up and arrives lower
+      // is §07's joke — «Лифт → всегда на этаж выше, до Отеля» — and a rift is illogical
+      // by definition; those are the two thresholds allowed to lie about where they go.
+      if (door.threshold === "stair") {
+        const from = index.levels.get(room.id as string) ?? 0;
+        const to = index.levels.get(door.toRoomId);
+        if (
+          index.buildings.get(room.id as string) !==
+          index.buildings.get(door.toRoomId)
+        ) {
+          fail(
+            `${path}.doors[${j}].toRoomId`,
+            "a staircase stays inside its own building",
+          );
+        }
+        if (to !== from + door.levelDelta) {
+          fail(
+            `${path}.doors[${j}].toRoomId`,
+            `stair claims floor ${from + door.levelDelta}, ${door.toRoomId} is floor ${String(to)}`,
+          );
+        }
+      }
+      if (
+        (door.threshold === "stair" || door.threshold === "lift") &&
+        index.kinds.get(door.toRoomId) === "meta"
+      ) {
+        fail(
+          `${path}.doors[${j}].toRoomId`,
+          "nobody takes the stairs to a place they will not remember",
+        );
+      }
     });
   });
+
+  // A meta-space authors no doors of its own, so a rift somewhere else is its only way
+  // in. Without one it is unreachable and its art never ships to anybody.
+  for (const [roomId, kind] of index.kinds) {
+    if (kind === "meta" && !riftTargets.has(roomId)) {
+      fail(`dream.rooms.${roomId}`, "no rift leads into this meta-space");
+    }
+  }
 
   // --- spawn and finale
   const spawn = obj(root.spawn, "dream.spawn");
@@ -878,4 +953,4 @@ export function validateAtlasManifest(value: unknown): AtlasManifest {
 }
 
 /** Re-exported so consumers get the room vocabulary from the artifact contract. */
-export type { DreamRoom, DreamSpawn, RoomLink };
+export type { DreamRoom, DreamSpawn };

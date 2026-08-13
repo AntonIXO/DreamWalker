@@ -23,20 +23,17 @@
   "hotspots": [
     {
       "id": "centroid",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "центроид",
-      "link": {
-        "to": "refuse",
-        "note": "Мета-пространство «ЛЕСТНИЦА»"
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
+      "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png",
+      "refusal": null
     },
     {
       "id": "vizitki-kotorye-ne-berutsia-v-ruku",
@@ -45,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "визитки, которые не берутся в руку",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
+      "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png",
+      "refusal": null
     },
     {
       "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
@@ -59,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "теодолит, показывающий одно и то же число независимо от направления",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
+      "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png",
+      "refusal": null
     },
     {
       "id": "kamen-s-rovno-otpilennoi-graniu",
@@ -73,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "камень с ровно отпиленной гранью",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
+      "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -100,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "03-gory-startapery-i-uchenye--rift-centroid",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "центроид",
+      "toRoomId": "m1-korni"
     }
   ],
   "figureSlots": [
@@ -136,5 +153,7 @@
   "copy": {
     "animations": "проход через скалу осыпается по таймеру, который **сбрасывается, если на него смотреть**; стартаперы дышат паром, учёные нет",
     "sound": "ветер, записанный в трубу; обрывки питчей на грани разборчивости, всегда в момент, когда отворачиваешься; низкий инфразвук от 18 Гц, тот самый, от которого тошно и кажется, что за спиной кто-то есть"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }

@@ -52,14 +52,17 @@ export type MapPatch =
       reason: string;
     }
   /**
-   * Point an authored link somewhere else. The most in-genre thing a heartbeat can do in
-   * a dream built on touching objects: the rope still hangs there, and this time it puts
-   * you in the morgue.
+   * Point a rift somewhere else. The most in-genre thing a heartbeat can do: the archway
+   * is still where it was, and this time it puts you in the morgue.
+   *
+   * **Rifts only.** Rewiring a staircase so the third floor comes out in the forest is
+   * exactly the «телепорт на ровном месте» §4.1 forbids, and the whole reason to keep
+   * stairs is that they are the part of the map that does not lie. Enforced in
+   * `patch.ts`, not merely intended here.
    */
   | {
-      kind: "relink";
-      roomId: string;
-      hotspotId: string;
+      kind: "retargetDoor";
+      doorId: string;
       toRoomId: string;
       reason: string;
     }
@@ -93,7 +96,7 @@ export const PATCH_KINDS = [
   "removeInterest",
   "placeInterest",
   "relocateShard",
-  "relink",
+  "retargetDoor",
   "shiftWalls",
   "closeHotspot",
   "openHotspot",

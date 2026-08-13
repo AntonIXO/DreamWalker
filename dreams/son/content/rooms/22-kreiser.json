@@ -23,21 +23,17 @@
   "hotspots": [
     {
       "id": "scena-mikrofon",
-      "kind": "link",
+      "kind": "look",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "сцена, микрофон",
-      "link": {
-        "to": "room",
-        "roomId": "13-podzemnye-zaly-cu",
-        "entryId": null
-      },
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--scena-mikrofon.png"
+      "image": "assets/objects/22-kreiser--scena-mikrofon.png",
+      "refusal": null
     },
     {
       "id": "nakrytye-stoly",
@@ -46,12 +42,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "накрытые столы",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
+      "image": "assets/objects/22-kreiser--nakrytye-stoly.png",
+      "refusal": null
     },
     {
       "id": "spasatelnye-krugi",
@@ -60,12 +56,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "спасательные круги",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
+      "image": "assets/objects/22-kreiser--spasatelnye-krugi.png",
+      "refusal": null
     },
     {
       "id": "voda-za-bortom-slishkom-blizko-k-palube",
@@ -74,12 +70,12 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "вода за бортом, слишком близко к палубе",
-      "link": null,
       "clueId": null,
       "action": null,
       "once": false,
       "dwellMs": null,
-      "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
+      "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png",
+      "refusal": null
     }
   ],
   "entries": [
@@ -101,7 +97,27 @@
       "toEntryId": "default",
       "type": "open",
       "keyId": null,
-      "prompt": null
+      "prompt": null,
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null
+    },
+    {
+      "id": "22-kreiser--rift-scena-mikrofon",
+      "x": 1,
+      "y": 1,
+      "w": 2,
+      "h": 1,
+      "toEntryId": null,
+      "type": "open",
+      "threshold": "rift",
+      "levelDelta": 0,
+      "facing": null,
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": "сцена, микрофон",
+      "toRoomId": "13-podzemnye-zaly-cu"
     }
   ],
   "figureSlots": [
@@ -137,5 +153,7 @@
   "copy": {
     "animations": "гости едят зациклено, вилка ко рту каждые 2 секунды, тарелки не пустеют; Кирилл **пытается пройти к сцене каждые 30 секунд**, всю сцену, независимо от действий игрока",
     "sound": "застольный гул; корабельный ход, низкий; микрофонная обратная связь, начинающаяся сама"
-  }
+  },
+  "buildingId": null,
+  "level": 0
 }
