@@ -6,6 +6,7 @@
 
 import type { CycleExitResult } from "../../shared/ai";
 import type { HeartbeatConfig } from "../../shared/dream";
+import { rectsOverlap, type TileRect } from "../../shared/rect";
 import {
   applyPatch,
   patchTouches,
@@ -17,15 +18,16 @@ import type { ObservationLog } from "./observation";
 import type { DreamMind } from "./types";
 
 /**
- * The room the sanitar is standing in.
+ * What the sanitar can actually see: the room they stand in, and the tiles on screen.
  *
- * §6's rule is that the dream never rearranges what the player can see. Format 3
- * approximated that with the camera's visible tile rectangle, because rooms were
- * rectangles inside one grid. With discrete rooms the rule is literal: never patch the
- * room they are in. Read *after* the model's await — a turn takes seconds and the
- * sanitar keeps walking.
+ * §6's rule is that the dream never rearranges what the player is looking at. Naming only
+ * the room was right while a room was exactly one screen, and wrong the moment a floor is
+ * six screens across — it would forbid the sleeper from touching anything on the floor
+ * you are standing on, which is nearly the whole dream.
+ *
+ * Read *after* the model's await — a turn takes seconds and the sanitar keeps walking.
  */
-export type ViewportSource = () => string;
+export type ViewportSource = () => { roomId: string; rect: TileRect };
 
 export interface BeatEntry {
   at: number;
@@ -129,7 +131,12 @@ export class Heartbeat {
       }
 
       const touched = patchTouches(patch, this.world);
-      if (protectViewport && touched.includes(view)) {
+      const seen = touched.some(
+        (scope) =>
+          scope.roomId === view.roomId &&
+          (scope.rect === null || rectsOverlap(scope.rect, view.rect)),
+      );
+      if (protectViewport && seen) {
         entries.push({
           at: observation.elapsedSeconds,
           patch,

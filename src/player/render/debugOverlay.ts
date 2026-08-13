@@ -10,6 +10,7 @@
  * The refusals are the interesting half: they are the invariant of §6 doing its job.
  */
 
+import type { TileRect } from "../../shared/rect";
 import { cellAt } from "../../shared/roomGrid";
 import type { TonusDelta } from "../../shared/tonus";
 import type { BeatEntry, Heartbeat } from "../mind/heartbeat";
@@ -36,6 +37,8 @@ export class DebugOverlay {
      */
     private readonly tonusAt?: () => TonusDelta,
     private readonly fxAt?: () => { preset: string; phase: string },
+    /** The tile rect the heartbeat treats as off limits — `camera.visibleTiles()`. */
+    private readonly viewAt?: () => TileRect,
   ) {
     this.root = document.createElement("div");
     this.root.className = "debug";
@@ -158,6 +161,21 @@ export class DebugOverlay {
 
     this.ctx.fillStyle = colorOf("highlight");
     this.ctx.fillRect(playerTileX * scale - 2, playerTileY * scale - 2, 5, 5);
+
+    // What the heartbeat is forbidden to touch. On a floor bigger than the screen this
+    // outline is the only way to see the §6 guard working at all — everything outside it
+    // is fair game, and the refusals in the log below should line up with what is inside.
+    const view = this.viewAt?.();
+    if (view) {
+      this.ctx.strokeStyle = "#ff8c42";
+      this.ctx.lineWidth = 1;
+      this.ctx.strokeRect(
+        view.x * scale + 0.5,
+        view.y * scale + 0.5,
+        view.w * scale - 1,
+        view.h * scale - 1,
+      );
+    }
   }
 
   private drawStats(): void {

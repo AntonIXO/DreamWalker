@@ -236,21 +236,51 @@ describe("shiftWalls", () => {
 });
 
 describe("patchTouches", () => {
-  test("names the rooms the heartbeat must not disturb", () => {
+  test("claims the whole room only when the whole mask may move", () => {
     const world = makeWorld();
-    installPopulation(world, POPULATION);
     expect(
       patchTouches(
         { kind: "shiftWalls", roomId: "b", variantId: "shifted", reason: "" },
         world,
       ),
-    ).toEqual(["b"]);
+    ).toEqual([{ roomId: "b", rect: null }]);
+  });
+
+  test("gives a door the door's own rect, and only its own side", () => {
+    const world = makeWorld();
+    // `affectedRooms` still names both rooms so both get redrawn. Visibility is a
+    // different question: the far side of a door is not on screen.
+    expect(
+      patchTouches({ kind: "sealDoor", doorId: "a-to-b", reason: "" }, world),
+    ).toEqual([{ roomId: "a", rect: { x: 5, y: 1, w: 4, h: 3 } }]);
+  });
+
+  test("says nothing about a hook changing hands", () => {
+    const world = makeWorld();
+    installPopulation(world, POPULATION);
     expect(
       patchTouches(
-        { kind: "sealDoor", doorId: "a-to-b", reason: "" },
+        {
+          kind: "relocateShard",
+          shardId: "shard1",
+          toFigureId: "figure1",
+          reason: "",
+        },
         world,
-      ).sort(),
-    ).toEqual(["a", "b"]);
+      ),
+    ).toEqual([]);
+  });
+
+  test("names every slot an arrival could land on, not the room", () => {
+    const world = makeWorld();
+    installPopulation(world, POPULATION);
+    const scopes = patchTouches(
+      { kind: "moveFigure", figureId: "figure1", toRoomId: "b", reason: "" },
+      world,
+    );
+    // One scope for where they stand now, one per candidate slot in the destination.
+    expect(scopes.map((scope) => scope.roomId).sort()).toEqual(["a", "b"]);
+    expect(scopes.every((scope) => scope.rect !== null)).toBe(true);
   });
 });
 

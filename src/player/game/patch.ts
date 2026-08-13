@@ -12,6 +12,7 @@
 
 import type { DreamPopulation, InterestSeed } from "../../shared/ai";
 import type { MapPatch } from "../../shared/map-patch";
+import { padRect, type TileRect } from "../../shared/rect";
 import { makeRng } from "../../shared/rng";
 import type { DoorTypeName } from "../../shared/tilecodes";
 import {
@@ -462,46 +463,99 @@ export function applyPatch(world: WorldState, patch: MapPatch): PatchResult {
 }
 
 /**
- * Which rooms a patch would disturb, *before* it is applied.
+ * Where on screen a patch would show, *before* it is applied.
  *
- * The heartbeat asks this so it can refuse anything touching the room the player is
- * standing in. In format 3 this had to return a tile rectangle and compare it against
- * the camera's viewport; with discrete rooms the question is simply "which rooms", which
- * is what it always meant.
+ * The heartbeat asks this so it can refuse anything the player can actually see (§6).
+ * Format 3 compared a tile rectangle against the camera; format 4 shrank the answer to
+ * "which rooms", which was right while a room was exactly one screen and becomes far too
+ * coarse the moment a floor is six screens across — the sleeper would be unable to touch
+ * anything on the floor you are standing on, which is most of the dream.
+ *
+ * So: a room id *and* a rectangle. `rect: null` means the whole room, which is the
+ * honest answer for `shiftWalls` and the only case that keeps the old behaviour.
+ *
+ * This is deliberately **not** the same question as `PatchResult.affectedRooms`. That one
+ * asks "what must be redrawn" and has to name both sides of a door; this one asks "what
+ * would the player notice", and the far side of a door they are not looking through is
+ * not it.
  */
-export function patchTouches(patch: MapPatch, world: WorldState): string[] {
+export interface PatchScope {
+  roomId: string;
+  /** Tiles, half-open. Null means the whole room. */
+  rect: TileRect | null;
+}
+
+/** A small square around a point, in tiles. */
+function around(roomId: string, x: number, y: number, radius = 1): PatchScope {
+  return {
+    roomId,
+    rect: {
+      x: Math.floor(x - radius),
+      y: Math.floor(y - radius),
+      w: Math.ceil(radius * 2) + 1,
+      h: Math.ceil(radius * 2) + 1,
+    },
+  };
+}
+
+/**
+ * Every slot an arrival could land on.
+ *
+ * `moveFigure` and `placeInterestState` both pick a slot with a seeded RNG *inside*
+ * `applyPatch`, so the exact destination is not knowable here. Naming every candidate is
+ * conservative in the safe direction and, unlike recomputing the seed, cannot drift away
+ * from the code that actually chooses.
+ */
+function slotScopes(world: WorldState, roomId: string): PatchScope[] {
+  const room = world.roomById.get(roomId);
+  if (!room) return [];
+  if (room.figureSlots.length === 0) return [{ roomId, rect: null }];
+  return room.figureSlots.map((slot) => around(roomId, slot.x, slot.y));
+}
+
+export function patchTouches(patch: MapPatch, world: WorldState): PatchScope[] {
   switch (patch.kind) {
     case "sealDoor":
     case "openDoor":
-    case "retypeDoor":
-      return roomsTouchingDoor(world, patch.doorId);
+    case "retypeDoor": {
+      const door = world.doorById.get(patch.doorId);
+      const home = world.roomIdByDoorId.get(patch.doorId);
+      if (!door || !home) return [];
+      return [{ roomId: home, rect: padRect(door, 1) }];
+    }
     case "moveFigure": {
       const figure = world.figures.find((f) => f.id === patch.figureId);
-      return [
-        ...new Set([figure?.roomId, patch.toRoomId].filter(Boolean)),
-      ] as string[];
+      const from = figure ? [around(figure.roomId, figure.x, figure.y)] : [];
+      return [...from, ...slotScopes(world, patch.toRoomId)];
     }
     case "moveInterest": {
       const interest = world.interests.find((i) => i.id === patch.interestId);
-      return [
-        ...new Set([interest?.roomId, patch.toRoomId].filter(Boolean)),
-      ] as string[];
+      const from = interest
+        ? [around(interest.roomId, interest.x, interest.y)]
+        : [];
+      return [...from, ...slotScopes(world, patch.toRoomId)];
     }
     case "removeInterest": {
       const interest = world.interests.find((i) => i.id === patch.interestId);
-      return interest ? [interest.roomId] : [];
+      return interest ? [around(interest.roomId, interest.x, interest.y)] : [];
     }
     case "placeInterest":
-      return [patch.interest.roomId];
-    case "relocateShard": {
-      const figure = world.figures.find((f) => f.id === patch.toFigureId);
-      return figure ? [figure.roomId] : [];
-    }
+      return slotScopes(world, patch.interest.roomId);
+    // A hook changing hands has no on-screen representation whatsoever. Naming the
+    // holder's room used to block a whole room for a change nobody could observe.
+    case "relocateShard":
+      return [];
     case "relink":
-    case "shiftWalls":
     case "closeHotspot":
-    case "openHotspot":
-      return [patch.roomId];
+    case "openHotspot": {
+      const room = world.roomById.get(patch.roomId);
+      const hotspot = room?.hotspots.find((h) => h.id === patch.hotspotId);
+      if (!hotspot) return [];
+      return [around(patch.roomId, hotspot.x, hotspot.y, hotspot.reach)];
+    }
+    // The whole walk mask may move. This is the one kind that keeps the old answer.
+    case "shiftWalls":
+      return [{ roomId: patch.roomId, rect: null }];
     default:
       return [];
   }

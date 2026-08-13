@@ -288,8 +288,10 @@ async function boot(): Promise<void> {
     observations,
     artifact.heartbeat,
     // §6's guarantee, as a question the heartbeat asks rather than a shape the camera
-    // enforced: the sleeper may rearrange any room the sanitar is not standing in.
-    () => world.currentRoomId,
+    // enforced: the sleeper may rearrange anything the sanitar is not looking at. Both
+    // halves matter once a floor is larger than the screen — the room alone would put
+    // most of the dream off limits.
+    () => ({ roomId: world.currentRoomId, rect: camera.visibleTiles() }),
   );
 
   const noteShard = (shardId: string): void => {
@@ -351,6 +353,7 @@ async function boot(): Promise<void> {
     heartbeat,
     () => session.tonus.position,
     () => dreamFx.debugState,
+    () => camera.visibleTiles(),
   );
   const input = new Input();
   input.attach();

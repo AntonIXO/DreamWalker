@@ -108,8 +108,14 @@ prompt, so a defensive cycle may become impossible.
 rules live in the heartbeat, **not** in the model, because the model is not trusted to be
 polite:
 
-- it never applies a patch overlapping **what is currently on screen** (`camera.visibleTiles()`),
-  read _after_ the mind's await, because a model turn takes seconds and the player keeps walking;
+- it never applies a patch overlapping **what is currently on screen** — both halves:
+  the room id _and_ `camera.visibleTiles()`. `patchTouches` returns `PatchScope[]`
+  (`{roomId, rect}`, `rect: null` meaning the whole room, which only `shiftWalls` claims),
+  and the viewport is read _after_ the mind's await, because a model turn takes seconds and
+  the player keeps walking. The room id alone was enough while a room was one screen; it is
+  not once a floor is larger than the frame. `patchTouches` answers "what would the player
+  notice" and is deliberately **not** `PatchResult.affectedRooms`, which answers "what must
+  be redrawn" and still names both sides of a door;
 - it caps patches per beat and calls per cycle.
 
 Cycle reset first plans from the outgoing observation, then runs `resetWorld` and applies
