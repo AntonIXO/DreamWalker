@@ -42,6 +42,15 @@ interface BuiltRoom {
   cells: string[];
 }
 
+/**
+ * How many built rooms to keep. Three covers where you are, where you came from, and the
+ * room a rift is about to drop you into.
+ */
+const KEEP_BUILT = 3;
+
+/** Guaranteed floor for `GL_MAX_TEXTURE_SIZE`. */
+const MAX_CACHE_PX = 2048;
+
 export class RoomScene {
   /** Goes inside the camera. Holds whichever room is current. */
   readonly root: Container;
@@ -49,6 +58,8 @@ export class RoomScene {
   readonly overlay: Container;
 
   private readonly built = new Map<string, BuiltRoom>();
+  /** Least-recently-shown first. See `evictBeyond`. */
+  private readonly recent: string[] = [];
   private readonly colors: LobbyColors;
   private current: BuiltRoom | null = null;
   private currentRoomId: string | null = null;
@@ -105,6 +116,12 @@ export class RoomScene {
     entry.container.visible = true;
     this.current = entry;
     this.currentRoomId = room.id;
+    // `splice(-1, 1)` on a miss removes the *last* entry, which is the opposite of what
+    // this line is for and quietly stops the cache ever being evicted.
+    const seen = this.recent.indexOf(room.id);
+    if (seen >= 0) this.recent.splice(seen, 1);
+    this.recent.push(room.id);
+    this.evictBeyond(KEEP_BUILT);
     this.paintOverlay(room);
   }
 
@@ -208,6 +225,21 @@ export class RoomScene {
     return { container, actors, cells: [...room.cells] };
   }
 
+  /**
+   * Keep only the last few built rooms.
+   *
+   * `built` never evicted, which was free at 20×11 — a 320×176 render texture is 220 kB
+   * and there are 29 of them. A floor larger than the screen changes the arithmetic
+   * rather than the design: at 48×32 the same cache is 1.5 MB a room, and holding all of
+   * them is 45 MB of GPU memory for rooms nobody is standing in.
+   */
+  private evictBeyond(keep: number): void {
+    while (this.recent.length > keep) {
+      const id = this.recent.shift();
+      if (id && id !== this.currentRoomId) this.destroyRoom(id);
+    }
+  }
+
   private drawTiles(room: RoomState): Container {
     const layer = new Container({
       label: `room-tiles:${room.id}`,
@@ -249,11 +281,18 @@ export class RoomScene {
       }
     }
 
-    layer.cacheAsTexture({
-      scaleMode: "nearest",
-      resolution: 1,
-      antialias: false,
-    });
+    // `cacheAsTexture` flattens the whole mask to one draw call, which is worth more on
+    // a big floor than a small one — but it allocates a texture the size of the room, and
+    // `GL_MAX_TEXTURE_SIZE` is only guaranteed to be 2048. Past that the cache silently
+    // fails, so do not ask for it; the sprites still draw, just unflattened.
+    const pixels = Math.max(room.width, room.height) * room.tileSize;
+    if (pixels <= MAX_CACHE_PX) {
+      layer.cacheAsTexture({
+        scaleMode: "nearest",
+        resolution: 1,
+        antialias: false,
+      });
+    }
     return layer;
   }
 

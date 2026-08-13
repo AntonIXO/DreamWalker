@@ -16,7 +16,7 @@
 
 import type { RoomHotspot } from "../../shared/room";
 import { makeRng } from "../../shared/rng";
-import type { Camera } from "../render/camera";
+import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
 import type { Shiver } from "../render/shiver";
 import { findTarget, type InteractTarget } from "./interact";
@@ -210,9 +210,7 @@ export class DreamSession {
       this.world.currentRoomId = roomId;
       placeAtEntry(this.player, room, entryId);
       this.scene.show(room);
-      this.camera.setWorldSize(room.width, room.height);
-      this.camera.fit(room.width, room.height);
-      this.camera.cutTo(this.player.x, this.player.y);
+      this.frameFor(room);
       this.dwellMs.clear();
 
       this.leadAlong(roomId);
@@ -247,8 +245,24 @@ export class DreamSession {
 
   private showRoom(room: RoomState): void {
     this.scene.show(room);
+    this.frameFor(room);
+  }
+
+  /**
+   * How this room is looked at.
+   *
+   * `frame` holds the whole room on screen at an integer zoom, which is what a 20×11
+   * scene is for. `follow` keeps a fixed window and tracks the walker, which is what a
+   * floor bigger than the screen needs. Arriving is always a cut — panning to a room you
+   * have just been thrown into would announce the geometry rather than the arrival.
+   */
+  private frameFor(room: RoomState): void {
     this.camera.setWorldSize(room.width, room.height);
-    this.camera.fit(room.width, room.height);
+    if (room.camera === "follow") {
+      this.camera.fit(FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h);
+    } else {
+      this.camera.fit(room.width, room.height);
+    }
     this.camera.cutTo(this.player.x, this.player.y);
   }
 

@@ -19,7 +19,7 @@ import {
 
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
-import { Camera, DEFAULT_CAMERA } from "./render/camera";
+import { Camera, DEFAULT_CAMERA, FOLLOW_VIEW_TILES } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
 import { DreamFx } from "./render/dreamFx";
 import { RoomScene } from "./render/roomScene";
@@ -630,7 +630,11 @@ async function boot(): Promise<void> {
     }
     const room = currentRoom(world);
     camera.setWorldSize(room.width, room.height);
-    camera.fit(room.width, room.height);
+    if (room.camera === "follow") {
+      camera.fit(FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h);
+    } else {
+      camera.fit(room.width, room.height);
+    }
     camera.cutTo(session.player.x, session.player.y);
     rooms.resizeOverlay(app.screen.width, app.screen.height);
   };
@@ -817,7 +821,14 @@ async function boot(): Promise<void> {
 
     // Rooms are discrete, so the camera always frames the one we are in. There is no
     // follow mode and no interior mask: neighbours are not hidden, they are not drawn.
-    camera.frame(room);
+    // A room that fits the screen is framed whole; a floor larger than the frame is
+    // followed. `DreamRoom.camera` is the switch and it is authored per room, so the two
+    // can coexist in one dream.
+    if (room.camera === "follow") {
+      camera.follow(session.player.x, session.player.y, delta);
+    } else {
+      camera.frame(room);
+    }
 
     // --- one-shot actions
     if (input.consume(Action.DEBUG)) debug.toggle();

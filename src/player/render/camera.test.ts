@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { Camera, DEFAULT_CAMERA, fitZoom, OUTDOOR_VIEW_TILES } from "./camera";
+import { Camera, DEFAULT_CAMERA, fitZoom, FOLLOW_VIEW_TILES } from "./camera";
 
 /** Just enough of a Pixi Container for the camera to write x/y/scale. */
 function stubStage(): {
@@ -62,7 +62,7 @@ describe("fitZoom", () => {
 
   test("outdoor target at 1920×1080 is zoom 5", () => {
     expect(
-      fitZoom(1920, 1080, OUTDOOR_VIEW_TILES.w, OUTDOOR_VIEW_TILES.h, 16),
+      fitZoom(1920, 1080, FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h, 16),
     ).toBe(5);
   });
 

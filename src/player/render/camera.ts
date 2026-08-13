@@ -54,10 +54,10 @@ export const DEFAULT_CAMERA: CameraOptions = {
 /**
  * How much country the follow camera aims to show.
  *
- * Chosen so a laptop sees a route and a junction, not a close-up of one tile. Interiors
- * and the lobby ignore this and fit their own rectangle instead.
+ * Chosen so a laptop sees a route and a junction, not a close-up of one tile. A room
+ * that fits the screen is framed whole instead and ignores this.
  */
-export const OUTDOOR_VIEW_TILES = { w: 22, h: 13 } as const;
+export const FOLLOW_VIEW_TILES = { w: 22, h: 13 } as const;
 
 /**
  * Largest whole-number zoom that still keeps `tilesW × tilesH` on screen.
