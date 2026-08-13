@@ -6288,7 +6288,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/anton.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "anton:v-sleduiuschii-raz"
       },
       {
         "id": "babushka-nadya",
@@ -6310,7 +6311,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/babushka-nadya.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "babushka-nadya:prichiny-zapretov"
       },
       {
         "id": "dolzhniki",
@@ -6332,7 +6334,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/dolzhniki.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "dolzhniki:naznachenie"
       },
       {
         "id": "glaz",
@@ -6354,7 +6357,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/glaz.md",
-        "suspicionMonotone": false
+        "suspicionMonotone": false,
+        "leverageId": null
       },
       {
         "id": "hudozhnik",
@@ -6376,7 +6380,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/hudozhnik.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "hudozhnik:pereskaz"
       },
       {
         "id": "kirill",
@@ -6398,7 +6403,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/kirill.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "kirill:chuzhaia-zasluga"
       },
       {
         "id": "kripto-bro",
@@ -6420,7 +6426,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/kripto-bro.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "kripto-bro:vsio-krome-summ"
       },
       {
         "id": "liosha-gnedkov",
@@ -6442,7 +6449,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/liosha-gnedkov.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": null
       },
       {
         "id": "mama",
@@ -6464,7 +6472,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/mama.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "mama:masshtab-problemy"
       },
       {
         "id": "nilufar",
@@ -6486,7 +6495,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/nilufar.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": null
       },
       {
         "id": "papa",
@@ -6508,7 +6518,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/papa.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": null
       },
       {
         "id": "tetya",
@@ -6530,7 +6541,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/tetya.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": null
       },
       {
         "id": "turyshev",
@@ -6552,7 +6564,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/turyshev.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": "turyshev:vsio-normalno"
       },
       {
         "id": "ubiitsa",
@@ -6574,7 +6587,8 @@
         "portraitImages": null,
         "spriteSheet": null,
         "soulPath": "souls/ubiitsa.md",
-        "suspicionMonotone": true
+        "suspicionMonotone": true,
+        "leverageId": null
       }
     ],
     "clues": [

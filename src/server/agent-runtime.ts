@@ -71,12 +71,25 @@ const dialogueSchema = z.object({
   figureMemorySummary: z.string().max(400),
   journalEntry: z.string().min(1).max(180).nullable(),
   portraitState: z.enum(["neutral", "interested", "wary", "knows"]),
+  leverageLearned: z
+    .object({
+      aboutFigureId: z.string().max(120),
+      leverageId: z.string().max(160),
+    })
+    .nullable(),
+  pressed: z.enum(["leveraged", "broken"]).nullable(),
 });
 
 const examineSchema = z.object({
   reply: z.string().min(1).max(180),
   yieldedShardId: z.string().max(120).nullable(),
   clueObservedId: z.string().max(120).nullable(),
+  leverageLearned: z
+    .object({
+      aboutFigureId: z.string().max(120),
+      leverageId: z.string().max(160),
+    })
+    .nullable(),
 });
 
 const agendaSchema = z.object({
@@ -910,6 +923,7 @@ export class AgentRuntime {
           figureId: figure.id,
           utterance: request.utterance,
           visitCounts: visits,
+          leveraged: request.leverageOffered !== null,
         })
           ? figure.holdsShardId
           : null;
@@ -920,6 +934,13 @@ export class AgentRuntime {
         output.memoryEffect?.memoryId === request.offeredMemory.id
           ? output.memoryEffect
           : null;
+      output.leverageLearned = this.clampLeverage(
+        output.leverageLearned,
+        figure.id,
+      );
+      // Being pressed is not something a figure gets to claim: it happened if the
+      // sanitar actually held something over them and used it.
+      if (!request.leverageOffered) output.pressed = null;
       return output;
     } catch (error) {
       throw classify(error);
@@ -927,6 +948,25 @@ export class AgentRuntime {
       this.release();
       if (this.providerMode === "codex") void this.account.refresh();
     }
+  }
+
+  /**
+   * Leverage is only ever about somebody else, and only about somebody who has any.
+   *
+   * Same shape and same place as the `yieldedShardId` clamp above: the model proposes,
+   * the engine decides. Nobody hands over their own noose, and nothing can be invented
+   * about a figure the Lord gave no `leverageId`.
+   */
+  private clampLeverage(
+    proposed: { aboutFigureId: string; leverageId: string } | null,
+    speakerId: string,
+  ): { aboutFigureId: string; leverageId: string } | null {
+    if (!proposed || proposed.aboutFigureId === speakerId) return null;
+    const about = this.artifact.content.characters.find(
+      (character) => character.id === proposed.aboutFigureId,
+    );
+    if (!about?.leverageId) return null;
+    return { aboutFigureId: about.id, leverageId: about.leverageId };
   }
 
   async examine(

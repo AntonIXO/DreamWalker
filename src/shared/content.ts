@@ -91,6 +91,17 @@ export interface CharacterDefinition {
    */
   soulPath?: string | null;
   /**
+   * What can be held over this figure, as an opaque key.
+   *
+   * Only the key ships. `dream.json` is served to the browser, and the *content* of
+   * somebody's leverage is an answer to a puzzle exactly the way ПАЛЕВО is — so the
+   * prose lives in the soul, which the server reads from disk and never publishes.
+   * Null for anybody with nothing to hold: the killer's «ВРЁТ ПРО» is «ничего», so
+   * `press` is simply never offered on him, which is the right kind of exception —
+   * it falls out of the material rather than being written down as a special case.
+   */
+  leverageId?: string | null;
+  /**
    * Whether suspicion is one-way. True everywhere except the Eye, whose scale is
    * replaced by «сколько правды санитар сказал».
    */

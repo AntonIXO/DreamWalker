@@ -18,5 +18,6 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/liosha-gnedkov.md",
-  "suspicionMonotone": true
+  "suspicionMonotone": true,
+  "leverageId": null
 }

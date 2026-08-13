@@ -120,3 +120,27 @@ describe("fateAfter", () => {
     expect(fateAfter("talk")).toBeNull();
   });
 });
+
+describe("what the live dream actually offers", () => {
+  test("only the figures who lie can be pressed, and that is not a special case", async () => {
+    // Straight from `## ВРЁТ ПРО`. «Ничего» means no key, so `press` is never offered on
+    // the killer, the Eye, Лёша, Нилюфар or the тётя — the exception falls out of the
+    // material rather than being written down.
+    const fs = await import("node:fs");
+    const artifact = JSON.parse(
+      fs.readFileSync("dreams/son/dream.json", "utf8"),
+    ) as {
+      content: {
+        characters: Array<{ id: string; leverageId?: string | null }>;
+      };
+    };
+    const holds = (id: string): boolean =>
+      Boolean(artifact.content.characters.find((c) => c.id === id)?.leverageId);
+
+    expect(holds("mama")).toBe(true);
+    expect(holds("kirill")).toBe(true);
+    for (const honest of ["ubiitsa", "glaz", "liosha-gnedkov", "tetya"]) {
+      expect(holds(honest)).toBe(false);
+    }
+  });
+});

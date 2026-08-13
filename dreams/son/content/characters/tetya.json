@@ -18,5 +18,6 @@
   "portraitImages": null,
   "spriteSheet": null,
   "soulPath": "souls/tetya.md",
-  "suspicionMonotone": true
+  "suspicionMonotone": true,
+  "leverageId": null
 }

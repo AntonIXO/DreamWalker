@@ -263,6 +263,7 @@ export class RemoteMind implements DreamMind {
       cycleNumber: this.context.cycleNumber(),
       figureId: request.figureId,
       utterance: request.utterance,
+      leverageOffered: request.leverageOffered ?? null,
       offeredMemory,
       figureMemory,
       knownShardIds: [...this.memory.knownShardIds],

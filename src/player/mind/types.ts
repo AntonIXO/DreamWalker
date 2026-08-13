@@ -47,6 +47,8 @@ export interface TurnRequest {
   figureId: string;
   utterance: string;
   offeredMemoryId?: string | null;
+  /** Leverage the sanitar chose to use on this person, if any. */
+  leverageOffered?: string | null;
 }
 
 export type TurnResponse = DialogueResult;

@@ -27,6 +27,12 @@ export interface DialogueCallbacks {
   onShard(shardId: string): void;
   onMemorySpent(memoryId: string): void;
   onJournal(figure: FigureState, text: string): void;
+  /** What the sanitar may hold over this person right now. */
+  leverageOn(figureId: string): readonly string[];
+  /** Somebody let something slip about somebody else. */
+  onLeverage(aboutFigureId: string, leverageId: string): void;
+  /** They gave it up, or they shut for good. */
+  onPressed(figure: FigureState, outcome: "leveraged" | "broken"): void;
   onResonance(declaration: string): void;
 }
 
@@ -37,6 +43,7 @@ export class DialoguePanel {
   private readonly logEl: HTMLElement;
   private readonly inputEl: HTMLInputElement;
   private readonly memoryEl: HTMLSelectElement;
+  private readonly leverageEl: HTMLSelectElement;
   private figure: FigureState | null = null;
   private busy = false;
 
@@ -62,6 +69,9 @@ export class DialoguePanel {
           <select class="dialogue-memory" aria-label="Предложить воспоминание">
             <option value="">не отдавать воспоминание</option>
           </select>
+          <select class="dialogue-leverage" aria-label="Назвать то, что знаешь" hidden>
+            <option value="">не называть</option>
+          </select>
         </form>
         <div class="dialogue-hint">Esc — отойти</div>
       </div>
@@ -73,6 +83,7 @@ export class DialoguePanel {
     this.logEl = this.root.querySelector(".dialogue-log")!;
     this.inputEl = this.root.querySelector(".dialogue-input")!;
     this.memoryEl = this.root.querySelector(".dialogue-memory")!;
+    this.leverageEl = this.root.querySelector(".dialogue-leverage")!;
 
     this.root.querySelector("form")!.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -105,7 +116,15 @@ export class DialoguePanel {
       : "";
   }
 
-  open(figure: FigureState): void {
+  /**
+   * Pressing is not a mode.
+   *
+   * It is the memory-offer idiom applied to leverage — a second `<select>` in the same
+   * form, hidden when there is nothing to name. Free text stays the move (§3), and the
+   * verb ring's `press` row is only a shortcut that opens this with the select already
+   * on. A mode would have needed its own screen, its own escape and its own rules.
+   */
+  open(figure: FigureState, preselectLeverage = false): void {
     this.figure = figure;
     this.root.hidden = false;
     this.nameEl.textContent = figure.name;
@@ -118,9 +137,23 @@ export class DialoguePanel {
       );
     }
     this.refreshMemories();
+    this.refreshLeverage();
+    if (preselectLeverage && this.leverageEl.options.length > 1) {
+      this.leverageEl.selectedIndex = 1;
+    }
     this.inputEl.value = "";
     this.inputEl.focus();
     this.callbacks.onOpen(figure);
+  }
+
+  private refreshLeverage(): void {
+    const figure = this.figure;
+    const held = figure ? this.callbacks.leverageOn(figure.id) : [];
+    this.leverageEl.replaceChildren(new Option("не называть", ""));
+    for (const id of held) {
+      this.leverageEl.add(new Option(`назвать: ${labelFor(id)}`, id));
+    }
+    this.leverageEl.hidden = held.length === 0;
   }
 
   private renderPortrait(): void {
@@ -172,7 +205,9 @@ export class DialoguePanel {
     this.inputEl.value = "";
     this.inputEl.disabled = true;
     this.memoryEl.disabled = true;
+    this.leverageEl.disabled = true;
     const offeredMemoryId = this.memoryEl.value || null;
+    const leverageOffered = this.leverageEl.value || null;
     this.line(utterance, "said-by-you");
 
     // A figure taking a moment to answer is in character, but a panel that looks frozen
@@ -186,7 +221,12 @@ export class DialoguePanel {
         `Продумывает ответ: ${figure.name}`,
         () =>
           this.mind.turn(
-            { figureId: figure.id, utterance, offeredMemoryId },
+            {
+              figureId: figure.id,
+              utterance,
+              offeredMemoryId,
+              leverageOffered,
+            },
             (partial) => {
               if (this.figure !== figure) return;
               setMarkdown(pending, partial || "…");
@@ -199,6 +239,8 @@ export class DialoguePanel {
       this.busy = false;
       this.inputEl.disabled = false;
       this.memoryEl.disabled = false;
+      this.leverageEl.disabled = false;
+      this.leverageEl.disabled = false;
       this.inputEl.focus();
       return;
     }
@@ -209,6 +251,8 @@ export class DialoguePanel {
       this.busy = false;
       this.inputEl.disabled = false;
       this.memoryEl.disabled = false;
+      this.leverageEl.disabled = false;
+      this.leverageEl.disabled = false;
       return;
     }
 
@@ -252,6 +296,14 @@ export class DialoguePanel {
     if (response.yieldedShardId)
       this.callbacks.onShard(response.yieldedShardId);
 
+    if (response.leverageLearned) {
+      this.callbacks.onLeverage(
+        response.leverageLearned.aboutFigureId,
+        response.leverageLearned.leverageId,
+      );
+    }
+    if (response.pressed) this.callbacks.onPressed(figure, response.pressed);
+
     if (response.journalEntry)
       this.callbacks.onJournal(figure, response.journalEntry);
     if (
@@ -270,6 +322,7 @@ export class DialoguePanel {
     this.busy = false;
     this.inputEl.disabled = false;
     this.memoryEl.disabled = false;
+    this.leverageEl.disabled = false;
     this.refreshMemories();
     this.inputEl.focus();
   }
@@ -277,4 +330,9 @@ export class DialoguePanel {
   destroy(): void {
     this.root.remove();
   }
+}
+
+/** The key is opaque on purpose; the readable half lives in the soul, server-side. */
+function labelFor(leverageId: string): string {
+  return leverageId.split(":")[1]?.replace(/-/g, " ") ?? leverageId;
 }

@@ -28,6 +28,16 @@ export function mayYieldShard(input: {
   figureId: string;
   utterance: string;
   visitCounts: ReadonlyMap<string, number> | Readonly<Record<string, number>>;
+  /**
+   * Whether this figure has already been pressed with something held over them.
+   *
+   * Pressure does not open a second door round the side: it satisfies the gate that was
+   * already there, for the figures whose price is not something else. `glaz` and
+   * `kirill` are never here — the Eye's price is an admission and Кирилл's is
+   * recognition, and both souls say pressure is the wrong currency. One authority over
+   * yields, no drift.
+   */
+  leveraged?: boolean;
 }): boolean {
   const said = input.utterance;
   const visits = (roomId: string): number => {
@@ -43,9 +53,13 @@ export function mayYieldShard(input: {
     case "kirill":
       return RECOGNISES_KIRILL.test(said);
     case "papa":
-      return ASKS_PAPA.test(said);
+      return input.leveraged === true || ASKS_PAPA.test(said);
     case "hudozhnik":
-      return visits(POOL_ROOM_ID) > 0 || HEARD_THE_HALL.test(said);
+      return (
+        input.leveraged === true ||
+        visits(POOL_ROOM_ID) > 0 ||
+        HEARD_THE_HALL.test(said)
+      );
     default:
       return true;
   }

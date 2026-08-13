@@ -38,6 +38,7 @@ import { walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
+import { learnLeverage, leverageOn } from "./game/fates";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
@@ -360,6 +361,40 @@ async function boot(): Promise<void> {
     onJournal: (figure, text) => {
       journal.addPerson(cycle.number, figure.id, figure.name, text);
     },
+    leverageOn: (figureId) => leverageOn(world, figureId),
+    onLeverage: (aboutFigureId, leverageId) => {
+      if (!learnLeverage(world, aboutFigureId, leverageId)) return;
+      const about = world.figures.find((f) => f.id === aboutFigureId);
+      journal.addPerson(
+        cycle.number,
+        aboutFigureId,
+        about?.name ?? aboutFigureId,
+        "Про него сказали лишнее.",
+        "tell",
+      );
+      hud.whisper("Ты теперь знаешь про него то, чего знать не должен.", 5);
+    },
+    onPressed: (figure, outcome) => {
+      applyPatch(
+        world,
+        {
+          kind: "markFigure",
+          figureId: figure.id,
+          fate: outcome,
+          quoted: null,
+          reason: "sanitar:press",
+        },
+        cycle.number,
+      );
+      observations.noteFate(figure.id, "press");
+      journal.addPerson(
+        cycle.number,
+        figure.id,
+        figure.name,
+        outcome === "broken" ? "Замолчал насовсем." : "Отдал и говорит иначе.",
+        "tell",
+      );
+    },
     onResonance: (declaration) => {
       dialogue.close();
       finale.openResonance(declaration);
@@ -370,7 +405,7 @@ async function boot(): Promise<void> {
     onClose: () => input.setCaptured(false),
     onPick: (figure, verb) => {
       if (verb === "talk" || verb === "press") {
-        dialogue.open(figure);
+        dialogue.open(figure, verb === "press");
         return;
       }
       const result = applyPatch(

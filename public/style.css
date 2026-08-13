@@ -1192,3 +1192,9 @@ body {
 .verb-ring .verb.refused .dim {
   text-decoration: none;
 }
+
+/* Leverage sits beside the memory offer, in the same form. Hidden when there is nothing
+   to name, so the row only appears once the sanitar has actually learned something. */
+.dialogue-leverage[hidden] {
+  display: none;
+}

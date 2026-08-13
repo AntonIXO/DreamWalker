@@ -60,3 +60,36 @@ describe("mayYieldShard", () => {
     expect(clueIdForShard("shard3")).toBe("clue-3");
   });
 });
+
+describe("pressure satisfies a gate, it does not go round it", () => {
+  const visits = new Map<string, number>();
+
+  test("papa and the artist open under it", () => {
+    for (const figureId of ["papa", "hudozhnik"]) {
+      expect(
+        mayYieldShard({ figureId, utterance: "…", visitCounts: visits }),
+      ).toBe(false);
+      expect(
+        mayYieldShard({
+          figureId,
+          utterance: "…",
+          visitCounts: visits,
+          leveraged: true,
+        }),
+      ).toBe(true);
+    }
+  });
+
+  test("the Eye and Кирилл never do — their souls say it is the wrong currency", () => {
+    for (const figureId of ["glaz", "kirill"]) {
+      expect(
+        mayYieldShard({
+          figureId,
+          utterance: "…",
+          visitCounts: visits,
+          leveraged: true,
+        }),
+      ).toBe(false);
+    }
+  });
+});

@@ -191,6 +191,8 @@ export interface DialogueRequestPayload {
   cycleNumber: number;
   figureId: string;
   utterance: string;
+  /** What the sanitar is holding over this person, when he chose to use it. */
+  leverageOffered: string | null;
   offeredMemory: DreamMemory | null;
   figureMemory: FigureMemory;
   knownShardIds: string[];
@@ -215,6 +217,23 @@ export interface DialogueResult {
   figureMemorySummary: string;
   journalEntry: string | null;
   portraitState: PortraitState;
+  /**
+   * Something said about **somebody else** that can be held over them.
+   *
+   * §2's economy is «осмотр мира — медленный и безопасный канал, а люди — быстрый и
+   * рискованный», and this is where it is protected: the main source of leverage is
+   * `examine`, so the heaviest verb in the game is paid for by *looking at things*
+   * rather than by aggression. A figure never hands over its own noose — the server
+   * clamps that next to the `yieldedShardId` clamp.
+   */
+  leverageLearned: { aboutFigureId: string; leverageId: string } | null;
+  /**
+   * What being pressed did to them, when they were.
+   *
+   * `leveraged` — gave up what they had and talks differently after. `broken` — «уходит
+   * в обиду и замолкает», and never speaks again. Null when nothing was pressed.
+   */
+  pressed: "leveraged" | "broken" | null;
 }
 
 export interface ExamineRequestPayload {
@@ -234,6 +253,16 @@ export interface ExamineResult {
   reply: string;
   yieldedShardId: string | null;
   clueObservedId: string | null;
+  /**
+   * Something the thing gives away about a person.
+   *
+   * This is the important half of leverage, not a convenience. §2 makes looking at the
+   * world the slow, safe channel and talking to people the fast, dangerous one; putting
+   * the main source of blackmail material on the *safe* channel means the heaviest verb
+   * in the game is paid for by patience rather than by pressure, and the concept's
+   * central trade survives a feature that could easily have destroyed it.
+   */
+  leverageLearned: { aboutFigureId: string; leverageId: string } | null;
 }
 
 export interface CycleExitRequestPayload {

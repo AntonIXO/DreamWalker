@@ -89,6 +89,57 @@ const DEFLECTIONS = [
   "Странный день. Все спрашивают.",
 ];
 
+/**
+ * What one figure lets slip about another, offline.
+ *
+ * Blunt and deterministic, in the spirit of `LOADED_STEMS` above: a stem in what the
+ * sanitar said, and who it is about. The real mind reads `## РЫЧАГ` out of the soul; this
+ * exists so the mechanic does not disappear when inference is down.
+ */
+const LEVERAGE_STEMS: Array<{ about: string; id: string; stems: string[] }> = [
+  {
+    about: "kirill",
+    id: "kirill:chuzhaia-zasluga",
+    stems: ["ноут", "acer", "хакатон", "заслуг", "присво"],
+  },
+  {
+    about: "mama",
+    id: "mama:masshtab-problemy",
+    stems: ["деньг", "трат", "мармелад", "преумен"],
+  },
+  {
+    about: "kripto-bro",
+    id: "kripto-bro:vsio-krome-summ",
+    stems: ["поезд", "вокзал", "кинул", "сумм"],
+  },
+  {
+    about: "hudozhnik",
+    id: "hudozhnik:pereskaz",
+    stems: ["смех", "хохот", "не слышн", "пересказ"],
+  },
+  {
+    about: "turyshev",
+    id: "turyshev:vsio-normalno",
+    stems: ["нормальн", "лавочк", "подъезд"],
+  },
+  {
+    about: "babushka-nadya",
+    id: "babushka-nadya:prichiny-zapretov",
+    stems: ["не бери", "запрет", "нельзя брать"],
+  },
+];
+
+function leverageFrom(said: string, speakerId: string) {
+  for (const entry of LEVERAGE_STEMS) {
+    // Nobody hands over their own noose.
+    if (entry.about === speakerId) continue;
+    if (entry.stems.some((stem) => said.includes(stem))) {
+      return { aboutFigureId: entry.about, leverageId: entry.id };
+    }
+  }
+  return null;
+}
+
 const WARM = [
   "Ты первый, кто спросил по-человечески.",
   "Ну... если тихо. Только тихо.",
@@ -118,6 +169,8 @@ export class ScriptedMind implements DreamMind {
         figureMemorySummary: "",
         journalEntry: null,
         portraitState: "neutral",
+        leverageLearned: null,
+        pressed: null,
       };
     }
 
@@ -139,6 +192,7 @@ export class ScriptedMind implements DreamMind {
       figureId: figure.id,
       utterance: request.utterance,
       visitCounts: this.world.visitCounts,
+      leveraged: Boolean(request.leverageOffered),
     });
     const yielded =
       mayYield && figure.holdsShardId ? figure.holdsShardId : null;
@@ -185,6 +239,13 @@ export class ScriptedMind implements DreamMind {
       journalEntry: yielded
         ? `${figure.name} проговорился о важной детали.`
         : null,
+      leverageLearned: leverageFrom(said, figure.id),
+      // Offline, pressure lands the way Кирилл's soul says pressure always lands.
+      pressed: request.leverageOffered
+        ? hedged
+          ? "leveraged"
+          : "broken"
+        : null,
       portraitState: hit
         ? this.turnCount >= 4
           ? "knows"
@@ -228,6 +289,12 @@ export class ScriptedMind implements DreamMind {
       // say "dust". It matters more now: what a dead carrier drops is exactly this.
       yieldedShardId: interest?.holdsShardId ?? null,
       clueObservedId: clueId,
+      // A thing can say something about a person. Offline it says so from the seed it
+      // was written with, which is the only text it has.
+      leverageLearned: leverageFrom(
+        (interest?.sensorySeed ?? "").toLowerCase(),
+        "",
+      ),
     };
   }
 
