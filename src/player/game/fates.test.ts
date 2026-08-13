@@ -115,6 +115,30 @@ describe("the ledger outlives the cycle", () => {
     expect(world.fateHistory).toHaveLength(1);
   });
 
+  test("and so does what they dropped — the reset must not delete a word", () => {
+    // Caught by playing it, not by the test above: `resetWorld` rebuilds `interests`
+    // from the population snapshot, so remains dropped mid-cycle were wiped on the next
+    // cycle and the hook left the world entirely. That is the exact brick the rule
+    // exists to prevent, and it only shows up after a reset.
+    const world = peopled();
+    kill(world, "figure1");
+    const before = world.interests.find((i) => i.id === "remains:figure1")!;
+    expect(before.holdsShardId).toBe("shard1");
+
+    resetWorld(world, 2);
+    const after = world.interests.find((i) => i.id === "remains:figure1");
+    expect(after?.holdsShardId).toBe("shard1");
+    // Back where it fell, not somewhere newly derived.
+    expect(after?.roomId).toBe(before.roomId);
+    expect(after?.x).toBe(before.x);
+
+    // And twice over, because a cycle happens more than once.
+    resetWorld(world, 3);
+    expect(
+      world.interests.filter((i) => i.id === "remains:figure1"),
+    ).toHaveLength(1);
+  });
+
   test("being led downgrades to gone — you cannot walk somebody across a reset", () => {
     const world = peopled();
     applyPatch(world, {

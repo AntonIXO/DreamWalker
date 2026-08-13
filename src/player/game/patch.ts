@@ -417,10 +417,14 @@ function relocateShard(
  * §6 refuses a solvability solver and this is not one. It does not decide whether a route
  * survives; it only refuses to let a word stop existing.
  */
-function dropRemains(world: WorldState, figure: FigureState): void {
-  if (!figure.holdsShardId) return;
+function dropRemains(
+  world: WorldState,
+  figure: FigureState,
+): InterestState | null {
+  if (!figure.holdsShardId) return null;
   const id = `remains:${figure.id}`;
-  if (world.interests.some((interest) => interest.id === id)) return;
+  const already = world.interests.find((interest) => interest.id === id);
+  if (already) return already;
   const placed = placeInterestState(world, {
     id,
     roomId: figure.roomId,
@@ -431,6 +435,7 @@ function dropRemains(world: WorldState, figure: FigureState): void {
     clueId: clueIdForShard(figure.holdsShardId),
   });
   if (placed) world.interests.push(placed);
+  return placed;
 }
 
 /**
@@ -458,6 +463,8 @@ function markFigure(
   if (fateOf(world, figureId) === fate) return refuse("already so");
 
   const roomId = figure.roomId;
+  const remains =
+    fate === "dead" || fate === "broken" ? dropRemains(world, figure) : null;
   setFate(world, {
     figureId,
     fate,
@@ -465,9 +472,9 @@ function markFigure(
     roomId,
     by: fate === "dead" ? "kill" : fate === "led" ? "lead" : "press",
     quoted,
+    remains,
   });
 
-  if (fate === "dead" || fate === "broken") dropRemains(world, figure);
   if (fate === "dead" || fate === "gone") {
     const index = world.figures.indexOf(figure);
     if (index >= 0) world.figures.splice(index, 1);

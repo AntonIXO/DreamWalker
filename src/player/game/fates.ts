@@ -12,7 +12,7 @@
  */
 
 import { RETURNS_WHOLE, type FigureFate, type Verb } from "../../shared/verbs";
-import type { WorldState } from "./world";
+import type { InterestState, WorldState } from "./world";
 
 export interface FateRecord {
   figureId: string;
@@ -21,6 +21,16 @@ export interface FateRecord {
   cycle: number;
   roomId: string;
   by: Verb;
+  /**
+   * What they were carrying, and where it ended up.
+   *
+   * `resetWorld` rebuilds `world.interests` from the population snapshot, so remains
+   * dropped mid-cycle are wiped by the next reset — and then the hook is gone from the
+   * world entirely, which is the exact brick «судьба не стирает слово» exists to
+   * prevent. Keeping the interest on the record lets the ledger put it back *where it
+   * fell*, rather than re-deriving a position that would not match.
+   */
+  remains: InterestState | null;
   /**
    * The sanitar's own words, when there were any.
    *
@@ -100,5 +110,17 @@ export function applyFateLedger(world: WorldState, cycle: number): void {
 
   for (let i = world.figures.length - 1; i >= 0; i--) {
     if (!isPresent(world, world.figures[i]!.id)) world.figures.splice(i, 1);
+  }
+
+  // 4. Put back what the dead and the broken were carrying. Without this the reset
+  //    quietly deletes a word, which is the one thing a fate is not allowed to do.
+  for (const record of world.fates.values()) {
+    if (!record.remains) continue;
+    if (
+      world.interests.some((interest) => interest.id === record.remains!.id)
+    ) {
+      continue;
+    }
+    world.interests.push({ ...record.remains });
   }
 }
