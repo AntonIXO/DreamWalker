@@ -35,6 +35,7 @@ const POPULATION: DreamPopulation = {
   interests: [],
   roomMoods: {},
   retargets: [],
+  assignments: [],
   source: "fallback",
 };
 

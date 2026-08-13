@@ -385,3 +385,71 @@ describe("Кирилл", () => {
     expect(world.figures.some((f) => f.id === mortal.id)).toBe(false);
   });
 });
+
+describe("the deal cannot make the dream uncrossable", () => {
+  /**
+   * The invariant the whole skeleton/card split exists for. §6 refuses a solvability
+   * solver, and this is not one: it does not check that a route is *good*, it checks
+   * that a reshuffle is structurally incapable of touching the map at all. The places
+   * move; the walls, doors, stairs and slots do not.
+   */
+  test("a hundred deals leave the geometry and the reachable set identical", () => {
+    const control = createWorld(artifact);
+    const geometry = (world: ReturnType<typeof createWorld>): string =>
+      JSON.stringify(
+        world.rooms.map((room) => ({
+          id: room.id,
+          cells: room.cells,
+          doors: room.doors.map((d) => [
+            d.id,
+            d.x,
+            d.y,
+            d.threshold,
+            d.toRoomId,
+          ]),
+          entries: room.entries,
+          props: room.props.map((p) => [p.id, p.x, p.y, p.w, p.h, p.solid]),
+        })),
+      );
+    const before = geometry(control);
+
+    for (let seed = 0; seed < 100; seed++) {
+      const world = createWorld(artifact);
+      installPopulation(
+        world,
+        fallbackPopulation(artifact, { shuffle: true, seed: `deal-${seed}` }),
+      );
+      expect(geometry(world)).toBe(before);
+    }
+  });
+
+  test("the courtyard and the finale never move, whatever the deal says", () => {
+    for (let seed = 0; seed < 40; seed++) {
+      const world = createWorld(artifact);
+      installPopulation(
+        world,
+        fallbackPopulation(artifact, { shuffle: true, seed: `pin-${seed}` }),
+      );
+      // §19 — «безопасная комната. Единственная». A run that opens anywhere else opens
+      // with the sanitar already in trouble, and the Eye is pinned to the last door.
+      expect(world.roomById.get(artifact.spawn.roomId)!.name).toBe(
+        artifact.rooms.find((r) => r.id === artifact.spawn.roomId)!.name,
+      );
+      expect(world.roomById.get(artifact.finaleRoomId)!.name).toBe(
+        artifact.rooms.find((r) => r.id === artifact.finaleRoomId)!.name,
+      );
+    }
+  });
+
+  test("but the places behind the doors really do move", () => {
+    const world = createWorld(artifact);
+    installPopulation(
+      world,
+      fallbackPopulation(artifact, { shuffle: true, seed: "moved" }),
+    );
+    const moved = artifact.rooms.filter(
+      (authored) => world.roomById.get(authored.id)!.name !== authored.name,
+    );
+    expect(moved.length).toBeGreaterThan(0);
+  });
+});

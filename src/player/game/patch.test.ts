@@ -56,6 +56,7 @@ const POPULATION: DreamPopulation = {
   ],
   roomMoods: { a: "Светло и неуместно подробно." },
   retargets: [],
+  assignments: [],
   source: "fallback",
 };
 

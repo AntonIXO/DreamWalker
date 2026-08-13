@@ -227,11 +227,71 @@ export function installPopulation(
   world.baseFigures = figures.map(cloneFigureState);
   world.baseInterests = interests.map((interest) => ({ ...interest }));
   const affected = applyPopulationRetargets(world, population);
+  for (const roomId of applyPopulationAssignments(world, population)) {
+    affected.add(roomId);
+  }
   for (const interest of interests) affected.add(interest.roomId);
   return {
     ok: true,
     affectedRooms: [...affected],
   };
+}
+
+/**
+ * Put each place onto the room it was dealt.
+ *
+ * **Only the writing and the things move.** `cells`, `props`, `doors`, `entries` and the
+ * slots stay exactly where a person drew them, which is the whole reason a reshuffle
+ * cannot make the dream uncrossable: the sleeper deals the catalogue, and the catalogue
+ * has no geometry in it. §3 — «мир не генерируется из воздуха».
+ *
+ * The hotspots come across because they are the room's objects — «три тысячи номерков»
+ * belongs to the hotel, not to a rectangle — but they are re-settled into *this* room's
+ * object slots on the way, so a place with five things landing in a room with three
+ * loses two rather than stacking them in a wall.
+ */
+export function applyPopulationAssignments(
+  world: WorldState,
+  population: DreamPopulation | null = world.population,
+): Set<string> {
+  const affected = new Set<string>();
+  const authored = new Map(world.artifact.rooms.map((room) => [room.id, room]));
+  for (const { roomId, cardId } of population?.assignments ?? []) {
+    const room = world.roomById.get(roomId);
+    const card = authored.get(cardId);
+    if (!room || !card || room.kind !== card.kind) continue;
+
+    room.name = card.name;
+    room.description = card.description;
+    room.atmosphere = card.atmosphere;
+    room.personality = card.personality;
+    room.tags = [...card.tags];
+    room.copy = { ...card.copy };
+    room.revisit = { ...card.revisit };
+    room.graphics = {
+      ...room.graphics,
+      glitchPreset: card.graphics.glitchPreset,
+      // The backdrop is a picture *of that place*, so it travels with the writing. The
+      // roles stay: they belong to the tiles this room is actually built from.
+      backdropImage: card.graphics.backdropImage,
+    };
+
+    // The things come too, re-seated on this room's own footprints.
+    const slots = room.props;
+    room.hotspots = card.hotspots.slice(0, slots.length).map((hotspot, i) => ({
+      ...hotspot,
+      propId: slots[i]!.id,
+      x: slots[i]!.x + slots[i]!.w / 2,
+      y: slots[i]!.y + slots[i]!.h + 0.15,
+    }));
+    for (const [i, prop] of slots.entries()) {
+      const from = card.props[i];
+      prop.image = from?.image ?? null;
+      prop.role = from?.role ?? prop.role;
+    }
+    affected.add(roomId);
+  }
+  return affected;
 }
 
 /** Re-deal this run's rifts. Safe to call after `resetWorld`. */

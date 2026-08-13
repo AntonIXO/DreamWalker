@@ -31,6 +31,7 @@ import { Action, Input } from "./game/input";
 import { updateFigures } from "./game/figures";
 import {
   applyPatch,
+  applyPopulationAssignments,
   applyPopulationRetargets,
   installPopulation,
 } from "./game/patch";
@@ -680,7 +681,11 @@ async function boot(): Promise<void> {
       const plan = await thinking.run("Перестраивает следующий цикл сна", () =>
         heartbeat.planCycleExit(),
       );
-      resetWorld(world);
+      resetWorld(world, cycle.number);
+      // The places are re-laid over the restored rooms before the exit plan lands, so
+      // the sleeper's patches apply to the arrangement the player is about to walk into
+      // rather than to the one they just left.
+      applyPopulationAssignments(world);
       applyPopulationRetargets(world);
       heartbeat.applyCyclePlan(plan);
       observations.reset();

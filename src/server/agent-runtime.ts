@@ -761,10 +761,15 @@ export class AgentRuntime {
         signal,
         16_384,
       );
+      // The model decides where people and things go; which place is behind which door
+      // is a permutation, and a permutation has no business depending on a round trip.
+      // Seeded off the sealed secret so a live run and a training run of the same dream
+      // are the same arrangement — and a reload is not a reroll.
       const population = buildPopulation(
         this.artifact,
         proposal as PopulationProposal,
         "ai",
+        { shuffle: true },
       );
       this.populationValue = population;
       return population;

@@ -96,6 +96,23 @@ export interface PopulationRetarget {
   toRoomId: string;
 }
 
+/**
+ * Which place is behind which door this run.
+ *
+ * The dream is 29 authored rooms and no generator (§3), but «жёсткий рез без перехода»
+ * is the corpus's own grammar and the sleeper is supposed to deal the catalogue anew
+ * each time. This is that deal, and it is deliberately the *content* that moves, never
+ * the geometry: walls, doors, stairs and slots stay exactly where a person drew them, so
+ * a reshuffle cannot make the dream uncrossable no matter what the model returns. That
+ * is what buys generativity without a solvability solver §6 refuses to have.
+ */
+export interface RoomAssignment {
+  /** The physical room — its mask, doors and slots. */
+  roomId: string;
+  /** Whose place it is this time: the id of the room whose writing and things it wears. */
+  cardId: string;
+}
+
 export interface DreamPopulation {
   figures: FigureProfile[];
   interests: InterestSeed[];
@@ -105,6 +122,11 @@ export interface DreamPopulation {
    * composes a new deal each inhabit; cycle-exit may add more later.
    */
   retargets: PopulationRetarget[];
+  /**
+   * How the places were dealt onto the rooms. Empty means everything is where it was
+   * authored, which is what a training run and a failed inhabit both give you.
+   */
+  assignments: RoomAssignment[];
   source: "ai" | "fallback";
 }
 
