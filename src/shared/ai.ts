@@ -1,5 +1,6 @@
 import type { MapPatch } from "./map-patch";
 import type { PortraitState } from "./content";
+import type { FigureFate, Verb } from "./verbs";
 
 /** The one Codex configuration this game is designed and tuned against. */
 export const DREAM_MODEL = "gpt-5.6-luna";
@@ -146,6 +147,19 @@ export interface WorldSnapshot {
     role: string;
     personality: string;
     activity: string;
+    /**
+     * What the sanitar did to them, if anything.
+     *
+     * This list holds people who are **not in the world any more**, which is the whole
+     * point: a dead figure is spliced out of `world.figures`, so without this nobody
+     * could mention that they are gone — and «его нет там, где он был» is the line every
+     * other figure has to be able to say.
+     */
+    fate: FigureFate;
+    fateCycle: number | null;
+    fateRoomId: string | null;
+    /** The sanitar's own words at the time, for a figure to quote back. */
+    fateQuoted: string | null;
   }>;
   interests: Array<{
     id: string;
@@ -154,6 +168,19 @@ export interface WorldSnapshot {
     sensorySeed: string;
     holdsShardId: string | null;
     clueId: string | null;
+  }>;
+  /**
+   * Everything the sanitar has ever done here, oldest first.
+   *
+   * Filtered per recipient before it is sent — see `remote.ts`. Кирилл never appears in
+   * it for anybody but the Eye.
+   */
+  fateHistory: Array<{
+    figureId: string;
+    figureName: string;
+    fate: FigureFate;
+    cycle: number;
+    roomId: string;
   }>;
   /** Which corner of the chart the sanitar is currently in. Sets the register, not the plot. */
   mood: "upper-dynamic" | "upper-static" | "downer-dynamic" | "downer-static";
@@ -228,6 +255,14 @@ export interface AiObservation {
   approachedFigures: Record<string, number>;
   learnedShardIds: string[];
   beatsThisCycle: number;
+  /**
+   * Figure id -> what the sanitar did to them this cycle.
+   *
+   * Cycle-exit answers this with the deal: move somebody who remembers onto his road,
+   * take the witness out of the room. It is what makes killing cost something beyond
+   * the person.
+   */
+  fatesThisCycle: Record<string, Verb>;
 }
 
 export interface CycleExitResult {

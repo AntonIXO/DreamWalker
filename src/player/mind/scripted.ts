@@ -161,6 +161,17 @@ export class ScriptedMind implements DreamMind {
       reply = rng.pick(DEFLECTIONS);
     }
 
+    // The offline version of *the figures notice*. Six lines, but without them the whole
+    // fate system disappears the moment inference is down: people would go on standing
+    // in a room where somebody died and never mention it.
+    const somethingHappenedHere = [...this.world.fates.values()].some(
+      (record) =>
+        record.roomId === figure.roomId && record.figureId !== figure.id,
+    );
+    if (somethingHappenedHere && reply.length < 140) {
+      reply = `${reply} Тут был ещё один. Куда делся, не знаю.`;
+    }
+
     return {
       reply,
       tell,
@@ -338,7 +349,65 @@ export class ScriptedMind implements DreamMind {
       }
     }
 
-    // 6. If nothing at all has provoked it, the dream still shifts a little. A world
+    // 6. The dream removes a witness. Somebody died in a room and somebody else was
+    //    standing in it; next cycle they are not. It uses `moveFigure` and nothing else —
+    //    the sleeper does not get to end people, only to rearrange around it.
+    const killedIn = Object.entries(observation.fatesThisCycle)
+      .filter(([, verb]) => verb === "kill")
+      .map(([figureId]) => this.world.fates.get(figureId)?.roomId)
+      .filter((roomId): roomId is string => Boolean(roomId));
+    if (killedIn.length > 0) {
+      const witness = rng.maybePick(
+        this.world.figures.filter(
+          (figure) =>
+            killedIn.includes(figure.roomId) &&
+            figure.roomId !== observation.currentRoomId,
+        ),
+      );
+      const elsewhere = rng.maybePick(
+        this.world.rooms.filter(
+          (room) =>
+            room.kind === "place" &&
+            room.id !== witness?.roomId &&
+            room.id !== observation.currentRoomId,
+        ),
+      );
+      if (witness && elsewhere) {
+        patches.push({
+          kind: "moveFigure",
+          figureId: witness.id,
+          toRoomId: elsewhere.id,
+          reason: "somebody died in that room",
+        });
+      }
+    }
+
+    // 7. Somebody nearly gave something up under pressure, so the dream hides it again.
+    const pressed = Object.entries(observation.fatesThisCycle).some(
+      ([, verb]) => verb === "press",
+    );
+    if (pressed) {
+      const loose = rng.maybePick(
+        this.world.figures.filter((figure) => figure.holdsShardId !== null),
+      );
+      const elsewhere = rng.maybePick(
+        this.world.figures.filter(
+          (figure) =>
+            figure.holdsShardId === null &&
+            figure.roomId !== observation.currentRoomId,
+        ),
+      );
+      if (loose?.holdsShardId && elsewhere) {
+        patches.push({
+          kind: "relocateShard",
+          shardId: loose.holdsShardId,
+          toFigureId: elsewhere.id,
+          reason: "that one nearly came out",
+        });
+      }
+    }
+
+    // 8. If nothing at all has provoked it, the dream still shifts a little. A world
     //    that only ever reacts is a world you can hold still by doing nothing.
     if (patches.length === 0) {
       const idle = rng.maybePick(

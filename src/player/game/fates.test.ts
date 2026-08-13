@@ -184,3 +184,23 @@ describe("what a room offers", () => {
     expect(lethalMeansIn(room)).toBe(true);
   });
 });
+
+describe("what the dream is told", () => {
+  test("a dead figure is still in the snapshot, or nobody could mention them", () => {
+    // The load-bearing detail of the whole feature. Killing splices the figure out of
+    // `world.figures`; if the snapshot were built from that list alone, the person would
+    // not have died, they would never have existed.
+    const world = peopled();
+    kill(world, "figure1");
+
+    // The snapshot is assembled from live figures *plus* everyone with a record, so the
+    // ledger is what has to survive the splice — and it has to remember the room, since
+    // «его нет там, где он был» is the line the others need.
+    expect(world.figures.some((f) => f.id === "figure1")).toBe(false);
+    expect(world.fateHistory[0]).toMatchObject({
+      figureId: "figure1",
+      fate: "dead",
+      roomId: "a",
+    });
+  });
+});

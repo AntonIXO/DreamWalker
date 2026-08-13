@@ -11,6 +11,7 @@ import type {
 } from "../../shared/ai";
 import type { DreamArtifact } from "../../shared/dream";
 import { fallbackPopulation } from "../../shared/population";
+import { RETURNS_WHOLE } from "../../shared/verbs";
 import type { WorldState } from "../game/world";
 import { MindMemory } from "./memory";
 import type { Observation } from "./observation";
@@ -40,10 +41,42 @@ class RemoteMindError extends Error {
   }
 }
 
+/**
+ * The dream as the sleeper sees it.
+ *
+ * `forFigureId` is not a nicety. Кирилл «вернётся в следующей комнате целым и не
+ * помнящим», and «Санитар, заметивший это вслух, палится мгновенно» — so nobody in the
+ * dream may be told what happened to him. Enforced here rather than in the prompt,
+ * because this is the strongest tell in the game and a sentence of instruction is not a
+ * защита. The Eye is the exception, and cycle-exit gets the unfiltered list: the sleeper
+ * is allowed to know.
+ */
 function snapshot(
   world: WorldState,
   mood: WorldSnapshot["mood"] = "upper-dynamic",
+  forFigureId: string | null = null,
 ): WorldSnapshot {
+  const hidden = (figureId: string): boolean =>
+    forFigureId !== null &&
+    forFigureId !== "glaz" &&
+    RETURNS_WHOLE.has(figureId);
+
+  // Figures who are no longer in the world still belong in the snapshot. Splicing them
+  // out of `world.figures` is what makes them gone; leaving them out of here would make
+  // them never have existed, and then nobody could say «его нет там, где он был».
+  const absent = [...world.fates.entries()]
+    .filter(([id]) => !world.figures.some((figure) => figure.id === id))
+    .map(([id, record]) => ({
+      id,
+      name: world.baseFigures.find((figure) => figure.id === id)?.name ?? id,
+      roomId: record.roomId,
+      holdsShardId: null,
+      role: "часть этого сна",
+      personality: "",
+      activity: "",
+      record,
+    }));
+
   return {
     rooms: world.rooms.map((room) => ({
       id: room.id,
@@ -59,15 +92,27 @@ function snapshot(
       fromRoomId: world.roomIdByDoorId.get(id) ?? "",
       toRoomId: door.toRoomId,
     })),
-    figures: world.figures.map((figure) => ({
-      id: figure.id,
-      name: figure.name,
-      roomId: figure.roomId,
-      holdsShardId: figure.holdsShardId,
-      role: figure.role,
-      personality: figure.personality,
-      activity: figure.activity,
-    })),
+    figures: [
+      ...world.figures.map((figure) => ({
+        id: figure.id,
+        name: figure.name,
+        roomId: figure.roomId,
+        holdsShardId: figure.holdsShardId,
+        role: figure.role,
+        personality: figure.personality,
+        activity: figure.activity,
+        record: world.fates.get(figure.id) ?? null,
+      })),
+      ...absent,
+    ]
+      .filter((figure) => !hidden(figure.id))
+      .map(({ record, ...figure }) => ({
+        ...figure,
+        fate: record?.fate ?? "present",
+        fateCycle: record?.cycle ?? null,
+        fateRoomId: record?.roomId ?? null,
+        fateQuoted: record?.quoted ?? null,
+      })),
     interests: world.interests.map((interest) => ({
       id: interest.id,
       name: interest.name,
@@ -76,6 +121,17 @@ function snapshot(
       holdsShardId: interest.holdsShardId,
       clueId: interest.clueId,
     })),
+    fateHistory: world.fateHistory
+      .filter((record) => !hidden(record.figureId))
+      .map((record) => ({
+        figureId: record.figureId,
+        figureName:
+          world.baseFigures.find((figure) => figure.id === record.figureId)
+            ?.name ?? record.figureId,
+        fate: record.fate,
+        cycle: record.cycle,
+        roomId: record.roomId,
+      })),
     mood,
   };
 }
@@ -211,7 +267,7 @@ export class RemoteMind implements DreamMind {
       figureMemory,
       knownShardIds: [...this.memory.knownShardIds],
       sleeper: this.memory.sleeper,
-      world: snapshot(this.world),
+      world: snapshot(this.world, "upper-dynamic", request.figureId),
     };
 
     try {
@@ -276,7 +332,9 @@ export class RemoteMind implements DreamMind {
       x: request.x,
       y: request.y,
       knownShardIds: [...this.memory.knownShardIds],
-      world: snapshot(this.world),
+      // A thing is still part of the dream, and the dream does not notice what happened
+      // to Кирилл either.
+      world: snapshot(this.world, "upper-dynamic", "__thing__"),
     };
     try {
       const result = await streamRequest<
