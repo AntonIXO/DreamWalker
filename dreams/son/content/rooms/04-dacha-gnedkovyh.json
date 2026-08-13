@@ -70,7 +70,7 @@
       "reach": 1.4,
       "prompt": "плита",
       "clueId": null,
-      "action": null,
+      "action": "lethal",
       "once": false,
       "dwellMs": null,
       "refusal": null,

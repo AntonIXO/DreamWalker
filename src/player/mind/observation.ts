@@ -11,6 +11,7 @@
  * `ScriptedMind` reads these numbers and gets recognisably pointed behaviour out of them.
  */
 
+import type { Verb } from "../../shared/verbs";
 import type { WorldState } from "../game/world";
 
 export interface Observation {
@@ -30,6 +31,14 @@ export interface Observation {
   learnedShardIds: string[];
   /** How many beats have already run this cycle, for pacing. */
   beatsThisCycle: number;
+  /**
+   * Figure id -> what the sanitar did to them this cycle.
+   *
+   * Cycle-exit reads it and answers with the deal: remove the one he keeps visiting,
+   * put somebody who remembers on his road. Cleared with everything else — the *ledger*
+   * on `WorldState` is what outlives a cycle, not this.
+   */
+  fatesThisCycle: Record<string, Verb>;
 }
 
 /**
@@ -42,6 +51,7 @@ export class ObservationLog {
   private readonly refusals = new Map<string, number>();
   private readonly approaches = new Map<string, number>();
   private readonly learned = new Set<string>();
+  private readonly fates = new Map<string, Verb>();
   private elapsed = 0;
   private beats = 0;
   private currentRoomId: string | null = null;
@@ -65,6 +75,10 @@ export class ObservationLog {
     this.learned.add(shardId);
   }
 
+  noteFate(figureId: string, verb: Verb): void {
+    this.fates.set(figureId, verb);
+  }
+
   noteBeat(): void {
     this.beats++;
   }
@@ -75,6 +89,7 @@ export class ObservationLog {
     this.refusals.clear();
     this.approaches.clear();
     this.learned.clear();
+    this.fates.clear();
     this.elapsed = 0;
     this.beats = 0;
     this.currentRoomId = null;
@@ -94,6 +109,7 @@ export class ObservationLog {
       approachedFigures: Object.fromEntries(this.approaches),
       learnedShardIds: [...this.learned],
       beatsThisCycle: this.beats,
+      fatesThisCycle: Object.fromEntries(this.fates),
     };
   }
 }

@@ -20,6 +20,7 @@ import type { Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
 import type { Shiver } from "../render/shiver";
 import { findTarget, type InteractTarget } from "./interact";
+import { whoIsLed } from "./fates";
 import { applyPatch } from "./patch";
 import {
   createPlayer,
@@ -214,6 +215,7 @@ export class DreamSession {
       this.camera.cutTo(this.player.x, this.player.y);
       this.dwellMs.clear();
 
+      this.leadAlong(roomId);
       const visits = noteVisit(this.world, roomId);
       this.escalateRevisit(room, visits);
       if (style !== "cut") this.shiver.trigger(style === "rift" ? 0.6 : 0.3);
@@ -248,6 +250,24 @@ export class DreamSession {
     this.camera.setWorldSize(room.width, room.height);
     this.camera.fit(room.width, room.height);
     this.camera.cutTo(this.player.x, this.player.y);
+  }
+
+  /**
+   * Whoever is being led comes through the threshold too.
+   *
+   * `moveFigure` is safe on this path: the "not the room the player is in" refusal lives
+   * in `scheduleFigure` and in `Heartbeat.apply`, and neither is on it. It already
+   * refuses meta-spaces, so nobody can be dragged into М1 — «разговаривать не с кем».
+   */
+  private leadAlong(roomId: string): void {
+    const led = whoIsLed(this.world);
+    if (!led) return;
+    applyPatch(this.world, {
+      kind: "moveFigure",
+      figureId: led,
+      toRoomId: roomId,
+      reason: "led by the sanitar",
+    });
   }
 
   /**

@@ -1169,3 +1169,26 @@ body {
 .debug-entry.refused b {
     color: #a06a6a;
 }
+
+/* The verb ring: four rows, flat, and the impossible ones say why. */
+.verb-ring .verb-list {
+  list-style: none;
+  margin: 0.6rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.verb-ring .verb {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Struck rather than hidden: a refusal teaches the system exists, an absent row does not. */
+.verb-ring .verb.refused {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.verb-ring .verb.refused .dim {
+  text-decoration: none;
+}

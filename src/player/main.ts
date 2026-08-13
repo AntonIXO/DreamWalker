@@ -29,7 +29,11 @@ import { Cycle, Journal } from "./game/cycle";
 import { WordNotebook } from "./game/wordNotebook";
 import { Action, Input } from "./game/input";
 import { updateFigures } from "./game/figures";
-import { applyPopulationRetargets, installPopulation } from "./game/patch";
+import {
+  applyPatch,
+  applyPopulationRetargets,
+  installPopulation,
+} from "./game/patch";
 import { walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
@@ -55,6 +59,7 @@ import { ModelThinkingIndicator } from "./ui/modelThinking";
 
 import { WordNotebookPanel } from "./ui/wordNotebook";
 import { ClueInspectPanel } from "./ui/clueInspect";
+import { VerbRing } from "./ui/verbRing";
 
 type AppPhase = "lobby" | "enteringDream" | "dream";
 
@@ -358,6 +363,46 @@ async function boot(): Promise<void> {
     onResonance: (declaration) => {
       dialogue.close();
       finale.openResonance(declaration);
+    },
+  });
+
+  const verbRing = new VerbRing(uiLayer, {
+    onClose: () => input.setCaptured(false),
+    onPick: (figure, verb) => {
+      if (verb === "talk" || verb === "press") {
+        dialogue.open(figure);
+        return;
+      }
+      const result = applyPatch(
+        world,
+        {
+          kind: "markFigure",
+          figureId: figure.id,
+          fate: verb === "kill" ? "dead" : "led",
+          // A kill has no words. The Eye quoting nothing back is stronger than a line.
+          quoted: null,
+          reason: `sanitar:${verb}`,
+        },
+        cycle.number,
+      );
+      if (!result.ok) return;
+      observations.noteFate(figure.id, verb);
+      if (verb === "kill") {
+        shiver.trigger(1);
+        dreamFx.surge();
+        hud.whisper("Он больше не там, где был.", 5);
+        journal.addPerson(
+          cycle.number,
+          figure.id,
+          figure.name,
+          "Его больше нет.",
+          "tell",
+        );
+      } else {
+        hud.whisper(`${figure.name} идёт за тобой.`, 4);
+        journal.addPerson(cycle.number, figure.id, figure.name, "Идёт следом.");
+      }
+      for (const roomId of result.affectedRooms) rooms.invalidate(roomId);
     },
   });
 
@@ -686,6 +731,7 @@ async function boot(): Promise<void> {
       journalPanel.isOpen ||
       wordNotebookPanel.isOpen ||
       clueInspect.isOpen ||
+      verbRing.isOpen ||
       finale.isOpen;
     // Pixi's ticker and renderer stay alive. Only the game clock is paused while network
     // latency, a cycle transition, or the finale owns the simulation.
@@ -705,6 +751,10 @@ async function boot(): Promise<void> {
         delta,
         dialogue.currentFigureId,
         world.currentRoomId,
+        {
+          x: session.player.x / room.tileSize,
+          y: session.player.y / room.tileSize,
+        },
       );
     }
 
@@ -745,6 +795,7 @@ async function boot(): Promise<void> {
       else if (journalPanel.isOpen) journalPanel.close();
       else if (wordNotebookPanel.isOpen) wordNotebookPanel.close();
       else if (clueInspect.isOpen) clueInspect.close();
+      else if (verbRing.isOpen) verbRing.close();
       else if (finale.isOpen) finale.close();
       else dialogue.close();
     }
@@ -767,6 +818,15 @@ async function boot(): Promise<void> {
     const target = held || simulationPaused ? null : session.target();
     const atFinale = room.id === artifact.finaleRoomId;
     prompt = target?.prompt ?? (atFinale ? "сердце сна — назвать тайну" : null);
+
+    if (
+      !simulationPaused &&
+      input.consume(Action.VERBS) &&
+      target?.kind === "figure"
+    ) {
+      input.setCaptured(true);
+      verbRing.open(target.figure, target.verbs);
+    }
 
     if (!simulationPaused && input.consume(Action.INTERACT)) {
       if (target?.kind === "figure") {

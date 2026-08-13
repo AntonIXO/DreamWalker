@@ -112,7 +112,7 @@
       "reach": 1.4,
       "prompt": "вода за бортом, слишком близко к палубе",
       "clueId": null,
-      "action": null,
+      "action": "lethal",
       "once": false,
       "dwellMs": null,
       "refusal": null,

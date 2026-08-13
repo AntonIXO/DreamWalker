@@ -21,6 +21,8 @@ export const Action = {
   DEBUG: "debug",
   HELP: "help",
   MEMORIES: "memories",
+  /** What else can be done with the person in front of you. */
+  VERBS: "verbs",
   JOURNAL: "journal",
   WORDS: "words",
   HEARTBEAT: "heartbeat",
@@ -44,6 +46,7 @@ const BINDINGS: Record<string, ActionName> = {
   F1: Action.DEBUG,
   KeyH: Action.HELP,
   KeyM: Action.MEMORIES,
+  KeyF: Action.VERBS,
   KeyJ: Action.JOURNAL,
   KeyN: Action.WORDS,
   // Not `H`: that is the help overlay now, and a key that both opens a panel and wakes

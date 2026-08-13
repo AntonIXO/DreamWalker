@@ -10,6 +10,8 @@
 
 import { findHotspot } from "../../shared/roomGrid";
 import type { RoomHotspot } from "../../shared/room";
+import { availableVerbs, type VerbOption } from "../../shared/verbs";
+import { fateOf, leverageOn, whoIsLed } from "./fates";
 import type { PlayerState } from "./player";
 import {
   doorRefusal,
@@ -24,7 +26,13 @@ import {
 export const FIGURE_REACH = 20;
 
 export type InteractTarget =
-  | { kind: "figure"; figure: FigureState; prompt: string }
+  | {
+      kind: "figure";
+      figure: FigureState;
+      prompt: string;
+      /** All four, with the impossible ones carrying their reason. */
+      verbs: VerbOption[];
+    }
   | { kind: "hotspot"; hotspot: RoomHotspot; prompt: string }
   | { kind: "door"; doorId: string; prompt: string };
 
@@ -68,6 +76,32 @@ export function reachableHotspots(
   return [...liveHotspots(room), ...interestHotspots(world, room.id)];
 }
 
+/**
+ * Whether this room offers a way to kill somebody.
+ *
+ * §9 has no weapons and there is no inventory, so the means is always a thing that is
+ * already here — «провода, которые убьют при касании», the stove that hisses, the party
+ * sticks. An object says so with `action: "lethal"`.
+ */
+export function lethalMeansIn(room: RoomState): boolean {
+  return liveHotspots(room).some((hotspot) => hotspot.action === "lethal");
+}
+
+function verbsFor(
+  world: WorldState,
+  room: RoomState,
+  figure: FigureState,
+): VerbOption[] {
+  return availableVerbs({
+    figureId: figure.id,
+    fate: fateOf(world, figure.id),
+    leverage: leverageOn(world, figure.id),
+    lethalMeans: lethalMeansIn(room),
+    leading: whoIsLed(world),
+    roomKind: room.kind,
+  });
+}
+
 export function findTarget(
   world: WorldState,
   room: RoomState,
@@ -94,24 +128,30 @@ export function findTarget(
     room.tileSize,
   );
 
+  const asFigure = (state: FigureState): InteractTarget => {
+    const verbs = verbsFor(world, room, state);
+    // One extra word on the prompt when there is anything else to do, rather than a
+    // second HUD element. The key label is not spelled out here — `ui/controls.ts`
+    // derives it from the binding, so rebinding does not lie.
+    const more = verbs.some(
+      (option) => option.verb !== "talk" && !option.refusal,
+    );
+    return {
+      kind: "figure",
+      figure: state,
+      prompt: `заговорить с ${state.name}${more ? " · F — иначе" : ""}`,
+      verbs,
+    };
+  };
+
   if (figure && hotspot) {
     const hotspotAway = hotspotDistance(hotspot, player, room.tileSize);
     if (hotspotAway < figure.distance) {
       return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
     }
-    return {
-      kind: "figure",
-      figure: figure.figure,
-      prompt: `заговорить с ${figure.figure.name}`,
-    };
+    return asFigure(figure.figure);
   }
-  if (figure) {
-    return {
-      kind: "figure",
-      figure: figure.figure,
-      prompt: `заговорить с ${figure.figure.name}`,
-    };
-  }
+  if (figure) return asFigure(figure.figure);
   if (hotspot) return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
   return null;
 }

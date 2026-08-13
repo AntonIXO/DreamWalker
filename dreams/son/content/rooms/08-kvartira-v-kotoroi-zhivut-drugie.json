@@ -98,7 +98,7 @@
       "reach": 1.4,
       "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
       "clueId": null,
-      "action": null,
+      "action": "lethal",
       "once": false,
       "dwellMs": null,
       "refusal": null,

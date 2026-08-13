@@ -166,3 +166,21 @@ describe("reviveFigure", () => {
     expect(fateOf(world, "figure1")).toBe("present");
   });
 });
+
+describe("what a room offers", () => {
+  test("a verb ring is built from the room, not from an inventory", async () => {
+    // The whole reason `kill` needs no weapon: §9 excludes combat, so the means has to
+    // already be standing there. Where none is, the row is struck through.
+    const { lethalMeansIn } = await import("./interact");
+    const world = peopled();
+    const room = world.roomById.get("a")!;
+    expect(lethalMeansIn(room)).toBe(false);
+
+    room.hotspots.push({
+      ...room.hotspots[0]!,
+      id: "provoda",
+      action: "lethal",
+    });
+    expect(lethalMeansIn(room)).toBe(true);
+  });
+});

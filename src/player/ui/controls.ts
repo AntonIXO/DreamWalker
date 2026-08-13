@@ -27,6 +27,7 @@ const PLAYING: Row[] = [
   bound(Action.INTERACT, "заговорить, посмотреть"),
   bound(Action.CANCEL, "отойти, закрыть"),
   bound(Action.MEMORIES, "воспоминания, купить время"),
+  bound(Action.VERBS, "что ещё можно сделать с человеком"),
   bound(Action.JOURNAL, "журнал людей"),
   bound(Action.WORDS, "блокнот шести слов"),
   bound(Action.HELP, "это окно"),
