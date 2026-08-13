@@ -18,6 +18,7 @@ import type { Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
 import type { Shiver } from "../render/shiver";
 import { findTarget, type InteractTarget } from "./interact";
+import { applyPatch } from "./patch";
 import {
   createPlayer,
   placeAtEntry,
@@ -224,6 +225,7 @@ export class DreamSession {
 
       const visits = noteVisit(this.world, roomId);
       this.applyArrivalTonus(room, visits);
+      this.escalateRevisit(room, visits);
       if (style !== "cut") this.shiver.trigger(style === "link" ? 0.6 : 0.3);
       this.callbacks.onEnterRoom(room, visits);
     } finally {
@@ -256,6 +258,38 @@ export class DreamSession {
     this.camera.setWorldSize(room.width, room.height);
     this.camera.fit(room.width, room.height);
     this.camera.cutTo(this.player.x, this.player.y);
+  }
+
+  /**
+   * §4.3 — the second visit is worse. The ditch is the canonical case: one
+   * killer, then two, then four. The note already fires; this puts a thing
+   * in the room so the count is visible, not only whispered.
+   */
+  private escalateRevisit(room: RoomState, visits: number): void {
+    if (!room.revisit.escalates || visits < 2) return;
+    const id = `revisit:${room.id}:${visits}`;
+    const name =
+      visits === 2
+        ? "Вторая машина"
+        : visits === 3
+          ? "Четверо у гаражей"
+          : "Их стало слишком много";
+    applyPatch(this.world, {
+      kind: "placeInterest",
+      interest: {
+        id,
+        roomId: room.id,
+        name,
+        sensorySeed:
+          visits === 2
+            ? "Фар уже двое, хотя мотор слышен один."
+            : "Людей больше, чем мест, куда можно спрятаться.",
+        solid: false,
+        holdsShardId: null,
+        clueId: null,
+      },
+      reason: "second visit worse",
+    });
   }
 
   private applyArrivalTonus(room: RoomState, visits: number): void {

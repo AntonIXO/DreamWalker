@@ -4,28 +4,36 @@
   "title": "Сон",
   "genreContract": "Сон, который знает, что его используют",
   "styleWords": [
-    "мотылёк",
-    "витраж",
-    "глаз",
-    "пыльца"
+    "оранжевая лавочка",
+    "готический холл",
+    "канава",
+    "глаз"
   ],
   "secretHash": "1c98bd32f73659e1f52d04d37a8faf3a5ebb27c8350fdcc0b4377d0e023342a6",
   "shards": [
     {
       "id": "shard1",
-      "hint": "Кто-то слышал стук из подвала и решил, что это трубы"
+      "hint": "На полке для оставленных вещей кто-то всё подписывал одним и тем же."
     },
     {
       "id": "shard2",
-      "hint": "Ключ от котельной пропал за неделю до"
+      "hint": "В хохоте художника между взрывами смеха есть слог, который с пола не слышно."
     },
     {
       "id": "shard3",
-      "hint": "В журнале дежурств вырван один лист"
+      "hint": "На пакетике под гербом чужим почерком написано бытовое слово."
     },
     {
       "id": "shard4",
-      "hint": "Он до сих пор не может находиться рядом с запахом гари"
+      "hint": "Кирилл называет чужое своим и вставляет это в хвастовство."
+    },
+    {
+      "id": "shard5",
+      "hint": "Папа в середине совета роняет одно лишнее существительное."
+    },
+    {
+      "id": "shard6",
+      "hint": "Глаз отдаст последнее, только если сказать вслух, зачем пришёл."
     }
   ],
   "palette": {
@@ -131,21 +139,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
         },
         {
           "id": "chuzhie-shtany-na-polu",
-          "kind": "look",
+          "kind": "link",
           "x": 5.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "чужие штаны на полу",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "07-bassein-i-odnostoronnii-lift",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
         },
         {
           "id": "kanat-do-svoda",
@@ -163,7 +177,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
         },
         {
           "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
@@ -177,7 +192,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
         },
         {
           "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
@@ -191,7 +207,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
         },
         {
           "id": "vedro-i-shvabra-uborschika",
@@ -205,7 +222,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
         }
       ],
       "entries": [
@@ -436,7 +454,7 @@
         {
           "id": "hub--to-20-ofis-sbera",
           "x": 1,
-          "y": 1,
+          "y": 10,
           "w": 1,
           "h": 1,
           "toRoomId": "20-ofis-sbera",
@@ -448,7 +466,7 @@
         {
           "id": "hub--to-21-komnata-niliufar",
           "x": 2,
-          "y": 1,
+          "y": 10,
           "w": 1,
           "h": 1,
           "toRoomId": "21-komnata-niliufar",
@@ -460,7 +478,7 @@
         {
           "id": "hub--to-22-kreiser",
           "x": 3,
-          "y": 1,
+          "y": 10,
           "w": 1,
           "h": 1,
           "toRoomId": "22-kreiser",
@@ -472,7 +490,7 @@
         {
           "id": "hub--to-23-nigeriia-konferenciia",
           "x": 4,
-          "y": 1,
+          "y": 10,
           "w": 1,
           "h": 1,
           "toRoomId": "23-nigeriia-konferenciia",
@@ -484,7 +502,7 @@
         {
           "id": "hub--to-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
           "x": 5,
-          "y": 1,
+          "y": 10,
           "w": 1,
           "h": 1,
           "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
@@ -496,7 +514,7 @@
         {
           "id": "hub--to-25-metro-i-poezd-kotoryi-ne-tot",
           "x": 6,
-          "y": 1,
+          "y": 10,
           "w": 1,
           "h": 1,
           "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
@@ -516,13 +534,18 @@
           "id": "b",
           "x": 14,
           "y": 6
+        },
+        {
+          "id": "c",
+          "x": 10,
+          "y": 5
         }
       ],
       "graphics": {
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/01-otel-goticheskii-holl.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -539,7 +562,10 @@
       "description": "Ты входишь и первое, что понимаешь: гардеробов больше, чем людей на планете. Ряды. Ряды рядов. Номерки на крючках уходят в перспективу, и где-то на трёхсотом ты ловишь себя на мысли — а куда, собственно, поместятся все эти люди? Ответ приходит сверху: **они не помещаются, они распределены по этажам согласно платёжеспособности**. Свод как в храме, только вместо бога — регистратура. Под потолком висит канат, и на нём кто-то уже фотографировал, судя по брошенным внизу штанам. Через зал идёт художник, размахивает руками, что-то рассказывает, и по холлу катится хохот — только вот **слов не слышно ни одного**. Ни одного слова, понимаешь? Смех есть, шутка есть, содержания нет. Как будто кто-то вывел диалоговую дорожку в отдельный канал и забыл её подключить.",
       "atmosphere": "Красиво, но ты тут никто",
       "personality": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
-      "tags": [],
+      "tags": [
+        "floor-3",
+        "clue-compatible"
+      ],
       "copy": {
         "animations": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
         "sound": "реверб пустого собора, время затухания около семи секунд; поверх — записанный на диктофон хохот компании из соседней комнаты, зациклен неровно, с разной длиной паузы; ни одного разборчивого слова. Референс: Уильям Басински, «The Disintegration Loops», но с людьми"
@@ -562,7 +588,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -580,7 +606,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--party.png"
         },
         {
           "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
@@ -594,7 +621,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
         },
         {
           "id": "grusha-za-steklom",
@@ -611,21 +639,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png"
         },
         {
           "id": "mat-v-uglu-s-rasstelennoi-posteliu",
-          "kind": "look",
+          "kind": "link",
           "x": 10.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "мат в углу с расстеленной постелью",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "07-bassein-i-odnostoronnii-lift",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
         }
       ],
       "entries": [
@@ -639,8 +673,8 @@
       "doors": [
         {
           "id": "02-shkola-kabinet-russkogo--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -666,7 +700,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/02-shkola-kabinet-russkogo.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -706,7 +740,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -727,7 +761,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
         },
         {
           "id": "vizitki-kotorye-ne-berutsia-v-ruku",
@@ -741,7 +776,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
         },
         {
           "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
@@ -755,7 +791,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
         },
         {
           "id": "kamen-s-rovno-otpilennoi-graniu",
@@ -769,7 +806,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
         }
       ],
       "entries": [
@@ -783,8 +821,8 @@
       "doors": [
         {
           "id": "03-gory-startapery-i-uchenye--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -810,7 +848,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/03-gory-startapery-i-uchenye.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -850,7 +888,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -868,21 +906,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
         },
         {
           "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
-          "kind": "look",
+          "kind": "link",
           "x": 5.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "отодвинутый кусок стены с чёрным проёмом",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "16-norvezhskaia-derevnia-i-pogreb",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
         },
         {
           "id": "telefon-s-odnim-kontaktom-lesha",
@@ -896,21 +940,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
         },
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
-          "kind": "look",
+          "kind": "link",
           "x": 10.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "m2-miasnaia-geometriia",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
         }
       ],
       "entries": [
@@ -924,8 +974,8 @@
       "doors": [
         {
           "id": "04-dacha-gnedkovyh--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -951,7 +1001,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/04-dacha-gnedkovyh.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -991,7 +1041,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1013,6 +1063,21 @@
           "clueId": null,
           "action": null,
           "once": false,
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
+        },
+        {
+          "id": "nadpis-na-polke",
+          "kind": "clue",
+          "x": 3,
+          "y": 5.2,
+          "reach": 1.4,
+          "prompt": "надпись на краю полки",
+          "link": null,
+          "tonus": null,
+          "clueId": "clue-1",
+          "action": null,
+          "once": false,
           "dwellMs": null
         },
         {
@@ -1031,7 +1096,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
         },
         {
           "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
@@ -1045,7 +1111,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
         },
         {
           "id": "korzina-s-chem-to-chto-ne-chitaetsia",
@@ -1059,7 +1126,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
         }
       ],
       "entries": [
@@ -1073,8 +1141,8 @@
       "doors": [
         {
           "id": "05-shesterochka--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1100,7 +1168,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/05-shesterochka.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -1117,7 +1185,9 @@
       "description": "Флуоресцент, который жужжит на грани слышимости и от которого лица у всех цвета варёной курицы. Ты лежишь **на полке для оставленных вещей**. Не в тележке, не на скамейке — на той самой металлической полке, куда кладут сумки перед входом в зал. Кирилл проходит мимо, говорит: «Ничего, поспи ещё». И ты спишь. В магазине. На полке. И никто, ни один человек в этом зале, не считает это странным. Просыпаешься от звука. Охранник **тащит Кирилла к выходу**, бьёт по почкам и пшикает перцовкой в лицо, и делает это буднично, как выкладывают товар. У тебя есть примерно две секунды, чтобы решить, кто ты в этой сцене.",
       "atmosphere": "(−4, +2). Тут начинается насилие",
       "personality": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
-      "tags": [],
+      "tags": [
+        "clue-compatible"
+      ],
       "copy": {
         "animations": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
         "sound": "пищание кассы, ускоряющееся к концу цикла; объявление по громкой связи, слова разобрать нельзя, интонация приветливая; гул холодильника с мясом, доминирует над всем"
@@ -1140,7 +1210,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1158,7 +1228,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
         },
         {
           "id": "liuk-v-kanalizaciiu",
@@ -1176,21 +1247,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
         },
         {
           "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
-          "kind": "look",
+          "kind": "link",
           "x": 8,
           "y": 4,
           "reach": 1.4,
           "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "10-komnata-s-grobami",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
         },
         {
           "id": "sledy-shin-kotoryh-utrom-ne-bylo",
@@ -1204,7 +1281,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
         }
       ],
       "entries": [
@@ -1218,8 +1296,8 @@
       "doors": [
         {
           "id": "06-kanava-garazhi-podvorotni--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1245,7 +1323,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/06-kanava-garazhi-podvorotni.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -1285,7 +1363,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1306,21 +1384,25 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
         },
         {
           "id": "panel-lifta-bez-knopki-vniz",
-          "kind": "look",
+          "kind": "link",
           "x": 5.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "панель лифта без кнопки «вниз»",
-          "link": null,
+          "link": {
+            "to": "up"
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
         },
         {
           "id": "polotence-radi-kotorogo-prishel-ne-nahod",
@@ -1334,7 +1416,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
         },
         {
           "id": "voda-v-chashe-basseina-slishkom-nepodviz",
@@ -1348,7 +1431,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
         }
       ],
       "entries": [
@@ -1362,8 +1446,8 @@
       "doors": [
         {
           "id": "07-bassein-i-odnostoronnii-lift--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1389,7 +1473,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/07-bassein-i-odnostoronnii-lift.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -1406,7 +1490,9 @@
       "description": "Лифт ходит только вверх. Не «в основном вверх», не «вниз по запросу» — **только вверх**, кнопки вниз физически нет, и на панели ровное место, будто её никогда и не планировали. Третий этаж. Ты идёшь то ли в раздевалку, то ли за полотенцем, и заходишь в помещение, где по всем стенам развешано женское бельё. Трусы, бюстгальтеры, полотенца. Развешано аккуратно, как экспозиция. Между ними ходит хлор и запах мокрого кафеля. Ты понимаешь, что зашёл не туда, ровно в тот момент, когда понимаешь, что выйти можно только выше.",
       "atmosphere": "(−2, −1)",
       "personality": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
-      "tags": [],
+      "tags": [
+        "floor-2"
+      ],
       "copy": {
         "animations": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
         "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
@@ -1429,7 +1515,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1442,12 +1528,16 @@
           "y": 4,
           "reach": 1.4,
           "prompt": "бумажная скульптура",
-          "link": null,
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «МУЗЕЙ НОРМАЛЬНОГО»"
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
         },
         {
           "id": "chuzhie-fotografii-v-tvoih-ramkah",
@@ -1461,7 +1551,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
         },
         {
           "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
@@ -1475,7 +1566,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
         },
         {
           "id": "chainik-kotoryi-uzhe-kipel",
@@ -1489,7 +1581,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
         }
       ],
       "entries": [
@@ -1503,8 +1596,8 @@
       "doors": [
         {
           "id": "08-kvartira-v-kotoroi-zhivut-drugie--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1530,7 +1623,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/08-kvartira-v-kotoroi-zhivut-drugie.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -1570,7 +1663,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1588,7 +1681,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png"
         },
         {
           "id": "odinakovye-naushniki",
@@ -1602,7 +1696,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
         },
         {
           "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
@@ -1620,7 +1715,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png"
         },
         {
           "id": "rozovyi-gashish-v-vitrine",
@@ -1634,7 +1730,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png"
         },
         {
           "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
@@ -1648,7 +1745,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
         }
       ],
       "entries": [
@@ -1662,8 +1760,8 @@
       "doors": [
         {
           "id": "09-hakaton-tretii-po-schetu--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1689,7 +1787,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/09-hakaton-tretii-po-schetu.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -1729,7 +1827,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1751,7 +1849,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--groby.png"
         },
         {
           "id": "schel-pod-potolkom",
@@ -1768,7 +1867,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
         },
         {
           "id": "tkan-s-kodami",
@@ -1782,21 +1882,23 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
         },
         {
           "id": "paketiki-fsb",
-          "kind": "look",
+          "kind": "clue",
           "x": 10.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "пакетики ФСБ",
           "link": null,
           "tonus": null,
-          "clueId": null,
+          "clueId": "clue-3",
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
         },
         {
           "id": "telefon-kamera-otkryvaetsia-sem-sekund",
@@ -1810,7 +1912,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
         }
       ],
       "entries": [
@@ -1824,8 +1927,8 @@
       "doors": [
         {
           "id": "10-komnata-s-grobami--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1851,7 +1954,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/10-komnata-s-grobami.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -1868,7 +1971,9 @@
       "description": "Здесь стоят гробы, и один из них принадлежит женщине, которая стоит рядом с тобой и объясняет, что это её. Не «был бы», не «будет» — **её, сейчас**. Она прыгнула с третьего этажа и якобы разбилась, но не совсем, и после этого числится актрисой, хотя ты уже понял, что не актрисой. Наверху, если залезть, есть щель. В щели — ткань с кодами и запечатанные пакетики, маленькие, как из Китая или как презервативы, с надписью ФСБ. Один из них — противоядие от скорпиона. Уточняется: иранского или иракского. Ты успеваешь достать и сфотографировать. Ровно в этот момент входят люди и говорят, что теперь на этом месте будет музей.",
       "atmosphere": "(−5, −4). Дно графика. Отсюда близко до переполнения",
       "personality": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
-      "tags": [],
+      "tags": [
+        "clue-compatible"
+      ],
       "copy": {
         "animations": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
         "sound": "абсолютная сухая тишина, ноль реверберации, как в заглушенной камере — от этого физически некомфортно; собственные шаги слишком громкие; в момент входа людей — щелчок и **комнатный тон появляется**, будто до этого звук был выключен"
@@ -1891,7 +1996,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1912,7 +2017,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
         },
         {
           "id": "fonari-kotorye-gasiat-pri-zvuke",
@@ -1926,7 +2032,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
         },
         {
           "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
@@ -1940,7 +2047,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
         },
         {
           "id": "stavni-na-vsem",
@@ -1958,7 +2066,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
         }
       ],
       "entries": [
@@ -1972,8 +2081,8 @@
       "doors": [
         {
           "id": "11-evreiskii-gorod--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1999,7 +2108,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/11-evreiskii-gorod.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2039,7 +2148,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2057,7 +2166,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
         },
         {
           "id": "dyrka-v-zabore",
@@ -2068,28 +2178,34 @@
           "prompt": "дырка в заборе",
           "link": {
             "to": "room",
-            "roomId": "06-kanava-garazhi-podvorotni",
+            "roomId": "19-dvor-i-oranzhevye-lavochki",
             "entryId": null
           },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
         },
         {
           "id": "piatimetrovyi-stellazh",
-          "kind": "look",
+          "kind": "link",
           "x": 8,
           "y": 4,
           "reach": 1.4,
           "prompt": "пятиметровый стеллаж",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "m3-sklad-ostavlennogo",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
         },
         {
           "id": "paket-fasoli",
@@ -2103,7 +2219,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
         },
         {
           "id": "tetia-sidiaschaia-spinoi",
@@ -2117,7 +2234,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
         }
       ],
       "entries": [
@@ -2131,8 +2249,8 @@
       "doors": [
         {
           "id": "12-tiurma-na-ovoschah--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -2158,7 +2276,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/12-tiurma-na-ovoschah.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2198,7 +2316,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2211,12 +2329,16 @@
           "y": 4,
           "reach": 1.4,
           "prompt": "японский сидр",
-          "link": null,
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «МАСШТАБ»"
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
         },
         {
           "id": "tribuny",
@@ -2230,7 +2352,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png"
         },
         {
           "id": "riukzak-s-fruktami-i-vodkoi",
@@ -2244,7 +2367,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
         },
         {
           "id": "divanchik-na-kotorom-spit-lesha",
@@ -2261,7 +2385,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png"
         },
         {
           "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
@@ -2275,7 +2400,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
         }
       ],
       "entries": [
@@ -2289,8 +2415,8 @@
       "doors": [
         {
           "id": "13-podzemnye-zaly-cu--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -2316,7 +2442,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/13-podzemnye-zaly-cu.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2356,7 +2482,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2364,17 +2490,22 @@
       "hotspots": [
         {
           "id": "vydrannyi-zub",
-          "kind": "look",
+          "kind": "link",
           "x": 3,
           "y": 4,
           "reach": 1.4,
           "prompt": "выдранный зуб",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "m2-miasnaia-geometriia",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
         },
         {
           "id": "iaschik-s-kapibarami-i-kotom",
@@ -2385,14 +2516,15 @@
           "prompt": "ящик с капибарами и котом",
           "link": {
             "to": "room",
-            "roomId": "06-kanava-garazhi-podvorotni",
+            "roomId": "19-dvor-i-oranzhevye-lavochki",
             "entryId": null
           },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png"
         },
         {
           "id": "kreslo",
@@ -2406,7 +2538,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png"
         },
         {
           "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
@@ -2420,7 +2553,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
         }
       ],
       "entries": [
@@ -2434,8 +2568,8 @@
       "doors": [
         {
           "id": "14-poliklinika-v-kaluge--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -2461,7 +2595,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/14-poliklinika-v-kaluge.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2501,7 +2635,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2523,7 +2657,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
         },
         {
           "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
@@ -2541,7 +2676,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
         },
         {
           "id": "listia-shurshaschie-ne-v-takt-shagam",
@@ -2555,7 +2691,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
         },
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
@@ -2569,7 +2706,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
         }
       ],
       "entries": [
@@ -2583,8 +2721,8 @@
       "doors": [
         {
           "id": "15-osennii-les-s-grobom--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -2610,7 +2748,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/15-osennii-les-s-grobom.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2650,7 +2788,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2672,7 +2810,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png"
         },
         {
           "id": "sneg-kotoryi-techet",
@@ -2686,7 +2825,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
         },
         {
           "id": "otec-na-kraiu",
@@ -2700,7 +2840,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
         },
         {
           "id": "kirill-riadom-molchit",
@@ -2714,7 +2855,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
         }
       ],
       "entries": [
@@ -2728,8 +2870,8 @@
       "doors": [
         {
           "id": "16-norvezhskaia-derevnia-i-pogreb--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -2755,7 +2897,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/16-norvezhskaia-derevnia-i-pogreb.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2795,7 +2937,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2813,7 +2955,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
         },
         {
           "id": "ventil",
@@ -2830,7 +2973,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
         },
         {
           "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
@@ -2839,12 +2983,16 @@
           "y": 4,
           "reach": 1.4,
           "prompt": "кафель, на одной плитке которого что-то нацарапано",
-          "link": null,
+          "link": {
+            "to": "refuse",
+            "note": "Мета-пространство «АРХИВ»"
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
         }
       ],
       "entries": [
@@ -2858,8 +3006,8 @@
       "doors": [
         {
           "id": "17-dush-iz-kotorogo-nelzia-vyiti--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -2885,7 +3033,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/17-dush-iz-kotorogo-nelzia-vyiti.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -2925,7 +3073,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2947,21 +3095,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
         },
         {
           "id": "koliuchaia-provoloka",
-          "kind": "look",
+          "kind": "link",
           "x": 5.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "колючая проволока",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "m2-miasnaia-geometriia",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
         },
         {
           "id": "zveri",
@@ -2975,7 +3129,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--zveri.png"
         },
         {
           "id": "snezhnoe-pole-do-gorizonta",
@@ -2989,7 +3144,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
         }
       ],
       "entries": [
@@ -3003,8 +3159,8 @@
       "doors": [
         {
           "id": "18-kupol-bez-sten--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3030,7 +3186,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/18-kupol-bez-sten.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3070,7 +3226,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3088,28 +3244,34 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
         },
         {
           "id": "podezdnaia-dver-s-domofonom",
-          "kind": "look",
+          "kind": "link",
           "x": 5.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "подъездная дверь с домофоном",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
         },
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
           "kind": "link",
           "x": 8,
           "y": 4,
-          "reach": 1.4,
+          "reach": 0.9,
           "prompt": "бутылка рядом с Турышевым, не первая",
           "link": {
             "to": "room",
@@ -3119,8 +3281,9 @@
           "tonus": null,
           "clueId": null,
           "action": null,
-          "once": false,
-          "dwellMs": null
+          "once": true,
+          "dwellMs": 9000,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
         },
         {
           "id": "urna-nabitaia-akkuratno",
@@ -3134,7 +3297,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
         }
       ],
       "entries": [
@@ -3148,8 +3312,8 @@
       "doors": [
         {
           "id": "19-dvor-i-oranzhevye-lavochki--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3175,7 +3339,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/19-dvor-i-oranzhevye-lavochki.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3215,7 +3379,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3237,7 +3401,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
         },
         {
           "id": "shirokii-monitor-s-chem-to-korporativnym",
@@ -3251,7 +3416,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
         },
         {
           "id": "beidzhi-na-shnurkah",
@@ -3265,7 +3431,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
         },
         {
           "id": "lift",
@@ -3279,21 +3446,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--lift.png"
         },
         {
           "id": "zakrytaia-dver-v-konce-koridora",
-          "kind": "look",
+          "kind": "link",
           "x": 13,
           "y": 4,
           "reach": 1.4,
           "prompt": "закрытая дверь в конце коридора",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "21-komnata-niliufar",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
         }
       ],
       "entries": [
@@ -3307,8 +3480,8 @@
       "doors": [
         {
           "id": "20-ofis-sbera--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3334,7 +3507,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/20-ofis-sbera.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3374,7 +3547,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3392,7 +3565,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--krovat.png"
         },
         {
           "id": "okno-s-vidom",
@@ -3410,7 +3584,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
         },
         {
           "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
@@ -3424,7 +3599,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
         },
         {
           "id": "veschi-tancevalnoi-gruppy",
@@ -3438,7 +3614,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
         }
       ],
       "entries": [
@@ -3452,8 +3629,8 @@
       "doors": [
         {
           "id": "21-komnata-niliufar--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3479,7 +3656,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/21-komnata-niliufar.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3519,7 +3696,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3527,17 +3704,22 @@
       "hotspots": [
         {
           "id": "scena-mikrofon",
-          "kind": "look",
+          "kind": "link",
           "x": 3,
           "y": 4,
           "reach": 1.4,
           "prompt": "сцена, микрофон",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "13-podzemnye-zaly-cu",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--scena-mikrofon.png"
         },
         {
           "id": "nakrytye-stoly",
@@ -3551,7 +3733,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
         },
         {
           "id": "spasatelnye-krugi",
@@ -3565,7 +3748,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
         },
         {
           "id": "voda-za-bortom-slishkom-blizko-k-palube",
@@ -3579,7 +3763,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
         }
       ],
       "entries": [
@@ -3593,8 +3778,8 @@
       "doors": [
         {
           "id": "22-kreiser--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3620,7 +3805,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/22-kreiser.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3660,7 +3845,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3678,7 +3863,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
         },
         {
           "id": "vr-shlemy-na-stoikah",
@@ -3696,7 +3882,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
         },
         {
           "id": "beidzh-konferencii-s-nechitaemym-nazvani",
@@ -3710,7 +3897,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
         },
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
@@ -3724,7 +3912,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
         }
       ],
       "entries": [
@@ -3738,8 +3927,8 @@
       "doors": [
         {
           "id": "23-nigeriia-konferenciia--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3765,7 +3954,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/23-nigeriia-konferenciia.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3805,7 +3994,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3823,7 +4012,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png"
         },
         {
           "id": "kusok-miasa-naznachennyi-bomboi",
@@ -3837,7 +4027,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
         },
         {
           "id": "korobka-s-golosom",
@@ -3855,7 +4046,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png"
         },
         {
           "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
@@ -3869,7 +4061,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
         }
       ],
       "entries": [
@@ -3883,8 +4076,8 @@
       "doors": [
         {
           "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -3910,7 +4103,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -3950,7 +4143,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#__................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3972,7 +4165,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
         },
         {
           "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
@@ -3986,7 +4180,8 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
         },
         {
           "id": "korobka-s-golosom",
@@ -4000,21 +4195,27 @@
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
         },
         {
           "id": "chuzhie-sumki-na-platforme",
-          "kind": "look",
+          "kind": "link",
           "x": 10.5,
           "y": 4,
           "reach": 1.4,
           "prompt": "чужие сумки на платформе",
-          "link": null,
+          "link": {
+            "to": "room",
+            "roomId": "m3-sklad-ostavlennogo",
+            "entryId": null
+          },
           "tonus": null,
           "clueId": null,
           "action": null,
           "once": false,
-          "dwellMs": null
+          "dwellMs": null,
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
         }
       ],
       "entries": [
@@ -4028,8 +4229,8 @@
       "doors": [
         {
           "id": "25-metro-i-poezd-kotoryi-ne-tot--to-hub",
-          "x": 10,
-          "y": 10,
+          "x": 1,
+          "y": 9,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -4055,7 +4256,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/25-metro-i-poezd-kotoryi-ne-tot.png",
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
@@ -4115,7 +4316,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/m1-korni.png",
         "backdropFit": "screen",
         "glitchPreset": "wrong-palette"
       },
@@ -4182,7 +4383,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/m2-miasnaia-geometriia.png",
         "backdropFit": "screen",
         "glitchPreset": "wrong-palette"
       },
@@ -4249,7 +4450,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/m3-sklad-ostavlennogo.png",
         "backdropFit": "screen",
         "glitchPreset": "wrong-palette"
       },
@@ -4316,7 +4517,7 @@
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
-        "backdropImage": null,
+        "backdropImage": "assets/rooms/m4-razvilka-gde-ty-ostalsia.png",
         "backdropFit": "screen",
         "glitchPreset": "wrong-palette"
       },
@@ -4354,34 +4555,26 @@
   "finaleRoomId": "01-otel-goticheskii-holl",
   "figures": [
     {
-      "id": "anton",
-      "archetypeId": "orderly",
-      "name": "АНТОН",
-      "roomId": "01-otel-goticheskii-holl",
-      "slotId": "a",
-      "holdsShardId": null
-    },
-    {
-      "id": "babushka-nadya",
-      "archetypeId": "visitor",
-      "name": "БАБУШКА НАДЯ",
-      "roomId": "02-shkola-kabinet-russkogo",
-      "slotId": "b",
-      "holdsShardId": null
-    },
-    {
-      "id": "dolzhniki",
-      "archetypeId": "child",
-      "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
-      "roomId": "03-gory-startapery-i-uchenye",
-      "slotId": "a",
-      "holdsShardId": null
-    },
-    {
-      "id": "glaz",
+      "id": "turyshev",
       "archetypeId": "watcher",
-      "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
-      "roomId": "04-dacha-gnedkovyh",
+      "name": "ТИМОФЕЙ ТУРЫШЕВ",
+      "roomId": "19-dvor-i-oranzhevye-lavochki",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "kirill",
+      "archetypeId": "child",
+      "name": "КИРИЛЛ",
+      "roomId": "06-kanava-garazhi-podvorotni",
+      "slotId": "a",
+      "holdsShardId": "shard4"
+    },
+    {
+      "id": "ubiitsa",
+      "archetypeId": "visitor",
+      "name": "УБИЙЦА НА МАШИНЕ",
+      "roomId": "06-kanava-garazhi-podvorotni",
       "slotId": "b",
       "holdsShardId": null
     },
@@ -4389,55 +4582,31 @@
       "id": "hudozhnik",
       "archetypeId": "orderly",
       "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
-      "roomId": "05-shesterochka",
+      "roomId": "01-otel-goticheskii-holl",
       "slotId": "a",
-      "holdsShardId": null
+      "holdsShardId": "shard2"
     },
     {
-      "id": "kirill",
-      "archetypeId": "visitor",
-      "name": "КИРИЛЛ",
-      "roomId": "06-kanava-garazhi-podvorotni",
-      "slotId": "b",
-      "holdsShardId": null
-    },
-    {
-      "id": "kripto-bro",
-      "archetypeId": "child",
-      "name": "КРИПТО-БРО ИЗ TON",
-      "roomId": "07-bassein-i-odnostoronnii-lift",
-      "slotId": "a",
-      "holdsShardId": null
-    },
-    {
-      "id": "liosha-gnedkov",
-      "archetypeId": "watcher",
-      "name": "ЛЁША ГНЕДКОВ",
-      "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
-      "slotId": "b",
-      "holdsShardId": null
-    },
-    {
-      "id": "mama",
+      "id": "anton",
       "archetypeId": "orderly",
-      "name": "МАМА",
-      "roomId": "09-hakaton-tretii-po-schetu",
-      "slotId": "a",
-      "holdsShardId": null
-    },
-    {
-      "id": "nilufar",
-      "archetypeId": "visitor",
-      "name": "НИЛЮФАР",
-      "roomId": "10-komnata-s-grobami",
+      "name": "АНТОН",
+      "roomId": "01-otel-goticheskii-holl",
       "slotId": "b",
       "holdsShardId": null
     },
     {
-      "id": "papa",
-      "archetypeId": "child",
-      "name": "ПАПА",
-      "roomId": "11-evreiskii-gorod",
+      "id": "glaz",
+      "archetypeId": "watcher",
+      "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
+      "roomId": "01-otel-goticheskii-holl",
+      "slotId": "c",
+      "holdsShardId": "shard6"
+    },
+    {
+      "id": "babushka-nadya",
+      "archetypeId": "visitor",
+      "name": "БАБУШКА НАДЯ",
+      "roomId": "05-shesterochka",
       "slotId": "a",
       "holdsShardId": null
     },
@@ -4446,23 +4615,55 @@
       "archetypeId": "watcher",
       "name": "ТЁТЯ, КОТОРАЯ НЕ ЗАМЕЧАЕТ",
       "roomId": "12-tiurma-na-ovoschah",
-      "slotId": "b",
+      "slotId": "a",
       "holdsShardId": null
     },
     {
-      "id": "turyshev",
-      "archetypeId": "orderly",
-      "name": "ТИМОФЕЙ ТУРЫШЕВ",
+      "id": "nilufar",
+      "archetypeId": "visitor",
+      "name": "НИЛЮФАР",
+      "roomId": "21-komnata-niliufar",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "liosha-gnedkov",
+      "archetypeId": "watcher",
+      "name": "ЛЁША ГНЕДКОВ",
       "roomId": "13-podzemnye-zaly-cu",
       "slotId": "a",
       "holdsShardId": null
     },
     {
-      "id": "ubiitsa",
-      "archetypeId": "visitor",
-      "name": "УБИЙЦА НА МАШИНЕ",
+      "id": "papa",
+      "archetypeId": "child",
+      "name": "ПАПА",
       "roomId": "14-poliklinika-v-kaluge",
-      "slotId": "b",
+      "slotId": "a",
+      "holdsShardId": "shard5"
+    },
+    {
+      "id": "mama",
+      "archetypeId": "orderly",
+      "name": "МАМА",
+      "roomId": "18-kupol-bez-sten",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "kripto-bro",
+      "archetypeId": "child",
+      "name": "КРИПТО-БРО ИЗ TON",
+      "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
+      "slotId": "a",
+      "holdsShardId": null
+    },
+    {
+      "id": "dolzhniki",
+      "archetypeId": "child",
+      "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
+      "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+      "slotId": "a",
       "holdsShardId": null
     }
   ],
@@ -4836,75 +5037,81 @@
     "clues": [
       {
         "id": "clue-1",
-        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "sensorySeed": "На краю полки для оставленных вещей кто-то процарапал одно и то же слово много раз. Буквы стёрты до ритма, как подпись на чужих сумках.",
         "placementTags": [
-          "clue-compatible"
+          "clue-compatible",
+          "shelf"
         ],
         "worldFrame": "prop",
         "detailFrame": "prop",
-        "worldImage": null,
-        "detailImage": null,
-        "marker": "бирюзовый шов с одной песочной точкой"
+        "worldImage": "assets/clues/clue-1/world.png",
+        "detailImage": "assets/clues/clue-1/detail.png",
+        "marker": "царапина на металле полки"
       },
       {
         "id": "clue-2",
-        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "sensorySeed": "Смех есть, слов нет. В паузах между хохотом складывается слог, который с пола не разобрать.",
         "placementTags": [
-          "clue-compatible"
+          "clue-compatible",
+          "artist"
         ],
         "worldFrame": "prop",
         "detailFrame": "prop",
-        "worldImage": null,
-        "detailImage": null,
-        "marker": "бирюзовый шов с одной песочной точкой"
+        "worldImage": "assets/clues/clue-2/world.png",
+        "detailImage": "assets/clues/clue-2/detail.png",
+        "marker": "пауза в записанном хохоте"
       },
       {
         "id": "clue-3",
-        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "sensorySeed": "На пакетике герб и три буквы. Под ними другим почерком — одно бытовое слово, не служебное.",
         "placementTags": [
-          "clue-compatible"
+          "clue-compatible",
+          "packet"
         ],
         "worldFrame": "prop",
         "detailFrame": "prop",
-        "worldImage": null,
-        "detailImage": null,
-        "marker": "бирюзовый шов с одной песочной точкой"
+        "worldImage": "assets/clues/clue-3/world.png",
+        "detailImage": "assets/clues/clue-3/detail.png",
+        "marker": "чужой почерк под гербом"
       },
       {
         "id": "clue-4",
-        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "sensorySeed": "Он вставляет это в хвастовство как своё. Слово чужое, интонация — будто сам придумал.",
         "placementTags": [
-          "clue-compatible"
+          "clue-compatible",
+          "kirill"
         ],
         "worldFrame": "prop",
         "detailFrame": "prop",
-        "worldImage": null,
-        "detailImage": null,
-        "marker": "бирюзовый шов с одной песочной точкой"
+        "worldImage": "assets/clues/clue-4/world.png",
+        "detailImage": "assets/clues/clue-4/detail.png",
+        "marker": "присвоенное хвастовство"
       },
       {
         "id": "clue-5",
-        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "sensorySeed": "Совет начинается издалека и в середине роняет одно лишнее существительное, как будто оно всегда там было.",
         "placementTags": [
-          "clue-compatible"
+          "clue-compatible",
+          "papa"
         ],
         "worldFrame": "prop",
         "detailFrame": "prop",
-        "worldImage": null,
-        "detailImage": null,
-        "marker": "бирюзовый шов с одной песочной точкой"
+        "worldImage": "assets/clues/clue-5/world.png",
+        "detailImage": "assets/clues/clue-5/detail.png",
+        "marker": "лишнее слово в лекции"
       },
       {
         "id": "clue-6",
-        "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+        "sensorySeed": "Он не спрашивает. Он ждёт, пока ты скажешь, зачем пришёл, и только тогда отдаёт последнее.",
         "placementTags": [
-          "clue-compatible"
+          "clue-compatible",
+          "eye"
         ],
         "worldFrame": "prop",
         "detailFrame": "prop",
-        "worldImage": null,
-        "detailImage": null,
-        "marker": "бирюзовый шов с одной песочной точкой"
+        "worldImage": "assets/clues/clue-6/world.png",
+        "detailImage": "assets/clues/clue-6/detail.png",
+        "marker": "взгляд сверху вниз"
       }
     ],
     "mnemonic": {

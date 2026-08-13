@@ -25,6 +25,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import type { DreamRoom, RoomHotspot } from "../../../src/shared/room";
+import { objectHotspotPrompt } from "../art/pixelPrompts";
 import { assertAffordable, describePlan, priceBatch } from "../art/pricing";
 import {
   RejectedBeforeCharge,
@@ -89,12 +90,7 @@ function seedFor(id: string): number {
  * treated with too much reverence is what this dream looks like.
  */
 function promptFor(hotspot: RoomHotspot, room: DreamRoom): string {
-  return [
-    hotspot.prompt,
-    `from ${room.name.toLowerCase()}`,
-    "single object centered on transparent background",
-    "mundane banal object rendered with excessive reverence and detail, deadpan",
-  ].join(", ");
+  return objectHotspotPrompt(hotspot.prompt, room.id);
 }
 
 export async function objectsCommand(

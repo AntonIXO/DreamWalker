@@ -56,6 +56,7 @@ export interface ExamineRequest {
   y: number;
   roomId: string | null;
   interestId: string | null;
+  hotspotId?: string | null;
 }
 
 export interface MindContext {

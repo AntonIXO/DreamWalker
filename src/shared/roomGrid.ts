@@ -93,6 +93,25 @@ export function isSolidCell(cell: RoomCell): boolean {
   return cell === "wall" || cell === "wallFace" || cell === "void";
 }
 
+/** A cell the walker can stand on. Doors have to land on one of these. */
+export function isWalkableCell(cell: RoomCell): boolean {
+  return cell === "floor" || cell === "floorAlt" || cell === "threshold";
+}
+
+/** Write one mark into an ASCII mask. Rows are immutable strings. */
+export function setCellMark(
+  cells: readonly string[],
+  x: number,
+  y: number,
+  mark: string,
+): string[] {
+  const next = [...cells];
+  const row = next[y];
+  if (!row || x < 0 || x >= row.length) return next;
+  next[y] = `${row.slice(0, x)}${mark}${row.slice(x + 1)}`;
+  return next;
+}
+
 /** Whether any solid rect covers this tile. */
 export function rectBlocks(
   rects: readonly SolidRect[],

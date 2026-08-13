@@ -35,7 +35,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/m3-sklad-ostavlennogo.png",
     "backdropFit": "screen",
     "glitchPreset": "wrong-palette"
   },

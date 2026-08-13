@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -71,12 +71,16 @@
     },
     {
       "id": "mat-v-uglu-s-rasstelennoi-posteliu",
-      "kind": "look",
+      "kind": "link",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "мат в углу с расстеленной постелью",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "07-bassein-i-odnostoronnii-lift",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -96,8 +100,8 @@
   "doors": [
     {
       "id": "02-shkola-kabinet-russkogo--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -123,7 +127,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/02-shkola-kabinet-russkogo.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

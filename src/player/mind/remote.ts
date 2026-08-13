@@ -9,6 +9,8 @@ import type {
   FigureMemory,
   WorldSnapshot,
 } from "../../shared/ai";
+import type { DreamArtifact } from "../../shared/dream";
+import { fallbackPopulation } from "../../shared/population";
 import type { WorldState } from "../game/world";
 import { MindMemory } from "./memory";
 import type { Observation } from "./observation";
@@ -19,8 +21,8 @@ import type {
   TurnResponse,
 } from "./types";
 
-const REQUEST_TIMEOUT_MS = 120_000;
-const INHABIT_TIMEOUT_MS = 175_000;
+const REQUEST_TIMEOUT_MS = 25_000;
+const INHABIT_TIMEOUT_MS = 20_000;
 const TRANSCRIPT_LINES = 6;
 
 export interface RemoteMindContext {
@@ -122,7 +124,10 @@ async function streamRequest<T>(
   return value;
 }
 
-export async function inhabitDream(slug: string): Promise<DreamPopulation> {
+export async function inhabitDream(
+  slug: string,
+  artifact: DreamArtifact,
+): Promise<DreamPopulation> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), INHABIT_TIMEOUT_MS);
   try {
@@ -131,6 +136,9 @@ export async function inhabitDream(slug: string): Promise<DreamPopulation> {
       { slug },
       controller.signal,
     );
+  } catch (error) {
+    console.warn("[mind] inhabit fell back to catalog deal:", error);
+    return fallbackPopulation(artifact, { shuffle: true });
   } finally {
     clearTimeout(timeout);
   }
@@ -264,6 +272,7 @@ export class RemoteMind implements DreamMind {
       cycleNumber: this.context.cycleNumber(),
       roomId: request.roomId,
       interestId: request.interestId,
+      hotspotId: request.hotspotId ?? null,
       x: request.x,
       y: request.y,
       knownShardIds: [...this.memory.knownShardIds],

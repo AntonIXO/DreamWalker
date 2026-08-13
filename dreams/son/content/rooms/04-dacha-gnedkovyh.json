@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -38,12 +38,16 @@
     },
     {
       "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
-      "kind": "look",
+      "kind": "link",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "отодвинутый кусок стены с чёрным проёмом",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "16-norvezhskaia-derevnia-i-pogreb",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -68,12 +72,16 @@
     },
     {
       "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
-      "kind": "look",
+      "kind": "link",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "m2-miasnaia-geometriia",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -93,8 +101,8 @@
   "doors": [
     {
       "id": "04-dacha-gnedkovyh--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -120,7 +128,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/04-dacha-gnedkovyh.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

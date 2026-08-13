@@ -1,114 +1,114 @@
 [
   {
-    "id": "anton",
-    "name": "АНТОН",
-    "roomId": "01-otel-goticheskii-holl",
+    "id": "turyshev",
+    "name": "ТИМОФЕЙ ТУРЫШЕВ",
+    "roomId": "19-dvor-i-oranzhevye-lavochki",
     "slotId": "a",
-    "archetypeId": "orderly",
-    "holdsShardId": null
-  },
-  {
-    "id": "babushka-nadya",
-    "name": "БАБУШКА НАДЯ",
-    "roomId": "02-shkola-kabinet-russkogo",
-    "slotId": "b",
-    "archetypeId": "visitor",
-    "holdsShardId": null
-  },
-  {
-    "id": "dolzhniki",
-    "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
-    "roomId": "03-gory-startapery-i-uchenye",
-    "slotId": "a",
-    "archetypeId": "child",
-    "holdsShardId": null
-  },
-  {
-    "id": "glaz",
-    "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
-    "roomId": "04-dacha-gnedkovyh",
-    "slotId": "b",
     "archetypeId": "watcher",
-    "holdsShardId": null
-  },
-  {
-    "id": "hudozhnik",
-    "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
-    "roomId": "05-shesterochka",
-    "slotId": "a",
-    "archetypeId": "orderly",
     "holdsShardId": null
   },
   {
     "id": "kirill",
     "name": "КИРИЛЛ",
     "roomId": "06-kanava-garazhi-podvorotni",
+    "slotId": "a",
+    "archetypeId": "child",
+    "holdsShardId": "shard4"
+  },
+  {
+    "id": "ubiitsa",
+    "name": "УБИЙЦА НА МАШИНЕ",
+    "roomId": "06-kanava-garazhi-podvorotni",
     "slotId": "b",
     "archetypeId": "visitor",
     "holdsShardId": null
   },
   {
-    "id": "kripto-bro",
-    "name": "КРИПТО-БРО ИЗ TON",
-    "roomId": "07-bassein-i-odnostoronnii-lift",
+    "id": "hudozhnik",
+    "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
+    "roomId": "01-otel-goticheskii-holl",
     "slotId": "a",
-    "archetypeId": "child",
-    "holdsShardId": null
+    "archetypeId": "orderly",
+    "holdsShardId": "shard2"
   },
   {
-    "id": "liosha-gnedkov",
-    "name": "ЛЁША ГНЕДКОВ",
-    "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+    "id": "anton",
+    "name": "АНТОН",
+    "roomId": "01-otel-goticheskii-holl",
     "slotId": "b",
-    "archetypeId": "watcher",
-    "holdsShardId": null
-  },
-  {
-    "id": "mama",
-    "name": "МАМА",
-    "roomId": "09-hakaton-tretii-po-schetu",
-    "slotId": "a",
     "archetypeId": "orderly",
     "holdsShardId": null
   },
   {
-    "id": "nilufar",
-    "name": "НИЛЮФАР",
-    "roomId": "10-komnata-s-grobami",
-    "slotId": "b",
-    "archetypeId": "visitor",
-    "holdsShardId": null
+    "id": "glaz",
+    "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
+    "roomId": "01-otel-goticheskii-holl",
+    "slotId": "c",
+    "archetypeId": "watcher",
+    "holdsShardId": "shard6"
   },
   {
-    "id": "papa",
-    "name": "ПАПА",
-    "roomId": "11-evreiskii-gorod",
+    "id": "babushka-nadya",
+    "name": "БАБУШКА НАДЯ",
+    "roomId": "05-shesterochka",
     "slotId": "a",
-    "archetypeId": "child",
+    "archetypeId": "visitor",
     "holdsShardId": null
   },
   {
     "id": "tetya",
     "name": "ТЁТЯ, КОТОРАЯ НЕ ЗАМЕЧАЕТ",
     "roomId": "12-tiurma-na-ovoschah",
-    "slotId": "b",
+    "slotId": "a",
     "archetypeId": "watcher",
     "holdsShardId": null
   },
   {
-    "id": "turyshev",
-    "name": "ТИМОФЕЙ ТУРЫШЕВ",
+    "id": "nilufar",
+    "name": "НИЛЮФАР",
+    "roomId": "21-komnata-niliufar",
+    "slotId": "a",
+    "archetypeId": "visitor",
+    "holdsShardId": null
+  },
+  {
+    "id": "liosha-gnedkov",
+    "name": "ЛЁША ГНЕДКОВ",
     "roomId": "13-podzemnye-zaly-cu",
+    "slotId": "a",
+    "archetypeId": "watcher",
+    "holdsShardId": null
+  },
+  {
+    "id": "papa",
+    "name": "ПАПА",
+    "roomId": "14-poliklinika-v-kaluge",
+    "slotId": "a",
+    "archetypeId": "child",
+    "holdsShardId": "shard5"
+  },
+  {
+    "id": "mama",
+    "name": "МАМА",
+    "roomId": "18-kupol-bez-sten",
     "slotId": "a",
     "archetypeId": "orderly",
     "holdsShardId": null
   },
   {
-    "id": "ubiitsa",
-    "name": "УБИЙЦА НА МАШИНЕ",
-    "roomId": "14-poliklinika-v-kaluge",
-    "slotId": "b",
-    "archetypeId": "visitor",
+    "id": "kripto-bro",
+    "name": "КРИПТО-БРО ИЗ TON",
+    "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
+    "slotId": "a",
+    "archetypeId": "child",
+    "holdsShardId": null
+  },
+  {
+    "id": "dolzhniki",
+    "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
+    "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+    "slotId": "a",
+    "archetypeId": "child",
     "holdsShardId": null
   }
 ]

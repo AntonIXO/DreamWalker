@@ -55,6 +55,7 @@ const POPULATION: DreamPopulation = {
     },
   ],
   roomMoods: { a: "Светло и неуместно подробно." },
+  relinks: [],
   source: "fallback",
 };
 

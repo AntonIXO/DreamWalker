@@ -16,6 +16,7 @@
  */
 
 import { makeRng } from "../../shared/rng";
+import { mayYieldShard } from "../../shared/yield";
 import type {
   CycleExitResult,
   ExamineResult,
@@ -43,22 +44,23 @@ import type {
  * slightly too suspicious is in character, and one that never notices is not.
  */
 const LOADED_STEMS = [
-  "пожар",
-  "гар",
-  "огн",
-  "огон",
-  "дым",
-  "котельн",
-  "подвал",
-  "ключ",
-  "заперт",
-  "умер",
-  "смерт",
-  "погиб",
-  "виноват",
-  "журнал",
-  "стук",
-  "сгор",
+  "двор",
+  "лавочк",
+  "развилк",
+  "кирилл",
+  "лёш",
+  "леш",
+  "турышев",
+  "сидор",
+  "сид-фраз",
+  "кошел",
+  "мнемон",
+  "битко",
+  "полк",
+  "гробы",
+  "глаз",
+  "санитар",
+  "снаруж",
 ];
 
 const HEDGE_STEMS = [
@@ -133,17 +135,24 @@ export class ScriptedMind implements DreamMind {
       };
     }
 
-    // A direct question buys the hook — and leaves a mark. A careful one is safe and
-    // gets you nothing. That fork is the thing §9 says to test before anything else.
-    const yielded = hit && figure.holdsShardId ? figure.holdsShardId : null;
+    const mayYield = mayYieldShard({
+      figureId: figure.id,
+      utterance: request.utterance,
+      visitCounts: this.world.visitCounts,
+    });
+    const yielded =
+      mayYield && figure.holdsShardId ? figure.holdsShardId : null;
 
     let reply: string;
     if (yielded) {
       const shard = this.world.artifact.shards.find((s) => s.id === yielded);
-      reply =
-        `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(WARM)} ${shard?.hint ?? ""}`
-          .trim()
-          .slice(0, 180);
+      reply = (
+        tell
+          ? `«${tell.quoted}»… ${rng.pick(WARM)} ${shard?.hint ?? ""}`
+          : `${rng.pick(WARM)} ${shard?.hint ?? ""}`
+      )
+        .trim()
+        .slice(0, 180);
     } else if (hit) {
       reply = `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(DEFLECTIONS)}`;
     } else if (hedged) {
@@ -186,10 +195,25 @@ export class ScriptedMind implements DreamMind {
     const interest = this.world.interests.find(
       (candidate) => candidate.id === request.interestId,
     );
+    const hotspot =
+      request.hotspotId && request.roomId
+        ? (this.world.roomById
+            .get(request.roomId)
+            ?.hotspots.find((entry) => entry.id === request.hotspotId) ?? null)
+        : null;
+    const clueId = interest?.clueId ?? hotspot?.clueId ?? null;
+    const clue = clueId
+      ? this.world.artifact.content.clues.find(
+          (candidate) => candidate.id === clueId,
+        )
+      : null;
     return {
-      reply: interest?.sensorySeed ?? lines[hash % lines.length]!,
+      reply:
+        interest?.sensorySeed ??
+        clue?.sensorySeed ??
+        lines[hash % lines.length]!,
       yieldedShardId: null,
-      clueObservedId: interest?.clueId ?? null,
+      clueObservedId: clueId,
     };
   }
 

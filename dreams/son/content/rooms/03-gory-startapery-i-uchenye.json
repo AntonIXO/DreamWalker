@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -96,8 +96,8 @@
   "doors": [
     {
       "id": "03-gory-startapery-i-uchenye--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -123,7 +123,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/03-gory-startapery-i-uchenye.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

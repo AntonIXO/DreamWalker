@@ -28,7 +28,7 @@ import { Cycle, Journal } from "./game/cycle";
 import { WordNotebook } from "./game/wordNotebook";
 import { Action, Input } from "./game/input";
 import { updateFigures } from "./game/figures";
-import { installPopulation } from "./game/patch";
+import { applyPopulationRelinks, installPopulation } from "./game/patch";
 import { walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld } from "./game/world";
@@ -36,6 +36,8 @@ import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
 import { inhabitDream } from "./mind/remote";
+import { fallbackPopulation } from "../shared/population";
+import { clueIdForShard } from "../shared/yield";
 import { MindMemory } from "./mind/memory";
 import { loadMindSettings } from "./mind/settings";
 import { LobbySession } from "./lobby/session";
@@ -286,6 +288,10 @@ async function boot(): Promise<void> {
     observations.noteLearned(shardId);
     const shard = artifact.shards.find((candidate) => candidate.id === shardId);
     if (shard) journal.add(cycle.number, shard.hint);
+    const clueId = clueIdForShard(shardId);
+    if (clueId && artifact.content.clues.some((clue) => clue.id === clueId)) {
+      wordNotebook.observe(clueId);
+    }
   };
 
   const dialogue = new DialoguePanel(uiLayer, mind, thinking, artifact, atlas, {
@@ -401,14 +407,23 @@ async function boot(): Promise<void> {
     phase = "enteringDream";
     input.setCaptured(true);
     try {
-      await transition.play();
+      const deal =
+        mode === "live" && !populationInstalled
+          ? inhabitDream(artifact.slug, artifact)
+          : Promise.resolve(fallbackPopulation(artifact, { shuffle: true }));
       if (mode === "live" && !populationInstalled) {
         hud.whisper("Сон вспоминает, кто здесь живёт…", 10);
+      }
+      await transition.play();
+      if (!populationInstalled) {
         const population = await thinking.run(
           "Населяет сон персонажами и деталями",
-          () => inhabitDream(artifact.slug),
+          () => deal,
         );
         installPopulation(world, population);
+        if (population.source === "fallback") {
+          hud.whisper("Сон отвечает сам, без модели.", 6);
+        }
         for (const room of world.rooms) rooms.invalidate(room.id);
         session.enterRoomImmediate();
         actors.syncFigures(figuresHere(), tileSize);
@@ -541,6 +556,7 @@ async function boot(): Promise<void> {
         heartbeat.planCycleExit(),
       );
       resetWorld(world);
+      applyPopulationRelinks(world);
       heartbeat.applyCyclePlan(plan);
       observations.reset();
       heartbeat.resetCycle();
@@ -740,6 +756,9 @@ async function boot(): Promise<void> {
                 interestId: hotspot.id.startsWith("interest:")
                   ? hotspot.id.slice("interest:".length)
                   : null,
+                hotspotId: hotspot.id.startsWith("interest:")
+                  ? null
+                  : hotspot.id,
               }),
             )
             .then((result) => {

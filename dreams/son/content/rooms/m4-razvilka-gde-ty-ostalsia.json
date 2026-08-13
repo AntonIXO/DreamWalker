@@ -35,7 +35,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/m4-razvilka-gde-ty-ostalsia.png",
     "backdropFit": "screen",
     "glitchPreset": "wrong-palette"
   },

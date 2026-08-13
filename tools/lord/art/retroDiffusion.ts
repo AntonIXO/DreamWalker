@@ -1,5 +1,129 @@
 const API_ROOT = "https://api.retrodiffusion.ai/v1";
 
+/**
+ * Bun's `fetch` rejects `socks5://` proxies (`UnsupportedProxyProtocol`). This
+ * machine reaches Retro Diffusion only through a local SOCKS hop, so the client
+ * speaks curl when `DREAMWALKER_SOCKS_PROXY` or `ALL_PROXY` is a socks URL.
+ */
+function socksHop(): { host: string; port: number } | null {
+  const raw =
+    process.env.DREAMWALKER_SOCKS_PROXY?.trim() ||
+    process.env.ALL_PROXY?.trim() ||
+    "";
+  const match = raw.match(/^socks5h?:\/\/([^:/]+):(\d+)/i);
+  if (!match) return null;
+  return { host: match[1]!, port: Number(match[2]) };
+}
+
+async function rdFetch(
+  url: string,
+  init: RequestInit = {},
+): Promise<{
+  ok: boolean;
+  status: number;
+  headers: { get(name: string): string | null };
+  json: () => Promise<unknown>;
+}> {
+  const hop = socksHop();
+  if (!hop) {
+    const response = await fetch(url, init);
+    return {
+      ok: response.ok,
+      status: response.status,
+      headers: response.headers,
+      json: () => response.json().catch(() => null),
+    };
+  }
+
+  const headers = new Headers(init.headers);
+  const args = [
+    "curl",
+    "-sS",
+    "--max-time",
+    "180",
+    "--socks5-hostname",
+    `${hop.host}:${hop.port}`,
+    "-w",
+    "\n__RD_HTTP__%{http_code}",
+    "-X",
+    init.method ?? "GET",
+  ];
+  for (const [name, value] of headers) {
+    args.push("-H", `${name}: ${value}`);
+  }
+  if (init.body !== undefined && init.body !== null) {
+    args.push("--data-binary", "@-");
+  }
+  args.push(url);
+
+  const proc = Bun.spawn(args, {
+    stdin: "pipe",
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  if (init.body !== undefined && init.body !== null) {
+    proc.stdin.write(
+      typeof init.body === "string" ? init.body : String(init.body),
+    );
+  }
+  proc.stdin.end();
+  const [stdout, stderr, exitCode] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (exitCode !== 0) {
+    throw new Error(
+      `socks curl ${exitCode}: ${stderr.trim() || "failed to reach Retro Diffusion"}`,
+    );
+  }
+  const marker = stdout.lastIndexOf("\n__RD_HTTP__");
+  const raw = marker >= 0 ? stdout.slice(0, marker) : stdout;
+  const status = Number(
+    marker >= 0 ? stdout.slice(marker + "\n__RD_HTTP__".length) : 0,
+  );
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    headers: { get: () => null },
+    json: async () => {
+      try {
+        return JSON.parse(raw) as unknown;
+      } catch {
+        return null;
+      }
+    },
+  };
+}
+
+async function rdDownload(url: string): Promise<ArrayBuffer> {
+  const hop = socksHop();
+  if (!hop) return (await fetch(url)).arrayBuffer();
+  const proc = Bun.spawn(
+    [
+      "curl",
+      "-sS",
+      "--max-time",
+      "180",
+      "--socks5-hostname",
+      `${hop.host}:${hop.port}`,
+      url,
+    ],
+    { stdout: "pipe", stderr: "pipe" },
+  );
+  const [bytes, stderr, exitCode] = await Promise.all([
+    new Response(proc.stdout).arrayBuffer(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (exitCode !== 0) {
+    throw new Error(
+      `socks curl ${exitCode}: ${stderr.trim() || "failed to download image"}`,
+    );
+  }
+  return bytes;
+}
+
 export interface RetroInferenceRequest {
   prompt: string;
   prompt_style: string;
@@ -181,7 +305,7 @@ export class RetroDiffusionClient {
     let last: unknown;
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        const response = await fetch(`${API_ROOT}${path}`, {
+        const response = await rdFetch(`${API_ROOT}${path}`, {
           ...init,
           headers: {
             "X-RD-Token": this.token,
@@ -189,7 +313,7 @@ export class RetroDiffusionClient {
             ...init.headers,
           },
         });
-        const body = (await response.json().catch(() => null)) as unknown;
+        const body = (await response.json()) as unknown;
         if (response.ok) return body as T;
         const message = `Retro Diffusion ${response.status}: ${detailOf(body)}`;
         // A bad request stays bad. Only rate limits and server faults are worth a retry.
@@ -429,9 +553,7 @@ export class RetroDiffusionClient {
     if (result.base64_images?.[0]) return result.base64_images[0];
     const url = result.output_urls?.[0];
     if (!url) throw new Error(`Retro Diffusion ${tool} returned no image`);
-    return Buffer.from(await (await fetch(url)).arrayBuffer()).toString(
-      "base64",
-    );
+    return Buffer.from(await rdDownload(url)).toString("base64");
   }
 
   async images(result: RetroInferenceResult): Promise<Buffer[]> {
@@ -440,7 +562,7 @@ export class RetroDiffusionClient {
     );
     if (images.length > 0) return images;
     for (const url of result.output_urls ?? []) {
-      images.push(Buffer.from(await (await fetch(url)).arrayBuffer()));
+      images.push(Buffer.from(await rdDownload(url)));
     }
     return images;
   }

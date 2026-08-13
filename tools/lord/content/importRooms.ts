@@ -183,10 +183,35 @@ export function parseRoomsDocument(markdown: string): ParsedRoom[] {
  * Match a prose link target against the rooms that exist.
  *
  * «Бассейн (третий этаж)» has to find `07-bassein-i-odnostoronnii-lift`, and
- * «Мета-пространство "КОРНИ"» has to find `m1-korni`. Matching is on the first
- * significant word, which is enough for this catalogue and fails loudly rather than
- * quietly when it is not.
+ * «Мета-пространство "КОРНИ"» has to find `m1-korni`. First significant word, then
+ * a small alias table for bible names that are not room titles («квартира», «двор»).
  */
+const TARGET_ALIASES: Array<{ stem: string; id: string }> = [
+  { stem: "bassein", id: "07-bassein-i-odnostoronnii-lift" },
+  { stem: "razdeval", id: "07-bassein-i-odnostoronnii-lift" },
+  { stem: "sportzal", id: "07-bassein-i-odnostoronnii-lift" },
+  { stem: "korni", id: "m1-korni" },
+  { stem: "miasn", id: "m2-miasnaia-geometriia" },
+  { stem: "sklad", id: "m3-sklad-ostavlennogo" },
+  { stem: "ostavlen", id: "m3-sklad-ostavlennogo" },
+  { stem: "razvilk", id: "m4-razvilka-gde-ty-ostalsia" },
+  { stem: "kvartir", id: "08-kvartira-v-kotoroi-zhivut-drugie" },
+  { stem: "dvor", id: "19-dvor-i-oranzhevye-lavochki" },
+  { stem: "lavoch", id: "19-dvor-i-oranzhevye-lavochki" },
+  { stem: "pogreb", id: "16-norvezhskaia-derevnia-i-pogreb" },
+  { stem: "norvezh", id: "16-norvezhskaia-derevnia-i-pogreb" },
+  { stem: "derevn", id: "16-norvezhskaia-derevnia-i-pogreb" },
+  { stem: "niliufar", id: "21-komnata-niliufar" },
+  { stem: "nilufar", id: "21-komnata-niliufar" },
+  { stem: "kanav", id: "06-kanava-garazhi-podvorotni" },
+  { stem: "garazh", id: "06-kanava-garazhi-podvorotni" },
+  { stem: "grobami", id: "10-komnata-s-grobami" },
+  { stem: "podzemn", id: "13-podzemnye-zaly-cu" },
+  { stem: "zaly", id: "13-podzemnye-zaly-cu" },
+  { stem: "otel", id: "01-otel-goticheskii-holl" },
+  { stem: "holl", id: "01-otel-goticheskii-holl" },
+];
+
 export function resolveTarget(
   target: string,
   rooms: readonly ParsedRoom[],
@@ -195,6 +220,10 @@ export function resolveTarget(
     .replace(/мета-?пространство/iu, "")
     .replace(/[«»"'()]/g, " ")
     .trim();
+  const slugged = slugify(cleaned);
+  const alias = TARGET_ALIASES.find((entry) => slugged.includes(entry.stem));
+  if (alias && rooms.some((room) => room.id === alias.id)) return alias.id;
+
   const head = slugify(cleaned.split(/[\s,(]/)[0] ?? "");
   if (!head) return null;
   const hit = rooms.find((room) => {
@@ -202,6 +231,39 @@ export function resolveTarget(
     return roomHead === head || room.id.includes(head);
   });
   return hit?.id ?? null;
+}
+
+/**
+ * Bind a bible «from → to» to an object phrase.
+ *
+ * `label.startsWith(from.slice(0, 5))` dropped the courtyard intercom
+ * («подъездная дверь с домофоном» vs «домофон») and most of the atlas with it.
+ * A link matches when the object contains the left-hand side, or they share a
+ * significant token.
+ */
+export function linkMatchesObject(from: string, label: string): boolean {
+  const left = from
+    .toLowerCase()
+    .replace(/[«»"'()]/g, " ")
+    .trim();
+  const right = label
+    .toLowerCase()
+    .replace(/[«»"'()]/g, " ")
+    .trim();
+  if (!left || !right) return false;
+  if (right.includes(left) || left.includes(right)) return true;
+  const leftTokens = slugify(left)
+    .split("-")
+    .filter((token) => token.length >= 3);
+  const rightSlug = slugify(right);
+  return leftTokens.some(
+    (token) => rightSlug.includes(token) || right.includes(token),
+  );
+}
+
+/** Lift / floor-up is a direction, not a room name. */
+export function isUpTarget(target: string): boolean {
+  return /этаж\s+выше|только\s+вверх|всегда\s+на\s+этаж/iu.test(target);
 }
 
 /**
@@ -246,6 +308,68 @@ export interface ConversionReport {
   unresolved: Array<{ room: string; target: string }>;
 }
 
+function resolveObjectLink(
+  linked: { from: string; to: string } | undefined,
+  parsed: readonly ParsedRoom[],
+): { link: RoomLink | null; unresolvedTarget: string | null } {
+  if (!linked) return { link: null, unresolvedTarget: null };
+  // «диванчик → там, где Лёша» is a link to a *person*, who moves.
+  const follows = linked.to.match(/там,?\s+где\s+(\S+)/iu);
+  if (follows) {
+    return {
+      link: { to: "figure", characterId: characterIdFor(follows[1]!) },
+      unresolvedTarget: null,
+    };
+  }
+  if (isUpTarget(linked.to)) {
+    return { link: { to: "up" }, unresolvedTarget: null };
+  }
+  const toId = resolveTarget(linked.to, parsed);
+  if (toId) {
+    return {
+      link: { to: "room", roomId: toId, entryId: null },
+      unresolvedTarget: null,
+    };
+  }
+  // «достать её нельзя, это проверено» — an unmatched target is more likely an
+  // authored refusal than a typo, so it becomes one and is reported either way.
+  return {
+    link: { to: "refuse", note: linked.to },
+    unresolvedTarget: linked.to,
+  };
+}
+
+/**
+ * Re-attach bible links to rooms that were imported under the old prefix matcher.
+ *
+ * Positions, images, doors and the ASCII stay. Only `kind` / `link` change, so a
+ * drawn courtyard does not lose its backdrop when the intercom starts working.
+ */
+export function rebindRoomLinks(
+  rooms: DreamRoom[],
+  parsed: readonly ParsedRoom[],
+): { rooms: DreamRoom[]; rebound: number } {
+  const byId = new Map(parsed.map((room) => [room.id, room]));
+  let rebound = 0;
+  for (const room of rooms) {
+    const source = byId.get(room.id);
+    if (!source) continue;
+    for (const hotspot of room.hotspots) {
+      const linked = source.links.find((entry) =>
+        linkMatchesObject(entry.from, hotspot.prompt),
+      );
+      const { link } = resolveObjectLink(linked, parsed);
+      const before = JSON.stringify(hotspot.link);
+      const after = JSON.stringify(link);
+      if (before === after) continue;
+      hotspot.link = link;
+      if (link && link.to !== "refuse") hotspot.kind = "link";
+      rebound++;
+    }
+  }
+  return { rooms, rebound };
+}
+
 /**
  * Parsed rooms into room cards.
  *
@@ -260,23 +384,12 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
   const rooms = parsed.map((room) => {
     const hotspots: RoomHotspot[] = room.objects.map((phrase, index) => {
       const label = phrase.split("(")[0]!.trim();
-      const linked = room.links.find((link) =>
-        label.toLowerCase().startsWith(link.from.toLowerCase().slice(0, 5)),
+      const linked = room.links.find((entry) =>
+        linkMatchesObject(entry.from, label),
       );
-      let link: RoomLink | null = null;
-      if (linked) {
-        // «диванчик → там, где Лёша» is a link to a *person*, who moves.
-        const follows = linked.to.match(/там,?\s+где\s+(\S+)/iu);
-        const toId = follows ? null : resolveTarget(linked.to, parsed);
-        if (follows) {
-          link = { to: "figure", characterId: characterIdFor(follows[1]!) };
-        } else if (toId) link = { to: "room", roomId: toId, entryId: null };
-        else {
-          unresolved.push({ room: room.id, target: linked.to });
-          // «достать её нельзя, это проверено» — an unmatched target is more likely an
-          // authored refusal than a typo, so it becomes one and is reported either way.
-          link = { to: "refuse", note: linked.to };
-        }
+      const { link, unresolvedTarget } = resolveObjectLink(linked, parsed);
+      if (unresolvedTarget) {
+        unresolved.push({ room: room.id, target: unresolvedTarget });
       }
       return {
         id: slugify(label) || `object-${index + 1}`,

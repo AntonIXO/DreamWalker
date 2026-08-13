@@ -13,6 +13,7 @@ import {
   type Walker,
 } from "../../shared/roomWalk";
 import type { Direction } from "../../shared/roomGrid";
+import { cellAt, isSolidCell } from "../../shared/roomGrid";
 import { doorAtTile, canPassDoor, type RoomState } from "./world";
 
 export interface PlayerState extends Walker {
@@ -77,7 +78,17 @@ export function updatePlayer(
   player.enteredDoorId = null;
   const tx = Math.floor(player.x / room.tileSize);
   const ty = Math.floor(player.y / room.tileSize);
-  const door = doorAtTile(room, tx, ty);
+  const stepX = axis.x === 0 ? 0 : axis.x > 0 ? 1 : -1;
+  const stepY = axis.y === 0 ? 0 : axis.y > 0 ? 1 : -1;
+  // A threshold you walk onto, or the tile you are pressing into. The second case
+  // is how a door still on a wall face can fire without the body standing in solid.
+  const aheadX = stepX !== 0 ? tx + stepX : tx;
+  const aheadY = stepY !== 0 ? ty + stepY : ty;
+  const ahead =
+    (stepX !== 0 || stepY !== 0) && isSolidCell(cellAt(room, aheadX, aheadY))
+      ? doorAtTile(room, aheadX, aheadY)
+      : null;
+  const door = doorAtTile(room, tx, ty) ?? ahead;
   if (!door) {
     player.refusedDoorId = null;
     return;

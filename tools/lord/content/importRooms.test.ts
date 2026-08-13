@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 import { REPO_ROOT } from "../project";
 import {
+  linkMatchesObject,
   normaliseMinus,
   parseRoomsDocument,
   resolveTarget,
@@ -72,6 +73,43 @@ describe("links", () => {
 
   test("returns null rather than guessing", () => {
     expect(resolveTarget("Мета-пространство «ЛЕСТНИЦА»", parsed)).toBeNull();
+  });
+
+  test("aliases bible names that are not room titles", () => {
+    expect(resolveTarget("Квартира", parsed)).toBe(
+      "08-kvartira-v-kotoroi-zhivut-drugie",
+    );
+    expect(resolveTarget("Раздевалка", parsed)).toBe(
+      "07-bassein-i-odnostoronnii-lift",
+    );
+    expect(resolveTarget("комната Нилюфар", parsed)).toBe(
+      "21-komnata-niliufar",
+    );
+  });
+
+  test("binds an object that contains the link's left side", () => {
+    expect(linkMatchesObject("домофон", "подъездная дверь с домофоном")).toBe(
+      true,
+    );
+    expect(linkMatchesObject("Штаны", "чужие штаны на полу")).toBe(true);
+    expect(
+      linkMatchesObject("мат с постелью", "мат в углу с расстеленной постелью"),
+    ).toBe(true);
+    expect(linkMatchesObject("домофон", "оранжевые лавочки")).toBe(false);
+  });
+
+  test("the courtyard intercom throws you into the apartment", () => {
+    const yard = toRoomCards(parsed).rooms.find((room) =>
+      room.id.startsWith("19"),
+    )!;
+    const intercom = yard.hotspots.find((hotspot) =>
+      hotspot.prompt.includes("домофон"),
+    );
+    expect(intercom?.link).toEqual({
+      to: "room",
+      roomId: "08-kvartira-v-kotoroi-zhivut-drugie",
+      entryId: null,
+    });
   });
 
   test("«там, где Лёша» becomes a link to a person, not a place", () => {

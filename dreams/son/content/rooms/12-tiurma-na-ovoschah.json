@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -45,7 +45,7 @@
       "prompt": "дырка в заборе",
       "link": {
         "to": "room",
-        "roomId": "06-kanava-garazhi-podvorotni",
+        "roomId": "19-dvor-i-oranzhevye-lavochki",
         "entryId": null
       },
       "tonus": null,
@@ -57,12 +57,16 @@
     },
     {
       "id": "piatimetrovyi-stellazh",
-      "kind": "look",
+      "kind": "link",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "пятиметровый стеллаж",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "m3-sklad-ostavlennogo",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -112,8 +116,8 @@
   "doors": [
     {
       "id": "12-tiurma-na-ovoschah--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -139,7 +143,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/12-tiurma-na-ovoschah.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

@@ -25,17 +25,16 @@ model generates dialogue and closed `MapPatch` objects, never a replacement arti
 ```
 bun install
 
-bun run lord init first-room     # title, genre contract, style words, palette
-bun run lord secret first-room   # the one immutable line; seed the hooks
-bun run lord layout first-room   # generate a map, [r]eroll until it is right, [a]ccept
-bun run lord art first-room      # four candidates per tile, press 1-4
-bun run lord figures first-room  # place the figures, hand them hooks
-bun run lord content first-room  # create editable room/character/clue cards
-bun run lord mnemonic first-room # seal a dummy BIP39 flag: 6 public + 6 hidden slots
-bun run lord clues first-room --check-cost # free Retro Diffusion estimate
-bun run lord clues first-room --yes        # generate wordless clue objects
-bun run lord build first-room    # validate and publish the artifact
-bun run lord play first-room     # build, then serve it at localhost:8080
+bun run lord init son            # title, genre contract, style words, palette
+bun run lord secret son          # the sealed mnemonic
+bun run lord import son          # rooms + souls from dream-walker-new/
+bun run lord rooms son --rebind  # attach bible links
+bun run lord rooms son --check   # walk doors and links from the courtyard
+bun run lord figures son         # default deal (Turyshev on the bench, …)
+bun run lord backdrops son       # room paintings
+bun run lord clues son --yes     # six wordless objects
+bun run lord build son           # validate and publish to public/dream/
+bun run lord play son            # build, then serve it at localhost:8080
 ```
 
 For normal development, run `bun run dev`. It starts Vite on `:8080` and the Bun API on
@@ -59,8 +58,8 @@ dreams/<slug>/     the authored dream. draft.json is the authoring state; dream.
                    content/rooms/*.json contains room prose + graphics; content/characters/
                    contains personality + portrait states; content/clues/ contains public
                    clue cards. mnemonic.local.json is the private clue-to-word map.
-tools/lord/        the CLI. worldgen/ is the map generator, art/ the tile pipeline,
-                   term/ the terminal UI including the truecolor pixel preview.
+tools/lord/        the CLI. rooms/figures/import are the catalog path; art/ the tile
+                   pipeline; term/ the terminal UI including the truecolor pixel preview.
 src/shared/        the artifact format and tile vocabulary, read by both sides.
 src/player/        the web game: render/, game/, ui/, mind/.
 src/server/        OAuth/account RPC, AI agents, API, and static production server.
@@ -68,16 +67,11 @@ src/server/        OAuth/account RPC, AI agents, API, and static production serv
 
 ## How the world is made
 
-`lord layout` is a TypeScript port of
-[GraphDungeonGenerator](https://github.com/amidos2006/GraphDungeonGenerator), which
-implements Joris Dormans' split between **mission** (what you do) and **space** (where you
-do it). A mission graph is grown from `start → end` by grammar rules — `addKeyLock`,
-`addPuzzle`, `addLever`, `makeLink` and friends — within budgets set in
-`tools/lord/worldgen/recipe.ts`, then laid onto a lattice and routed with A*.
-
-Node types are read in the dream's own terms: a _key_ is leverage somebody holds, a _lock_
-is a threshold the dream refuses you, a _puzzle_ is something only the world will give up,
-a _lever_ is a way round the sleeper forgot to close.
+There is no generated overworld. The diary in `dream-walker-bible.md` / `dream-walker-new/`
+*is* the mission: 25 places, 4 meta-spaces, 14 figures. Rooms are ASCII boxes with
+authored links. You leave a room by touching a thing (LSD linking) or by walking into a
+hotel-style threshold. Inhabit deals every card into a new arrangement each run;
+training does the same shuffle locally so the game starts without a model.
 
 Every rule application is validated and rolled back if it would make the dream
 unsolvable, so what the Lord is offered is always crossable. There is no solver beyond
@@ -202,10 +196,11 @@ token remains server-side and is never bundled by Vite.
 
 ## Status
 
-Working: the Lord CLI end to end, artifact validator, world generation, indexed-PNG art
-pipeline, PixiJS player, typed runtime patches, AI population/dialogue/examination/cycle/finale,
-Codex device OAuth, an Anthropic-compatible provider, persistent memory economy, journal,
-and deterministic offline fallback.
+Working: format-4 authored rooms, bible link graph, inhabit/training catalog deal,
+indexed-PNG art pipeline, PixiJS player, typed runtime patches, AI
+population/dialogue/examination/cycle/finale, Codex device OAuth, an
+Anthropic-compatible provider (Gemini by default when `ANTHROPIC_*` is set),
+persistent memory economy, journal, and deterministic offline fallback.
 
 Not built: final human-painted room/portrait atlases and multi-server dream federation.
 

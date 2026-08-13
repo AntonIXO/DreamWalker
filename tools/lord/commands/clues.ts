@@ -3,6 +3,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
+import { clueObjectPrompt } from "../art/pixelPrompts";
 import {
   RetroDiffusionClient,
   type RetroInferenceRequest,
@@ -85,7 +86,7 @@ export async function cluesCommand(
     const secret = byId.get(clue.id);
     if (!secret)
       throw new Error(`mnemonic has no private mapping for ${clue.id}`);
-    const defaultPrompt = `One clearly recognizable ${secret.word}, centered isolated full silhouette, ordinary proportions, completely blank unmarked surfaces, a single turquoise seam with one sand-colored dot, no letters, no numbers, no symbols, no label, no writing`;
+    const defaultPrompt = clueObjectPrompt(secret.word);
     const prompt = flags.retry
       ? defaultPrompt
       : secret.visualPrompt.trim() || defaultPrompt;

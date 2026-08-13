@@ -90,15 +90,28 @@ export interface InterestSeed {
   clueId: string | null;
 }
 
+export interface PopulationRelink {
+  roomId: string;
+  hotspotId: string;
+  toRoomId: string;
+}
+
 export interface DreamPopulation {
   figures: FigureProfile[];
   interests: InterestSeed[];
   roomMoods: Record<string, string>;
+  /**
+   * How this run rewires authored object-links. Empty means the bible bindings stand.
+   * The sleeper composes a new deal each inhabit; cycle-exit may add more later.
+   */
+  relinks: PopulationRelink[];
   source: "ai" | "fallback";
 }
 
 export interface InhabitRequestPayload {
   slug: string;
+  /** Skip the model and return a shuffled catalog deal immediately. */
+  fallback?: boolean;
 }
 
 export interface FigureMemory {
@@ -183,6 +196,8 @@ export interface ExamineRequestPayload {
   cycleNumber: number;
   roomId: string | null;
   interestId: string | null;
+  /** Authored hotspot id, when the sanitar is looking at a bible object. */
+  hotspotId: string | null;
   x: number;
   y: number;
   knownShardIds: string[];

@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -28,7 +28,10 @@
       "y": 4,
       "reach": 1.4,
       "prompt": "бумажная скульптура",
-      "link": null,
+      "link": {
+        "to": "refuse",
+        "note": "Мета-пространство «МУЗЕЙ НОРМАЛЬНОГО»"
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -93,8 +96,8 @@
   "doors": [
     {
       "id": "08-kvartira-v-kotoroi-zhivut-drugie--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -120,7 +123,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/08-kvartira-v-kotoroi-zhivut-drugie.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

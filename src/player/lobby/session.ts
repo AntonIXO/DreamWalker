@@ -198,38 +198,32 @@ export class LobbySession {
     }
     if (hotspot.kind === "dream-entry") {
       this.held = true;
+      const actions = [];
       if (this.mindReady) {
-        this.inspect.open({
-          title: this.definition.copy["entry.title"] ?? "Аппарат",
-          category: this.definition.copy["entry.category"] ?? "АППАРАТ",
-          body: this.definition.copy["entry.readyBody"] ?? "",
-          actions: [
-            {
-              label: this.definition.copy["entry.start"] ?? "Полезли",
-              onClick: () => {
-                this.inspect.close();
-                this.callbacks.onEnterDream("live");
-              },
-            },
-          ],
-        });
-      } else {
-        this.inspect.open({
-          title: this.definition.copy["entry.title"] ?? "Аппарат",
-          category: this.definition.copy["entry.category"] ?? "АППАРАТ",
-          body: this.definition.copy["entry.blockedBody"] ?? "",
-          actions: [
-            {
-              label: this.definition.copy["entry.train"] ?? "Учебный прогон",
-              kind: "ghost",
-              onClick: () => {
-                this.inspect.close();
-                this.callbacks.onEnterDream("training");
-              },
-            },
-          ],
+        actions.push({
+          label: this.definition.copy["entry.start"] ?? "Полезли",
+          onClick: () => {
+            this.inspect.close();
+            this.callbacks.onEnterDream("live");
+          },
         });
       }
+      actions.push({
+        label: this.definition.copy["entry.train"] ?? "Учебный прогон",
+        kind: "ghost" as const,
+        onClick: () => {
+          this.inspect.close();
+          this.callbacks.onEnterDream("training");
+        },
+      });
+      this.inspect.open({
+        title: this.definition.copy["entry.title"] ?? "Аппарат",
+        category: this.definition.copy["entry.category"] ?? "АППАРАТ",
+        body: this.mindReady
+          ? (this.definition.copy["entry.readyBody"] ?? "")
+          : (this.definition.copy["entry.blockedBody"] ?? ""),
+        actions,
+      });
     }
   }
 

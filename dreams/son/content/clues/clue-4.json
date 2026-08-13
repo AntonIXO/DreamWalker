@@ -1,12 +1,13 @@
 {
   "id": "clue-4",
-  "sensorySeed": "Предмет узнаваем по форме, но его нельзя называть существительным в ответе.",
+  "sensorySeed": "Он вставляет это в хвастовство как своё. Слово чужое, интонация — будто сам придумал.",
   "placementTags": [
-    "clue-compatible"
+    "clue-compatible",
+    "kirill"
   ],
   "worldFrame": "prop",
   "detailFrame": "prop",
-  "worldImage": null,
-  "detailImage": null,
-  "marker": "бирюзовый шов с одной песочной точкой"
+  "worldImage": "assets/clues/clue-4/world.png",
+  "detailImage": "assets/clues/clue-4/detail.png",
+  "marker": "присвоенное хвастовство"
 }

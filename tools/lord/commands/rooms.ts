@@ -10,6 +10,7 @@
  *
  *   lord rooms <slug>            list the catalogue
  *   lord rooms <slug> --scaffold write a blank 20x11 room for each id in rooms.md
+ *   lord rooms <slug> --rebind   re-attach bible links without touching the ASCII
  *   lord rooms <slug> --check    walk the door and link graph from the spawn
  *
  * The scaffold deliberately writes an *empty box*. No parser can read a floor plan out of
@@ -17,12 +18,18 @@
  * finished. The ASCII is the author's job; this only makes the file to draw in.
  */
 
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import {
+  doorIsUsable,
+  overlappingDoors,
+  punchDoorThresholds,
+} from "../../../src/shared/doors";
 import type { DreamRoom } from "../../../src/shared/room";
 import { loadRoomFiles, loadRoomSettings } from "../content/files";
-import { dreamDir, loadDraft, saveDraft } from "../project";
+import { parseRoomsDocument, rebindRoomLinks } from "../content/importRooms";
+import { dreamDir, loadDraft, REPO_ROOT, saveDraft } from "../project";
 import { color, heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
 
@@ -108,7 +115,11 @@ export function reachableRooms(
     if (seen.has(id) || !byId.has(id)) continue;
     seen.add(id);
     const room = byId.get(id)!;
-    for (const door of room.doors) queue.push(door.toRoomId);
+    for (const door of room.doors) {
+      // A door on a wall is not an edge. The old check treated `--wire` as a finished
+      // map while the walker could not stand on any of the 48 rects.
+      if (doorIsUsable(room, door)) queue.push(door.toRoomId);
+    }
     for (const hotspot of room.hotspots) {
       if (hotspot.link?.to === "room") queue.push(hotspot.link.roomId);
     }
@@ -191,7 +202,7 @@ export async function roomsCommand(
         room.doors.push({
           id: backId,
           x: Math.floor(room.width / 2),
-          y: room.height - 1,
+          y: Math.max(2, room.height - 2),
           w: 2,
           h: 1,
           toRoomId: hub.id,
@@ -200,6 +211,8 @@ export async function roomsCommand(
           keyId: null,
           prompt: null,
         });
+        const punched = punchDoorThresholds(room);
+        Object.assign(room, punched);
         await writeFile(
           join(dir, `${room.id}.json`),
           `${JSON.stringify(room, null, 2)}\n`,
@@ -209,10 +222,11 @@ export async function roomsCommand(
       const outId = `hub--to-${room.id}`;
       if (!hub.doors.some((door) => door.id === outId)) {
         const index = hub.doors.length;
+        const inner = Math.max(1, hub.width - 2);
         hub.doors.push({
           id: outId,
-          x: 1 + (index % (hub.width - 2)),
-          y: 1,
+          x: 1 + (index % inner),
+          y: 2 + Math.floor(index / inner),
           w: 1,
           h: 1,
           toRoomId: room.id,
@@ -223,11 +237,32 @@ export async function roomsCommand(
         });
       }
     }
+    const punchedHub = punchDoorThresholds(hub);
+    Object.assign(hub, punchedHub);
     await writeFile(
       join(dir, `${hub.id}.json`),
       `${JSON.stringify(hub, null, 2)}\n`,
     );
     ok(`wired ${wired} rooms through ${hub.id}`);
+  }
+
+  if (flags.rebind) {
+    const markdown = await readFile(
+      join(REPO_ROOT, "dream-walker-new", "rooms.md"),
+      "utf8",
+    );
+    const parsed = parseRoomsDocument(markdown);
+    const loaded = await loadRoomFiles(slug);
+    const { rooms: rebound, rebound: count } = rebindRoomLinks(loaded, parsed);
+    const dir = join(dreamDir(slug), "content", "rooms");
+    for (const room of rebound) {
+      const opened = punchDoorThresholds(room);
+      await writeFile(
+        join(dir, `${opened.id}.json`),
+        `${JSON.stringify(opened, null, 2)}\n`,
+      );
+    }
+    ok(`rebound ${count} link(s) and opened door thresholds`);
   }
 
   draft.rooms = await loadRoomFiles(slug);
@@ -261,6 +296,17 @@ export async function roomsCommand(
     warn(`${bad.from} → ${bad.via} points at ${bad.to}, which does not exist`);
   }
 
+  for (const room of draft.rooms) {
+    for (const door of room.doors) {
+      if (!doorIsUsable(room, door)) {
+        warn(`${room.id} door ${door.id} cannot be reached by walking`);
+      }
+    }
+    for (const [a, b] of overlappingDoors(room.doors)) {
+      warn(`${room.id} doors ${a} and ${b} share a tile`);
+    }
+  }
+
   if (!draft.spawn) {
     warn("no spawn set — add one to content/settings.json");
     return;
@@ -271,7 +317,10 @@ export async function roomsCommand(
     warn(`${room.id} cannot be reached from ${draft.spawn.roomId}`);
   }
 
-  if (dangling.length === 0 && stranded.length === 0) {
+  const blocked = draft.rooms.some((room) =>
+    room.doors.some((door) => !doorIsUsable(room, door)),
+  );
+  if (dangling.length === 0 && stranded.length === 0 && !blocked) {
     ok(`every room is reachable from ${draft.spawn.roomId}`);
   }
 }

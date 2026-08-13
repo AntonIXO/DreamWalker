@@ -172,10 +172,33 @@ export function installPopulation(
   };
   world.baseFigures = figures.map(cloneFigureState);
   world.baseInterests = interests.map((interest) => ({ ...interest }));
+  const affected = applyPopulationRelinks(world, population);
+  for (const interest of interests) affected.add(interest.roomId);
   return {
     ok: true,
-    affectedRooms: [...new Set(interests.map((interest) => interest.roomId))],
+    affectedRooms: [...affected],
   };
+}
+
+/** Re-deal this run's object-links. Safe to call after `resetWorld`. */
+export function applyPopulationRelinks(
+  world: WorldState,
+  population: DreamPopulation | null = world.population,
+): Set<string> {
+  const affected = new Set<string>();
+  for (const relink of population?.relinks ?? []) {
+    const result = applyPatch(world, {
+      kind: "relink",
+      roomId: relink.roomId,
+      hotspotId: relink.hotspotId,
+      toRoomId: relink.toRoomId,
+      reason: "inhabit",
+    });
+    if (result.ok) {
+      for (const roomId of result.affectedRooms) affected.add(roomId);
+    }
+  }
+  return affected;
 }
 
 function roomsTouchingDoor(world: WorldState, doorId: string): string[] {

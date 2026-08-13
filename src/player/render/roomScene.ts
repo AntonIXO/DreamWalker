@@ -185,6 +185,10 @@ export class RoomScene {
       container.addChild(sprite);
     }
 
+    const doors = this.drawDoors(room);
+    doors.zIndex = 1.5;
+    container.addChild(doors);
+
     const props = this.drawProps(room);
     props.zIndex = 2;
     container.addChild(props);
@@ -251,6 +255,49 @@ export class RoomScene {
       resolution: 1,
       antialias: false,
     });
+    return layer;
+  }
+
+  /**
+   * Thresholds sit above the backdrop so a painted courtyard still shows its south
+   * door. Atlas roles `doorOpen` / `doorLocked` / `doorSealed` already exist.
+   */
+  private drawDoors(room: RoomState): Container {
+    const layer = new Container({
+      label: `room-doors:${room.id}`,
+      eventMode: "none",
+    });
+    const size = room.tileSize;
+    for (const door of room.doors) {
+      const role =
+        door.type === "sealed"
+          ? "doorSealed"
+          : door.type === "open" || door.type === "ledge"
+            ? "doorOpen"
+            : "doorLocked";
+      const textures = this.atlas.roles.get(role);
+      for (let y = door.y; y < door.y + door.h; y++) {
+        for (let x = door.x; x < door.x + door.w; x++) {
+          if (textures && textures.length > 0) {
+            layer.addChild(
+              new Sprite({
+                texture: variantFor(textures, x, y),
+                x: x * size,
+                y: y * size,
+                roundPixels: true,
+                eventMode: "none",
+              }),
+            );
+            continue;
+          }
+          layer.addChild(
+            new Graphics({ eventMode: "none", roundPixels: true })
+              .rect(x * size, y * size, size, size)
+              .fill(this.colors.metal),
+          );
+        }
+      }
+    }
     return layer;
   }
 

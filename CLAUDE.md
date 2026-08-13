@@ -4,14 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A top-down web game where a "sanitar" infiltrates a sleeping person's dream (see
-`dream-walker-concept.md`, the design document). This repo is the technical foundation:
-world editor, artifact format, player, heartbeat, and the model seam.
+A top-down web game where a "sanitar" infiltrates a sleeping person's dream.
+`dream-walker-bible.md` and `dream-walker-new/` are the grammar; `dream-walker-concept.md`
+is the AI/engine seam. This repo is the technical foundation: world editor, artifact
+format, player, heartbeat, and the model.
 
-The world is **Pokémon-shaped, not dungeon-shaped**: towns joined by wide routes, a
-treeline for a border, water and one-way ledges, buildings you walk into. It is generated
-from a mission graph (Dormans) whose _space_ stage was replaced — the graph machinery is
-unchanged and still correct.
+The world is **29 authored rooms, not a generated overworld**. Travel is LSD linking
+(touch a thing, hard cut) plus a few real hotel thresholds. The sleeper does not invent
+rooms — it deals the catalog (all 25 places, 4 meta-spaces, 14 figures) into a new
+arrangement each run.
 
 Comments throughout reference the concept doc by section (`§3`, `§6`, …). When changing
 behaviour those sections describe, read them first — several non-obvious decisions
@@ -35,12 +36,13 @@ The Lord flow, in order. Each command also takes flags (`--title`, `--seed`, `--
 
 ```bash
 bun run lord init <slug>     # title, genre contract, style words, palette
-                             #   palette is measured off assets/*.png when there is
-                             #   exactly one; --palette ash forces a built-in instead
 bun run lord secret <slug>   # the sealed line + hooks
-bun run lord layout <slug>   # generate world, [r]eroll / [a]ccept
+bun run lord import <slug>   # pull rooms/characters from dream-walker-new/
+bun run lord rooms <slug>    # list / --rebind bible links / --check walkability
 bun run lord art <slug>      # 4 tilesets per role, press 1-4
 bun run lord figures <slug>  # place figures, assign hooks
+bun run lord backdrops <slug> # room paintings (Retro Diffusion at author time)
+bun run lord clues <slug>    # six wordless objects
 bun run lord build <slug>    # validate + publish to public/dream/
 bun run lord play <slug>     # build, then start the dev server
 bun run lord status [slug]   # what is done and what is not
@@ -64,14 +66,8 @@ This is the single most important thing to understand, and it is easy to get bac
   APIs, since both sides import it.
 
 `src/player/` must never import from `tools/`. Randomness at author time is a reroll knob;
-the accepted output is committed data. Nothing re-derives a world from a seed at runtime.
-
-**The one exception, and it is deliberate:** `src/player/render/foundry.ts` mints tile art
-at runtime when the sleeper makes terrain the Lord never baked (§6 — "разум подкинул").
-It is not free invention — it calls the same `src/shared/art/terrain.ts` the CLI called,
-with the same palette and the same measured `StyleProfile`, so a tile minted mid-cycle is
-drawn by the same code as one baked last week. The Lord chooses what the world is made of;
-the sleeper chooses what it makes with it.
+the accepted output is committed data. The sleeper may reseat the catalog at inhabit and
+cycle-exit; it may not invent rooms.
 
 ### Artifact lifecycle
 
@@ -88,29 +84,16 @@ public/dream/                    gitignored; what the player fetches
 browser at load. It checks relational invariants, not just shapes — doors pointing at real
 rooms, no lock whose key sits behind it. The artifact carries `secretHash` only.
 
-### Generation pipeline (author time)
+### Catalog (author time)
 
-`tools/lord/worldgen/`, run in sequence by `lord layout`:
+There is no worldgen. `dream-walker-new/rooms.md` and `characters/*/SOUL.md` are the
+mission. `lord import` / `lord rooms --rebind` attach those links to authored ASCII
+rooms. `lord rooms --check` walks doors **and** links from the courtyard spawn.
 
-1. `missionGraph.ts` — a port of GraphDungeonGenerator (Dormans' mission/space split).
-   Grows `start → end` by grammar rules within `recipe.ts` budgets. **Every rule
-   application is snapshotted, applied, validated, and rolled back on failure**, so the
-   returned graph is always crossable. Access level = fewest gates from start, computed by
-   0-1 BFS; lever edges are one-way and excluded from it.
-2. `layout.ts` — places mission nodes on a lattice two cells apart, then routes every edge
-   with A*. Unchanged from the dungeon version: it is a good skeleton whatever gets drawn
-   on it. Node cells become **places**, route cells become **roads**.
-3. `regions.ts` — decides what each node _is_: town, wild, landmark. Degree and access
-   level, not just node type — a junction wants people whatever the mission calls it.
-4. `overworld.ts` — the tile fill, in eight layers, each subordinate to the one before:
-   walkable mask → elevation → water → biome ground → tall grass → treeline → ledges and
-   gates → towns and interiors. **Every layer may only take walkable ground away**, which
-   is what makes the reachability check at the end almost always pass.
-
-`commands/layout.ts` calls `strandedRegions()` and rerolls any world whose terrain walled a
-place off. This is _not_ the solvability solver §2 forbids — it does not ask whether the
-dream can be understood, only whether the generator's own layers accidentally built a wall.
-It has caught real bugs (a building across the only road; a cliff face spanning a route).
+The default deal (Turyshev on the bench, Kirill in the ditch, artist in the hotel, Eye at
+the finale) lives in `content/figures.json`. Inhabit may reseat anyone except the
+gatekeeper and the Eye. Training does the same shuffle locally so play never waits on a
+model.
 
 ### Runtime (player)
 
@@ -138,10 +121,12 @@ references to them.
 
 `src/player/mind/types.ts` is the browser contract. `remote.ts` calls the Bun API and
 falls back per request to deterministic `scripted.ts`. `src/server/agent-runtime.ts`
-contains schema-validated dialogue, examine, cycle-exit, and finale agents. The default
-provider uses Codex device OAuth through `codex app-server`, pinned to `gpt-5.6-luna` at
-`xhigh`; setting the three `ANTHROPIC_*` variables selects an Anthropic
-Messages-compatible endpoint instead. The finale agent alone sees the plaintext secret.
+contains schema-validated inhabit, dialogue, examine, cycle-exit, and finale agents.
+`ANTHROPIC_*` selects an Anthropic-compatible proxy (default model
+`gemini-3.6-flash-high`). Without those variables the server uses Codex device OAuth
+(`gpt-5.6-luna` at `xhigh`). Live inhabit may take a few seconds; on timeout or any
+error the client installs `fallbackPopulation` and play continues. Training never
+calls the model. The finale agent alone sees the plaintext secret.
 
 `tools/lord/art/candidates.ts` is the art seam (`CandidateSource`). Replacing the
 procedural generator with Retro Diffusion changes that function body only, and stays
@@ -149,13 +134,11 @@ author-time — never runtime.
 
 ## Things that will bite you
 
-- **Cell coordinate parity is load-bearing.** `tiles.ts` gives even columns/rows a
-  room-sized footprint and odd ones a narrow lane. Rooms are placed on even coordinates,
-  so `layout.ts` normalises the grid by an _even_ shift. An odd shift silently swaps rooms
-  and corridors.
-- **Door tile spans are duplicated** — `doorSpan` in `tools/lord/worldgen/tiles.ts` and
-  `doorTiles` in `src/player/game/world.ts`. They must agree; move them to `src/shared/`
-  if you touch either.
+- **Hotel hub doors stay on the wall face.** Punching `_` under them turns the first
+  floor row into a warp carpet. `punchDoorThresholds` skips y=1 and the south wall;
+  the walker presses into the solid cell (`doorIsUsable`).
+- **Links are the map.** `--wire` is a backup spine, not the grammar. The courtyard
+  exit is the intercom, not the bottle (bottle → М4 is once, close-range, optional).
 - **Frame names are a cross-module string contract**: `tools/lord/art/silhouettes.ts`
   writes `player_<dir>_<frame>` / `figure_<archetype>_<dir>_<frame>`, and
   `src/player/render/walkerView.ts` reconstructs them. Atlas frames must all be

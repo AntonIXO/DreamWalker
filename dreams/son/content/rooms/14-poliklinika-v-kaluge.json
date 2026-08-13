@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -23,12 +23,16 @@
   "hotspots": [
     {
       "id": "vydrannyi-zub",
-      "kind": "look",
+      "kind": "link",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "выдранный зуб",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "m2-miasnaia-geometriia",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -45,7 +49,7 @@
       "prompt": "ящик с капибарами и котом",
       "link": {
         "to": "room",
-        "roomId": "06-kanava-garazhi-podvorotni",
+        "roomId": "19-dvor-i-oranzhevye-lavochki",
         "entryId": null
       },
       "tonus": null,
@@ -97,8 +101,8 @@
   "doors": [
     {
       "id": "14-poliklinika-v-kaluge--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -124,7 +128,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/14-poliklinika-v-kaluge.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

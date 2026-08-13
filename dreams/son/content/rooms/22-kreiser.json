@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -23,12 +23,16 @@
   "hotspots": [
     {
       "id": "scena-mikrofon",
-      "kind": "look",
+      "kind": "link",
       "x": 3,
       "y": 4,
       "reach": 1.4,
       "prompt": "сцена, микрофон",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "13-podzemnye-zaly-cu",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -93,8 +97,8 @@
   "doors": [
     {
       "id": "22-kreiser--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -120,7 +124,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/22-kreiser.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

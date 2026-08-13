@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -38,12 +38,16 @@
     },
     {
       "id": "podezdnaia-dver-s-domofonom",
-      "kind": "look",
+      "kind": "link",
       "x": 5.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "подъездная дверь с домофоном",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -56,7 +60,7 @@
       "kind": "link",
       "x": 8,
       "y": 4,
-      "reach": 1.4,
+      "reach": 0.9,
       "prompt": "бутылка рядом с Турышевым, не первая",
       "link": {
         "to": "room",
@@ -66,8 +70,8 @@
       "tonus": null,
       "clueId": null,
       "action": null,
-      "once": false,
-      "dwellMs": null,
+      "once": true,
+      "dwellMs": 9000,
       "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
     },
     {
@@ -97,8 +101,8 @@
   "doors": [
     {
       "id": "19-dvor-i-oranzhevye-lavochki--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",

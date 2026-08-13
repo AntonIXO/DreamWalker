@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -57,12 +57,16 @@
     },
     {
       "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
-      "kind": "look",
+      "kind": "link",
       "x": 8,
       "y": 4,
       "reach": 1.4,
       "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "10-komnata-s-grobami",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -97,8 +101,8 @@
   "doors": [
     {
       "id": "06-kanava-garazhi-podvorotni--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -124,7 +128,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/06-kanava-garazhi-podvorotni.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

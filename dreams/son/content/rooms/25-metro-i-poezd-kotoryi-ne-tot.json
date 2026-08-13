@@ -15,7 +15,7 @@
     "#..................#",
     "#..................#",
     "#..................#",
-    "#..................#",
+    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -72,12 +72,16 @@
     },
     {
       "id": "chuzhie-sumki-na-platforme",
-      "kind": "look",
+      "kind": "link",
       "x": 10.5,
       "y": 4,
       "reach": 1.4,
       "prompt": "чужие сумки на платформе",
-      "link": null,
+      "link": {
+        "to": "room",
+        "roomId": "m3-sklad-ostavlennogo",
+        "entryId": null
+      },
       "tonus": null,
       "clueId": null,
       "action": null,
@@ -97,8 +101,8 @@
   "doors": [
     {
       "id": "25-metro-i-poezd-kotoryi-ne-tot--to-hub",
-      "x": 10,
-      "y": 10,
+      "x": 1,
+      "y": 9,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
@@ -124,7 +128,7 @@
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
-    "backdropImage": null,
+    "backdropImage": "assets/rooms/25-metro-i-poezd-kotoryi-ne-tot.png",
     "backdropFit": "cells",
     "glitchPreset": "none"
   },

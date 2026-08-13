@@ -1,0 +1,338 @@
+/**
+ * The sleeper's deal: who stands where, and which authored links have moved.
+ *
+ * Lives in `shared/` so the player can start a training run (or recover from a
+ * failed inhabit) without waiting on the model. The server uses the same builder
+ * after an AI proposal, so a fallback deal and a live deal are the same shape.
+ */
+
+import type {
+  DreamPopulation,
+  FigureAgenda,
+  FigureProfile,
+  InterestSeed,
+  PopulationRelink,
+} from "./ai";
+import type { DreamArtifact } from "./dream";
+import { makeRng } from "./rng";
+import { shardIdForClue } from "./yield";
+
+export interface PopulationProposal {
+  figures: Array<{
+    id: string;
+    name: string;
+    homeRoomId: string;
+    role: string;
+    voice: string;
+    desire: string;
+    fear: string;
+    taboo: string;
+    agenda: FigureAgenda[];
+  }>;
+  interests: Array<{
+    id: string;
+    name: string;
+    roomId?: string;
+    sensorySeed: string;
+    solid: boolean;
+  }>;
+  relinks?: PopulationRelink[];
+  roomMoods: Record<string, string>;
+}
+
+interface FigureSlot {
+  id: string;
+  homeRoomId: string;
+  archetypeId: string;
+  name: string;
+  authoredShardId: string | null;
+}
+
+interface InterestSlot {
+  id: string;
+  roomId: string;
+  clueId: string | null;
+  sensorySeed: string | null;
+}
+
+export interface PopulationOptions {
+  shuffle?: boolean;
+  seed?: string;
+}
+
+const FALLBACK_INTERESTS = [
+  ["Погнутый стул", "На холодной спинке остался тёплый след ладони."],
+  ["Доска объявлений", "Под свежим листом проступает старое пятно от кнопки."],
+  ["Стакан с водой", "Вода пахнет железом, хотя стакан выглядит чистым."],
+  [
+    "Связка квитанций",
+    "Одна дата зачёркнута так сильно, что бумага порвалась.",
+  ],
+  ["Выключенный радиоприёмник", "Из динамика едва слышно дыхание помех."],
+] as const;
+
+/** Gatekeeper stays on the bench; the Eye stays at the last door. */
+export function pinnedHome(
+  artifact: DreamArtifact,
+  figureId: string,
+): string | null {
+  if (figureId === "turyshev") return artifact.spawn.roomId;
+  if (figureId === "glaz") return artifact.finaleRoomId;
+  return null;
+}
+
+export function populationSlots(artifact: DreamArtifact): {
+  figures: FigureSlot[];
+  interests: InterestSlot[];
+} {
+  const placeRooms = artifact.rooms.filter((room) => room.kind === "place");
+  const figures: FigureSlot[] = artifact.figures.map((figure) => ({
+    id: figure.id,
+    homeRoomId: figure.roomId,
+    archetypeId: figure.archetypeId,
+    name: figure.name,
+    authoredShardId: figure.holdsShardId,
+  }));
+
+  const fallbackRoomIds = placeRooms.map((room) => room.id);
+  const authoredClueIds = new Set(
+    artifact.rooms.flatMap((room) =>
+      room.hotspots
+        .map((hotspot) => hotspot.clueId)
+        .filter((id): id is string => id !== null),
+    ),
+  );
+  const figureShards = new Set(
+    artifact.figures
+      .map((figure) => figure.holdsShardId)
+      .filter((id): id is string => id !== null),
+  );
+  const authoredClueRooms = placeRooms
+    .filter((room) => room.tags.includes("clue-compatible"))
+    .map((room) => room.id);
+  const clueRooms =
+    authoredClueRooms.length > 0 ? authoredClueRooms : fallbackRoomIds;
+  const clues: InterestSlot[] = artifact.content.clues
+    .filter((clue) => {
+      if (authoredClueIds.has(clue.id)) return false;
+      const shardId = shardIdForClue(clue.id);
+      return shardId === null || !figureShards.has(shardId);
+    })
+    .map((clue, index) => ({
+      id: `clue-interest-${clue.id}`,
+      roomId:
+        clueRooms[index % Math.max(1, clueRooms.length)] ??
+        artifact.spawn.roomId,
+      clueId: clue.id,
+      sensorySeed: clue.sensorySeed,
+    }));
+  const ambient: InterestSlot[] = placeRooms
+    .slice(0, 12)
+    .map((room, index) => ({
+      id: `interest-${index + 1}`,
+      roomId: room.id,
+      clueId: null,
+      sensorySeed: null,
+    }));
+  return { figures, interests: [...clues, ...ambient] };
+}
+
+function dealHomes(
+  artifact: DreamArtifact,
+  slots: FigureSlot[],
+  proposal: PopulationProposal | null,
+  options: PopulationOptions,
+): Map<string, string> {
+  const rooms = artifact.rooms.filter((room) => room.kind === "place");
+  const capacity = new Map(
+    rooms.map((room) => [room.id, Math.max(1, room.figureSlots.length || 2)]),
+  );
+  const used = new Map(rooms.map((room) => [room.id, 0]));
+  const rng = options.shuffle
+    ? makeRng(options.seed ?? `deal:${artifact.slug}:${Date.now()}`)
+    : null;
+  const homes = new Map<string, string>();
+
+  const claim = (preferred: string | undefined, fallback: string): string => {
+    const order = [preferred, fallback, ...rooms.map((room) => room.id)].filter(
+      (id): id is string => !!id && capacity.has(id),
+    );
+    for (const id of order) {
+      if ((used.get(id) ?? 0) < (capacity.get(id) ?? 1)) {
+        used.set(id, (used.get(id) ?? 0) + 1);
+        return id;
+      }
+    }
+    return fallback;
+  };
+
+  const ordered = [
+    ...slots.filter((slot) => pinnedHome(artifact, slot.id) !== null),
+    ...slots.filter((slot) => pinnedHome(artifact, slot.id) === null),
+  ];
+  for (const slot of ordered) {
+    const proposed = proposal?.figures.find((figure) => figure.id === slot.id);
+    const pin = pinnedHome(artifact, slot.id) ?? undefined;
+    const rolled = !pin && rng ? rng.pick(rooms).id : undefined;
+    homes.set(
+      slot.id,
+      claim(pin ?? proposed?.homeRoomId ?? rolled, pin ?? slot.homeRoomId),
+    );
+  }
+  return homes;
+}
+
+function sanitiseRelinks(
+  artifact: DreamArtifact,
+  relinks: PopulationProposal["relinks"],
+): DreamPopulation["relinks"] {
+  const rooms = new Set(artifact.rooms.map((room) => room.id));
+  return (relinks ?? []).filter((relink) => {
+    const room = artifact.rooms.find((entry) => entry.id === relink.roomId);
+    return (
+      room !== undefined &&
+      rooms.has(relink.toRoomId) &&
+      room.hotspots.some(
+        (hotspot) => hotspot.id === relink.hotspotId && hotspot.link !== null,
+      )
+    );
+  });
+}
+
+export function buildPopulation(
+  artifact: DreamArtifact,
+  proposal: PopulationProposal | null,
+  source: DreamPopulation["source"],
+  options: PopulationOptions = {},
+): DreamPopulation {
+  const slots = populationSlots(artifact);
+  const proposedFigures = new Map(
+    proposal?.figures.map((figure) => [figure.id, figure]),
+  );
+  const usedShards = new Set<string>();
+  const homes = dealHomes(artifact, slots.figures, proposal, options);
+
+  const figures: FigureProfile[] = slots.figures.map((slot) => {
+    const proposed = proposedFigures.get(slot.id);
+    const authored = artifact.content.characters.find(
+      (character) => character.id === slot.id,
+    );
+    const authoredShard = slot.authoredShardId;
+    const holdsShardId =
+      authoredShard && !usedShards.has(authoredShard) ? authoredShard : null;
+    if (holdsShardId) usedShards.add(holdsShardId);
+    const homeRoomId = homes.get(slot.id) ?? slot.homeRoomId;
+    const agendaRooms = (proposed?.agenda ?? []).map((stop) =>
+      artifact.rooms.some(
+        (room) => room.id === stop.roomId && room.kind === "place",
+      )
+        ? stop.roomId
+        : homeRoomId,
+    );
+    return {
+      id: slot.id,
+      name: authored?.name ?? proposed?.name.trim().slice(0, 60) ?? slot.name,
+      archetypeId: slot.archetypeId,
+      homeRoomId,
+      personality: authored?.personality ?? "Держится за привычный порядок.",
+      role:
+        authored?.role ??
+        proposed?.role.trim().slice(0, 100) ??
+        "следит за привычным порядком",
+      voice:
+        authored?.voice ??
+        proposed?.voice.trim().slice(0, 120) ??
+        "отвечает коротко, избегает прямых слов",
+      desire:
+        authored?.desire ??
+        proposed?.desire.trim().slice(0, 140) ??
+        "чтобы день повторился без перемен",
+      fear:
+        authored?.fear ??
+        proposed?.fear.trim().slice(0, 140) ??
+        "заметить в знакомом месте чужого",
+      taboo:
+        authored?.taboo ??
+        proposed?.taboo.trim().slice(0, 140) ??
+        "не говорит о внешнем мире",
+      holdsShardId,
+      agenda: (["early", "middle", "late"] as const).map((phase, index) => ({
+        phase,
+        roomId: agendaRooms[index] ?? homeRoomId,
+        activity: authored?.initialActivity ?? "занят привычным делом",
+      })),
+    };
+  });
+
+  const objectShards = new Set(
+    artifact.rooms
+      .flatMap((room) =>
+        room.hotspots
+          .map((hotspot) => hotspot.clueId)
+          .filter((id): id is string => id !== null),
+      )
+      .map((clueId) => shardIdForClue(clueId))
+      .filter((id): id is string => id !== null),
+  );
+  for (const shard of artifact.shards) {
+    if (usedShards.has(shard.id) || objectShards.has(shard.id)) continue;
+    const receiver = figures.find((figure) => figure.holdsShardId === null);
+    if (!receiver) break;
+    receiver.holdsShardId = shard.id;
+    usedShards.add(shard.id);
+  }
+
+  const proposedInterests = new Map(
+    proposal?.interests.map((interest) => [interest.id, interest]),
+  );
+  const interests: InterestSeed[] = slots.interests.map((slot, index) => {
+    const proposed = proposedInterests.get(slot.id);
+    const fallback = FALLBACK_INTERESTS[index % FALLBACK_INTERESTS.length]!;
+    const proposedRoom =
+      proposed?.roomId &&
+      artifact.rooms.some(
+        (room) => room.id === proposed.roomId && room.kind === "place",
+      )
+        ? proposed.roomId
+        : slot.roomId;
+    return {
+      id: slot.id,
+      roomId: proposedRoom,
+      name: slot.clueId
+        ? "Неуместный предмет"
+        : proposed?.name.trim().slice(0, 70) || fallback[0],
+      sensorySeed:
+        slot.sensorySeed ??
+        proposed?.sensorySeed.trim().slice(0, 220) ??
+        fallback[1],
+      solid: proposed?.solid ?? index % 3 === 0,
+      holdsShardId: null,
+      clueId: slot.clueId,
+    };
+  });
+
+  const roomMoods: Record<string, string> = {};
+  for (const room of artifact.rooms) {
+    const authored = `${room.atmosphere} ${room.personality}`.trim();
+    roomMoods[room.id] =
+      authored.length > 1
+        ? authored.slice(0, 140)
+        : proposal?.roomMoods[room.id]?.trim().slice(0, 140) ||
+          `${room.name}: воздух кажется чуть тяжелее, чем должен.`;
+  }
+  return {
+    figures,
+    interests,
+    roomMoods,
+    relinks: sanitiseRelinks(artifact, proposal?.relinks),
+    source,
+  };
+}
+
+/** Instant offline deal. Used by training and by a live inhabit that failed. */
+export function fallbackPopulation(
+  artifact: DreamArtifact,
+  options: PopulationOptions = { shuffle: true },
+): DreamPopulation {
+  return buildPopulation(artifact, null, "fallback", options);
+}
