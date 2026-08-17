@@ -26,5 +26,5 @@
     "noImplicitOverride": true,
     "exactOptionalPropertyTypes": false
   },
-  "include": ["src", "tools"]
+  "include": ["src", "tools", "dreams/son"]
 }

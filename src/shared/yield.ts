@@ -49,6 +49,7 @@ export function mayYieldShard(input: {
 
   switch (input.figureId) {
     case "glaz":
+    case "shchenok":
       return ADMITS_PURPOSE.test(said);
     case "kirill":
       return RECOGNISES_KIRILL.test(said);

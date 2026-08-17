@@ -5,6 +5,23 @@ import { clueIdForShard, mayYieldShard, POOL_ROOM_ID } from "./yield";
 describe("mayYieldShard", () => {
   const none = new Map<string, number>();
 
+  test("the puppy opens on the same admission as the Eye", () => {
+    expect(
+      mayYieldShard({
+        figureId: "shchenok",
+        utterance: "Как тебя зовут?",
+        visitCounts: none,
+      }),
+    ).toBe(false);
+    expect(
+      mayYieldShard({
+        figureId: "shchenok",
+        utterance: "Я пришёл забрать кошелёк.",
+        visitCounts: none,
+      }),
+    ).toBe(true);
+  });
+
   test("the Eye only pays if the sanitar says why he came", () => {
     expect(
       mayYieldShard({

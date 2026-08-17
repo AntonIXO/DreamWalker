@@ -32,6 +32,10 @@ export class WordNotebook {
     return this.observed.size;
   }
 
+  get observedIds(): readonly string[] {
+    return [...this.observed];
+  }
+
   hasObserved(clueId: string): boolean {
     return this.observed.has(clueId);
   }

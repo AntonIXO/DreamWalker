@@ -4,6 +4,7 @@ interface StoredMindState {
   knownShardIds: string[];
   sleeper: SleeperMemory;
   memories: DreamMemory[];
+  exhaustion: number;
 }
 
 function emptyState(): StoredMindState {
@@ -11,6 +12,7 @@ function emptyState(): StoredMindState {
     knownShardIds: [],
     sleeper: { summary: "", tells: [] },
     memories: [],
+    exhaustion: 0,
   };
 }
 
@@ -53,6 +55,11 @@ export class MindMemory {
                 typeof memory.text === "string",
             )
           : [],
+        exhaustion:
+          typeof parsed.exhaustion === "number" &&
+          Number.isFinite(parsed.exhaustion)
+            ? parsed.exhaustion
+            : 0,
       };
     } catch {
       return emptyState();
@@ -117,6 +124,21 @@ export class MindMemory {
     memory.spent = true;
     this.save();
     return true;
+  }
+
+  get exhaustion(): number {
+    return this.state.exhaustion;
+  }
+
+  setExhaustion(value: number): void {
+    this.state.exhaustion = value;
+    this.save();
+  }
+
+  spentMemoryTexts(): string[] {
+    return this.state.memories
+      .filter((memory) => memory.spent)
+      .map((memory) => memory.text);
   }
 
   learnShard(id: string): void {

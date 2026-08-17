@@ -13,7 +13,13 @@ import type { ModelThinkingIndicator } from "./modelThinking";
  * it was, «даже в статистике».
  */
 export type EndingKind =
-  "match" | "empty" | "unfinished" | "resonance" | "void" | "walk-away";
+  | "match"
+  | "empty"
+  | "unfinished"
+  | "resonance"
+  | "void"
+  | "walk-away"
+  | "locked";
 
 export interface FinaleCallbacks {
   onOpen(): void;
@@ -37,6 +43,7 @@ export class FinalePanel {
   private readonly submit: HTMLButtonElement;
   private busy = false;
   private ended = false;
+  private kind: EndingKind | null = null;
 
   constructor(
     parent: HTMLElement,
@@ -90,10 +97,7 @@ export class FinalePanel {
     this.submit = this.root.querySelector(".finale-submit")!;
     this.submit.addEventListener("click", () => void this.judge());
     this.root.querySelector(".finale-leave")!.addEventListener("click", () => {
-      this.showEnding(
-        "Ты уходишь без ключа. Пациент проснётся бедным только во сне.",
-        "walk-away",
-      );
+      this.showEnding("Дверь с той стороны.", "walk-away");
     });
     this.root
       .querySelector(".finale-close")!
@@ -106,6 +110,11 @@ export class FinalePanel {
 
   get isWaiting(): boolean {
     return this.busy;
+  }
+
+  /** «Пустота» — no way back except closing the tab. */
+  get isTrapped(): boolean {
+    return this.ended && this.kind === "void";
   }
 
   open(): void {
@@ -160,20 +169,26 @@ export class FinalePanel {
         this.mind.judge(this.fullPhrase()),
       );
       if (result.verdict === "match") {
-        // «Взял» and «Пусто» are the same correct phrase and two different worlds. The
-        // dry one holds on screen longer than is comfortable, because the doc asks for
-        // exactly that: the number is the point, and so is how long you look at it.
-        const dry = result.wallet === "dry";
         const paid = this.callbacks.whatWasPaid?.() ?? [];
-        // `endings.md`: «Потом список того, что ты за неё отдал, тем же кеглем.» Same
-        // size, no adjectives, no moral — the register is flat constatation. This is the
-        // one place the ledger is shown to the player at all, and it is the moment the
-        // whole thing is for.
         const ledger = paid.length > 0 ? `\n\n${paid.join("\n")}` : "";
+        if (result.locked) {
+          this.showEnding(
+            `${result.reply}\n\nЗаперто. Таймер считает вверх.`,
+            "locked",
+          );
+          return;
+        }
+        const dry = result.wallet === "dry";
+        const amount = dry ? "0.00000000" : (result.amount ?? "");
+        if (dry) {
+          this.reply.textContent = `${result.reply}\n\n${amount}`;
+          this.reply.style.whiteSpace = "pre-line";
+          await new Promise((resolve) => setTimeout(resolve, 2400));
+        }
         this.showEnding(
           dry
-            ? `${result.reply}\n\n0.00000000${ledger}`
-            : `${result.reply}${ledger}`,
+            ? `${result.reply}\n\n${amount}${ledger}`
+            : `${result.reply}${amount ? `\n\n${amount}` : ""}${ledger}`,
           dry ? "empty" : "match",
         );
         return;
@@ -214,10 +229,15 @@ export class FinalePanel {
 
   private showEnding(text: string, kind: EndingKind): void {
     this.ended = true;
+    this.kind = kind;
     setMarkdown(this.reply, text);
     this.reply.style.whiteSpace = "pre-line";
     this.form.hidden = true;
     this.submit.hidden = true;
+    const leave = this.root.querySelector<HTMLButtonElement>(".finale-leave");
+    const close = this.root.querySelector<HTMLButtonElement>(".finale-close");
+    if (leave) leave.hidden = kind === "void";
+    if (close) close.hidden = kind === "void";
     this.callbacks.onEnded(kind);
   }
 

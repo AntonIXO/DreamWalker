@@ -18,6 +18,8 @@ import {
 } from "pixi.js";
 
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
+import { sonPack } from "../../dreams/son/pack";
+import { LOCK_STARTED_AT } from "../../dreams/son/meta";
 import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
 import { Camera, DEFAULT_CAMERA, FOLLOW_VIEW_TILES } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
@@ -39,6 +41,8 @@ import { walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
+import { MEMORY_EXHAUSTION } from "./game/exhaustion";
+import { addExhaustion } from "./game/world";
 import { learnLeverage, leverageOn } from "./game/fates";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
@@ -80,24 +84,12 @@ function showBootError(title: string, detail: string): void {
   node.replaceChildren(heading, body);
 }
 
-async function loadArtifact(): Promise<DreamArtifact> {
-  const response = await fetch(`${DREAM_URL}/dream.json`);
-  if (!response.ok) {
-    throw new Error(
-      "No dream is published on this server. Build one:<br><br>" +
-        "<code>bun run lord init my-dream</code><br>" +
-        "<code>bun run lord secret my-dream</code><br>" +
-        "<code>bun run lord rooms my-dream</code><br>" +
-        "<code>bun run lord art my-dream</code><br>" +
-        "<code>bun run lord figures my-dream</code><br>" +
-        "<code>bun run lord build my-dream</code>",
-    );
-  }
-  return validateDreamArtifact(await response.json());
+function loadArtifact(): DreamArtifact {
+  return validateDreamArtifact(sonPack.artifact());
 }
 
 async function boot(): Promise<void> {
-  const artifact = await loadArtifact();
+  const artifact = loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
   const apparatusUrl = new URL("../../assets/autofag.png", import.meta.url)
     .href;
@@ -229,6 +221,15 @@ async function boot(): Promise<void> {
   shiver.onTrigger = (intensity) => dreamFx.burst(intensity);
   const transition = new EnterTransition(uiLayer);
 
+  const cycle = new Cycle(artifact);
+  const journal = new Journal(artifact.slug);
+  const wordNotebook = new WordNotebook(artifact.slug);
+  const mindMemory = new MindMemory(artifact.slug);
+  const hud = new Hud(uiLayer);
+  hud.setLobbyMode(true);
+  const observations = new ObservationLog();
+  world.exhaustion = mindMemory.exhaustion;
+
   /**
    * Walking, doors, links and meta-spaces.
    *
@@ -252,8 +253,12 @@ async function boot(): Promise<void> {
         if (line) hud.whisper(line, 4);
       },
       onRefused: (doorId) => observations.noteRefusal(doorId),
+      whisper: (text) => hud.whisper(text, 4),
+      cycleNumber: () => cycle.number,
+      knownClueIds: () => wordNotebook.observedIds,
     },
     transition,
+    sonPack.scripts,
   );
 
   const figuresHere = (): typeof world.figures =>
@@ -263,15 +268,7 @@ async function boot(): Promise<void> {
       (interest) => interest.roomId === world.currentRoomId,
     );
 
-  const cycle = new Cycle(artifact);
-  const journal = new Journal(artifact.slug);
-  const wordNotebook = new WordNotebook(artifact.slug);
-  const mindMemory = new MindMemory(artifact.slug);
-  const hud = new Hud(uiLayer);
-  hud.setLobbyMode(true);
   const thinking = new ModelThinkingIndicator(uiLayer);
-
-  const observations = new ObservationLog();
   const mindSettings = await loadMindSettings();
   const mind = createMind(
     world,
@@ -352,6 +349,9 @@ async function boot(): Promise<void> {
     },
     onShard: noteShard,
     onMemorySpent: () => {
+      addExhaustion(world, MEMORY_EXHAUSTION);
+      mindMemory.setExhaustion(world.exhaustion);
+      session.noteMemorySpent();
       journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
       // «Пустота» — nothing left to spend, so the sanitar stays. Not dead; stuck.
       if (mindMemory.availableMemories().length === 0) {
@@ -400,6 +400,7 @@ async function boot(): Promise<void> {
       dialogue.close();
       finale.openResonance(declaration);
     },
+    exhaustion: () => world.exhaustion,
   });
 
   const verbRing = new VerbRing(uiLayer, {
@@ -471,8 +472,9 @@ async function boot(): Promise<void> {
     {
       onOpen: () => input.setCaptured(true),
       onClose: () => input.setCaptured(false),
-      whatWasPaid: () =>
-        world.fateHistory.map((record) => {
+      whatWasPaid: () => {
+        const memories = mindMemory.spentMemoryTexts().map((text) => text);
+        const fates = world.fateHistory.map((record) => {
           const name =
             world.baseFigures.find((f) => f.id === record.figureId)?.name ??
             record.figureId;
@@ -486,8 +488,10 @@ async function boot(): Promise<void> {
                   : record.fate === "leveraged"
                     ? "сломан"
                     : "";
-          return `${name} — ${what}, цикл ${record.cycle}.`;
-        }),
+          return what ? `${name} — ${what}, цикл ${record.cycle}.` : "";
+        });
+        return [...memories, ...fates].filter(Boolean);
+      },
       onEnded: (kind) => {
         input.setCaptured(true);
         journal.add(
@@ -502,7 +506,9 @@ async function boot(): Promise<void> {
                   ? "Отдавать больше нечего."
                   : kind === "walk-away"
                     ? "Ты ушёл, не забрав тайну."
-                    : "Фигура назвала тебя чужим.",
+                    : kind === "locked"
+                      ? "Фраза была верна. Замок ещё считает вверх."
+                      : "Фигура назвала тебя чужим.",
         );
       },
     },
@@ -551,6 +557,7 @@ async function boot(): Promise<void> {
         }
         for (const room of world.rooms) rooms.invalidate(room.id);
         session.enterRoomImmediate();
+        session.noteCycleReset();
         actors.syncFigures(figuresHere(), tileSize);
         actors.syncInterests(interestsHere(), tileSize);
         populationInstalled = true;
@@ -649,6 +656,9 @@ async function boot(): Promise<void> {
     },
     onTimeBought: (memoryText) => {
       cycle.extend(120_000);
+      addExhaustion(world, MEMORY_EXHAUSTION);
+      mindMemory.setExhaustion(world.exhaustion);
+      session.noteMemorySpent();
       journal.add(
         cycle.number,
         `Ты сжёг воспоминание «${memoryText}», чтобы удержать сон.`,
@@ -697,6 +707,7 @@ async function boot(): Promise<void> {
       forgetCycle(mind);
       for (const room of world.rooms) rooms.invalidate(room.id);
       session.restart();
+      session.noteCycleReset();
 
       // `endings.md` sets four cycles before the sanitar is thrown out with whatever
       // they have. The gaps in the phrase persist into the next run.
@@ -864,7 +875,7 @@ async function boot(): Promise<void> {
       else if (wordNotebookPanel.isOpen) wordNotebookPanel.close();
       else if (clueInspect.isOpen) clueInspect.close();
       else if (verbRing.isOpen) verbRing.close();
-      else if (finale.isOpen) finale.close();
+      else if (finale.isOpen && !finale.isTrapped) finale.close();
       else dialogue.close();
     }
 
@@ -898,13 +909,17 @@ async function boot(): Promise<void> {
 
     if (!simulationPaused && input.consume(Action.INTERACT)) {
       if (target?.kind === "figure") {
-        dialogue.open(target.figure);
+        if (!session.mayTalk(target.figure.id)) {
+          hud.whisper("Ну ладно.", 2);
+        } else {
+          dialogue.open(target.figure);
+        }
       } else if (target?.kind === "hotspot") {
         const hotspot = target.hotspot;
-        // An authored refusal is the answer — «достать её нельзя, это проверено». It
-        // never reaches the model, which has nothing to add to a rule.
-        if (hotspot.refusal) {
-          session.use(hotspot);
+        if (session.use(hotspot)) {
+          // A pack script handled the thing.
+        } else if (hotspot.refusal) {
+          // An authored refusal is the answer — «достать её нельзя, это проверено».
           hud.whisper(hotspot.refusal, 4);
         } else {
           void thinking
@@ -963,6 +978,14 @@ async function boot(): Promise<void> {
     actors.syncFigures(figuresHere(), room.tileSize);
     actors.syncInterests(interestsHere(), room.tileSize);
 
+    if (room.id === "m11-zamok-po-vremeni") {
+      const elapsed = Math.max(0, Date.now() - Date.parse(LOCK_STARTED_AT));
+      const days = Math.floor(elapsed / 86_400_000);
+      const hours = Math.floor((elapsed % 86_400_000) / 3_600_000);
+      hud.setAside(`закрыто ${days}д ${String(hours).padStart(2, "0")}ч`);
+    } else {
+      hud.setAside(null);
+    }
     hud.update(
       {
         title: artifact.title,

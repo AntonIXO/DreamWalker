@@ -11,12 +11,14 @@
  */
 
 import { highestPortraitState } from "../../shared/content";
+import { clampPortraitByExhaustion } from "../game/exhaustion";
 import type { FigureState } from "../game/world";
 import type { DreamMind, TurnResponse } from "../mind/types";
 import type { DreamArtifact } from "../../shared/dream";
 import type { AtlasTextures } from "../render/atlasTextures";
 import { setMarkdown } from "./markdown";
 import type { ModelThinkingIndicator } from "./modelThinking";
+import { npcFor } from "../../../dreams/son/npcs";
 
 export interface DialogueCallbacks {
   onOpen(figure: FigureState): void;
@@ -34,11 +36,13 @@ export interface DialogueCallbacks {
   /** They gave it up, or they shut for good. */
   onPressed(figure: FigureState, outcome: "leveraged" | "broken"): void;
   onResonance(declaration: string): void;
+  exhaustion(): number;
 }
 
 export class DialoguePanel {
   private readonly root: HTMLElement;
   private readonly nameEl: HTMLElement;
+  private readonly actionEl: HTMLElement;
   private readonly portraitEl: HTMLElement;
   private readonly logEl: HTMLElement;
   private readonly inputEl: HTMLInputElement;
@@ -62,6 +66,7 @@ export class DialoguePanel {
       <div class="dialogue-portrait" aria-hidden="true"><div></div></div>
       <div class="dialogue-copy">
         <div class="dialogue-name"></div>
+        <div class="dialogue-action" hidden></div>
         <div class="dialogue-log"></div>
         <form class="dialogue-form">
           <input class="dialogue-input" type="text" autocomplete="off" spellcheck="false"
@@ -79,6 +84,7 @@ export class DialoguePanel {
     parent.appendChild(this.root);
 
     this.nameEl = this.root.querySelector(".dialogue-name")!;
+    this.actionEl = this.root.querySelector(".dialogue-action")!;
     this.portraitEl = this.root.querySelector(".dialogue-portrait > div")!;
     this.logEl = this.root.querySelector(".dialogue-log")!;
     this.inputEl = this.root.querySelector(".dialogue-input")!;
@@ -127,7 +133,12 @@ export class DialoguePanel {
   open(figure: FigureState, preselectLeverage = false): void {
     this.figure = figure;
     this.root.hidden = false;
+    this.root.dataset.figure = figure.id;
     this.nameEl.textContent = figure.name;
+    this.actionEl.hidden = true;
+    const npc = npcFor(figure.id);
+    this.inputEl.placeholder = npc.placeholder ?? "что ты скажешь";
+    this.memoryEl.hidden = npc.hideMemoryOffer === true;
     this.renderPortrait();
     this.logEl.replaceChildren();
     for (const line of this.mind.conversation(figure.id)) {
@@ -138,6 +149,7 @@ export class DialoguePanel {
     }
     this.refreshMemories();
     this.refreshLeverage();
+    if (figure.id === "glaz") figure.portraitState = "knows";
     if (preselectLeverage && this.leverageEl.options.length > 1) {
       this.leverageEl.selectedIndex = 1;
     }
@@ -153,7 +165,8 @@ export class DialoguePanel {
     for (const id of held) {
       this.leverageEl.add(new Option(`назвать: ${labelFor(id)}`, id));
     }
-    this.leverageEl.hidden = held.length === 0;
+    const npc = this.figure ? npcFor(this.figure.id) : null;
+    this.leverageEl.hidden = Boolean(npc?.hideLeverage) || held.length === 0;
   }
 
   private renderPortrait(): void {
@@ -258,6 +271,10 @@ export class DialoguePanel {
 
     setMarkdown(pending, response.reply);
     pending.className = "said-by-them";
+    if (response.action) {
+      this.actionEl.hidden = false;
+      this.actionEl.textContent = response.action;
+    }
     // «Уровень 3 не откатывается» — suspicion is a ratchet, so a figure that has worked
     // it out cannot be talked back down into being merely curious. The Eye is the one
     // exception: its scale is «сколько правды санитар сказал», not suspicion at all.
@@ -265,10 +282,14 @@ export class DialoguePanel {
     const character = this.artifact.content.characters.find(
       (candidate) => candidate.id === figure.id,
     );
-    figure.portraitState =
-      character?.suspicionMonotone === false
+    const npc = npcFor(figure.id);
+    const raised =
+      character?.suspicionMonotone === false || npc.skipExhaustionClamp
         ? response.portraitState
         : highestPortraitState(before, response.portraitState);
+    figure.portraitState = npc.skipExhaustionClamp
+      ? raised
+      : clampPortraitByExhaustion(this.callbacks.exhaustion(), raised, before);
     this.renderPortrait();
 
     // The rung that matters. Announced once, on the way up, so the picture can agree
@@ -288,7 +309,9 @@ export class DialoguePanel {
     // have *already* known before this turn, and this turn has to have handed it one
     // more piece. Without that gate any single turn could end the run.
     const dozhim =
-      before === "knows" && figure.portraitState === "knows" && !!response.tell;
+      before === "knows" &&
+      figure.portraitState === "knows" &&
+      (!!response.tell || !!leverageOffered);
     if (response.resonance && !dozhim) {
       response = { ...response, resonance: null };
     }

@@ -220,6 +220,8 @@ export interface DialogueRequestPayload {
   knownShardIds: string[];
   sleeper: SleeperMemory;
   world: WorldSnapshot;
+  /** 0..1. High exhaustion is camouflage. The engine also clamps the face. */
+  exhaustion: number;
 }
 
 export interface Tell {
@@ -228,6 +230,8 @@ export interface Tell {
 
 export interface DialogueResult {
   reply: string;
+  /** Stage direction. Shown smaller than the spoken line. */
+  action?: string | null;
   tell: Tell | null;
   yieldedShardId: string | null;
   residueDelta: string[];
@@ -333,6 +337,10 @@ export interface FinaleResult {
    * rather than as the risk it was.
    */
   wallet?: "full" | "dry";
+  /** Layer 2: the phrase is right and the lock has not opened yet. */
+  locked?: boolean;
+  /** Fake prize. Never sent on walk-away. */
+  amount?: string;
   verdict: "match" | "miss";
   reply: string;
 }

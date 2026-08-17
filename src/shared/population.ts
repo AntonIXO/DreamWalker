@@ -59,6 +59,7 @@ interface InterestSlot {
 export interface PopulationOptions {
   shuffle?: boolean;
   seed?: string;
+  dryWallet?: boolean;
 }
 
 const FALLBACK_INTERESTS = [
@@ -76,9 +77,18 @@ const FALLBACK_INTERESTS = [
 export function pinnedHome(
   artifact: DreamArtifact,
   figureId: string,
+  options?: { dryWallet?: boolean },
 ): string | null {
   if (figureId === "turyshev") return artifact.spawn.roomId;
   if (figureId === "glaz") return artifact.finaleRoomId;
+  if (figureId === "kripto-bro" && options?.dryWallet) {
+    return (
+      artifact.rooms.find((room) => room.id.includes("metro"))?.id ??
+      "25-metro-i-poezd-kotoryi-ne-tot"
+    );
+  }
+  if (figureId === "shchenok") return "m9-shkaf";
+  if (figureId === "raisa") return "02-shkola-kabinet-russkogo";
   return null;
 }
 
@@ -144,9 +154,11 @@ function dealHomes(
   proposal: PopulationProposal | null,
   options: PopulationOptions,
 ): Map<string, string> {
-  const rooms = artifact.rooms.filter((room) => room.kind === "place");
+  const rooms = artifact.rooms.filter(
+    (room) => room.kind === "place" && room.figureSlots.length > 0,
+  );
   const capacity = new Map(
-    rooms.map((room) => [room.id, Math.max(1, room.figureSlots.length || 2)]),
+    rooms.map((room) => [room.id, room.figureSlots.length]),
   );
   const used = new Map(rooms.map((room) => [room.id, 0]));
   const rng = options.shuffle
@@ -167,13 +179,17 @@ function dealHomes(
     return fallback;
   };
 
+  const pinOf = (id: string) =>
+    pinnedHome(artifact, id, { dryWallet: options.dryWallet });
   const ordered = [
-    ...slots.filter((slot) => pinnedHome(artifact, slot.id) !== null),
-    ...slots.filter((slot) => pinnedHome(artifact, slot.id) === null),
+    ...slots.filter((slot) => pinOf(slot.id) !== null),
+    ...slots.filter((slot) => pinOf(slot.id) === null),
   ];
   for (const slot of ordered) {
     const proposed = proposal?.figures.find((figure) => figure.id === slot.id);
-    const pin = pinnedHome(artifact, slot.id) ?? undefined;
+    const pin =
+      pinnedHome(artifact, slot.id, { dryWallet: options.dryWallet }) ??
+      undefined;
     const rolled = !pin && rng ? rng.pick(rooms).id : undefined;
     homes.set(
       slot.id,

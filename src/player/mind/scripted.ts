@@ -17,6 +17,9 @@
 
 import { makeRng } from "../../shared/rng";
 import { mayYieldShard } from "../../shared/yield";
+import { clampPortraitByExhaustion } from "../game/exhaustion";
+import { lookAt } from "../../../dreams/son/looks";
+import { npcFor, talkContext } from "../../../dreams/son/npcs";
 import type {
   CycleExitResult,
   ExamineResult,
@@ -174,6 +177,27 @@ export class ScriptedMind implements DreamMind {
       };
     }
 
+    const ctx = talkContext(this.world, {
+      figureId: request.figureId,
+      utterance: request.utterance,
+      offeredMemoryText: null,
+      leverageOffered: request.leverageOffered ?? null,
+      cycle: 1,
+    });
+    if (ctx) {
+      const authored = npcFor(figure.id).talk(ctx);
+      if (authored) {
+        const somethingHappenedHere = [...this.world.fates.values()].some(
+          (record) =>
+            record.roomId === figure.roomId && record.figureId !== figure.id,
+        );
+        if (somethingHappenedHere && authored.reply.length < 140) {
+          authored.reply = `${authored.reply} Тут был ещё один. Куда делся, не знаю.`;
+        }
+        return authored;
+      }
+    }
+
     const said = request.utterance.toLowerCase();
     const rng = makeRng(`${request.figureId}:${this.turnCount}:${said.length}`);
 
@@ -246,13 +270,20 @@ export class ScriptedMind implements DreamMind {
           ? "leveraged"
           : "broken"
         : null,
-      portraitState: hit
-        ? this.turnCount >= 4
-          ? "knows"
-          : "wary"
-        : hedged
-          ? "interested"
-          : "neutral",
+      portraitState:
+        figure.id === "shchenok" || figure.id === "kurt"
+          ? "neutral"
+          : clampPortraitByExhaustion(
+              this.world.exhaustion,
+              hit
+                ? this.turnCount >= 4
+                  ? "knows"
+                  : "wary"
+                : hedged
+                  ? "interested"
+                  : "neutral",
+              figure.portraitState,
+            ),
     };
   }
 
@@ -274,6 +305,13 @@ export class ScriptedMind implements DreamMind {
             ?.hotspots.find((entry) => entry.id === request.hotspotId) ?? null)
         : null;
     const clueId = interest?.clueId ?? hotspot?.clueId ?? null;
+    const authoredRoom = request.roomId
+      ? this.world.roomById.get(request.roomId)
+      : null;
+    const looked = lookAt(hotspot?.id);
+    const inscription =
+      looked?.reply ??
+      (hotspot?.id === "nadpis" ? authoredRoom?.copy.nadpis : null);
     const clue = clueId
       ? this.world.artifact.content.clues.find(
           (candidate) => candidate.id === clueId,
@@ -281,6 +319,7 @@ export class ScriptedMind implements DreamMind {
       : null;
     return {
       reply:
+        inscription ??
         interest?.sensorySeed ??
         clue?.sensorySeed ??
         lines[hash % lines.length]!,
@@ -513,6 +552,8 @@ export class ScriptedMind implements DreamMind {
     return hash === this.world.artifact.content.mnemonic.hash
       ? {
           verdict: "match",
+          wallet: "full",
+          amount: "0.08412000",
           reply: "Шесть слов встали на места. Аппарат забирает ключ из сна.",
         }
       : {

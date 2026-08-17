@@ -26,6 +26,7 @@ export interface HudModel {
 export class Hud {
   private readonly root: HTMLElement;
   private readonly roomEl: HTMLElement;
+  private readonly asideEl: HTMLElement;
   private readonly clockEl: HTMLElement;
   private readonly cycleEl: HTMLElement;
   private readonly whisperEl: HTMLElement;
@@ -38,6 +39,7 @@ export class Hud {
     this.root.innerHTML = `
       <div class="hud-top">
         <span class="hud-room"></span>
+        <span class="hud-aside" hidden></span>
         <span class="hud-cycle"></span>
         <span class="hud-clock"></span>
       </div>
@@ -46,6 +48,7 @@ export class Hud {
     parent.appendChild(this.root);
 
     this.roomEl = this.root.querySelector(".hud-room")!;
+    this.asideEl = this.root.querySelector(".hud-aside")!;
     this.clockEl = this.root.querySelector(".hud-clock")!;
     this.cycleEl = this.root.querySelector(".hud-cycle")!;
     this.whisperEl = this.root.querySelector(".hud-whisper")!;
@@ -87,6 +90,12 @@ export class Hud {
         this.whisperEl.classList.remove("visible");
       }
     }
+  }
+
+  /** A quiet extra line under the room name — a timer, not a meter. */
+  setAside(text: string | null): void {
+    this.asideEl.hidden = !text;
+    this.asideEl.textContent = text ?? "";
   }
 
   /** Hide the cycle chrome while the sanitar is still in the procedure room. */

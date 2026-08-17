@@ -21,6 +21,8 @@ import type {
   TurnRequest,
   TurnResponse,
 } from "./types";
+import { lookAt } from "../../../dreams/son/looks";
+import { npcFor, talkContext } from "../../../dreams/son/npcs";
 
 const REQUEST_TIMEOUT_MS = 25_000;
 const INHABIT_TIMEOUT_MS = 20_000;
@@ -252,12 +254,18 @@ export class RemoteMind implements DreamMind {
     request: TurnRequest,
     onPartial?: (reply: string) => void,
   ): Promise<TurnResponse> {
-    const controller = this.controller();
     const figureMemory = this.figureMemories.get(request.figureId) ?? {
       summary: "",
       lines: [],
     };
     const offeredMemory = this.memory.memory(request.offeredMemoryId);
+    const local = this.localTurn(request, offeredMemory?.text ?? null);
+    if (local) {
+      onPartial?.(local.reply);
+      this.rememberTurn(request, local, offeredMemory?.id ?? null);
+      return local;
+    }
+    const controller = this.controller();
     const payload: DialogueRequestPayload = {
       slug: this.world.artifact.slug,
       cycleNumber: this.context.cycleNumber(),
@@ -269,6 +277,7 @@ export class RemoteMind implements DreamMind {
       knownShardIds: [...this.memory.knownShardIds],
       sleeper: this.memory.sleeper,
       world: snapshot(this.world, "upper-dynamic", request.figureId),
+      exhaustion: this.world.exhaustion,
     };
 
     try {
@@ -322,7 +331,54 @@ export class RemoteMind implements DreamMind {
     }
   }
 
+  private localTurn(
+    request: TurnRequest,
+    offeredMemoryText: string | null,
+  ): TurnResponse | null {
+    const ctx = talkContext(this.world, {
+      figureId: request.figureId,
+      utterance: request.utterance,
+      offeredMemoryText,
+      leverageOffered: request.leverageOffered ?? null,
+      knownClueIds: [],
+      knownShardIds: [...this.memory.knownShardIds],
+      cycle: this.context.cycleNumber(),
+    });
+    if (!ctx) return null;
+    return npcFor(request.figureId).talk(ctx);
+  }
+
+  private rememberTurn(
+    request: TurnRequest,
+    result: TurnResponse,
+    offeredMemoryId: string | null,
+  ): void {
+    const figureMemory = this.figureMemories.get(request.figureId) ?? {
+      summary: "",
+      lines: [],
+    };
+    figureMemory.lines.push(
+      { speaker: "sanitar", text: request.utterance },
+      { speaker: "figure", text: result.reply },
+    );
+    figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
+    figureMemory.summary = result.figureMemorySummary.slice(-400);
+    this.figureMemories.set(request.figureId, figureMemory);
+    if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
+    if (result.tell) {
+      this.memory.addTell(
+        this.context.cycleNumber(),
+        request.figureId,
+        result.tell.quoted,
+      );
+    }
+    this.memory.addResidue(result.residueDelta);
+    if (offeredMemoryId) this.memory.spendMemory(offeredMemoryId);
+  }
+
   async examine(request: ExamineRequest) {
+    const looked = lookAt(request.hotspotId ?? null);
+    if (looked) return looked;
     const controller = this.controller();
     const payload: ExamineRequestPayload = {
       slug: this.world.artifact.slug,

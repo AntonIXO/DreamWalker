@@ -31,6 +31,13 @@ import {
   type InhabitRequestPayload,
 } from "../shared/ai";
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
+import { sonArtifact } from "../../dreams/son/pack";
+import {
+  moneyTellFor,
+  readDreamWallet,
+  walletIsLocked,
+  type DreamWallet,
+} from "../../dreams/son/server";
 import type { MapPatch } from "../shared/map-patch";
 import {
   buildPopulation,
@@ -252,7 +259,8 @@ const DIALOGUE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 Ответ — максимум два коротких предложения и 180 символов.
 Если формулировка выдала чужого, tell.quoted обязан дословно цитировать непрерывный кусок
 его текущей реплики, а reply обязан естественно содержать эту точную цитату.
-resonance используй редко: только если фигура решилась явно назвать чужого.
+resonance используй редко: только если фигура уже всё поняла (знает) и её дожали
+ещё одной прямой уликой на этом ходу. Уровень «знает» сам по себе не убивает.
 Если resonance заполнен, declaration должна быть её финальной произнесённой фразой.
 
 Кирилл отдаёт зацепку только за признание. Папа — только если его попросили совета
@@ -469,12 +477,11 @@ export class AgentRuntime {
     private readonly account: CodexAccountProcess,
     private readonly options: AgentRuntimeOptions,
   ) {
-    const artifactPath = resolve(
-      options.artifactPath ?? join(process.cwd(), "public/dream/dream.json"),
-    );
-    this.artifact = validateDreamArtifact(
-      JSON.parse(readFileSync(artifactPath, "utf8")) as unknown,
-    );
+    this.artifact = options.artifactPath
+      ? validateDreamArtifact(
+          JSON.parse(readFileSync(resolve(options.artifactPath), "utf8")),
+        )
+      : sonArtifact();
 
     const secretPath = resolve(
       options.secretPath ??
@@ -492,7 +499,7 @@ export class AgentRuntime {
 
     this.agentCwd = mkdtempSync(join(tmpdir(), "dream-walker-agent-"));
     this.dreamDir = join(process.cwd(), "dreams", this.artifact.slug);
-    this.wallet = this.readWallet();
+    this.wallet = this.readWalletState();
   }
 
   /**
@@ -532,18 +539,8 @@ export class AgentRuntime {
    * решит, что его кинула не игра, а рандом». It must never reach the artifact: a flag in
    * a served file turns the whole discovery loop into a `curl`.
    */
-  private readWallet(): "full" | "dry" {
-    try {
-      const raw = readFileSync(
-        join(this.dreamDir, "wallet.local.json"),
-        "utf8",
-      );
-      return (JSON.parse(raw) as { wallet?: string }).wallet === "dry"
-        ? "dry"
-        : "full";
-    } catch {
-      return "full";
-    }
+  private readWalletState(): DreamWallet {
+    return readDreamWallet(this.dreamDir);
   }
 
   /**
@@ -562,7 +559,7 @@ export class AgentRuntime {
 
   private readonly souls = new Map<string, string | null>();
   private readonly dreamDir: string;
-  private readonly wallet: "full" | "dry";
+  private readonly wallet: DreamWallet;
 
   get providerMode(): "codex" | "anthropic" {
     return this.options.anthropic ? "anthropic" : "codex";
@@ -709,6 +706,7 @@ export class AgentRuntime {
     if (request.fallback) {
       const fallback = buildPopulation(this.artifact, null, "fallback", {
         shuffle: true,
+        dryWallet: this.wallet.wallet === "dry",
       });
       this.populationValue = fallback;
       return fallback;
@@ -769,7 +767,7 @@ export class AgentRuntime {
         this.artifact,
         proposal as PopulationProposal,
         "ai",
-        { shuffle: true },
+        { shuffle: true, dryWallet: this.wallet.wallet === "dry" },
       );
       this.populationValue = population;
       return population;
@@ -780,6 +778,7 @@ export class AgentRuntime {
       );
       const fallback = buildPopulation(this.artifact, null, "fallback", {
         shuffle: true,
+        dryWallet: this.wallet.wallet === "dry",
       });
       this.populationValue = fallback;
       return fallback;
@@ -818,6 +817,7 @@ export class AgentRuntime {
         `Жанровый контракт: ${this.artifact.genreContract}`,
         `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
         `Цикл: ${request.cycleNumber}`,
+        `Истощение санитара (0..1): ${request.exhaustion.toFixed(2)}. При высоком он выглядит бесцельным, подозрение почти не растёт.`,
         `Фигура: ${figure.name}`,
         `Её роль: ${profile?.role ?? figure.role}`,
         `Устойчивая личность: ${profile?.personality ?? figure.personality}`,
@@ -946,6 +946,9 @@ export class AgentRuntime {
       // Being pressed is not something a figure gets to claim: it happened if the
       // sanitar actually held something over them and used it.
       if (!request.leverageOffered) output.pressed = null;
+      if (output.resonance && !request.leverageOffered && !output.tell) {
+        output.resonance = null;
+      }
       return output;
     } catch (error) {
       throw classify(error);
@@ -1003,7 +1006,9 @@ export class AgentRuntime {
       }
       const subjectName =
         worldInterest?.name ?? authoredHotspot?.prompt ?? "деталь";
+      const tell = moneyTellFor(this.wallet.wallet, request.hotspotId);
       const sensory =
+        tell ??
         authoredInterest?.sensorySeed ??
         worldInterest?.sensorySeed ??
         authoredHotspot?.prompt ??
@@ -1192,15 +1197,25 @@ export class AgentRuntime {
       // whole point: «настоящий гоп-стоп отличается тем, что у терпилы может не оказаться
       // денег». The tells were readable all along; the sanitar chose not to spend a cycle
       // on them.
-      return this.wallet === "dry"
+      if (walletIsLocked(this.wallet)) {
+        return {
+          verdict: "match",
+          locked: true,
+          reply:
+            "Фраза встала на места. Ячейка не открывается. Таймер считает вверх.",
+        };
+      }
+      return this.wallet.wallet === "dry"
         ? {
             verdict: "match",
             wallet: "dry",
+            amount: "0.00000000",
             reply: "Фраза встала на места. Кошелёк пуст. Он всегда был пуст.",
           }
         : {
             verdict: "match",
             wallet: "full",
+            amount: this.wallet.amount,
             reply: "Фраза встала на места. Аппарат забирает ключ из сна.",
           };
     } catch (error) {

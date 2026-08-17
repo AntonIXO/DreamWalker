@@ -27,6 +27,8 @@ import type {
 } from "../../shared/ai";
 import type { PortraitState } from "../../shared/content";
 import { applyFateLedger, type FateRecord } from "./fates";
+import { clampExhaustion } from "./exhaustion";
+import type { ScriptFlag } from "../../shared/pack";
 
 export interface FigureState extends FigurePlacement {
   facing: Direction;
@@ -134,6 +136,14 @@ export interface WorldState {
   fates: Map<string, FateRecord>;
   fateHistory: FateRecord[];
   leverage: Map<string, Set<string>>;
+
+  /**
+   * How spent the sanitar is, 0..1. Survives a cycle: the dream forgets, the
+   * body does not.
+   */
+  exhaustion: number;
+  /** Pack-script state. Cleared only where a script says so. */
+  flags: Map<string, ScriptFlag>;
 }
 
 function cloneRoom(room: DreamRoom): RoomState {
@@ -205,6 +215,8 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     fates: new Map(),
     fateHistory: [],
     leverage: new Map(),
+    exhaustion: 0,
+    flags: new Map(),
   };
 }
 
@@ -314,6 +326,26 @@ export function visitCount(world: WorldState, roomId: string): number {
 }
 
 /** Records an arrival and returns the new count. */
+export function addExhaustion(world: WorldState, delta: number): number {
+  world.exhaustion = clampExhaustion(world.exhaustion + delta);
+  return world.exhaustion;
+}
+
+export function worldFlag(
+  world: WorldState,
+  key: string,
+): ScriptFlag | undefined {
+  return world.flags.get(key);
+}
+
+export function setWorldFlag(
+  world: WorldState,
+  key: string,
+  value: ScriptFlag,
+): void {
+  world.flags.set(key, value);
+}
+
 export function noteVisit(world: WorldState, roomId: string): number {
   const next = visitCount(world, roomId) + 1;
   world.visitCounts.set(roomId, next);

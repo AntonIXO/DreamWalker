@@ -15,6 +15,7 @@
  */
 
 import type { RoomHotspot } from "../../shared/room";
+import type { DreamScript, ScriptHost } from "../../shared/pack";
 import { makeRng } from "../../shared/rng";
 import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
@@ -29,10 +30,14 @@ import {
   type PlayerState,
 } from "./player";
 import {
+  addExhaustion,
+  cloneFigureState,
   currentRoom,
   doorDestination,
   noteVisit,
+  setWorldFlag,
   visitCount,
+  worldFlag,
   type RoomState,
   type WorldState,
 } from "./world";
@@ -43,6 +48,9 @@ export type ArrivalStyle = "door" | "rift" | "meta-exit" | "cut";
 export interface SessionCallbacks {
   onEnterRoom(room: RoomState, visits: number): void;
   onRefused(doorId: string, text: string): void;
+  whisper?(text: string): void;
+  cycleNumber?(): number;
+  knownClueIds?(): readonly string[];
 }
 
 interface MetaVisit {
@@ -65,11 +73,13 @@ export class DreamSession {
     private readonly shiver: Shiver,
     private readonly callbacks: SessionCallbacks,
     private readonly transition?: { play(): Promise<void> },
+    private readonly scripts: readonly DreamScript[] = [],
   ) {
     const room = currentRoom(world);
     this.player = createPlayer(room, world.artifact.spawn.entryId);
     this.showRoom(room);
     noteVisit(world, room.id);
+    this.runScripts("enter");
   }
 
   get room(): RoomState {
@@ -113,6 +123,7 @@ export class DreamSession {
 
     this.tickDwell(room, deltaSeconds);
     this.tickMeta(deltaSeconds);
+    this.runScripts("update", deltaSeconds);
   }
 
   /**
@@ -158,9 +169,30 @@ export class DreamSession {
     void this.enterRoom(returnTo.roomId, returnTo.entryId, "meta-exit");
   }
 
-  /** The player pressed E on something. */
-  use(hotspot: RoomHotspot): void {
-    this.fire(hotspot);
+  /** The player pressed E on something. True when a pack script consumed it. */
+  use(hotspot: RoomHotspot): boolean {
+    const host = this.host();
+    for (const script of this.scriptsFor(this.room.id)) {
+      if (script.onUse?.(host, hotspot)) return true;
+    }
+    return false;
+  }
+
+  /** Pack scripts may refuse talk. */
+  mayTalk(figureId: string): boolean {
+    const host = this.host();
+    for (const script of this.scriptsFor(this.room.id)) {
+      if (script.onApproach?.(host, figureId) === false) return false;
+    }
+    return true;
+  }
+
+  noteMemorySpent(): void {
+    this.runScripts("memory");
+  }
+
+  noteCycleReset(): void {
+    this.runScripts("cycle");
   }
 
   /**
@@ -205,6 +237,7 @@ export class DreamSession {
           remainingMs: room.meta.minMs + rng.next() * span,
           returnTo: { roomId: from, entryId: null },
         };
+        setWorldFlag(this.world, "returnTo", from);
       }
 
       this.world.currentRoomId = roomId;
@@ -218,6 +251,7 @@ export class DreamSession {
       this.escalateRevisit(room, visits);
       if (style !== "cut") this.shiver.trigger(style === "rift" ? 0.6 : 0.3);
       this.callbacks.onEnterRoom(room, visits);
+      this.runScripts("enter");
     } finally {
       this.transitioning = false;
     }
@@ -289,6 +323,133 @@ export class DreamSession {
    * killer, then two, then four. The note already fires; this puts a thing
    * in the room so the count is visible, not only whispered.
    */
+  private scriptsFor(roomId: string): DreamScript[] {
+    return this.scripts.filter(
+      (script) => script.roomId === undefined || script.roomId === roomId,
+    );
+  }
+
+  private runScripts(
+    hook: "enter" | "update" | "memory" | "cycle",
+    dt = 0,
+  ): void {
+    const host = this.host();
+    const list =
+      hook === "memory" || hook === "cycle"
+        ? this.scripts
+        : this.scriptsFor(this.world.currentRoomId);
+    for (const script of list) {
+      if (hook === "enter") script.onEnter?.(host);
+      if (hook === "update") script.onUpdate?.(host, dt);
+      if (hook === "memory") script.onMemorySpent?.(host);
+      if (hook === "cycle") script.onCycleReset?.(host);
+    }
+  }
+
+  private host(): ScriptHost {
+    const world = this.world;
+    // The host object is a bag of getters; they cannot use the class `this`.
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const session = this;
+    return {
+      get currentRoomId() {
+        return world.currentRoomId;
+      },
+      get exhaustion() {
+        return world.exhaustion;
+      },
+      get cycleNumber() {
+        return session.callbacks.cycleNumber?.() ?? 1;
+      },
+      get playerX() {
+        return session.player.x;
+      },
+      get playerY() {
+        return session.player.y;
+      },
+      get playerMoving() {
+        return session.player.moving;
+      },
+      get tileSize() {
+        return session.room.tileSize;
+      },
+      now: () => Date.now(),
+      getFlag: (key) => worldFlag(world, key),
+      setFlag: (key, value) => setWorldFlag(world, key, value),
+      addExhaustion: (delta) => {
+        addExhaustion(world, delta);
+      },
+      knownClueIds: () => session.callbacks.knownClueIds?.() ?? [],
+      enterRoom: (roomId, entryId, style = "meta-exit") => {
+        void session.enterRoom(roomId, entryId, style);
+      },
+      placePlayer: (entryId) => {
+        placeAtEntry(session.player, session.room, entryId);
+      },
+      closeHotspot: (hotspotId) => {
+        session.room.closedHotspotIds.add(hotspotId);
+      },
+      removeProp: (propId) => {
+        const room = session.room;
+        const index = room.props.findIndex((prop) => prop.id === propId);
+        if (index >= 0) room.props.splice(index, 1);
+        session.scene.show(room);
+      },
+      retargetRift: (doorId, toRoomId) => {
+        applyPatch(world, {
+          kind: "retargetDoor",
+          doorId,
+          toRoomId,
+          reason: "pack script",
+        });
+      },
+      openDoor: (doorId) => {
+        applyPatch(world, {
+          kind: "retypeDoor",
+          doorId,
+          to: "open",
+          reason: "pack script",
+        });
+      },
+      hideFigure: (figureId) => {
+        const figure = world.figures.find((entry) => entry.id === figureId);
+        if (!figure) return;
+        applyPatch(
+          world,
+          {
+            kind: "markFigure",
+            figureId,
+            fate: "gone",
+            quoted: null,
+            reason: "pack script",
+          },
+          session.callbacks.cycleNumber?.() ?? 1,
+        );
+      },
+      showFigure: (figureId, roomId) => {
+        const room = world.roomById.get(roomId);
+        if (!room || room.kind === "meta") return;
+        const existing = world.figures.find((entry) => entry.id === figureId);
+        if (existing) {
+          applyPatch(world, {
+            kind: "moveFigure",
+            figureId,
+            toRoomId: roomId,
+            reason: "pack script",
+          });
+          return;
+        }
+        const base = world.baseFigures.find((entry) => entry.id === figureId);
+        if (!base) return;
+        world.fates.delete(figureId);
+        world.figures.push(cloneFigureState({ ...base, roomId }));
+      },
+      figureInWorld: (figureId) =>
+        world.figures.some((entry) => entry.id === figureId),
+      whisper: (text) => session.callbacks.whisper?.(text),
+    };
+  }
+
   private escalateRevisit(room: RoomState, visits: number): void {
     if (!room.revisit.escalates || visits < 2) return;
     const id = `revisit:${room.id}:${visits}`;

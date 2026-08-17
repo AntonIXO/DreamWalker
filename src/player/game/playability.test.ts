@@ -1,8 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-
 import { validateDreamArtifact, type DreamArtifact } from "../../shared/dream";
+import { sonArtifact } from "../../../dreams/son/pack";
 import { fallbackPopulation } from "../../shared/population";
 import { blockedInRoom, cellAt, isSolidCell } from "../../shared/roomGrid";
 import { ScriptedMind } from "../mind/scripted";
@@ -13,11 +11,7 @@ import { UNKILLABLE } from "../../shared/verbs";
 import { createPlayer, updatePlayer } from "./player";
 import { createWorld, doorDestination, resetWorld } from "./world";
 
-const artifact = validateDreamArtifact(
-  JSON.parse(
-    readFileSync(join(process.cwd(), "dreams/son/dream.json"), "utf8"),
-  ) as unknown,
-) as DreamArtifact;
+const artifact = validateDreamArtifact(sonArtifact()) as DreamArtifact;
 
 describe("son is playable", () => {
   test("spawns on open floor in the courtyard with Turyshev", () => {
@@ -179,7 +173,7 @@ describe("son is playable", () => {
       seed: "play",
     });
     installPopulation(world, population);
-    expect(world.figures).toHaveLength(14);
+    expect(world.figures).toHaveLength(artifact.figures.length);
     expect(
       world.figures.find((figure) => figure.id === "turyshev")?.roomId,
     ).toBe("19-dvor-i-oranzhevye-lavochki");

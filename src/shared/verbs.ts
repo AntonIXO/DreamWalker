@@ -51,6 +51,8 @@ export const UNKILLABLE: ReadonlySet<string> = new Set([
   "ubiitsa",
   // Их несколько.
   "dolzhniki",
+  "shchenok",
+  "kurt",
 ]);
 
 export const UNLEADABLE: ReadonlySet<string> = new Set([
@@ -60,6 +62,8 @@ export const UNLEADABLE: ReadonlySet<string> = new Set([
   "dolzhniki",
   // §12 — «сидела тётя, но она меня не заметила». She does not notice you at all.
   "tetya",
+  "shchenok",
+  "kurt",
 ]);
 
 /**
@@ -74,6 +78,8 @@ export const PRESS_PROOF: ReadonlySet<string> = new Set([
   "kirill",
   // Admission is the Eye's price, and it will not be bought with anything else.
   "glaz",
+  "shchenok",
+  "kurt",
 ]);
 
 export interface VerbContext {

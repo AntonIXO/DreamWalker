@@ -125,6 +125,11 @@ body {
     color: var(--ink);
 }
 
+.hud-aside {
+    color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+}
+
 .hud-clock {
     margin-left: auto;
     font-variant-numeric: tabular-nums;
@@ -499,6 +504,16 @@ body {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-dim);
+}
+
+.dialogue-action {
+    font-size: 0.6875rem;
+    color: var(--ink-dim);
+    font-style: italic;
+}
+
+.dialogue[data-figure="shchenok"] .said-by-them {
+    letter-spacing: 0.02em;
 }
 
 .dialogue-copy {
