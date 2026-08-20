@@ -3,6 +3,12 @@ import { validateDreamArtifact, type DreamArtifact } from "../../shared/dream";
 import { sonArtifact } from "../../../dreams/son/pack";
 import { fallbackPopulation } from "../../shared/population";
 import { blockedInRoom, cellAt, isSolidCell } from "../../shared/roomGrid";
+import {
+  originY,
+  roomContainingPlayer,
+  toLocalPixels,
+  toWorldPixels,
+} from "../../shared/street";
 import { ScriptedMind } from "../mind/scripted";
 import { findTarget } from "./interact";
 import { applyPatch, installPopulation } from "./patch";
@@ -13,6 +19,25 @@ import { createWorld, doorDestination, resetWorld } from "./world";
 
 const artifact = validateDreamArtifact(sonArtifact()) as DreamArtifact;
 
+function walkWorld(
+  world: ReturnType<typeof createWorld>,
+  player: ReturnType<typeof createPlayer>,
+  axis: { x: number; y: number },
+  frames: number,
+): void {
+  for (let i = 0; i < frames; i++) {
+    const room = world.roomById.get(world.currentRoomId)!;
+    updatePlayer(player, room, world, axis, 1 / 30);
+    const next = roomContainingPlayer(
+      world.rooms,
+      player.x,
+      player.y,
+      world.currentRoomId,
+    );
+    if (next) world.currentRoomId = next.id;
+  }
+}
+
 describe("son is playable", () => {
   test("spawns on open floor in the courtyard with Turyshev", () => {
     const world = createWorld(artifact);
@@ -20,33 +45,35 @@ describe("son is playable", () => {
     expect(world.figures.some((figure) => figure.id === "turyshev")).toBe(true);
     const room = world.roomById.get(world.currentRoomId)!;
     const player = createPlayer(room, artifact.spawn.entryId);
+    const local = toLocalPixels(room, player.x, player.y);
     expect(
       blockedInRoom(
         room,
         [],
-        { x: player.x, y: player.y, width: 9, height: 7 },
+        { x: local.x, y: local.y, width: 9, height: 7 },
         room.tileSize,
       ),
     ).toBe(false);
   });
 
-  test("the intercom archway is a rift into the apartment", () => {
+  test("the courtyard south door is the apartment, not a rift", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get("19-dvor-i-oranzhevye-lavochki")!;
-    // The intercom itself is a thing to look at again — the way through is the doorway.
     const intercom = room.hotspots.find((hotspot) =>
       hotspot.prompt.includes("домофон"),
     )!;
     expect(intercom.kind).toBe("look");
     expect("link" in intercom).toBe(false);
 
-    const rift = room.doors.find((door) =>
-      door.id.endsWith("podezdnaia-dver-s-domofonom"),
-    )!;
-    expect(rift.threshold).toBe("rift");
-    expect(doorDestination(world, rift).roomId).toBe(
-      "08-kvartira-v-kotoroi-zhivut-drugie",
-    );
+    const south = room.doors.find((door) => door.id.includes("--s-"))!;
+    expect(south.threshold).toBe("door");
+    expect(south.toRoomId.startsWith("path-")).toBe(true);
+    const road = world.roomById.get(south.toRoomId)!;
+    expect(
+      road.doors.some(
+        (door) => door.toRoomId === "08-kvartira-v-kotoroi-zhivut-drugie",
+      ),
+    ).toBe(true);
   });
 
   test("nothing in the dream moves the player by being touched", () => {
@@ -60,16 +87,20 @@ describe("son is playable", () => {
     }
   });
 
-  test("every meta-space is still reachable, by rift and only by rift", () => {
+  test("every meta-space is on the street map, with a door", () => {
     const world = createWorld(artifact);
     const rifts = artifact.rooms.flatMap((room) =>
       room.doors.filter((door) => door.threshold === "rift"),
     );
+    expect(rifts).toEqual([]);
     for (const meta of artifact.rooms.filter((room) => room.kind === "meta")) {
-      expect(meta.doors).toEqual([]);
-      expect(rifts.some((door) => door.toRoomId === meta.id)).toBe(true);
+      expect(meta.doors.length).toBeGreaterThan(0);
+      expect(
+        artifact.rooms.some((room) =>
+          room.doors.some((door) => door.toRoomId === meta.id),
+        ),
+      ).toBe(true);
     }
-    expect(rifts.length).toBeGreaterThan(0);
     expect(world.rooms.length).toBe(artifact.rooms.length);
   });
 
@@ -77,11 +108,12 @@ describe("son is playable", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get(world.currentRoomId)!;
     const player = createPlayer(room, artifact.spawn.entryId);
-    for (let i = 0; i < 40; i++) {
+    const startX = player.x;
+    for (let i = 0; i < 20; i++) {
       updatePlayer(player, room, world, { x: -1, y: 0 }, 1 / 30);
     }
     expect(player.enteredDoorId).toBeNull();
-    expect(player.x).toBeLessThan(10 * room.tileSize);
+    expect(player.x).toBeLessThan(startX);
   });
 
   test("the hotel floor is not a carpet of doors", () => {
@@ -93,6 +125,8 @@ describe("son is playable", () => {
         if (isSolidCell(cellAt(hotel, x, y))) continue;
         const onDoor = hotel.doors.some(
           (door) =>
+            door.threshold !== "door" &&
+            door.threshold !== "lift" &&
             x >= door.x &&
             x < door.x + door.w &&
             y >= door.y &&
@@ -104,19 +138,21 @@ describe("son is playable", () => {
     expect(warpTiles).toBe(0);
   });
 
-  test("pressing into a hotel wall door enters another place", () => {
+  test("pressing north out of the hotel is walking, not a warp", () => {
     const world = createWorld(artifact);
     const hotel = world.roomById.get("01-otel-goticheskii-holl")!;
-    const door = hotel.doors.find((entry) => entry.y === 1);
-    expect(door).toBeDefined();
     const player = createPlayer(hotel, "default");
-    player.x = (door!.x + 0.5) * hotel.tileSize;
-    player.y = 2.4 * hotel.tileSize;
-    for (let i = 0; i < 20; i++) {
-      updatePlayer(player, hotel, world, { x: 0, y: -1 }, 1 / 30);
-      if (player.enteredDoorId) break;
-    }
-    expect(player.enteredDoorId).toBe(door!.id);
+    const worldPos = toWorldPixels(
+      hotel,
+      10 * hotel.tileSize,
+      2.4 * hotel.tileSize,
+    );
+    player.x = worldPos.x;
+    player.y = worldPos.y;
+    walkWorld(world, player, { x: 0, y: -1 }, 50);
+    expect(player.enteredDoorId).toBeNull();
+    expect(player.y).toBeLessThan(originY(hotel) * hotel.tileSize);
+    expect(world.currentRoomId.startsWith("path-")).toBe(true);
   });
 
   test("the six words have carriers", () => {
@@ -200,7 +236,7 @@ describe("son is playable", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get(world.currentRoomId)!;
     const player = createPlayer(room, artifact.spawn.entryId);
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 25; i++) {
       updatePlayer(player, room, world, { x: 0, y: -1 }, 1 / 30);
     }
     expect(player.enteredDoorId).toBeNull();
@@ -221,8 +257,13 @@ describe("son is playable", () => {
     expect(intercom.y).toBeCloseTo(body.y + body.h + 0.15);
     expect(body.solid).toBe(true);
 
-    player.x = intercom.x * room.tileSize;
-    player.y = intercom.y * room.tileSize;
+    const at = toWorldPixels(
+      room,
+      intercom.x * room.tileSize,
+      intercom.y * room.tileSize,
+    );
+    player.x = at.x;
+    player.y = at.y;
     const target = findTarget(world, room, player);
     expect(target?.kind).toBe("hotspot");
     if (target?.kind === "hotspot") {
@@ -240,25 +281,39 @@ describe("son is playable", () => {
     expect(bench.solid).toBe(true);
 
     // Stand directly below the bench and push north into it.
-    player.x = (bench.x + bench.w / 2) * room.tileSize;
-    player.y = (bench.y + bench.h + 0.6) * room.tileSize;
+    const at = toWorldPixels(
+      room,
+      (bench.x + bench.w / 2) * room.tileSize,
+      (bench.y + bench.h + 0.6) * room.tileSize,
+    );
+    player.x = at.x;
+    player.y = at.y;
     const before = player.y;
     for (let i = 0; i < 60; i++) {
       updatePlayer(player, room, world, { x: 0, y: -1 }, 1 / 30);
     }
     expect(player.y).toBeLessThan(before);
-    expect(player.y).toBeGreaterThan((bench.y + bench.h) * room.tileSize);
+    expect(player.y).toBeGreaterThan(
+      toWorldPixels(room, 0, (bench.y + bench.h) * room.tileSize).y,
+    );
   });
 
   test("the courtyard door to the hotel is a walkable threshold", () => {
     const world = createWorld(artifact);
     const room = world.roomById.get(world.currentRoomId)!;
     const player = createPlayer(room, artifact.spawn.entryId);
-    for (let i = 0; i < 80; i++) {
-      updatePlayer(player, room, world, { x: -1, y: 0 }, 1 / 30);
-      if (player.enteredDoorId) break;
-    }
-    expect(player.enteredDoorId).toBe("19-dvor-i-oranzhevye-lavochki--to-hub");
+    const door = room.doors.find((entry) => entry.id.includes("--e-"))!;
+    expect(door.toRoomId.startsWith("path-")).toBe(true);
+    const at = toWorldPixels(
+      room,
+      (door.x - 0.6) * room.tileSize,
+      (door.y + door.h / 2) * room.tileSize,
+    );
+    player.x = at.x;
+    player.y = at.y;
+    walkWorld(world, player, { x: 1, y: 0 }, 180);
+    expect(player.enteredDoorId).toBeNull();
+    expect(world.currentRoomId).toBe("01-otel-goticheskii-holl");
   });
 });
 
@@ -435,7 +490,7 @@ describe("the deal cannot make the dream uncrossable", () => {
     }
   });
 
-  test("but the places behind the doors really do move", () => {
+  test("the places behind the doors stay where they were drawn", () => {
     const world = createWorld(artifact);
     installPopulation(
       world,
@@ -444,6 +499,6 @@ describe("the deal cannot make the dream uncrossable", () => {
     const moved = artifact.rooms.filter(
       (authored) => world.roomById.get(authored.id)!.name !== authored.name,
     );
-    expect(moved.length).toBeGreaterThan(0);
+    expect(moved).toEqual([]);
   });
 });

@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -125,40 +125,96 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "08-kvartira-v-kotoroi-zhivut-drugie--to-hub",
+      "id": "08-kvartira-v-kotoroi-zhivut-drugie--n-19-dvor-i-oranzhevye-lavochki",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "08-kvartira-v-kotoroi-zhivut-drugie--rift-bumazhnaia-skulptura",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "s",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "бумажная скульптура",
-      "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+      "prompt": null
+    },
+    {
+      "id": "08-kvartira-v-kotoroi-zhivut-drugie--e-17-dush-iz-kotorogo-nelzia-vyiti",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "08-kvartira-v-kotoroi-zhivut-drugie--s-04-dacha-gnedkovyh",
+      "x": 1,
+      "y": 10,
+      "w": 18,
+      "h": 1,
+      "toRoomId": "04-dacha-gnedkovyh",
+      "toEntryId": "from-n",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "n",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "08-kvartira-v-kotoroi-zhivut-drugie--w-06-kanava-garazhi-podvorotni",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "06-kanava-garazhi-podvorotni",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -181,7 +237,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "(−1, −3). Downer Static в чистом виде"
@@ -196,5 +252,7 @@
     "sound": "чужой телевизор за стеной на чужом языке; тиканье, идущее не от часов; в момент открытия окна — **резкое падение всех частот выше 2 кГц**, как будто накрыли одеялом"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 20,
+  "originY": 33
 }

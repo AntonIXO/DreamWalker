@@ -2,13 +2,12 @@
  * Draws the procedure room with atlas floor/wall tiles and furniture.
  *
  * Layout follows the hand sketch (`room.png`): north desk / cross / locker / terminal /
- * ward doors, south bed / drip / apparatus / carpet. The apparatus is the authored
- * pixel sprite; everything else is Graphics so a later artist can swap a piece without
- * touching hotspot logic. `cacheAsTexture` is nearest so the drawings stay as crisp
- * as the tiles once the camera zooms them.
+ * ward doors, south bed / drip / apparatus / carpet. Furniture is Graphics so a later
+ * artist can swap a piece without touching hotspot logic. `cacheAsTexture` is nearest
+ * so the drawings stay as crisp as the tiles once the camera zooms them.
  */
 
-import { Container, Graphics, Sprite, type Texture } from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 
 import { variantFor, type AtlasTextures } from "../render/atlasTextures";
 import { cellAt } from "./definition";
@@ -33,7 +32,6 @@ export class LobbyScene {
     private readonly definition: LobbyDefinition,
     artifact: DreamArtifact,
     atlas: AtlasTextures,
-    private readonly apparatusTexture: Texture | null = null,
   ) {
     this.colors = lobbyColors(artifact);
     this.root = new Container({
@@ -208,10 +206,6 @@ export class LobbyScene {
     const size = this.definition.tileSize;
     const pw = w * size;
     const ph = h * size;
-    if (kind === "apparatus" && this.apparatusTexture) {
-      return this.drawApparatus(pw, ph);
-    }
-
     const g = new Graphics({ eventMode: "none", roundPixels: true });
     const c = this.colors;
 
@@ -286,23 +280,6 @@ export class LobbyScene {
       g.rect(4, 9, 7, 2).fill(c.rust);
     }
     return g;
-  }
-
-  private drawApparatus(pw: number, ph: number): Container {
-    const wrap = new Container({ eventMode: "none" });
-    const sprite = new Sprite({
-      texture: this.apparatusTexture!,
-      roundPixels: true,
-      eventMode: "none",
-    });
-    // Fit the width of the 2-tile bay; let the crystal rise above the box so the
-    // authored sprite stays readable instead of being squashed into 32×48.
-    const scale = pw / Math.max(1, sprite.texture.width);
-    sprite.scale.set(scale);
-    sprite.x = 0;
-    sprite.y = Math.round(ph - sprite.height);
-    wrap.addChild(sprite);
-    return wrap;
   }
 
   destroy(): void {

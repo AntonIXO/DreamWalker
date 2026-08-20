@@ -345,50 +345,19 @@ export function buildPopulation(
     interests,
     roomMoods,
     retargets: sanitiseRetargets(artifact, proposal?.retargets),
-    assignments: dealPlaces(artifact, options),
+    assignments: dealPlaces(artifact),
     source,
   };
 }
 
 /**
- * Deal the places onto the rooms.
- *
- * A seeded shuffle rather than a model call: the model gets to decide where *people* and
- * *things* go, but which place is behind which door is a permutation, and a permutation
- * is exactly the kind of thing that should not depend on a network round trip.
- *
- * Two rooms stay where they are, and both are load-bearing:
- *
- *   - the spawn. §19's courtyard is «безопасная комната. Единственная», and a run that
- *     opens somewhere else opens with the sanitar already in trouble.
- *   - the finale. The Eye is the last door, and it is pinned to that room by
- *     `homeRoomFor`, so moving the room out from under it would put the ending
- *     somewhere nobody was sent.
- *
- * Meta-spaces never move either: their picture is `backdropFit: "screen"`, they are the
- * gaps between places rather than places, and swapping two of them would mean nothing.
+ * Places stay where they were drawn. The sleeper still reseats figures; the street
+ * map does not shuffle behind the doors.
  */
-function dealPlaces(
-  artifact: DreamArtifact,
-  options: PopulationOptions,
-): RoomAssignment[] {
-  const movable = artifact.rooms
-    .filter(
-      (room) =>
-        room.kind === "place" &&
-        room.id !== artifact.spawn.roomId &&
-        room.id !== artifact.finaleRoomId,
-    )
-    .map((room) => room.id);
-  if (movable.length < 2) return [];
-
-  const dealt = options.shuffle
-    ? makeRng(`places:${options.seed ?? artifact.secretHash}`).shuffle(movable)
-    : movable;
-  return movable.map((roomId, index) => ({
-    roomId,
-    cardId: dealt[index] ?? roomId,
-  }));
+function dealPlaces(artifact: DreamArtifact): RoomAssignment[] {
+  return artifact.rooms
+    .filter((room) => room.kind === "place")
+    .map((room) => ({ roomId: room.id, cardId: room.id }));
 }
 
 /** Instant offline deal. Used by training and by a live inhabit that failed. */

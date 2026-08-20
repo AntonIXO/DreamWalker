@@ -65,6 +65,10 @@ export async function buildCommand(
     JSON.parse(await readFile(join(dir, "atlas.json"), "utf8")),
   );
   draft.rooms = await loadRoomFiles(slug);
+  if (slug === "son") {
+    const { applyStreetMap } = await import("../../../dreams/son/rooms/map");
+    draft.rooms = applyStreetMap(draft.rooms);
+  }
   const settings = await loadRoomSettings(slug);
   draft.spawn = settings.spawn ?? draft.spawn;
   draft.finaleRoomId = settings.finaleRoomId ?? draft.finaleRoomId;

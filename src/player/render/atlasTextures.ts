@@ -97,6 +97,30 @@ export function variantFor(textures: Texture[], x: number, y: number): Texture {
   return textures[hash % textures.length]!;
 }
 
+/**
+ * Optional PNGs that must not block boot: missing art falls back to atlas silhouettes.
+ */
+export async function loadOptionalTexture(
+  url: string,
+  alias: string,
+): Promise<Texture | null> {
+  const texture = await Assets.load<Texture | undefined>(
+    {
+      src: url,
+      alias,
+      data: { scaleMode: "nearest" },
+    },
+    {
+      strategy: "skip",
+      onError: (error) =>
+        console.warn(`[dream] optional image skipped: ${url}`, error),
+    },
+  );
+  if (!texture) return null;
+  texture.source.scaleMode = "nearest";
+  return texture;
+}
+
 /** Load optional author-time PNGs without adding them to the indexed terrain atlas. */
 export async function loadExternalTextures(
   baseUrl: string,
@@ -106,23 +130,8 @@ export async function loadExternalTextures(
   await Promise.all(
     sources.map(async ({ id, path }) => {
       const url = `${baseUrl}/${path}`;
-      const texture = await Assets.load<Texture | undefined>(
-        {
-          src: url,
-          alias: `dream-external:${id}`,
-          data: { scaleMode: "nearest" },
-        },
-        {
-          // Generated clue art and authored room backdrops are optional decoration.
-          // A stale dev server, missing file, or bad image must not prevent the dream
-          // and its atlas-backed fallbacks from opening.
-          strategy: "skip",
-          onError: (error) =>
-            console.warn(`[dream] optional image skipped: ${url}`, error),
-        },
-      );
+      const texture = await loadOptionalTexture(url, `dream-external:${id}`);
       if (!texture) return;
-      texture.source.scaleMode = "nearest";
       textures.set(id, texture);
     }),
   );

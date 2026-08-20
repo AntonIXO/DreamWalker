@@ -472,6 +472,22 @@ function validateRoomShape(
 
   const buildingId = optionalStr(room.buildingId, `${path}.buildingId`);
   const level = num(room.level, `${path}.level`);
+  if (room.originX === undefined || room.originX === null) {
+    room.originX = 0;
+  } else {
+    const originX = num(room.originX, `${path}.originX`);
+    if (!Number.isInteger(originX) || originX < 0) {
+      fail(`${path}.originX`, "expected a whole tile origin");
+    }
+  }
+  if (room.originY === undefined || room.originY === null) {
+    room.originY = 0;
+  } else {
+    const originY = num(room.originY, `${path}.originY`);
+    if (!Number.isInteger(originY) || originY < 0) {
+      fail(`${path}.originY`, "expected a whole tile origin");
+    }
+  }
   if (!Number.isInteger(level)) fail(`${path}.level`, "expected a whole floor");
   if (buildingId === null && level !== 0) {
     fail(`${path}.level`, "a room outside a building is on floor 0");
@@ -489,8 +505,9 @@ function validateRoomShape(
   );
   obj(room.copy, `${path}.copy`);
 
-  // A meta-space is defined by what it lacks: no doors, no figures, and one picture
-  // covering the whole screen. Part II of rooms.md — «выход не ищется, он случается».
+  // A meta-space is defined by what it lacks: no figures, and one picture covering
+  // the whole screen. It is on the street map like any other room; you leave through
+  // a door. The timer is a leftover for a meta-space that still has none.
   if (kind === "meta") {
     const meta = obj(room.meta, `${path}.meta`);
     const minMs = num(meta.minMs, `${path}.meta.minMs`);
@@ -501,18 +518,8 @@ function validateRoomShape(
         `expected 0 < minMs <= maxMs, got ${minMs}..${maxMs}`,
       );
     }
-    if (doorIds.size > 0) {
-      fail(`${path}.doors`, "a meta-space has no doors — you leave on a timer");
-    }
-    // A meta-space *is* one picture — but the art arrives after the rooms are drawn, and
-    // a schema that refuses to load an un-arted dream makes the game unbuildable for the
-    // whole of authoring. `lord build` warns about the missing picture instead.
-    if (fit !== "screen") {
-      fail(
-        `${path}.graphics.backdropFit`,
-        'a meta-space bleeds to the whole frame — expected "screen"',
-      );
-    }
+    // A meta-space *is* one picture — but on the street map it sits in a room rect
+    // like anything else (`cells`). `screen` is the leftover full-frame bleed.
   } else if (room.meta !== null && room.meta !== undefined) {
     fail(`${path}.meta`, "only a meta-space carries a meta config");
   }
@@ -673,6 +680,7 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
   // door by bare id, so two rooms owning a `groby` would silently share a door.
   const allDoorIds = new Set<string>();
   const riftTargets = new Set<string>();
+  const doorTargets = new Set<string>();
   shaped.forEach((room, i) => {
     const path = `dream.rooms[${i}]`;
     (room.doors as unknown[]).forEach((value, j) => {
@@ -706,6 +714,7 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
       }
 
       if (door.threshold === "rift") riftTargets.add(door.toRoomId);
+      doorTargets.add(door.toRoomId);
 
       // Only a staircase is held to the geometry. A lift that goes up and arrives lower
       // is §07's joke — «Лифт → всегда на этаж выше, до Отеля» — and a rift is illogical
@@ -741,11 +750,15 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     });
   });
 
-  // A meta-space authors no doors of its own, so a rift somewhere else is its only way
-  // in. Without one it is unreachable and its art never ships to anybody.
+  // A meta-space used to be reachable only by rift. It now sits on the street map,
+  // so any inbound door is enough — a rift still counts, for older artifacts.
   for (const [roomId, kind] of index.kinds) {
-    if (kind === "meta" && !riftTargets.has(roomId)) {
-      fail(`dream.rooms.${roomId}`, "no rift leads into this meta-space");
+    if (
+      kind === "meta" &&
+      !doorTargets.has(roomId) &&
+      !riftTargets.has(roomId)
+    ) {
+      fail(`dream.rooms.${roomId}`, "nothing leads into this meta-space");
     }
   }
 

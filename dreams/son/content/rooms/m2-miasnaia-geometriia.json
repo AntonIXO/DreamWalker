@@ -8,15 +8,15 @@
   "cells": [
     "####################",
     "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "####################"
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [],
@@ -27,19 +27,64 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
-  "doors": [],
+  "doors": [
+    {
+      "id": "m2-miasnaia-geometriia--s-12-tiurma-na-ovoschah",
+      "x": 1,
+      "y": 10,
+      "w": 18,
+      "h": 1,
+      "toRoomId": "12-tiurma-na-ovoschah",
+      "toEntryId": "from-n",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "n",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "m2-miasnaia-geometriia--w-18-kupol-bez-sten",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "18-kupol-bez-sten",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    }
+  ],
   "figureSlots": [],
   "graphics": {
     "floorRole": "floor",
     "wallRole": "wall",
     "propRole": "prop",
     "backdropImage": "assets/rooms/m2-miasnaia-geometriia.png",
-    "backdropFit": "screen",
+    "backdropFit": "cells",
     "glitchPreset": "wrong-palette"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": true,
     "note": "(−4, +4)"
@@ -59,5 +104,7 @@
     "sound": "влажный ревер, как в бассейне, но с более коротким хвостом; глотательные звуки на границе слышимости; **никакого низа** — специально всё выше 200 Гц, от этого некомфортно физиологически"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 100,
+  "originY": 0
 }

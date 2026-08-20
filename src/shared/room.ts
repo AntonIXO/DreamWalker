@@ -223,6 +223,12 @@ export interface DreamRoom extends CellGrid {
   buildingId: string | null;
   /** Floor within the building. 0 outside one. Ground level is 1 where it is named. */
   level: number;
+  /**
+   * Where this room sits on the street grid, in tiles. (0, 0) is the north-west of
+   * the map. Stacked floors (the pool above the hotel) share an origin.
+   */
+  originX: number;
+  originY: number;
   tileSize: number;
   width: number;
   height: number;

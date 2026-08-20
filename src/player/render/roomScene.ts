@@ -12,7 +12,7 @@
  *   0  backdrop — the authored PNG, when there is one
  *   1  tiles    — atlas floor/wall art from the ASCII mask, drawn *under* the backdrop
  *                 so a room with art shows the art and a room without still walks
- *   2  props    — authored rects, either atlas roles or their own loose PNG
+ *   2  props    — authored rects: the prop's own PNG if it has one, else atlas tiles
  *   3  actors   — the walker and the figures, y-sorted
  *
  * A meta-space sets `backdropFit: "screen"`: its picture is parented outside the camera
@@ -21,8 +21,16 @@
 
 import { Container, Graphics, Sprite, type Texture } from "pixi.js";
 
-import { cellAt } from "../../shared/roomGrid";
+import { cellAt, type RoomCell } from "../../shared/roomGrid";
 import type { DreamArtifact } from "../../shared/dream";
+import { originX, originY } from "../../shared/street";
+import { Tile } from "../../shared/tilecodes";
+import {
+  autotileOf,
+  blobIndex,
+  edgeIndex,
+  type Sampler,
+} from "../../shared/autotile";
 import { lobbyColors, type LobbyColors } from "../lobby/palette";
 import type { RoomState } from "../game/world";
 import { variantFor, type AtlasTextures } from "./atlasTextures";
@@ -33,6 +41,23 @@ const ROLE_BY_CELL: Record<string, string> = {
   threshold: "threshold",
   floorAlt: "floorAlt",
   floor: "floor",
+  grass: "grass",
+  grassTall: "grassTall",
+  path: "path",
+  tree: "tree",
+};
+
+const TILE_BY_CELL: Record<string, number> = {
+  void: Tile.VOID,
+  wall: Tile.WALL,
+  wallFace: Tile.WALL_FACE,
+  threshold: Tile.THRESHOLD,
+  floorAlt: Tile.FLOOR_ALT,
+  floor: Tile.FLOOR,
+  grass: Tile.GRASS,
+  grassTall: Tile.GRASS_TALL,
+  path: Tile.PATH,
+  tree: Tile.TREE,
 };
 
 interface BuiltRoom {
@@ -43,10 +68,9 @@ interface BuiltRoom {
 }
 
 /**
- * How many built rooms to keep. Three covers where you are, where you came from, and the
- * room a rift is about to drop you into.
+ * How many built rooms to keep. A street view shows the block around you.
  */
-const KEEP_BUILT = 3;
+const KEEP_BUILT = 28;
 
 /** Guaranteed floor for `GL_MAX_TEXTURE_SIZE`. */
 const MAX_CACHE_PX = 2048;
@@ -97,6 +121,14 @@ export class RoomScene {
     return this.currentRoomId;
   }
 
+  get shown(): Set<string> {
+    const ids = new Set<string>();
+    for (const [id, entry] of this.built) {
+      if (entry.container.visible) ids.add(id);
+    }
+    return ids;
+  }
+
   show(room: RoomState): void {
     const existing = this.built.get(room.id);
     // A shifted wall mask invalidates the cache — §13's halls rebuild behind your back.
@@ -122,7 +154,47 @@ export class RoomScene {
     if (seen >= 0) this.recent.splice(seen, 1);
     this.recent.push(room.id);
     this.evictBeyond(KEEP_BUILT);
+    this.placeRoom(entry, room);
     this.paintOverlay(room);
+  }
+
+  /**
+   * Draw a neighbourhood: each room sits at its origin so walking east is walking
+   * east, not a cut to a new (0, 0).
+   */
+  showStreet(rooms: readonly RoomState[], current: RoomState): void {
+    const wanted = new Set(rooms.map((room) => room.id));
+    for (const room of rooms) {
+      const existing = this.built.get(room.id);
+      if (existing && !sameCells(existing.cells, room.cells)) {
+        this.destroyRoom(room.id);
+      }
+      let entry = this.built.get(room.id);
+      if (!entry) {
+        entry = this.build(room);
+        this.built.set(room.id, entry);
+        this.root.addChild(entry.container);
+      }
+      entry.container.visible = true;
+      this.placeRoom(entry, room);
+      const seen = this.recent.indexOf(room.id);
+      if (seen >= 0) this.recent.splice(seen, 1);
+      this.recent.push(room.id);
+    }
+    for (const [id, entry] of this.built) {
+      if (!wanted.has(id)) entry.container.visible = false;
+    }
+    const currentEntry = this.built.get(current.id);
+    this.current = currentEntry ?? null;
+    this.currentRoomId = current.id;
+    this.evictBeyond(KEEP_BUILT);
+    this.paintOverlay(current);
+  }
+
+  private placeRoom(entry: BuiltRoom, room: RoomState): void {
+    const size = room.tileSize;
+    entry.container.x = originX(room) * size;
+    entry.container.y = originY(room) * size;
   }
 
   /** Force a rebuild, after anything that changed what the room is made of. */
@@ -236,7 +308,16 @@ export class RoomScene {
   private evictBeyond(keep: number): void {
     while (this.recent.length > keep) {
       const id = this.recent.shift();
-      if (id && id !== this.currentRoomId) this.destroyRoom(id);
+      if (
+        id &&
+        id !== this.currentRoomId &&
+        !this.built.get(id)?.container.visible
+      ) {
+        this.destroyRoom(id);
+      } else if (id) {
+        this.recent.push(id);
+        break;
+      }
     }
   }
 
@@ -256,7 +337,7 @@ export class RoomScene {
         if (textures && textures.length > 0) {
           layer.addChild(
             new Sprite({
-              texture: variantFor(textures, x, y),
+              texture: this.tileTexture(room, role, cell, x, y, textures),
               x: x * size,
               y: y * size,
               roundPixels: true,
@@ -306,6 +387,7 @@ export class RoomScene {
       eventMode: "none",
     });
     const size = room.tileSize;
+    if (room.tags.includes("route")) return layer;
     for (const door of room.doors) {
       const role =
         door.type === "sealed"
@@ -341,9 +423,40 @@ export class RoomScene {
 
   /** The room's own floor/wall/prop art overrides the generic role, per §7.1. */
   private roleFor(room: RoomState, cell: string): string {
+    if (
+      cell === "grass" ||
+      cell === "grassTall" ||
+      cell === "path" ||
+      cell === "tree"
+    ) {
+      return ROLE_BY_CELL[cell] ?? cell;
+    }
     if (cell === "floor" || cell === "floorAlt") return room.graphics.floorRole;
     if (cell === "wall" || cell === "wallFace") return room.graphics.wallRole;
     return ROLE_BY_CELL[cell] ?? "floor";
+  }
+
+  private tileTexture(
+    room: RoomState,
+    role: string,
+    cell: RoomCell,
+    x: number,
+    y: number,
+    textures: Texture[],
+  ): Texture {
+    const kind = autotileOf(role);
+    if (kind === "plain" || textures.length < 16) {
+      return variantFor(textures, x, y);
+    }
+    const self = TILE_BY_CELL[cell] ?? Tile.FLOOR;
+    const sample: Sampler = (dx, dy) => {
+      const neighbour = cellAt(room, x + dx, y + dy);
+      if (neighbour === "void") return null;
+      return TILE_BY_CELL[neighbour] ?? Tile.FLOOR;
+    };
+    const index =
+      kind === "blob" ? blobIndex(self, sample) : edgeIndex(self, sample);
+    return textures[index] ?? textures[0]!;
   }
 
   /**
@@ -362,32 +475,21 @@ export class RoomScene {
     const size = room.tileSize;
 
     for (const prop of room.props) {
-      const role = prop.role ?? room.graphics.propRole;
-      const textures = this.atlas.roles.get(role);
       const node = new Container({ eventMode: "none" });
-      if (textures && textures.length > 0) {
-        for (let y = 0; y < prop.h; y++) {
-          for (let x = 0; x < prop.w; x++) {
-            node.addChild(
-              new Sprite({
-                texture: variantFor(textures, prop.x + x, prop.y + y),
-                x: x * size,
-                y: y * size,
-                roundPixels: true,
-                eventMode: "none",
-              }),
-            );
-          }
-        }
-      } else if (this.objects.has(`${room.id}:${prop.id}`)) {
+      const objectTexture = this.objects.get(`${room.id}:${prop.id}`);
+      if (objectTexture) {
         // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
         // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
         // with square art reads as a square thing on a wide footprint, not a stretched
         // one — and anchored on the bottom edge so the art stands on its own base.
-        const texture = this.objects.get(`${room.id}:${prop.id}`)!;
+        //
+        // This branch has to win over the atlas `prop` role. Every room names that role
+        // as a fallback, and the atlas always has a frame for it — a brown 16×16 block.
+        // Checking the role first painted those blocks over every hotspot and never
+        // reached the PNG that was generated for it.
         const box = Math.min(prop.w, prop.h) * size;
         const sprite = new Sprite({
-          texture,
+          texture: objectTexture,
           roundPixels: true,
           eventMode: "none",
           anchor: { x: 0.5, y: 1 },
@@ -397,11 +499,29 @@ export class RoomScene {
         sprite.setSize(box, box);
         node.addChild(sprite);
       } else {
-        node.addChild(
-          new Graphics({ eventMode: "none", roundPixels: true })
-            .rect(0, 0, prop.w * size, prop.h * size)
-            .fill(prop.solid ? this.colors.metal : this.colors.floor),
-        );
+        const role = prop.role ?? room.graphics.propRole;
+        const textures = this.atlas.roles.get(role);
+        if (textures && textures.length > 0) {
+          for (let y = 0; y < prop.h; y++) {
+            for (let x = 0; x < prop.w; x++) {
+              node.addChild(
+                new Sprite({
+                  texture: variantFor(textures, prop.x + x, prop.y + y),
+                  x: x * size,
+                  y: y * size,
+                  roundPixels: true,
+                  eventMode: "none",
+                }),
+              );
+            }
+          }
+        } else {
+          node.addChild(
+            new Graphics({ eventMode: "none", roundPixels: true })
+              .rect(0, 0, prop.w * size, prop.h * size)
+              .fill(prop.solid ? this.colors.metal : this.colors.floor),
+          );
+        }
       }
       node.x = prop.x * size;
       node.y = prop.y * size;

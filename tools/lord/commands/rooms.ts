@@ -87,6 +87,8 @@ export function blankRoom(id: string, name: string): DreamRoom {
     camera: "frame",
     buildingId: null,
     level: 0,
+    originX: 0,
+    originY: 0,
     revisit: { escalates: false, note: null },
     meta: null,
     description: "",

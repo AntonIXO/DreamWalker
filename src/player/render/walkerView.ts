@@ -10,7 +10,8 @@ import { Container, Sprite, type Texture } from "pixi.js";
 
 import type { Direction } from "../../shared/roomGrid";
 import type { AtlasTextures } from "./atlasTextures";
-import type { FigureState, InterestState } from "../game/world";
+import { originX, originY } from "../../shared/street";
+import type { FigureState, InterestState, WorldState } from "../game/world";
 
 export type { Direction };
 
@@ -83,6 +84,12 @@ export class WalkerSprite {
  * `sortableChildren`, so the ordering is decided by position rather than by the order
  * things happened to be created in.
  */
+/**
+ * Authored figure paintings are larger than a 16px walker so the silhouette is
+ * readable. Contain in a 3-tile box; feet stay on the tile the walker would occupy.
+ */
+const FIGURE_PAINTING_TILES = 3;
+
 export class ActorLayer {
   readonly root = new Container({
     label: "actors",
@@ -92,11 +99,13 @@ export class ActorLayer {
     cullableChildren: false,
   });
   private readonly figures = new Map<string, WalkerSprite>();
+  private readonly paintings = new Map<string, Sprite>();
   private readonly clues = new Map<string, Sprite>();
 
   constructor(
     private readonly atlas: AtlasTextures,
     private readonly clueTextures: ReadonlyMap<string, Texture> = new Map(),
+    private readonly figureTextures: ReadonlyMap<string, Texture> = new Map(),
   ) {}
 
   add(walker: WalkerSprite): void {
@@ -104,11 +113,49 @@ export class ActorLayer {
   }
 
   /** Figures are keyed by id so the heartbeat can move them without rebuilding anything. */
-  syncFigures(figures: readonly FigureState[], tileSize: number): void {
+  syncFigures(
+    figures: readonly FigureState[],
+    tileSize: number,
+    world?: WorldState,
+  ): void {
     const seen = new Set<string>();
 
     for (const figure of figures) {
       seen.add(figure.id);
+      const room = world?.roomById.get(figure.roomId);
+      const ox = room ? originX(room) : 0;
+      const oy = room ? originY(room) : 0;
+      const x = (ox + figure.x) * tileSize + tileSize / 2;
+      const y = (oy + figure.y) * tileSize + tileSize;
+      const painting = this.figureTextures.get(figure.id);
+      if (painting) {
+        const walker = this.figures.get(figure.id);
+        if (walker) {
+          walker.destroy();
+          this.figures.delete(figure.id);
+        }
+        let sprite = this.paintings.get(figure.id);
+        if (!sprite) {
+          sprite = new Sprite({
+            texture: painting,
+            anchor: { x: 0.5, y: 0.9 },
+            roundPixels: true,
+            eventMode: "none",
+            label: `figure-art:${figure.id}`,
+          });
+          const scale = Math.min(
+            (tileSize * FIGURE_PAINTING_TILES) / Math.max(1, painting.width),
+            (tileSize * FIGURE_PAINTING_TILES) / Math.max(1, painting.height),
+          );
+          sprite.scale.set(scale);
+          this.paintings.set(figure.id, sprite);
+          this.root.addChild(sprite);
+        }
+        sprite.x = Math.round(x);
+        sprite.y = Math.round(y);
+        sprite.zIndex = Math.round(y);
+        continue;
+      }
       let walker = this.figures.get(figure.id);
       if (!walker) {
         walker = new WalkerSprite(this.atlas, `figure_${figure.archetypeId}`);
@@ -116,8 +163,8 @@ export class ActorLayer {
         this.root.addChild(walker.sprite);
       }
       walker.update(
-        figure.x * tileSize + tileSize / 2,
-        figure.y * tileSize + tileSize,
+        x,
+        y,
         figure.facing,
         figure.walking ? Math.floor(figure.walkTime * 5) : 0,
       );
@@ -128,10 +175,19 @@ export class ActorLayer {
       walker.destroy();
       this.figures.delete(id);
     }
+    for (const [id, sprite] of this.paintings) {
+      if (seen.has(id)) continue;
+      sprite.destroy();
+      this.paintings.delete(id);
+    }
   }
 
   /** RD clue PNGs sit above the generic prop tile and move with heartbeat patches. */
-  syncInterests(interests: readonly InterestState[], tileSize: number): void {
+  syncInterests(
+    interests: readonly InterestState[],
+    tileSize: number,
+    world?: WorldState,
+  ): void {
     const seen = new Set<string>();
     for (const interest of interests) {
       if (!interest.clueId) continue;
@@ -149,8 +205,11 @@ export class ActorLayer {
         this.clues.set(interest.id, sprite);
         this.root.addChild(sprite);
       }
-      sprite.x = interest.x * tileSize + tileSize / 2;
-      sprite.y = interest.y * tileSize + tileSize;
+      const room = world?.roomById.get(interest.roomId);
+      const ox = room ? originX(room) : 0;
+      const oy = room ? originY(room) : 0;
+      sprite.x = (ox + interest.x) * tileSize + tileSize / 2;
+      sprite.y = (oy + interest.y) * tileSize + tileSize;
       sprite.zIndex = sprite.y - 1;
     }
     for (const [id, sprite] of this.clues) {
@@ -163,6 +222,8 @@ export class ActorLayer {
   destroy(): void {
     for (const walker of this.figures.values()) walker.destroy();
     this.figures.clear();
+    for (const sprite of this.paintings.values()) sprite.destroy();
+    this.paintings.clear();
     for (const sprite of this.clues.values()) sprite.destroy();
     this.clues.clear();
     this.root.destroy({ children: true });

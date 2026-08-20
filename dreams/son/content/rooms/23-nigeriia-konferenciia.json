@@ -6,16 +6,16 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
+    "#__________________#",
+    "#__________________#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
+    "_..................#",
     "####################"
   ],
   "cellVariants": {},
@@ -125,40 +125,52 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "23-nigeriia-konferenciia--to-hub",
+      "id": "23-nigeriia-konferenciia--n-10-komnata-s-grobami",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "10-komnata-s-grobami",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "23-nigeriia-konferenciia--rift-vr-shlemy-na-stoikah",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "s",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "VR-шлемы на стойках",
-      "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+      "prompt": null
+    },
+    {
+      "id": "23-nigeriia-konferenciia--w-22-kreiser",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "22-kreiser",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -181,7 +193,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": null
@@ -196,5 +208,7 @@
     "sound": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 120,
+  "originY": 22
 }

@@ -28,7 +28,16 @@ export type Direction = "n" | "e" | "s" | "w";
  * A room's look comes from its backdrop and its roles, not from these six letters.
  */
 export type RoomCell =
-  "void" | "floor" | "floorAlt" | "wall" | "wallFace" | "threshold";
+  | "void"
+  | "floor"
+  | "floorAlt"
+  | "wall"
+  | "wallFace"
+  | "threshold"
+  | "grass"
+  | "grassTall"
+  | "path"
+  | "tree";
 
 /** The authoring alphabet. One character per tile, so a room reads as a picture. */
 const CELL_BY_MARK: Record<string, RoomCell> = {
@@ -37,6 +46,10 @@ const CELL_BY_MARK: Record<string, RoomCell> = {
   _: "threshold",
   ",": "floorAlt",
   ".": "floor",
+  g: "grass",
+  h: "grassTall",
+  p: "path",
+  t: "tree",
 };
 
 /** Anything with a rectangular ASCII walk mask. */
@@ -92,12 +105,21 @@ export function cellAt(grid: CellGrid, tx: number, ty: number): RoomCell {
 
 /** Walls stop you; so does the outside. Thresholds and both floors do not. */
 export function isSolidCell(cell: RoomCell): boolean {
-  return cell === "wall" || cell === "wallFace" || cell === "void";
+  return (
+    cell === "wall" || cell === "wallFace" || cell === "tree" || cell === "void"
+  );
 }
 
 /** A cell the walker can stand on. Doors have to land on one of these. */
 export function isWalkableCell(cell: RoomCell): boolean {
-  return cell === "floor" || cell === "floorAlt" || cell === "threshold";
+  return (
+    cell === "floor" ||
+    cell === "floorAlt" ||
+    cell === "threshold" ||
+    cell === "grass" ||
+    cell === "grassTall" ||
+    cell === "path"
+  );
 }
 
 /** Write one mark into an ASCII mask. Rows are immutable strings. */

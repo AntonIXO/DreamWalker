@@ -6,16 +6,16 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
     "####################"
   ],
   "cellVariants": {},
@@ -125,40 +125,74 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "22-kreiser--to-hub",
+      "id": "22-kreiser--n-12-tiurma-na-ovoschah",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "12-tiurma-na-ovoschah",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "22-kreiser--rift-scena-mikrofon",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "s",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "сцена, микрофон",
-      "toRoomId": "13-podzemnye-zaly-cu"
+      "prompt": null
+    },
+    {
+      "id": "22-kreiser--e-23-nigeriia-konferenciia",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "23-nigeriia-konferenciia",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "22-kreiser--w-25-metro-i-poezd-kotoryi-ne-tot",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -181,7 +215,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "(−1, +1)"
@@ -196,5 +230,7 @@
     "sound": "застольный гул; корабельный ход, низкий; микрофонная обратная связь, начинающаяся сама"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 100,
+  "originY": 22
 }

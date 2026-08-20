@@ -7,11 +7,13 @@
 import type { CycleExitResult } from "../../shared/ai";
 import type { HeartbeatConfig } from "../../shared/dream";
 import { rectsOverlap, type TileRect } from "../../shared/rect";
+import { isStreetWorld, originX, originY } from "../../shared/street";
 import {
   applyPatch,
   patchTouches,
   type MapPatch,
   type PatchResult,
+  type PatchScope,
 } from "../game/patch";
 import type { WorldState } from "../game/world";
 import type { ObservationLog } from "./observation";
@@ -131,10 +133,8 @@ export class Heartbeat {
       }
 
       const touched = patchTouches(patch, this.world);
-      const seen = touched.some(
-        (scope) =>
-          scope.roomId === view.roomId &&
-          (scope.rect === null || rectsOverlap(scope.rect, view.rect)),
+      const seen = touched.some((scope) =>
+        scopeIsOnScreen(scope, view, this.world),
       );
       if (protectViewport && seen) {
         entries.push({
@@ -161,4 +161,31 @@ export class Heartbeat {
     }
     return outcome;
   }
+}
+
+function scopeIsOnScreen(
+  scope: PatchScope,
+  view: { roomId: string; rect: TileRect },
+  world: WorldState,
+): boolean {
+  const room = world.roomById.get(scope.roomId);
+  if (!room) return false;
+  if (!isStreetWorld(world.rooms)) {
+    return (
+      scope.roomId === view.roomId &&
+      (scope.rect === null || rectsOverlap(scope.rect, view.rect))
+    );
+  }
+  const ox = originX(room);
+  const oy = originY(room);
+  const rect =
+    scope.rect === null
+      ? { x: ox, y: oy, w: room.width, h: room.height }
+      : {
+          x: scope.rect.x + ox,
+          y: scope.rect.y + oy,
+          w: scope.rect.w,
+          h: scope.rect.h,
+        };
+  return rectsOverlap(rect, view.rect);
 }

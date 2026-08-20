@@ -5,7 +5,6 @@
 import { Action, Input, keyFor } from "../game/input";
 import type { MindSettings } from "../mind/settings";
 import { WalkerSprite } from "../render/walkerView";
-import type { Texture } from "pixi.js";
 
 import type { AtlasTextures } from "../render/atlasTextures";
 import type { Camera } from "../render/camera";
@@ -46,14 +45,8 @@ export class LobbySession {
     atlas: AtlasTextures,
     private readonly camera: Camera,
     private readonly callbacks: LobbyCallbacks,
-    apparatusTexture: Texture | null = null,
   ) {
-    this.scene = new LobbyScene(
-      this.definition,
-      artifact,
-      atlas,
-      apparatusTexture,
-    );
+    this.scene = new LobbyScene(this.definition, artifact, atlas);
     this.walker = createLobbyWalker(this.definition);
     this.sprite = new WalkerSprite(atlas, "player");
     this.scene.actorLayer.addChild(this.sprite.sprite);

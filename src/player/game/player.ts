@@ -1,20 +1,40 @@
 /**
  * The sanitar.
  *
- * Movement itself lives in `shared/roomWalk.ts`, shared with the lobby and with every
- * authored room. What is left here is the dream-specific part: which room's geometry the
- * walker is being tested against, and which door most recently refused them.
+ * Movement itself lives in `shared/roomWalk.ts`, shared with the lobby. On a street
+ * map the walker lives in world pixels and is tested against every room the body
+ * overlaps; a door that shares an edge with its destination is an opening, not a warp.
  */
 
 import {
   createWalker,
+  facingFor,
   updateWalker,
+  WALK_SPEED,
   walkFrame as sharedWalkFrame,
   type Walker,
 } from "../../shared/roomWalk";
 import type { Direction } from "../../shared/roomGrid";
-import { cellAt, isSolidCell } from "../../shared/roomGrid";
-import { doorAtTile, canPassDoor, type RoomState } from "./world";
+import {
+  BODY_HEIGHT,
+  BODY_WIDTH,
+  cellAt,
+  isSolidCell,
+} from "../../shared/roomGrid";
+import {
+  blockedInWorld,
+  isContinuousDoor,
+  isStreetWorld,
+  originX,
+  originY,
+  toWorldPixels,
+} from "../../shared/street";
+import {
+  doorAtTile,
+  canPassDoor,
+  type RoomState,
+  type WorldState,
+} from "./world";
 
 export interface PlayerState extends Walker {
   /**
@@ -31,12 +51,11 @@ export function createPlayer(room: RoomState, entryId: string): PlayerState {
     room.entries.find((candidate) => candidate.id === entryId) ??
     room.entries[0];
   const size = room.tileSize;
+  const localX = (entry?.x ?? 1) * size;
+  const localY = (entry?.y ?? 1) * size;
+  const world = toWorldPixels(room, localX, localY);
   return {
-    ...createWalker(
-      (entry?.x ?? 1) * size,
-      (entry?.y ?? 1) * size,
-      (entry?.facing ?? "s") as Direction,
-    ),
+    ...createWalker(world.x, world.y, (entry?.facing ?? "s") as Direction),
     refusedDoorId: null,
     enteredDoorId: null,
   };
@@ -52,8 +71,13 @@ export function placeAtEntry(
     room.entries.find((candidate) => candidate.id === entryId) ??
     room.entries[0];
   const size = room.tileSize;
-  player.x = (entry?.x ?? 1) * size;
-  player.y = (entry?.y ?? 1) * size;
+  const world = toWorldPixels(
+    room,
+    (entry?.x ?? 1) * size,
+    (entry?.y ?? 1) * size,
+  );
+  player.x = world.x;
+  player.y = world.y;
   player.facing = (entry?.facing ?? "s") as Direction;
   player.moving = false;
   player.refusedDoorId = null;
@@ -63,58 +87,118 @@ export function placeAtEntry(
 export function updatePlayer(
   player: PlayerState,
   room: RoomState,
-  world: {
-    keysHeld: Set<string>;
-    leversPulled: Set<string>;
-    puzzlesSolved: Set<string>;
-  },
+  world: WorldState,
   axis: { x: number; y: number },
   deltaSeconds: number,
 ): void {
   const before = { x: player.x, y: player.y };
-  const solidProps = room.props.filter((prop) => prop.solid);
-  updateWalker(player, room, solidProps, room.tileSize, axis, deltaSeconds);
+  if (isStreetWorld(world.rooms)) {
+    walkStreet(player, room, world, axis, deltaSeconds);
+  } else {
+    const solidProps = room.props.filter((prop) => prop.solid);
+    updateWalker(player, room, solidProps, room.tileSize, axis, deltaSeconds);
+  }
 
   player.enteredDoorId = null;
-  const tx = Math.floor(player.x / room.tileSize);
-  const ty = Math.floor(player.y / room.tileSize);
+  const door = doorAhead(player, room, axis);
+  if (!door) {
+    player.refusedDoorId = null;
+    return;
+  }
+  const dest = world.roomById.get(door.toRoomId);
+  if (isContinuousDoor(room, door, dest)) {
+    player.refusedDoorId = null;
+    return;
+  }
+  if (canPassDoor(world, door)) {
+    player.enteredDoorId = door.id;
+    player.refusedDoorId = null;
+    return;
+  }
+  player.x = before.x;
+  player.y = before.y;
+  player.refusedDoorId = door.id;
+}
+
+function walkStreet(
+  player: PlayerState,
+  room: RoomState,
+  world: WorldState,
+  axis: { x: number; y: number },
+  deltaSeconds: number,
+): void {
+  const dx = axis.x * WALK_SPEED * deltaSeconds;
+  const dy = axis.y * WALK_SPEED * deltaSeconds;
+  if (dx === 0 && dy === 0) {
+    player.moving = false;
+    return;
+  }
+  const box = {
+    x: player.x,
+    y: player.y,
+    width: BODY_WIDTH,
+    height: BODY_HEIGHT,
+  };
+  let x = player.x;
+  let y = player.y;
+  if (
+    dx !== 0 &&
+    !blockedInWorld(world.rooms, room.id, { ...box, x: x + dx }, room.tileSize)
+  ) {
+    x += dx;
+  }
+  if (
+    dy !== 0 &&
+    !blockedInWorld(
+      world.rooms,
+      room.id,
+      { ...box, x, y: y + dy },
+      room.tileSize,
+    )
+  ) {
+    y += dy;
+  }
+  const moved = Math.hypot(x - player.x, y - player.y);
+  player.x = x;
+  player.y = y;
+  player.facing = facingFor(axis.x, axis.y, player.facing);
+  player.travelled += moved;
+  player.moving = moved > 0.01;
+}
+
+function doorAhead(
+  player: PlayerState,
+  room: RoomState,
+  axis: { x: number; y: number },
+): ReturnType<typeof doorAtTile> {
+  const size = room.tileSize;
+  const ox = originX(room) * size;
+  const oy = originY(room) * size;
+  const tx = Math.floor((player.x - ox) / size);
+  const ty = Math.floor((player.y - oy) / size);
   const stepX = axis.x === 0 ? 0 : axis.x > 0 ? 1 : -1;
   const stepY = axis.y === 0 ? 0 : axis.y > 0 ? 1 : -1;
-  // A threshold you walk onto, or the tile you are pressing into. The second case
-  // is how a door still on a wall face can fire without the body standing in solid.
   const aheadX = stepX !== 0 ? tx + stepX : tx;
   const aheadY = stepY !== 0 ? ty + stepY : ty;
   const ahead =
     (stepX !== 0 || stepY !== 0) && isSolidCell(cellAt(room, aheadX, aheadY))
       ? doorAtTile(room, aheadX, aheadY)
       : null;
-  const door = doorAtTile(room, tx, ty) ?? ahead;
-  if (!door) {
-    player.refusedDoorId = null;
-    return;
-  }
-  if (canPassDoor(world as never, door)) {
-    player.enteredDoorId = door.id;
-    player.refusedDoorId = null;
-    return;
-  }
-  // Refused: undo the step so the sanitar stands against it rather than inside it.
-  player.x = before.x;
-  player.y = before.y;
-  player.refusedDoorId = door.id;
+  return doorAtTile(room, tx, ty) ?? ahead;
 }
 
 export function walkFrame(player: PlayerState): number {
   return sharedWalkFrame(player);
 }
 
-/** Tile the sanitar is standing on. */
+/** Tile the sanitar is standing on, in the given room's local space. */
 export function playerTile(
   player: PlayerState,
   room: RoomState,
 ): { x: number; y: number } {
+  const size = room.tileSize;
   return {
-    x: Math.floor(player.x / room.tileSize),
-    y: Math.floor(player.y / room.tileSize),
+    x: Math.floor(player.x / size - originX(room)),
+    y: Math.floor(player.y / size - originY(room)),
   };
 }

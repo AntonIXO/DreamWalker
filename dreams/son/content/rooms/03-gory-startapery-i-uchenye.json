@@ -8,15 +8,15 @@
   "cells": [
     "####################",
     "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -125,40 +125,74 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "03-gory-startapery-i-uchenye--to-hub",
-      "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "id": "03-gory-startapery-i-uchenye--e-16-norvezhskaia-derevnia-i-pogreb",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
+      "toEntryId": "from-w",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "03-gory-startapery-i-uchenye--rift-centroid",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "w",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "центроид",
-      "toRoomId": "m1-korni"
+      "prompt": null
+    },
+    {
+      "id": "03-gory-startapery-i-uchenye--s-09-hakaton-tretii-po-schetu",
+      "x": 1,
+      "y": 10,
+      "w": 18,
+      "h": 1,
+      "toRoomId": "09-hakaton-tretii-po-schetu",
+      "toEntryId": "from-n",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "n",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "03-gory-startapery-i-uchenye--w-15-osennii-les-s-grobom",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "15-osennii-les-s-grobom",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -181,7 +215,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "Высоко, ветрено, дёргано"
@@ -196,5 +230,7 @@
     "sound": "ветер, записанный в трубу; обрывки питчей на грани разборчивости, всегда в момент, когда отворачиваешься; низкий инфразвук от 18 Гц, тот самый, от которого тошно и кажется, что за спиной кто-то есть"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 40,
+  "originY": 0
 }

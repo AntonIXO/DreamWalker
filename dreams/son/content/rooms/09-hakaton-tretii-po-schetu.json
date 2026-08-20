@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -149,40 +149,96 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "09-hakaton-tretii-po-schetu--to-hub",
+      "id": "09-hakaton-tretii-po-schetu--n-03-gory-startapery-i-uchenye",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "03-gory-startapery-i-uchenye",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "09-hakaton-tretii-po-schetu--rift-demo-stend-na-kotorom-rabotaet-chto-to-c",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "s",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
-      "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+      "prompt": null
+    },
+    {
+      "id": "09-hakaton-tretii-po-schetu--e-20-ofis-sbera",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "20-ofis-sbera",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "09-hakaton-tretii-po-schetu--s-01-otel-goticheskii-holl",
+      "x": 1,
+      "y": 10,
+      "w": 18,
+      "h": 1,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "from-n",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "n",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "09-hakaton-tretii-po-schetu--w-02-shkola-kabinet-russkogo",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "02-shkola-kabinet-russkogo",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -205,7 +261,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "Единственная честно Upper Dynamic комната. Пользуйся"
@@ -220,5 +276,7 @@
     "sound": "гул из трёхсот разговоров, ни одного разборчивого; кулеры; чей-то доклад через плохой микрофон с клиппингом на согласных"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 40,
+  "originY": 11
 }

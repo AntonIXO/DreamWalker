@@ -120,13 +120,15 @@ export class DebugOverlay {
         const cell = cellAt(room, x, y);
         if (cell === "void") continue;
         this.ctx.fillStyle = colorOf(
-          cell === "wall" || cell === "wallFace"
+          cell === "wall" || cell === "wallFace" || cell === "tree"
             ? "wall"
-            : cell === "threshold"
+            : cell === "threshold" || cell === "path"
               ? "threshold"
-              : cell === "floorAlt"
+              : cell === "floorAlt" || cell === "grassTall"
                 ? "floorAlt"
-                : "floor",
+                : cell === "grass"
+                  ? "floor"
+                  : "floor",
         );
         this.ctx.fillRect(x * scale, y * scale, scale, scale);
       }

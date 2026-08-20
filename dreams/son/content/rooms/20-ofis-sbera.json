@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -149,56 +149,96 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "20-ofis-sbera--to-hub",
+      "id": "20-ofis-sbera--n-16-norvezhskaia-derevnia-i-pogreb",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
+      "facing": "s",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     },
     {
-      "id": "20-ofis-sbera--rift-elt-s-morrowind",
+      "id": "20-ofis-sbera--e-13-podzemnye-zaly-cu",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "13-podzemnye-zaly-cu",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "20-ofis-sbera--s-11-evreiskii-gorod",
       "x": 1,
-      "y": 1,
-      "w": 2,
+      "y": 10,
+      "w": 18,
       "h": 1,
-      "toEntryId": null,
+      "toRoomId": "11-evreiskii-gorod",
+      "toEntryId": "from-n",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "n",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "ЭЛТ с Morrowind",
-      "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+      "prompt": null
     },
     {
-      "id": "20-ofis-sbera--rift-zakrytaia-dver-v-konce-koridora",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
+      "id": "20-ofis-sbera--w-09-hakaton-tretii-po-schetu",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "09-hakaton-tretii-po-schetu",
+      "toEntryId": "from-e",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "e",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "закрытая дверь в конце коридора",
-      "toRoomId": "21-komnata-niliufar"
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -221,7 +261,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "(+2, −2)"
@@ -236,5 +276,7 @@
     "sound": "пятнадцатикилогерцовый писк строчной развёртки (те, кто слышит, услышат, остальные почувствуют); кондиционер; **музыка Morrowind, доносящаяся тихо** — Джереми Соул через динамик кинескопа, самый безжалостный ностальгический удар из доступных"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 60,
+  "originY": 11
 }

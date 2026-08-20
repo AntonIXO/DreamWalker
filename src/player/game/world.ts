@@ -149,6 +149,8 @@ export interface WorldState {
 function cloneRoom(room: DreamRoom): RoomState {
   return {
     ...room,
+    originX: room.originX ?? 0,
+    originY: room.originY ?? 0,
     cells: [...room.cells],
     cellVariants: Object.fromEntries(
       Object.entries(room.cellVariants).map(([name, rows]) => [

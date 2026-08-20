@@ -9,6 +9,7 @@
  */
 
 import { findHotspot } from "../../shared/roomGrid";
+import { toLocalPixels } from "../../shared/street";
 import type { RoomHotspot } from "../../shared/room";
 import { availableVerbs, type VerbOption } from "../../shared/verbs";
 import { fateOf, leverageOn, whoIsLed } from "./fates";
@@ -45,9 +46,10 @@ function nearestFigure(
   let bestDistance = Infinity;
   for (const figure of world.figures) {
     if (figure.roomId !== room.id) continue;
+    const local = toLocalPixels(room, player.x, player.y);
     const distance = Math.hypot(
-      figure.x * room.tileSize - player.x,
-      figure.y * room.tileSize - player.y,
+      figure.x * room.tileSize - local.x,
+      figure.y * room.tileSize - local.y,
     );
     if (distance <= FIGURE_REACH && distance < bestDistance) {
       best = figure;
@@ -60,11 +62,12 @@ function nearestFigure(
 function hotspotDistance(
   hotspot: RoomHotspot,
   player: PlayerState,
-  tileSize: number,
+  room: RoomState,
 ): number {
+  const local = toLocalPixels(room, player.x, player.y);
   return Math.hypot(
-    hotspot.x * tileSize - player.x,
-    hotspot.y * tileSize - player.y,
+    hotspot.x * room.tileSize - local.x,
+    hotspot.y * room.tileSize - local.y,
   );
 }
 
@@ -121,10 +124,11 @@ export function findTarget(
   }
 
   const figure = nearestFigure(world, player, room);
+  const local = toLocalPixels(room, player.x, player.y);
   const hotspot = findHotspot(
     reachableHotspots(world, room),
-    player.x,
-    player.y,
+    local.x,
+    local.y,
     room.tileSize,
   );
 
@@ -145,7 +149,7 @@ export function findTarget(
   };
 
   if (figure && hotspot) {
-    const hotspotAway = hotspotDistance(hotspot, player, room.tileSize);
+    const hotspotAway = hotspotDistance(hotspot, player, room);
     if (hotspotAway < figure.distance) {
       return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
     }

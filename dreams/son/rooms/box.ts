@@ -149,6 +149,8 @@ export function boxRoom(input: {
     copy: input.copy ?? {},
     buildingId: null,
     level: 0,
+    originX: 0,
+    originY: 0,
   };
 }
 

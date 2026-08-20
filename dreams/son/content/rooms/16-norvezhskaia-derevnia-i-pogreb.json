@@ -8,15 +8,15 @@
   "cells": [
     "####################",
     "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -125,40 +125,74 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "16-norvezhskaia-derevnia-i-pogreb--to-hub",
-      "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "id": "16-norvezhskaia-derevnia-i-pogreb--e-18-kupol-bez-sten",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "18-kupol-bez-sten",
+      "toEntryId": "from-w",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "16-norvezhskaia-derevnia-i-pogreb--rift-pogreb-s-korniami",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "w",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "погреб с корнями",
-      "toRoomId": "m1-korni"
+      "prompt": null
+    },
+    {
+      "id": "16-norvezhskaia-derevnia-i-pogreb--s-20-ofis-sbera",
+      "x": 1,
+      "y": 10,
+      "w": 18,
+      "h": 1,
+      "toRoomId": "20-ofis-sbera",
+      "toEntryId": "from-n",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "n",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "16-norvezhskaia-derevnia-i-pogreb--w-03-gory-startapery-i-uchenye",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "03-gory-startapery-i-uchenye",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -181,7 +215,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": true,
     "note": "(−8, +6). Максимальный размах. **Отсюда чаще всего происходит переполнение графика**"
@@ -196,5 +230,7 @@
     "sound": "гул усилителя, 50 Гц с гармониками, ровный, никогда не смолкающий; полное отсутствие ветра при видимом снегопаде; в момент падения — **всё, кроме гула, вырезается**"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 60,
+  "originY": 0
 }

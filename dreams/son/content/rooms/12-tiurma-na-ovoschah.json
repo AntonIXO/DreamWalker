@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -149,56 +149,96 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "12-tiurma-na-ovoschah--to-hub",
+      "id": "12-tiurma-na-ovoschah--n-m2-miasnaia-geometriia",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "m2-miasnaia-geometriia",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
+      "facing": "s",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     },
     {
-      "id": "12-tiurma-na-ovoschah--rift-dyrka-v-zabore",
+      "id": "12-tiurma-na-ovoschah--e-10-komnata-s-grobami",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "10-komnata-s-grobami",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "12-tiurma-na-ovoschah--s-22-kreiser",
       "x": 1,
-      "y": 1,
-      "w": 2,
+      "y": 10,
+      "w": 18,
       "h": 1,
-      "toEntryId": null,
+      "toRoomId": "22-kreiser",
+      "toEntryId": "from-n",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "n",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "дырка в заборе",
-      "toRoomId": "19-dvor-i-oranzhevye-lavochki"
+      "prompt": null
     },
     {
-      "id": "12-tiurma-na-ovoschah--rift-piatimetrovyi-stellazh",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
+      "id": "12-tiurma-na-ovoschah--w-13-podzemnye-zaly-cu",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "13-podzemnye-zaly-cu",
+      "toEntryId": "from-e",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "e",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "пятиметровый стеллаж",
-      "toRoomId": "m3-sklad-ostavlennogo"
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -221,7 +261,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "Абсурдно лёгкая"
@@ -236,5 +276,7 @@
     "sound": "капель с потолка; хруст овощей под весом; полное отсутствие тюремных звуков — ни решёток, ни голосов, ни шагов конвоя"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 100,
+  "originY": 11
 }

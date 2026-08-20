@@ -17,12 +17,13 @@ describe("son pack", () => {
     expect(sonPack.scripts.length).toBeGreaterThan(0);
   });
 
-  test("every meta-space has an inbound rift", () => {
-    const rifts = artifact.rooms.flatMap((room) =>
-      room.doors.filter((door) => door.threshold === "rift"),
-    );
+  test("every meta-space has an inbound door", () => {
     for (const meta of artifact.rooms.filter((room) => room.kind === "meta")) {
-      expect(rifts.some((door) => door.toRoomId === meta.id)).toBe(true);
+      expect(
+        artifact.rooms.some((room) =>
+          room.doors.some((door) => door.toRoomId === meta.id),
+        ),
+      ).toBe(true);
     }
   });
 

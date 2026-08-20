@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -149,56 +149,96 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "13-podzemnye-zaly-cu--to-hub",
+      "id": "13-podzemnye-zaly-cu--n-18-kupol-bez-sten",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "18-kupol-bez-sten",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "13-podzemnye-zaly-cu--rift-iaponskii-sidr",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
+      "facing": "s",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "японский сидр",
-      "toRoomId": "m2-miasnaia-geometriia"
+      "prompt": null
     },
     {
-      "id": "13-podzemnye-zaly-cu--rift-divanchik-na-kotorom-spit-lesha",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
+      "id": "13-podzemnye-zaly-cu--e-12-tiurma-na-ovoschah",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "12-tiurma-na-ovoschah",
+      "toEntryId": "from-w",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": "liosha-gnedkov",
+      "facing": "w",
+      "toFigureId": null,
       "keyId": null,
-      "prompt": "диванчик, на котором спит Лёша",
-      "toRoomId": "13-podzemnye-zaly-cu"
+      "prompt": null
+    },
+    {
+      "id": "13-podzemnye-zaly-cu--s-25-metro-i-poezd-kotoryi-ne-tot",
+      "x": 1,
+      "y": 10,
+      "w": 18,
+      "h": 1,
+      "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+      "toEntryId": "from-n",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "n",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "13-podzemnye-zaly-cu--w-20-ofis-sbera",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "20-ofis-sbera",
+      "toEntryId": "from-e",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "e",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -221,7 +261,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": null
@@ -236,5 +276,7 @@
     "sound": "гул большого зала, ревер 4 секунды; механические перестроения без звука механизмов (**это важно — стены двигаются в тишине**); поверх — объявление о начале игр, зациклено"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 80,
+  "originY": 11
 }

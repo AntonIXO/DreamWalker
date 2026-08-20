@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -125,56 +125,96 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "19-dvor-i-oranzhevye-lavochki--to-hub",
+      "id": "19-dvor-i-oranzhevye-lavochki--n-02-shkola-kabinet-russkogo",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "02-shkola-kabinet-russkogo",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
+      "facing": "s",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     },
     {
-      "id": "19-dvor-i-oranzhevye-lavochki--rift-podezdnaia-dver-s-domofonom",
+      "id": "19-dvor-i-oranzhevye-lavochki--e-01-otel-goticheskii-holl",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "01-otel-goticheskii-holl",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "19-dvor-i-oranzhevye-lavochki--s-08-kvartira-v-kotoroi-zhivut-drugie",
       "x": 1,
-      "y": 1,
-      "w": 2,
+      "y": 10,
+      "w": 18,
       "h": 1,
-      "toEntryId": null,
+      "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+      "toEntryId": "from-n",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "n",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "подъездная дверь с домофоном",
-      "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie"
+      "prompt": null
     },
     {
-      "id": "19-dvor-i-oranzhevye-lavochki--rift-butylka-riadom-s-turyshevym-ne-pervaia",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
+      "id": "19-dvor-i-oranzhevye-lavochki--w-05-shesterochka",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "05-shesterochka",
+      "toEntryId": "from-e",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "e",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "бутылка рядом с Турышевым, не первая",
-      "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -197,7 +237,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции"
@@ -212,5 +252,7 @@
     "sound": "двор днём, дети где-то далеко, машина заводится через дом; **ни одного тревожного слоя** — и от чистоты микса становится не по себе"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 20,
+  "originY": 22
 }

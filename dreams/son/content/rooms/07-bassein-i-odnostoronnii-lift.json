@@ -14,8 +14,8 @@
     "#..................#",
     "#..................#",
     "#..................#",
+    "#..__..............#",
     "#..................#",
-    "#__................#",
     "####################"
   ],
   "cellVariants": {},
@@ -125,56 +125,30 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-lift",
+      "x": 5,
+      "y": 2.2,
+      "facing": "s"
     }
   ],
   "doors": [
     {
-      "id": "07-bassein-i-odnostoronnii-lift--to-hub",
-      "x": 1,
-      "y": 9,
+      "id": "07-bassein-i-odnostoronnii-lift--lift-01-otel-goticheskii-holl",
+      "x": 3,
+      "y": 8,
       "w": 2,
       "h": 1,
       "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
-      "type": "open",
-      "keyId": null,
-      "prompt": null,
-      "threshold": "door",
-      "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
-    },
-    {
-      "id": "07-bassein-i-odnostoronnii-lift--rift-bele-na-stenah",
-      "x": 1,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null,
-      "keyId": null,
-      "prompt": "бельё на стенах",
-      "toRoomId": "m3-sklad-ostavlennogo"
-    },
-    {
-      "id": "07-bassein-i-odnostoronnii-lift--rift-panel-lifta-bez-knopki-vniz",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
+      "toEntryId": "from-lift",
       "type": "open",
       "threshold": "lift",
       "levelDelta": 1,
-      "facing": null,
+      "facing": "s",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "панель лифта без кнопки «вниз»",
-      "toRoomId": "01-otel-goticheskii-holl"
+      "prompt": "лифт — только вверх"
     }
   ],
   "figureSlots": [
@@ -197,7 +171,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "(−2, −1)"
@@ -214,5 +188,7 @@
     "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
   },
   "buildingId": "otel",
-  "level": 3
+  "level": 3,
+  "originX": 40,
+  "originY": 22
 }

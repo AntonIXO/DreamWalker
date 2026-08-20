@@ -279,424 +279,118 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
+        },
+        {
+          "id": "from-lift",
+          "x": 5,
+          "y": 2.2,
+          "facing": "s"
         }
       ],
       "doors": [
         {
-          "id": "hub--to-02-shkola-kabinet-russkogo",
-          "x": 1,
+          "id": "01-otel-goticheskii-holl--n-09-hakaton-tretii-po-schetu",
+          "x": 9,
           "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "02-shkola-kabinet-russkogo",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-03-gory-startapery-i-uchenye",
-          "x": 2,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "03-gory-startapery-i-uchenye",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-04-dacha-gnedkovyh",
-          "x": 3,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "04-dacha-gnedkovyh",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-05-shesterochka",
-          "x": 4,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "05-shesterochka",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-06-kanava-garazhi-podvorotni",
-          "x": 5,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "06-kanava-garazhi-podvorotni",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-07-bassein-i-odnostoronnii-lift",
-          "x": 6,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "07-bassein-i-odnostoronnii-lift",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-08-kvartira-v-kotoroi-zhivut-drugie",
-          "x": 7,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-09-hakaton-tretii-po-schetu",
-          "x": 8,
-          "y": 1,
-          "w": 1,
+          "w": 2,
           "h": 1,
           "toRoomId": "09-hakaton-tretii-po-schetu",
-          "toEntryId": "default",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-10-komnata-s-grobami",
-          "x": 9,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "10-komnata-s-grobami",
-          "toEntryId": "default",
-          "type": "open",
+          "facing": "s",
+          "toFigureId": null,
           "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
+          "prompt": null
         },
         {
-          "id": "hub--to-11-evreiskii-gorod",
-          "x": 10,
-          "y": 1,
+          "id": "01-otel-goticheskii-holl--e-11-evreiskii-gorod",
+          "x": 19,
+          "y": 4,
           "w": 1,
-          "h": 1,
+          "h": 2,
           "toRoomId": "11-evreiskii-gorod",
-          "toEntryId": "default",
+          "toEntryId": "from-w",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-12-tiurma-na-ovoschah",
-          "x": 11,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "12-tiurma-na-ovoschah",
-          "toEntryId": "default",
-          "type": "open",
+          "facing": "w",
+          "toFigureId": null,
           "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
+          "prompt": null
         },
         {
-          "id": "hub--to-13-podzemnye-zaly-cu",
-          "x": 12,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "13-podzemnye-zaly-cu",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-14-poliklinika-v-kaluge",
-          "x": 13,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "14-poliklinika-v-kaluge",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-15-osennii-les-s-grobom",
-          "x": 14,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "15-osennii-les-s-grobom",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-16-norvezhskaia-derevnia-i-pogreb",
-          "x": 15,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-17-dush-iz-kotorogo-nelzia-vyiti",
-          "x": 16,
-          "y": 1,
-          "w": 1,
+          "id": "01-otel-goticheskii-holl--s-17-dush-iz-kotorogo-nelzia-vyiti",
+          "x": 9,
+          "y": 10,
+          "w": 2,
           "h": 1,
           "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
-          "toEntryId": "default",
+          "toEntryId": "from-n",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-18-kupol-bez-sten",
-          "x": 17,
-          "y": 1,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "18-kupol-bez-sten",
-          "toEntryId": "default",
-          "type": "open",
+          "facing": "n",
+          "toFigureId": null,
           "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
+          "prompt": null
         },
         {
-          "id": "hub--to-19-dvor-i-oranzhevye-lavochki",
-          "x": 18,
-          "y": 1,
+          "id": "01-otel-goticheskii-holl--w-19-dvor-i-oranzhevye-lavochki",
+          "x": 0,
+          "y": 4,
           "w": 1,
-          "h": 1,
+          "h": 2,
           "toRoomId": "19-dvor-i-oranzhevye-lavochki",
-          "toEntryId": "default",
+          "toEntryId": "from-e",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         },
         {
-          "id": "hub--to-20-ofis-sbera",
+          "id": "01-otel-goticheskii-holl--lift-07-bassein-i-odnostoronnii-lift",
           "x": 1,
-          "y": 10,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "20-ofis-sbera",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-21-komnata-niliufar",
-          "x": 2,
-          "y": 10,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "21-komnata-niliufar",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-22-kreiser",
-          "x": 3,
-          "y": 10,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "22-kreiser",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-23-nigeriia-konferenciia",
-          "x": 4,
-          "y": 10,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "23-nigeriia-konferenciia",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
-          "x": 5,
-          "y": 10,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "hub--to-25-metro-i-poezd-kotoryi-ne-tot",
-          "x": 6,
-          "y": 10,
-          "w": 1,
-          "h": 1,
-          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "01-otel-goticheskii-holl--rift-chuzhie-shtany-na-polu",
-          "x": 7,
-          "y": 10,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "07-bassein-i-odnostoronnii-lift",
+          "toEntryId": "from-lift",
           "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "threshold": "lift",
+          "levelDelta": 2,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "чужие штаны на полу",
-          "toRoomId": "07-bassein-i-odnostoronnii-lift"
-        },
-        {
-          "id": "01-otel-goticheskii-holl--rift-kanat-do-svoda",
-          "x": 9,
-          "y": 10,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null,
-          "keyId": null,
-          "prompt": "канат до свода",
-          "toRoomId": "07-bassein-i-odnostoronnii-lift"
+          "prompt": "лифт на третий этаж"
         }
       ],
       "figureSlots": [
@@ -761,7 +455,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -871,40 +565,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "02-shkola-kabinet-russkogo--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "02-shkola-kabinet-russkogo--rift-mat-v-uglu-s-rasstelennoi-posteliu",
-          "x": 1,
+          "id": "02-shkola-kabinet-russkogo--n-15-osennii-les-s-grobom",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "15-osennii-les-s-grobom",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "мат в углу с расстеленной постелью",
-          "toRoomId": "07-bassein-i-odnostoronnii-lift"
+          "prompt": null
+        },
+        {
+          "id": "02-shkola-kabinet-russkogo--e-09-hakaton-tretii-po-schetu",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "09-hakaton-tretii-po-schetu",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "02-shkola-kabinet-russkogo--s-19-dvor-i-oranzhevye-lavochki",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "02-shkola-kabinet-russkogo--w-14-poliklinika-v-kaluge",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -961,7 +711,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1071,40 +821,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "03-gory-startapery-i-uchenye--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "id": "03-gory-startapery-i-uchenye--e-16-norvezhskaia-derevnia-i-pogreb",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
+          "toEntryId": "from-w",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "03-gory-startapery-i-uchenye--rift-centroid",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "центроид",
-          "toRoomId": "m1-korni"
+          "prompt": null
+        },
+        {
+          "id": "03-gory-startapery-i-uchenye--s-09-hakaton-tretii-po-schetu",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "09-hakaton-tretii-po-schetu",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "03-gory-startapery-i-uchenye--w-15-osennii-les-s-grobom",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "15-osennii-les-s-grobom",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -1161,7 +945,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1271,56 +1055,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "04-dacha-gnedkovyh--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "04-dacha-gnedkovyh--n-08-kvartira-v-kotoroi-zhivut-drugie",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "04-dacha-gnedkovyh--rift-otodvinutyi-kusok-steny-s-chernym-proemo",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "отодвинутый кусок стены с чёрным проёмом",
-          "toRoomId": "16-norvezhskaia-derevnia-i-pogreb"
+          "prompt": null
         },
         {
-          "id": "04-dacha-gnedkovyh--rift-goluboi-lipkii-slizen-na-lestnice-bit-mo",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "04-dacha-gnedkovyh--e-m4-razvilka-gde-ty-ostalsia",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m4-razvilka-gde-ty-ostalsia",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
-          "toRoomId": "m2-miasnaia-geometriia"
+          "prompt": null
+        },
+        {
+          "id": "04-dacha-gnedkovyh--w-m1-korni",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m1-korni",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -1377,7 +1179,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1511,56 +1313,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
         }
       ],
       "doors": [
         {
-          "id": "05-shesterochka--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "05-shesterochka--n-14-poliklinika-v-kaluge",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "05-shesterochka--rift-polka-dlia-veschei",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "полка для вещей",
-          "toRoomId": "m3-sklad-ostavlennogo"
+          "prompt": null
         },
         {
-          "id": "05-shesterochka--rift-ballonchik-na-poiase-ohrannika",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "05-shesterochka--e-19-dvor-i-oranzhevye-lavochki",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "баллончик на поясе охранника",
-          "toRoomId": "06-kanava-garazhi-podvorotni"
+          "prompt": null
+        },
+        {
+          "id": "05-shesterochka--s-06-kanava-garazhi-podvorotni",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "06-kanava-garazhi-podvorotni",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -1619,7 +1439,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1729,56 +1549,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
         }
       ],
       "doors": [
         {
-          "id": "06-kanava-garazhi-podvorotni--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "06-kanava-garazhi-podvorotni--n-05-shesterochka",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "06-kanava-garazhi-podvorotni--rift-liuk-v-kanalizaciiu",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "люк в канализацию",
-          "toRoomId": "m1-korni"
+          "prompt": null
         },
         {
-          "id": "06-kanava-garazhi-podvorotni--rift-chuzhaia-zhenschina-svalivshaiasia-siuda",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "06-kanava-garazhi-podvorotni--e-08-kvartira-v-kotoroi-zhivut-drugie",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
-          "toRoomId": "10-komnata-s-grobami"
+          "prompt": null
+        },
+        {
+          "id": "06-kanava-garazhi-podvorotni--s-m1-korni",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m1-korni",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -1835,7 +1673,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -1945,56 +1783,30 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-lift",
+          "x": 5,
+          "y": 2.2,
+          "facing": "s"
         }
       ],
       "doors": [
         {
-          "id": "07-bassein-i-odnostoronnii-lift--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "07-bassein-i-odnostoronnii-lift--lift-01-otel-goticheskii-holl",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "07-bassein-i-odnostoronnii-lift--rift-bele-na-stenah",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null,
-          "keyId": null,
-          "prompt": "бельё на стенах",
-          "toRoomId": "m3-sklad-ostavlennogo"
-        },
-        {
-          "id": "07-bassein-i-odnostoronnii-lift--rift-panel-lifta-bez-knopki-vniz",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "toEntryId": "from-lift",
           "type": "open",
           "threshold": "lift",
           "levelDelta": 1,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "панель лифта без кнопки «вниз»",
-          "toRoomId": "01-otel-goticheskii-holl"
+          "prompt": "лифт — только вверх"
         }
       ],
       "figureSlots": [
@@ -2053,7 +1865,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2163,40 +1975,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "08-kvartira-v-kotoroi-zhivut-drugie--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "08-kvartira-v-kotoroi-zhivut-drugie--rift-bumazhnaia-skulptura",
-          "x": 1,
+          "id": "08-kvartira-v-kotoroi-zhivut-drugie--n-19-dvor-i-oranzhevye-lavochki",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "бумажная скульптура",
-          "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+          "prompt": null
+        },
+        {
+          "id": "08-kvartira-v-kotoroi-zhivut-drugie--e-17-dush-iz-kotorogo-nelzia-vyiti",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "08-kvartira-v-kotoroi-zhivut-drugie--s-04-dacha-gnedkovyh",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "04-dacha-gnedkovyh",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "08-kvartira-v-kotoroi-zhivut-drugie--w-06-kanava-garazhi-podvorotni",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "06-kanava-garazhi-podvorotni",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -2253,7 +2121,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2387,40 +2255,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "09-hakaton-tretii-po-schetu--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "09-hakaton-tretii-po-schetu--rift-demo-stend-na-kotorom-rabotaet-chto-to-c",
-          "x": 1,
+          "id": "09-hakaton-tretii-po-schetu--n-03-gory-startapery-i-uchenye",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "03-gory-startapery-i-uchenye",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
-          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+          "prompt": null
+        },
+        {
+          "id": "09-hakaton-tretii-po-schetu--e-20-ofis-sbera",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "20-ofis-sbera",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "09-hakaton-tretii-po-schetu--s-01-otel-goticheskii-holl",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "09-hakaton-tretii-po-schetu--w-02-shkola-kabinet-russkogo",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "02-shkola-kabinet-russkogo",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -2477,7 +2401,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2611,56 +2535,52 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "10-komnata-s-grobami--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "10-komnata-s-grobami--s-23-nigeriia-konferenciia",
+          "x": 9,
+          "y": 10,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "23-nigeriia-konferenciia",
+          "toEntryId": "from-n",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "10-komnata-s-grobami--rift-groby",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "n",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "гробы",
-          "toRoomId": "15-osennii-les-s-grobom"
+          "prompt": null
         },
         {
-          "id": "10-komnata-s-grobami--rift-schel-pod-potolkom",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "10-komnata-s-grobami--w-12-tiurma-na-ovoschah",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "12-tiurma-na-ovoschah",
+          "toEntryId": "from-e",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "e",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "щель под потолком",
-          "toRoomId": "m3-sklad-ostavlennogo"
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -2719,7 +2639,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -2829,56 +2749,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "11-evreiskii-gorod--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "11-evreiskii-gorod--n-20-ofis-sbera",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "20-ofis-sbera",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "11-evreiskii-gorod--rift-kinder-siurpriz-s-lavochku",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "киндер-сюрприз с лавочку",
-          "toRoomId": "m2-miasnaia-geometriia"
+          "prompt": null
         },
         {
-          "id": "11-evreiskii-gorod--rift-stavni-na-vsem",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "11-evreiskii-gorod--e-25-metro-i-poezd-kotoryi-ne-tot",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "ставни на всём",
-          "toRoomId": "01-otel-goticheskii-holl"
+          "prompt": null
+        },
+        {
+          "id": "11-evreiskii-gorod--s-21-komnata-niliufar",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "21-komnata-niliufar",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "11-evreiskii-gorod--w-01-otel-goticheskii-holl",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -2935,7 +2895,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3069,56 +3029,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "12-tiurma-na-ovoschah--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "12-tiurma-na-ovoschah--n-m2-miasnaia-geometriia",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "m2-miasnaia-geometriia",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "12-tiurma-na-ovoschah--rift-dyrka-v-zabore",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "дырка в заборе",
-          "toRoomId": "19-dvor-i-oranzhevye-lavochki"
+          "prompt": null
         },
         {
-          "id": "12-tiurma-na-ovoschah--rift-piatimetrovyi-stellazh",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "12-tiurma-na-ovoschah--e-10-komnata-s-grobami",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "10-komnata-s-grobami",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "пятиметровый стеллаж",
-          "toRoomId": "m3-sklad-ostavlennogo"
+          "prompt": null
+        },
+        {
+          "id": "12-tiurma-na-ovoschah--s-22-kreiser",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "22-kreiser",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "12-tiurma-na-ovoschah--w-13-podzemnye-zaly-cu",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "13-podzemnye-zaly-cu",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -3175,7 +3175,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3309,56 +3309,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "13-podzemnye-zaly-cu--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "13-podzemnye-zaly-cu--n-18-kupol-bez-sten",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "18-kupol-bez-sten",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "13-podzemnye-zaly-cu--rift-iaponskii-sidr",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "японский сидр",
-          "toRoomId": "m2-miasnaia-geometriia"
+          "prompt": null
         },
         {
-          "id": "13-podzemnye-zaly-cu--rift-divanchik-na-kotorom-spit-lesha",
-          "x": 3,
-          "y": 1,
+          "id": "13-podzemnye-zaly-cu--e-12-tiurma-na-ovoschah",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "12-tiurma-na-ovoschah",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "13-podzemnye-zaly-cu--s-25-metro-i-poezd-kotoryi-ne-tot",
+          "x": 9,
+          "y": 10,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+          "toEntryId": "from-n",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": "liosha-gnedkov",
+          "facing": "n",
+          "toFigureId": null,
           "keyId": null,
-          "prompt": "диванчик, на котором спит Лёша",
-          "toRoomId": "13-podzemnye-zaly-cu"
+          "prompt": null
+        },
+        {
+          "id": "13-podzemnye-zaly-cu--w-20-ofis-sbera",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "20-ofis-sbera",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -3415,7 +3455,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3525,56 +3565,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
         }
       ],
       "doors": [
         {
-          "id": "14-poliklinika-v-kaluge--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "14-poliklinika-v-kaluge--n-m3-sklad-ostavlennogo",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "m3-sklad-ostavlennogo",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "14-poliklinika-v-kaluge--rift-vydrannyi-zub",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "выдранный зуб",
-          "toRoomId": "m2-miasnaia-geometriia"
+          "prompt": null
         },
         {
-          "id": "14-poliklinika-v-kaluge--rift-iaschik-s-kapibarami-i-kotom",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "14-poliklinika-v-kaluge--e-02-shkola-kabinet-russkogo",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "02-shkola-kabinet-russkogo",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "ящик с капибарами и котом",
-          "toRoomId": "19-dvor-i-oranzhevye-lavochki"
+          "prompt": null
+        },
+        {
+          "id": "14-poliklinika-v-kaluge--s-05-shesterochka",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -3631,7 +3689,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3741,56 +3799,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "15-osennii-les-s-grobom--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "id": "15-osennii-les-s-grobom--e-03-gory-startapery-i-uchenye",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "03-gory-startapery-i-uchenye",
+          "toEntryId": "from-w",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "15-osennii-les-s-grobom--rift-grob",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "гроб",
-          "toRoomId": "10-komnata-s-grobami"
+          "prompt": null
         },
         {
-          "id": "15-osennii-les-s-grobom--rift-piramida-tualet-s-sovetskim-kafelem-vnut",
-          "x": 3,
-          "y": 1,
+          "id": "15-osennii-les-s-grobom--s-02-shkola-kabinet-russkogo",
+          "x": 9,
+          "y": 10,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "02-shkola-kabinet-russkogo",
+          "toEntryId": "from-n",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "n",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "пирамида-туалет с советским кафелем внутри",
-          "toRoomId": "07-bassein-i-odnostoronnii-lift"
+          "prompt": null
+        },
+        {
+          "id": "15-osennii-les-s-grobom--w-m3-sklad-ostavlennogo",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m3-sklad-ostavlennogo",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -3847,7 +3923,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -3957,40 +4033,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "16-norvezhskaia-derevnia-i-pogreb--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "id": "16-norvezhskaia-derevnia-i-pogreb--e-18-kupol-bez-sten",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "18-kupol-bez-sten",
+          "toEntryId": "from-w",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "16-norvezhskaia-derevnia-i-pogreb--rift-pogreb-s-korniami",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "погреб с корнями",
-          "toRoomId": "m1-korni"
+          "prompt": null
+        },
+        {
+          "id": "16-norvezhskaia-derevnia-i-pogreb--s-20-ofis-sbera",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "20-ofis-sbera",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "16-norvezhskaia-derevnia-i-pogreb--w-03-gory-startapery-i-uchenye",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "03-gory-startapery-i-uchenye",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -4047,7 +4157,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -4133,40 +4243,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "17-dush-iz-kotorogo-nelzia-vyiti--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "17-dush-iz-kotorogo-nelzia-vyiti--rift-kafel-na-odnoi-plitke-kotorogo-chto-to-n",
-          "x": 1,
+          "id": "17-dush-iz-kotorogo-nelzia-vyiti--n-01-otel-goticheskii-holl",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "кафель, на одной плитке которого что-то нацарапано",
-          "toRoomId": "m3-sklad-ostavlennogo"
+          "prompt": null
+        },
+        {
+          "id": "17-dush-iz-kotorogo-nelzia-vyiti--e-21-komnata-niliufar",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "21-komnata-niliufar",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "17-dush-iz-kotorogo-nelzia-vyiti--s-m4-razvilka-gde-ty-ostalsia",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m4-razvilka-gde-ty-ostalsia",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "17-dush-iz-kotorogo-nelzia-vyiti--w-08-kvartira-v-kotoroi-zhivut-drugie",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -4223,7 +4389,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -4333,56 +4499,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "18-kupol-bez-sten--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "id": "18-kupol-bez-sten--e-m2-miasnaia-geometriia",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m2-miasnaia-geometriia",
+          "toEntryId": "from-w",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "18-kupol-bez-sten--rift-karkas-kupola-bez-sten",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "каркас купола без стен",
-          "toRoomId": "03-gory-startapery-i-uchenye"
+          "prompt": null
         },
         {
-          "id": "18-kupol-bez-sten--rift-koliuchaia-provoloka",
-          "x": 3,
-          "y": 1,
+          "id": "18-kupol-bez-sten--s-13-podzemnye-zaly-cu",
+          "x": 9,
+          "y": 10,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "13-podzemnye-zaly-cu",
+          "toEntryId": "from-n",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "n",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "колючая проволока",
-          "toRoomId": "m2-miasnaia-geometriia"
+          "prompt": null
+        },
+        {
+          "id": "18-kupol-bez-sten--w-16-norvezhskaia-derevnia-i-pogreb",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -4439,7 +4623,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -4549,56 +4733,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "19-dvor-i-oranzhevye-lavochki--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "19-dvor-i-oranzhevye-lavochki--n-02-shkola-kabinet-russkogo",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "02-shkola-kabinet-russkogo",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "19-dvor-i-oranzhevye-lavochki--rift-podezdnaia-dver-s-domofonom",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "подъездная дверь с домофоном",
-          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie"
+          "prompt": null
         },
         {
-          "id": "19-dvor-i-oranzhevye-lavochki--rift-butylka-riadom-s-turyshevym-ne-pervaia",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "19-dvor-i-oranzhevye-lavochki--e-01-otel-goticheskii-holl",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "01-otel-goticheskii-holl",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "бутылка рядом с Турышевым, не первая",
-          "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+          "prompt": null
+        },
+        {
+          "id": "19-dvor-i-oranzhevye-lavochki--s-08-kvartira-v-kotoroi-zhivut-drugie",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "19-dvor-i-oranzhevye-lavochki--w-05-shesterochka",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -4655,7 +4879,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -4789,56 +5013,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "20-ofis-sbera--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "20-ofis-sbera--n-16-norvezhskaia-derevnia-i-pogreb",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "20-ofis-sbera--rift-elt-s-morrowind",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "ЭЛТ с Morrowind",
-          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+          "prompt": null
         },
         {
-          "id": "20-ofis-sbera--rift-zakrytaia-dver-v-konce-koridora",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "20-ofis-sbera--e-13-podzemnye-zaly-cu",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "13-podzemnye-zaly-cu",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "закрытая дверь в конце коридора",
-          "toRoomId": "21-komnata-niliufar"
+          "prompt": null
+        },
+        {
+          "id": "20-ofis-sbera--s-11-evreiskii-gorod",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "11-evreiskii-gorod",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "20-ofis-sbera--w-09-hakaton-tretii-po-schetu",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "09-hakaton-tretii-po-schetu",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -4895,7 +5159,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -5005,40 +5269,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "21-komnata-niliufar--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "21-komnata-niliufar--rift-okno-s-vidom",
-          "x": 1,
+          "id": "21-komnata-niliufar--n-11-evreiskii-gorod",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "11-evreiskii-gorod",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "окно с видом",
-          "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+          "prompt": null
+        },
+        {
+          "id": "21-komnata-niliufar--e-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "21-komnata-niliufar--w-17-dush-iz-kotorogo-nelzia-vyiti",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -5095,7 +5393,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -5205,40 +5503,74 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "22-kreiser--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "22-kreiser--rift-scena-mikrofon",
-          "x": 1,
+          "id": "22-kreiser--n-12-tiurma-na-ovoschah",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "12-tiurma-na-ovoschah",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "сцена, микрофон",
-          "toRoomId": "13-podzemnye-zaly-cu"
+          "prompt": null
+        },
+        {
+          "id": "22-kreiser--e-23-nigeriia-konferenciia",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "23-nigeriia-konferenciia",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "22-kreiser--w-25-metro-i-poezd-kotoryi-ne-tot",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -5295,7 +5627,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -5405,40 +5737,52 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "23-nigeriia-konferenciia--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "23-nigeriia-konferenciia--rift-vr-shlemy-na-stoikah",
-          "x": 1,
+          "id": "23-nigeriia-konferenciia--n-10-komnata-s-grobami",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "10-komnata-s-grobami",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "VR-шлемы на стойках",
-          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen"
+          "prompt": null
+        },
+        {
+          "id": "23-nigeriia-konferenciia--w-22-kreiser",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "22-kreiser",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -5495,7 +5839,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -5605,40 +5949,52 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--to-hub",
-          "x": 1,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
-          "type": "open",
-          "keyId": null,
-          "prompt": null,
-          "threshold": "door",
-          "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--rift-korobka-s-golosom",
-          "x": 1,
+          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--n-25-metro-i-poezd-kotoryi-ne-tot",
+          "x": 9,
           "y": 1,
           "w": 2,
           "h": 1,
-          "toEntryId": null,
+          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
+          "toEntryId": "from-s",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "коробка с голосом",
-          "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot"
+          "prompt": null
+        },
+        {
+          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--w-21-komnata-niliufar",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "21-komnata-niliufar",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -5695,7 +6051,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#__................#",
+        "#..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -5805,56 +6161,96 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
       "doors": [
         {
-          "id": "25-metro-i-poezd-kotoryi-ne-tot--to-hub",
-          "x": 1,
-          "y": 9,
+          "id": "25-metro-i-poezd-kotoryi-ne-tot--n-13-podzemnye-zaly-cu",
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 1,
-          "toRoomId": "01-otel-goticheskii-holl",
-          "toEntryId": "default",
+          "toRoomId": "13-podzemnye-zaly-cu",
+          "toEntryId": "from-s",
           "type": "open",
-          "keyId": null,
-          "prompt": null,
           "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
-          "toFigureId": null
-        },
-        {
-          "id": "25-metro-i-poezd-kotoryi-ne-tot--rift-tablo-s-raspisaniem-gde-nomera-meniaiuts",
-          "x": 1,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
-          "type": "open",
-          "threshold": "rift",
-          "levelDelta": 0,
-          "facing": null,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "табло с расписанием, где номера меняются",
-          "toRoomId": "m4-razvilka-gde-ty-ostalsia"
+          "prompt": null
         },
         {
-          "id": "25-metro-i-poezd-kotoryi-ne-tot--rift-chuzhie-sumki-na-platforme",
-          "x": 3,
-          "y": 1,
-          "w": 2,
-          "h": 1,
-          "toEntryId": null,
+          "id": "25-metro-i-poezd-kotoryi-ne-tot--e-22-kreiser",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "22-kreiser",
+          "toEntryId": "from-w",
           "type": "open",
-          "threshold": "rift",
+          "threshold": "door",
           "levelDelta": 0,
-          "facing": null,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
-          "prompt": "чужие сумки на платформе",
-          "toRoomId": "m3-sklad-ostavlennogo"
+          "prompt": null
+        },
+        {
+          "id": "25-metro-i-poezd-kotoryi-ne-tot--s-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "25-metro-i-poezd-kotoryi-ne-tot--w-11-evreiskii-gorod",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "11-evreiskii-gorod",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
         }
       ],
       "figureSlots": [
@@ -5923,9 +6319,54 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
         }
       ],
-      "doors": [],
+      "doors": [
+        {
+          "id": "m1-korni--n-06-kanava-garazhi-podvorotni",
+          "x": 9,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "06-kanava-garazhi-podvorotni",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "m1-korni--e-04-dacha-gnedkovyh",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "04-dacha-gnedkovyh",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
       "figureSlots": [],
       "graphics": {
         "floorRole": "floor",
@@ -5986,9 +6427,54 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
-      "doors": [],
+      "doors": [
+        {
+          "id": "m2-miasnaia-geometriia--s-12-tiurma-na-ovoschah",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "12-tiurma-na-ovoschah",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "m2-miasnaia-geometriia--w-18-kupol-bez-sten",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "18-kupol-bez-sten",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
       "figureSlots": [],
       "graphics": {
         "floorRole": "floor",
@@ -6049,9 +6535,54 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 5.5,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.8,
+          "facing": "n"
         }
       ],
-      "doors": [],
+      "doors": [
+        {
+          "id": "m3-sklad-ostavlennogo--e-15-osennii-les-s-grobom",
+          "x": 19,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "15-osennii-les-s-grobom",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "m3-sklad-ostavlennogo--s-14-poliklinika-v-kaluge",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
       "figureSlots": [],
       "graphics": {
         "floorRole": "floor",
@@ -6112,9 +6643,54 @@
           "x": 10,
           "y": 9,
           "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.2,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 5.5,
+          "facing": "e"
         }
       ],
-      "doors": [],
+      "doors": [
+        {
+          "id": "m4-razvilka-gde-ty-ostalsia--n-17-dush-iz-kotorogo-nelzia-vyiti",
+          "x": 9,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "m4-razvilka-gde-ty-ostalsia--w-04-dacha-gnedkovyh",
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "04-dacha-gnedkovyh",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
       "figureSlots": [],
       "graphics": {
         "floorRole": "floor",

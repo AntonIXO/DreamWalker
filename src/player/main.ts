@@ -10,7 +10,6 @@
 import "pixi.js/prepare";
 import {
   Application,
-  Assets,
   Container,
   CullerPlugin,
   extensions,
@@ -20,7 +19,11 @@ import {
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import { sonPack } from "../../dreams/son/pack";
 import { LOCK_STARTED_AT } from "../../dreams/son/meta";
-import { loadAtlas, loadExternalTextures } from "./render/atlasTextures";
+import {
+  loadAtlas,
+  loadExternalTextures,
+  loadOptionalTexture,
+} from "./render/atlasTextures";
 import { Camera, DEFAULT_CAMERA, FOLLOW_VIEW_TILES } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
 import { DreamFx } from "./render/dreamFx";
@@ -37,7 +40,7 @@ import {
   applyPopulationRetargets,
   installPopulation,
 } from "./game/patch";
-import { walkFrame } from "./game/player";
+import { playerTile, walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
@@ -91,21 +94,31 @@ function loadArtifact(): DreamArtifact {
 async function boot(): Promise<void> {
   const artifact = loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
-  const apparatusUrl = new URL("../../assets/autofag.png", import.meta.url)
-    .href;
-  const apparatusTexture = await Assets.load<Texture | undefined>(
+  // Authored figure paintings live in repo `assets/` until they have walk sheets.
+  // The Eye replaces the watcher silhouette; the autophage goes to the crypto-bro,
+  // whose face nobody in the dream has seen.
+  const figureArt: Array<{ id: string; alias: string; url: string }> = [
     {
-      src: apparatusUrl,
-      alias: "lobby-apparatus",
-      data: { scaleMode: "nearest" },
+      id: "glaz",
+      alias: "figure-glaz",
+      url: new URL("../../assets/ВоНеСиМо-patient.png", import.meta.url).href,
     },
     {
-      strategy: "skip",
-      onError: (error) =>
-        console.warn("[dream] lobby apparatus skipped", error),
+      id: "kripto-bro",
+      alias: "figure-kripto-bro",
+      url: new URL("../../assets/autofag.png", import.meta.url).href,
     },
+  ];
+  const figureTextures = new Map<string, Texture>();
+  const figurePortraitUrls = new Map<string, string>();
+  await Promise.all(
+    figureArt.map(async ({ id, alias, url }) => {
+      const texture = await loadOptionalTexture(url, alias);
+      if (!texture) return;
+      figureTextures.set(id, texture);
+      figurePortraitUrls.set(id, url);
+    }),
   );
-  if (apparatusTexture) apparatusTexture.source.scaleMode = "nearest";
   const clueTextures = await loadExternalTextures(
     DREAM_URL,
     artifact.content.clues.flatMap((clue) =>
@@ -197,7 +210,7 @@ async function boot(): Promise<void> {
   // A meta-space's picture has no edges and must not move with the camera.
   app.stage.addChild(rooms.overlay);
 
-  const actors = new ActorLayer(atlas, clueTextures);
+  const actors = new ActorLayer(atlas, clueTextures, figureTextures);
   worldRoot.addChild(actors.root);
 
   const playerSprite = new WalkerSprite(atlas, "player");
@@ -262,10 +275,15 @@ async function boot(): Promise<void> {
   );
 
   const figuresHere = (): typeof world.figures =>
-    world.figures.filter((figure) => figure.roomId === world.currentRoomId);
+    world.figures.filter(
+      (figure) =>
+        rooms.shown.has(figure.roomId) || figure.roomId === world.currentRoomId,
+    );
   const interestsHere = (): typeof world.interests =>
     world.interests.filter(
-      (interest) => interest.roomId === world.currentRoomId,
+      (interest) =>
+        rooms.shown.has(interest.roomId) ||
+        interest.roomId === world.currentRoomId,
     );
 
   const thinking = new ModelThinkingIndicator(uiLayer);
@@ -310,98 +328,108 @@ async function boot(): Promise<void> {
     }
   };
 
-  const dialogue = new DialoguePanel(uiLayer, mind, thinking, artifact, atlas, {
-    onOpen: (figure) => {
-      input.setCaptured(true);
-      observations.noteApproach(figure.id);
-      const roomName =
-        world.roomById.get(figure.roomId)?.name ?? "неизвестное место";
-      journal.addPerson(
-        cycle.number,
-        figure.id,
-        figure.name,
-        `${figure.activity}. Встречен: ${roomName}.`,
-      );
-    },
-    onClose: () => input.setCaptured(false),
-    onTell: (figure, quoted) => {
-      // §3: a tell is only useful if the player can go back and see what caused it.
-      journal.addPerson(
-        cycle.number,
-        figure.id,
-        figure.name,
-        `Заметил чужого по словам «${quoted}».`,
-        "tell",
-      );
-    },
-    onKnows: (figure) => {
-      // The picture agreeing with the face. This used to fire on the тонус counter
-      // wrapping — arithmetic nobody could see; now it fires when somebody has you.
-      shiver.trigger(1);
-      dreamFx.surge();
-      journal.addPerson(
-        cycle.number,
-        figure.id,
-        figure.name,
-        "Понял и молчит.",
-        "tell",
-      );
-    },
-    onShard: noteShard,
-    onMemorySpent: () => {
-      addExhaustion(world, MEMORY_EXHAUSTION);
-      mindMemory.setExhaustion(world.exhaustion);
-      session.noteMemorySpent();
-      journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
-      // «Пустота» — nothing left to spend, so the sanitar stays. Not dead; stuck.
-      if (mindMemory.availableMemories().length === 0) {
+  const dialogue = new DialoguePanel(
+    uiLayer,
+    mind,
+    thinking,
+    artifact,
+    atlas,
+    {
+      onOpen: (figure) => {
         input.setCaptured(true);
-        finale.openVoid();
-      }
+        observations.noteApproach(figure.id);
+        const roomName =
+          world.roomById.get(figure.roomId)?.name ?? "неизвестное место";
+        journal.addPerson(
+          cycle.number,
+          figure.id,
+          figure.name,
+          `${figure.activity}. Встречен: ${roomName}.`,
+        );
+      },
+      onClose: () => input.setCaptured(false),
+      onTell: (figure, quoted) => {
+        // §3: a tell is only useful if the player can go back and see what caused it.
+        journal.addPerson(
+          cycle.number,
+          figure.id,
+          figure.name,
+          `Заметил чужого по словам «${quoted}».`,
+          "tell",
+        );
+      },
+      onKnows: (figure) => {
+        // The picture agreeing with the face. This used to fire on the тонус counter
+        // wrapping — arithmetic nobody could see; now it fires when somebody has you.
+        shiver.trigger(1);
+        dreamFx.surge();
+        journal.addPerson(
+          cycle.number,
+          figure.id,
+          figure.name,
+          "Понял и молчит.",
+          "tell",
+        );
+      },
+      onShard: noteShard,
+      onMemorySpent: () => {
+        addExhaustion(world, MEMORY_EXHAUSTION);
+        mindMemory.setExhaustion(world.exhaustion);
+        session.noteMemorySpent();
+        journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
+        // «Пустота» — nothing left to spend, so the sanitar stays. Not dead; stuck.
+        if (mindMemory.availableMemories().length === 0) {
+          input.setCaptured(true);
+          finale.openVoid();
+        }
+      },
+      onJournal: (figure, text) => {
+        journal.addPerson(cycle.number, figure.id, figure.name, text);
+      },
+      leverageOn: (figureId) => leverageOn(world, figureId),
+      onLeverage: (aboutFigureId, leverageId) => {
+        if (!learnLeverage(world, aboutFigureId, leverageId)) return;
+        const about = world.figures.find((f) => f.id === aboutFigureId);
+        journal.addPerson(
+          cycle.number,
+          aboutFigureId,
+          about?.name ?? aboutFigureId,
+          "Про него сказали лишнее.",
+          "tell",
+        );
+        hud.whisper("Ты теперь знаешь про него то, чего знать не должен.", 5);
+      },
+      onPressed: (figure, outcome) => {
+        applyPatch(
+          world,
+          {
+            kind: "markFigure",
+            figureId: figure.id,
+            fate: outcome,
+            quoted: null,
+            reason: "sanitar:press",
+          },
+          cycle.number,
+        );
+        observations.noteFate(figure.id, "press");
+        journal.addPerson(
+          cycle.number,
+          figure.id,
+          figure.name,
+          outcome === "broken"
+            ? "Замолчал насовсем."
+            : "Отдал и говорит иначе.",
+          "tell",
+        );
+      },
+      onResonance: (declaration) => {
+        dialogue.close();
+        finale.openResonance(declaration);
+      },
+      exhaustion: () => world.exhaustion,
     },
-    onJournal: (figure, text) => {
-      journal.addPerson(cycle.number, figure.id, figure.name, text);
-    },
-    leverageOn: (figureId) => leverageOn(world, figureId),
-    onLeverage: (aboutFigureId, leverageId) => {
-      if (!learnLeverage(world, aboutFigureId, leverageId)) return;
-      const about = world.figures.find((f) => f.id === aboutFigureId);
-      journal.addPerson(
-        cycle.number,
-        aboutFigureId,
-        about?.name ?? aboutFigureId,
-        "Про него сказали лишнее.",
-        "tell",
-      );
-      hud.whisper("Ты теперь знаешь про него то, чего знать не должен.", 5);
-    },
-    onPressed: (figure, outcome) => {
-      applyPatch(
-        world,
-        {
-          kind: "markFigure",
-          figureId: figure.id,
-          fate: outcome,
-          quoted: null,
-          reason: "sanitar:press",
-        },
-        cycle.number,
-      );
-      observations.noteFate(figure.id, "press");
-      journal.addPerson(
-        cycle.number,
-        figure.id,
-        figure.name,
-        outcome === "broken" ? "Замолчал насовсем." : "Отдал и говорит иначе.",
-        "tell",
-      );
-    },
-    onResonance: (declaration) => {
-      dialogue.close();
-      finale.openResonance(declaration);
-    },
-    exhaustion: () => world.exhaustion,
-  });
+    figurePortraitUrls,
+  );
 
   const verbRing = new VerbRing(uiLayer, {
     onClose: () => input.setCaptured(false),
@@ -558,8 +586,8 @@ async function boot(): Promise<void> {
         for (const room of world.rooms) rooms.invalidate(room.id);
         session.enterRoomImmediate();
         session.noteCycleReset();
-        actors.syncFigures(figuresHere(), tileSize);
-        actors.syncInterests(interestsHere(), tileSize);
+        actors.syncFigures(figuresHere(), tileSize, world);
+        actors.syncInterests(interestsHere(), tileSize, world);
         populationInstalled = true;
       }
       controls.close();
@@ -595,24 +623,17 @@ async function boot(): Promise<void> {
     void enterDream(mode);
   };
 
-  const lobby = new LobbySession(
-    uiLayer,
-    artifact,
-    atlas,
-    camera,
-    {
-      onTerminal: () => {
-        input.setCaptured(true);
-        connect.open();
-      },
-      onControls: () => {
-        input.setCaptured(true);
-        controls.open();
-      },
-      onEnterDream: requestEntry,
+  const lobby = new LobbySession(uiLayer, artifact, atlas, camera, {
+    onTerminal: () => {
+      input.setCaptured(true);
+      connect.open();
     },
-    apparatusTexture ?? null,
-  );
+    onControls: () => {
+      input.setCaptured(true);
+      controls.open();
+    },
+    onEnterDream: requestEntry,
+  });
   cameraRoot.addChild(lobby.scene.root);
   // Deliberately not awaited. `prepare.upload` resolves on a ticker tick, and a
   // backgrounded tab has no `requestAnimationFrame` — so awaiting it means the game
@@ -824,17 +845,14 @@ async function boot(): Promise<void> {
         dialogue.currentFigureId,
         world.currentRoomId,
         {
-          x: session.player.x / room.tileSize,
-          y: session.player.y / room.tileSize,
+          x: session.player.x / room.tileSize - (room.originX ?? 0),
+          y: session.player.y / room.tileSize - (room.originY ?? 0),
         },
       );
     }
 
-    // Rooms are discrete, so the camera always frames the one we are in. There is no
-    // follow mode and no interior mask: neighbours are not hidden, they are not drawn.
-    // A room that fits the screen is framed whole; a floor larger than the frame is
-    // followed. `DreamRoom.camera` is the switch and it is authored per room, so the two
-    // can coexist in one dream.
+    // A street map is one country: follow the walker. A single-room dream still
+    // frames the authored scene.
     if (room.camera === "follow") {
       camera.follow(session.player.x, session.player.y, delta);
     } else {
@@ -975,8 +993,8 @@ async function boot(): Promise<void> {
     // --- draw
     const walker = session.player;
     playerSprite.update(walker.x, walker.y, walker.facing, walkFrame(walker));
-    actors.syncFigures(figuresHere(), room.tileSize);
-    actors.syncInterests(interestsHere(), room.tileSize);
+    actors.syncFigures(figuresHere(), room.tileSize, world);
+    actors.syncInterests(interestsHere(), room.tileSize, world);
 
     if (room.id === "m11-zamok-po-vremeni") {
       const elapsed = Math.max(0, Date.now() - Date.parse(LOCK_STARTED_AT));
@@ -997,10 +1015,8 @@ async function boot(): Promise<void> {
       },
       delta,
     );
-    debug.update(
-      Math.floor(walker.x / room.tileSize),
-      Math.floor(walker.y / room.tileSize),
-    );
+    const tile = playerTile(walker, room);
+    debug.update(tile.x, tile.y);
 
     input.endFrame();
   });

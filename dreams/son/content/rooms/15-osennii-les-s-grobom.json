@@ -8,15 +8,15 @@
   "cells": [
     "####################",
     "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "_.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -125,56 +125,74 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
+    },
+    {
+      "id": "from-w",
+      "x": 1.5,
+      "y": 5.5,
+      "facing": "e"
     }
   ],
   "doors": [
     {
-      "id": "15-osennii-les-s-grobom--to-hub",
-      "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "id": "15-osennii-les-s-grobom--e-03-gory-startapery-i-uchenye",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "03-gory-startapery-i-uchenye",
+      "toEntryId": "from-w",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     },
     {
-      "id": "15-osennii-les-s-grobom--rift-grob",
+      "id": "15-osennii-les-s-grobom--s-02-shkola-kabinet-russkogo",
       "x": 1,
-      "y": 1,
-      "w": 2,
+      "y": 10,
+      "w": 18,
       "h": 1,
-      "toEntryId": null,
+      "toRoomId": "02-shkola-kabinet-russkogo",
+      "toEntryId": "from-n",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "n",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "гроб",
-      "toRoomId": "10-komnata-s-grobami"
+      "prompt": null
     },
     {
-      "id": "15-osennii-les-s-grobom--rift-piramida-tualet-s-sovetskim-kafelem-vnut",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
+      "id": "15-osennii-les-s-grobom--w-m3-sklad-ostavlennogo",
+      "x": 0,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "m3-sklad-ostavlennogo",
+      "toEntryId": "from-e",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "e",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "пирамида-туалет с советским кафелем внутри",
-      "toRoomId": "07-bassein-i-odnostoronnii-lift"
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -197,7 +215,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": false,
     "note": "(−1, +2). Смешно и невыносимо одновременно"
@@ -212,5 +230,7 @@
     "sound": "та самая труба из мема, но замедленная в четыре раза и пропущенная через ревер, до состояния, где мелодия почти не узнаётся — узнавание должно приходить на третьей секунде и бить под дых"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 20,
+  "originY": 0
 }

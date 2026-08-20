@@ -5,13 +5,9 @@
  * because rooms are discrete now and there are three different ways out of one — a
  * threshold, a timer, and the sleeper moving something while you were not looking.
  *
- * Touching a thing used to be a fourth: LSD: Dream Emulator's linking, which Osamu Sato
- * built out of being bad at racing games — he kept hitting walls and wondered what would
- * happen if hitting something *was* the point. It is gone. What it bought, the map
- * connecting without logic, is bought instead by the `rift` threshold, and §4.1 is the
- * reason: «Никаких телепортов на ровном месте — всегда есть створ, через который прошли.»
- * Poking the world is a safe channel again, and being thrown somewhere costs you the walk
- * into the doorway that threw you.
+ * Touching a thing used to be a fourth: LSD: Dream Emulator's linking. That, and the
+ * rift wall that replaced it, are gone. Rooms sit on a street grid; a door on the east
+ * wall is the room to the east. Poking the world is a safe channel again.
  */
 
 import type { RoomHotspot } from "../../shared/room";
@@ -20,6 +16,13 @@ import { makeRng } from "../../shared/rng";
 import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
 import type { Shiver } from "../render/shiver";
+import {
+  isStreetWorld,
+  roomContainingPlayer,
+  streetRoomsToShow,
+  toLocalPixels,
+  worldBounds,
+} from "../../shared/street";
 import { findTarget, type InteractTarget } from "./interact";
 import { whoIsLed } from "./fates";
 import { applyPatch } from "./patch";
@@ -121,7 +124,9 @@ export class DreamSession {
       }
     }
 
-    this.tickDwell(room, deltaSeconds);
+    this.crossStreet();
+
+    this.tickDwell(this.room, deltaSeconds);
     this.tickMeta(deltaSeconds);
     this.runScripts("update", deltaSeconds);
   }
@@ -139,11 +144,12 @@ export class DreamSession {
       if (hotspot.dwellMs === null || room.closedHotspotIds.has(hotspot.id)) {
         continue;
       }
+      const local = toLocalPixels(room, this.player.x, this.player.y);
       const near =
         !moving &&
         Math.hypot(
-          hotspot.x * room.tileSize - this.player.x,
-          hotspot.y * room.tileSize - this.player.y,
+          hotspot.x * room.tileSize - local.x,
+          hotspot.y * room.tileSize - local.y,
         ) <=
           hotspot.reach * room.tileSize;
       if (!near) {
@@ -227,9 +233,9 @@ export class DreamSession {
       }
 
       const from = this.world.currentRoomId;
-      // A meta-space remembers where it took you from, since you do not leave it by
-      // walking — «выход не ищется, он случается».
-      if (room.kind === "meta" && room.meta) {
+      // A meta-space with no door still dumps you back on a timer. Once it has a
+      // threshold of its own, you leave by walking, like anywhere else.
+      if (room.kind === "meta" && room.meta && room.doors.length === 0) {
         const rng = makeRng(`meta:${roomId}:${visitCount(this.world, roomId)}`);
         const span = room.meta.maxMs - room.meta.minMs;
         this.meta = {
@@ -242,8 +248,7 @@ export class DreamSession {
 
       this.world.currentRoomId = roomId;
       placeAtEntry(this.player, room, entryId);
-      this.scene.show(room);
-      this.frameFor(room);
+      this.showRoom(room);
       this.dwellMs.clear();
 
       this.leadAlong(roomId);
@@ -277,20 +282,57 @@ export class DreamSession {
     this.showRoom(currentRoom(this.world));
   }
 
-  private showRoom(room: RoomState): void {
-    this.scene.show(room);
-    this.frameFor(room);
+  private showRoom(room: RoomState, cutCamera = true): void {
+    if (isStreetWorld(this.world.rooms)) {
+      this.scene.showStreet(
+        streetRoomsToShow(this.world.rooms, room.id) as RoomState[],
+        room,
+      );
+    } else {
+      this.scene.show(room);
+    }
+    if (cutCamera) this.frameFor(room);
+  }
+
+  /**
+   * Stepped across a punched opening into the next room. No cut, no placeAtEntry —
+   * the walker is already standing on that floor.
+   */
+  private crossStreet(): void {
+    if (!isStreetWorld(this.world.rooms)) return;
+    const next = roomContainingPlayer(
+      this.world.rooms,
+      this.player.x,
+      this.player.y,
+      this.world.currentRoomId,
+    );
+    if (!next || next.id === this.world.currentRoomId) return;
+    const room = this.world.roomById.get(next.id);
+    if (!room) return;
+    this.world.currentRoomId = room.id;
+    this.showRoom(room, false);
+    this.dwellMs.clear();
+    this.leadAlong(room.id);
+    const visits = noteVisit(this.world, room.id);
+    this.escalateRevisit(room, visits);
+    this.callbacks.onEnterRoom(room, visits);
+    this.runScripts("enter");
   }
 
   /**
    * How this room is looked at.
    *
-   * `frame` holds the whole room on screen at an integer zoom, which is what a 20×11
-   * scene is for. `follow` keeps a fixed window and tracks the walker, which is what a
-   * floor bigger than the screen needs. Arriving is always a cut — panning to a room you
-   * have just been thrown into would announce the geometry rather than the arrival.
+   * A street map is one country: the camera follows the walker across rooms. A
+   * single-room dream still frames or follows the authored scene.
    */
   private frameFor(room: RoomState): void {
+    if (isStreetWorld(this.world.rooms)) {
+      const bounds = worldBounds(this.world.rooms);
+      this.camera.setWorldSize(bounds.w, bounds.h);
+      this.camera.fit(FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h);
+      this.camera.cutTo(this.player.x, this.player.y);
+      return;
+    }
     this.camera.setWorldSize(room.width, room.height);
     if (room.camera === "follow") {
       this.camera.fit(FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h);

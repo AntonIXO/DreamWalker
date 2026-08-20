@@ -6,17 +6,17 @@
   "width": 20,
   "height": 11,
   "cells": [
-    "####################",
-    "#==================#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#..................#",
-    "#__................#",
-    "####################"
+    "#__________________#",
+    "#__________________#",
+    "#.................._",
+    "#.................._",
+    "#.................._",
+    "#.................._",
+    "#.................._",
+    "#.................._",
+    "#.................._",
+    "#.................._",
+    "#__________________#"
   ],
   "cellVariants": {},
   "props": [
@@ -125,56 +125,74 @@
       "x": 10,
       "y": 9,
       "facing": "n"
+    },
+    {
+      "id": "from-n",
+      "x": 10,
+      "y": 2.2,
+      "facing": "s"
+    },
+    {
+      "id": "from-e",
+      "x": 18.5,
+      "y": 5.5,
+      "facing": "w"
+    },
+    {
+      "id": "from-s",
+      "x": 10,
+      "y": 8.8,
+      "facing": "n"
     }
   ],
   "doors": [
     {
-      "id": "06-kanava-garazhi-podvorotni--to-hub",
+      "id": "06-kanava-garazhi-podvorotni--n-05-shesterochka",
       "x": 1,
-      "y": 9,
-      "w": 2,
-      "h": 1,
-      "toRoomId": "01-otel-goticheskii-holl",
-      "toEntryId": "default",
+      "y": 0,
+      "w": 18,
+      "h": 2,
+      "toRoomId": "05-shesterochka",
+      "toEntryId": "from-s",
       "type": "open",
-      "keyId": null,
-      "prompt": null,
       "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null
+      "facing": "s",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
     },
     {
-      "id": "06-kanava-garazhi-podvorotni--rift-liuk-v-kanalizaciiu",
+      "id": "06-kanava-garazhi-podvorotni--e-08-kvartira-v-kotoroi-zhivut-drugie",
+      "x": 19,
+      "y": 2,
+      "w": 1,
+      "h": 8,
+      "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
+      "toEntryId": "from-w",
+      "type": "open",
+      "threshold": "door",
+      "levelDelta": 0,
+      "facing": "w",
+      "toFigureId": null,
+      "keyId": null,
+      "prompt": null
+    },
+    {
+      "id": "06-kanava-garazhi-podvorotni--s-m1-korni",
       "x": 1,
-      "y": 1,
-      "w": 2,
+      "y": 10,
+      "w": 18,
       "h": 1,
-      "toEntryId": null,
+      "toRoomId": "m1-korni",
+      "toEntryId": "from-n",
       "type": "open",
-      "threshold": "rift",
+      "threshold": "door",
       "levelDelta": 0,
-      "facing": null,
+      "facing": "n",
       "toFigureId": null,
       "keyId": null,
-      "prompt": "люк в канализацию",
-      "toRoomId": "m1-korni"
-    },
-    {
-      "id": "06-kanava-garazhi-podvorotni--rift-chuzhaia-zhenschina-svalivshaiasia-siuda",
-      "x": 3,
-      "y": 1,
-      "w": 2,
-      "h": 1,
-      "toEntryId": null,
-      "type": "open",
-      "threshold": "rift",
-      "levelDelta": 0,
-      "facing": null,
-      "toFigureId": null,
-      "keyId": null,
-      "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
-      "toRoomId": "10-komnata-s-grobami"
+      "prompt": null
     }
   ],
   "figureSlots": [
@@ -197,7 +215,7 @@
     "backdropFit": "cells",
     "glitchPreset": "none"
   },
-  "camera": "frame",
+  "camera": "follow",
   "revisit": {
     "escalates": true,
     "note": "(−6, +4). Самая тёмная динамика в игре"
@@ -212,5 +230,7 @@
     "sound": "мотор на холостых, приближается неравномерно; хлюпанье; тишина в момент, когда открывается дверь машины — **вырезать весь звук на 1.5 секунды**, это дешевле любого крика"
   },
   "buildingId": null,
-  "level": 0
+  "level": 0,
+  "originX": 0,
+  "originY": 33
 }
