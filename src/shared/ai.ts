@@ -13,7 +13,7 @@ export interface CodexRateLimitWindow {
 }
 
 export interface CodexAccountStatus {
-  provider: "codex" | "anthropic";
+  provider: "codex" | "anthropic" | "openai";
   state:
     "disconnected" | "authorizing" | "connected" | "incompatible" | "error";
   email: string | null;

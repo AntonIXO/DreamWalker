@@ -10,7 +10,7 @@ import type {
 } from "../shared/ai";
 import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
-import { DEFAULT_ANTHROPIC_MODEL, normaliseAnthropicBaseURL } from "./config";
+import { resolveAiBackend } from "./config";
 
 const root = process.cwd();
 const port = Number(process.env.DREAMWALKER_API_PORT ?? 8080);
@@ -19,21 +19,7 @@ const codexPath = process.env.DREAMWALKER_CODEX_PATH ?? "codex";
 const codexHome = resolve(
   process.env.DREAMWALKER_CODEX_HOME ?? `${root}/.dreamwalker/codex-home`,
 );
-const configuredAnthropicBaseURL = process.env.ANTHROPIC_BASE_URL?.trim();
-const anthropicBaseURL = configuredAnthropicBaseURL
-  ? normaliseAnthropicBaseURL(configuredAnthropicBaseURL)
-  : undefined;
-const anthropicAuthToken = process.env.ANTHROPIC_AUTH_TOKEN?.trim();
-const anthropicModel =
-  process.env.ANTHROPIC_MODEL?.trim() || DEFAULT_ANTHROPIC_MODEL;
-const anthropic =
-  anthropicBaseURL && anthropicAuthToken && anthropicModel
-    ? {
-        baseURL: anthropicBaseURL,
-        authToken: anthropicAuthToken,
-        model: anthropicModel,
-      }
-    : undefined;
+const backend = resolveAiBackend();
 
 const account = new CodexAccountProcess({
   codexPath,
@@ -45,7 +31,8 @@ const agents = new AgentRuntime(account, {
   secretPath: process.env.DREAMWALKER_SECRET_FILE,
   codexPath,
   codexHome,
-  anthropic,
+  anthropic: backend.anthropic,
+  openai: backend.openai,
   verbose: process.env.DREAMWALKER_AI_VERBOSE === "1",
 });
 
@@ -180,7 +167,7 @@ async function api(
   }
 
   if (pathname === "/api/codex/account" && request.method === "GET") {
-    if (agents.providerMode === "anthropic")
+    if (agents.providerMode !== "codex")
       return json(agents.connectionStatus());
     const snapshot = account.snapshot();
     return json(
@@ -191,9 +178,9 @@ async function api(
   }
 
   if (pathname === "/api/codex/login" && request.method === "POST") {
-    if (agents.providerMode === "anthropic") {
+    if (agents.providerMode !== "codex") {
       return json(
-        { error: "Anthropic-compatible provider configured by the server." },
+        { error: "Inference provider is configured by the server." },
         409,
       );
     }
@@ -215,9 +202,9 @@ async function api(
   }
 
   if (pathname === "/api/codex/logout" && request.method === "POST") {
-    if (agents.providerMode === "anthropic") {
+    if (agents.providerMode !== "codex") {
       return json(
-        { error: "Anthropic-compatible provider is configured by the server." },
+        { error: "Inference provider is configured by the server." },
         409,
       );
     }

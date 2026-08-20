@@ -1,4 +1,4 @@
-/** ChatGPT device OAuth, or a server-configured Anthropic-compatible provider. */
+/** ChatGPT device OAuth, or a server-configured Anthropic / OpenAI-compatible provider. */
 
 import type { DeviceLogin } from "../../shared/ai";
 import {
@@ -93,9 +93,11 @@ export class ConnectPanel {
   private render(): void {
     const account = this.root.querySelector<HTMLElement>(".connect-account")!;
     const connected = this.settings.state === "connected";
-    const anthropic = this.settings.provider === "anthropic";
-    this.descriptionEl.textContent = anthropic
-      ? "Разум этого сна подключён владельцем сервера через Anthropic-compatible endpoint. Ключ остаётся на сервере."
+    const serverBound = this.settings.provider !== "codex";
+    this.descriptionEl.textContent = serverBound
+      ? this.settings.provider === "openai"
+        ? "Разум этого сна подключён владельцем сервера через OpenAI-compatible CloseRouter. Ключ остаётся на сервере."
+        : "Разум этого сна подключён владельцем сервера через Anthropic-compatible endpoint. Ключ остаётся на сервере."
       : "Подключение использует лимиты твоего плана ChatGPT через Codex OAuth. Игра покажет одноразовый код; API-ключ не нужен и не принимается.";
     account.textContent = connected
       ? [
@@ -110,8 +112,8 @@ export class ConnectPanel {
         "Модель не подключена; работает сценарный сон.");
     account.style.whiteSpace = "pre-line";
 
-    this.loginButton.hidden = connected || anthropic;
-    this.logoutButton.hidden = !connected || anthropic;
+    this.loginButton.hidden = connected || serverBound;
+    this.logoutButton.hidden = !connected || serverBound;
     this.cancelButton.hidden = !this.login;
     this.loginBox.hidden = !this.login;
     if (this.login) {

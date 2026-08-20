@@ -195,12 +195,24 @@ The server normalizes the base URL to `/v1`, sends the token as bearer auth, and
 JSON-in-text compatibility responses while still validating every result with Zod. The
 token remains server-side and is never bundled by Vite.
 
+### OpenAI-compatible provider (CloseRouter)
+
+`OPENAI_KEY` is a CloseRouter bearer. With it set, the server uses
+https://api.closerouter.dev/v1 unless `DREAMWALKER_AI_PROVIDER` forces another backend.
+
+```bash
+DREAMWALKER_AI_PROVIDER=openai
+OPENAI_BASE_URL=https://api.closerouter.dev/v1
+OPENAI_KEY=closerouter_…
+OPENAI_MODEL=openai/gpt-5.6-luna
+```
+
 ## Status
 
 Working: format-4 authored rooms, bible link graph, inhabit/training catalog deal,
 indexed-PNG art pipeline, PixiJS player, typed runtime patches, AI
 population/dialogue/examination/cycle/finale, Codex device OAuth, an
-Anthropic-compatible provider (Gemini by default when `ANTHROPIC_*` is set),
+Anthropic-compatible provider, OpenAI-compatible CloseRouter (`openai/gpt-5.6-luna`),
 persistent memory economy, journal, and deterministic offline fallback.
 
 Not built: final human-painted room/portrait atlases and multi-server dream federation.

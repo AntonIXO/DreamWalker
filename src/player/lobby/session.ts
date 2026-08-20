@@ -81,7 +81,7 @@ export class LobbySession {
     if (!this.settings) return false;
     return (
       this.settings.state === "connected" ||
-      this.settings.provider === "anthropic"
+      this.settings.provider !== "codex"
     );
   }
 

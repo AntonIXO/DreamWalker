@@ -10,6 +10,7 @@ import {
   isTimeoutError,
 } from "ai-sdk-provider-codex-app-server";
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from "@ai-sdk/openai";
 import {
   generateText,
   Output,
@@ -52,6 +53,7 @@ import {
 } from "../shared/population";
 import { mayYieldShard } from "../shared/yield";
 import type { CodexAccountProcess } from "./codex-account";
+import type { AiProviderMode, AnthropicBackend, OpenAIBackend } from "./config";
 import { dialogueTurnMessages } from "./dialogue-messages";
 
 const MAX_PATCHES = 8;
@@ -484,11 +486,8 @@ export interface AgentRuntimeOptions {
   secretPath?: string;
   codexPath: string;
   codexHome: string;
-  anthropic?: {
-    baseURL: string;
-    authToken: string;
-    model: string;
-  };
+  anthropic?: AnthropicBackend;
+  openai?: OpenAIBackend;
   verbose?: boolean;
 }
 
@@ -588,11 +587,33 @@ export class AgentRuntime {
   private readonly dreamDir: string;
   private readonly wallet: DreamWallet;
 
-  get providerMode(): "codex" | "anthropic" {
-    return this.options.anthropic ? "anthropic" : "codex";
+  get providerMode(): AiProviderMode {
+    if (this.options.openai) return "openai";
+    if (this.options.anthropic) return "anthropic";
+    return "codex";
+  }
+
+  /** Proxies that return JSON as text instead of native structured output. */
+  private get usesJsonInText(): boolean {
+    return this.providerMode === "anthropic" || this.providerMode === "openai";
   }
 
   connectionStatus(): CodexAccountStatus {
+    if (this.options.openai) {
+      return {
+        provider: "openai",
+        state: "connected",
+        email: null,
+        planType: "OpenAI-compatible CloseRouter",
+        model: this.options.openai.model,
+        effort: "provider default",
+        modelAvailable: true,
+        effortAvailable: true,
+        primary: null,
+        secondary: null,
+        message: null,
+      };
+    }
     if (!this.options.anthropic) return this.account.snapshot();
     return {
       provider: "anthropic",
@@ -611,6 +632,17 @@ export class AgentRuntime {
 
   private ensureModel(): LanguageModel {
     if (this.model) return this.model;
+    if (this.options.openai) {
+      const openai = createOpenAI({
+        name: "closerouter",
+        baseURL: this.options.openai.baseURL,
+        apiKey: this.options.openai.apiKey,
+      });
+      // Chat Completions, not the Responses API — CloseRouter's OpenAI-like surface.
+      this.model = openai.chat(this.options.openai.model);
+      this.disposeModel = null;
+      return this.model;
+    }
     if (this.options.anthropic) {
       const anthropic = createAnthropic({
         baseURL: this.options.anthropic.baseURL,
@@ -683,7 +715,7 @@ export class AgentRuntime {
     const turn = Array.isArray(input)
       ? { messages: input }
       : { prompt: input };
-    if (this.providerMode === "anthropic") {
+    if (this.usesJsonInText) {
       const run = (next: string | ModelMessage[]) =>
         generateText({
           model: this.ensureModel(),
@@ -880,7 +912,7 @@ export class AgentRuntime {
       );
 
       let output: DialogueResult;
-      if (this.providerMode === "anthropic") {
+      if (this.usesJsonInText) {
         const stream = streamText({
           model: this.ensureModel(),
           system: structuredInstructions(
