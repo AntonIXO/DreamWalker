@@ -443,6 +443,8 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
       camera: "frame" as const,
       buildingId: null,
       level: 0,
+      originX: 0,
+      originY: 0,
       revisit: {
         // §06's ditch is the canonical case, and it says so in its own mood line.
         escalates: room.moodDowner <= -4,

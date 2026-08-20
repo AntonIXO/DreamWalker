@@ -639,7 +639,7 @@ async function boot(): Promise<void> {
   // backgrounded tab has no `requestAnimationFrame` — so awaiting it means the game
   // never finishes booting until the tab is looked at, and `window.dreamWalker` is
   // never exposed. Pre-uploading textures is an optimisation; boot is not.
-  void app.renderer.prepare.upload(lobby.scene.root);
+  void (app.renderer as { prepare?: { upload?: (target: unknown) => Promise<unknown> } }).prepare?.upload?.(lobby.scene.root);
   lobby.setMind(mindSettings);
 
   /**
