@@ -142,6 +142,29 @@ export class Soundtrack {
     const previous = this.bed;
     this.bed = bed;
     this.start(bed);
+
+    if (bed === "finale") {
+      this.stopCue();
+      // Cut all other playing music immediately
+      (Object.keys(this.voices) as Bed[]).forEach((other) => {
+        if (other !== "finale") {
+          const voice = this.voices[other];
+          this.ramp(voice.gain.gain, 0, 0.05);
+          if (voice.source) {
+            try {
+              voice.source.stop();
+            } catch {
+              // Ignore if already stopped
+            }
+            voice.source.disconnect();
+            voice.source = null;
+          }
+        }
+      });
+      this.rampBed("finale", this.bedTarget(), 0.2);
+      return;
+    }
+
     this.rampBed(previous, 0, FADE_SECONDS);
     this.rampBed(bed, this.bedTarget(), FADE_SECONDS);
   }
