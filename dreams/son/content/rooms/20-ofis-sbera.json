@@ -22,18 +22,18 @@
   "props": [
     {
       "id": "elt-s-morrowind",
-      "x": 3,
-      "y": 3,
+      "x": 11,
+      "y": 2,
       "w": 2,
-      "h": 2,
+      "h": 3,
       "solid": true,
       "role": null,
       "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
     },
     {
       "id": "shirokii-monitor-s-chem-to-korporativnym",
-      "x": 6,
-      "y": 3,
+      "x": 4,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -42,8 +42,8 @@
     },
     {
       "id": "beidzhi-na-shnurkah",
-      "x": 8,
-      "y": 3,
+      "x": 17,
+      "y": 6,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,8 +52,8 @@
     },
     {
       "id": "lift",
-      "x": 11,
-      "y": 3,
+      "x": 15,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -62,11 +62,11 @@
     },
     {
       "id": "zakrytaia-dver-v-konce-koridora",
-      "x": 13,
-      "y": 3,
+      "x": 9,
+      "y": 1,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
     }
@@ -75,7 +75,7 @@
     {
       "id": "elt-s-morrowind",
       "kind": "look",
-      "x": 4,
+      "x": 12,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "ЭЛТ с Morrowind",
@@ -89,8 +89,8 @@
     {
       "id": "shirokii-monitor-s-chem-to-korporativnym",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 5,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "широкий монитор с чем-то корпоративным",
       "clueId": null,
@@ -103,8 +103,8 @@
     {
       "id": "beidzhi-na-shnurkah",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 18,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "бейджи на шнурках",
       "clueId": null,
@@ -117,8 +117,8 @@
     {
       "id": "lift",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 16,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "лифт",
       "clueId": null,
@@ -131,8 +131,8 @@
     {
       "id": "zakrytaia-dver-v-konce-koridora",
       "kind": "look",
-      "x": 14,
-      "y": 5.15,
+      "x": 10,
+      "y": 3.15,
       "reach": 1.4,
       "prompt": "закрытая дверь в конце коридора",
       "clueId": null,
@@ -244,13 +244,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
+      "x": 6,
       "y": 6
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 13,
+      "y": 7
     }
   ],
   "graphics": {

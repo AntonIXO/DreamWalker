@@ -22,17 +22,17 @@
   "props": [
     {
       "id": "grob",
-      "x": 3,
+      "x": 9,
       "y": 3,
       "w": 2,
-      "h": 2,
+      "h": 3,
       "solid": true,
       "role": null,
       "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
     },
     {
       "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
-      "x": 6,
+      "x": 4,
       "y": 3,
       "w": 2,
       "h": 2,
@@ -42,21 +42,21 @@
     },
     {
       "id": "listia-shurshaschie-ne-v-takt-shagam",
-      "x": 8,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 11,
+      "y": 6,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
     },
     {
       "id": "fotografiia-klassnogo-rukovoditelia-lica",
-      "x": 11,
+      "x": 14,
       "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
     }
@@ -65,8 +65,8 @@
     {
       "id": "grob",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 10,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "гроб",
       "clueId": null,
@@ -79,7 +79,7 @@
     {
       "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
       "kind": "look",
-      "x": 7,
+      "x": 5,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "пирамида-туалет с советским кафелем внутри",
@@ -93,8 +93,8 @@
     {
       "id": "listia-shurshaschie-ne-v-takt-shagam",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 11.5,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "листья, шуршащие не в такт шагам",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "fotografiia-klassnogo-rukovoditelia-lica",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 14.5,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "фотография классного руководителя, лица не разобрать",
       "clueId": null,
@@ -198,13 +198,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
-      "y": 6
+      "x": 7,
+      "y": 7
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 12,
+      "y": 7
     }
   ],
   "graphics": {

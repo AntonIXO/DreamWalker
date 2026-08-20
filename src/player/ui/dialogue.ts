@@ -16,6 +16,7 @@
 
 import { highestPortraitState } from "../../shared/content";
 import { clampPortraitByExhaustion } from "../game/exhaustion";
+import { bandAt, coverForPortrait, weatherFor } from "../game/forecast";
 import type { FigureState } from "../game/world";
 import type { DreamMind, TurnResponse } from "../mind/types";
 import type { DreamArtifact } from "../../shared/dream";
@@ -52,6 +53,7 @@ export interface DialogueCallbacks {
 export class DialoguePanel {
   private readonly root: HTMLElement;
   private readonly nameEl: HTMLElement;
+  private readonly skyEl: HTMLElement;
   private readonly actionEl: HTMLElement;
   private readonly portraitEl: HTMLElement;
   private readonly logEl: HTMLElement;
@@ -83,6 +85,7 @@ export class DialoguePanel {
       <div class="dialogue-portrait" aria-hidden="true"><div></div></div>
       <div class="dialogue-copy">
         <div class="dialogue-name"></div>
+        <div class="dialogue-sky" hidden></div>
         <div class="dialogue-action" hidden></div>
         <div class="dialogue-log"></div>
         <form class="dialogue-form">
@@ -112,6 +115,7 @@ export class DialoguePanel {
     parent.appendChild(this.root);
 
     this.nameEl = this.root.querySelector(".dialogue-name")!;
+    this.skyEl = this.root.querySelector(".dialogue-sky")!;
     this.actionEl = this.root.querySelector(".dialogue-action")!;
     this.portraitEl = this.root.querySelector(".dialogue-portrait > div")!;
     this.logEl = this.root.querySelector(".dialogue-log")!;
@@ -191,7 +195,6 @@ export class DialoguePanel {
     this.idlePlaceholder = npc.placeholder ?? "что ты скажешь";
     this.inputEl.placeholder = this.idlePlaceholder;
     this.memoryEl.hidden = npc.hideMemoryOffer === true;
-    this.renderPortrait();
     this.logEl.replaceChildren();
     for (const line of this.mind.conversation(figure.id)) {
       this.line(
@@ -202,6 +205,7 @@ export class DialoguePanel {
     this.refreshMemories();
     this.refreshLeverage();
     if (figure.id === "glaz") figure.portraitState = "knows";
+    this.paintFace();
     if (preselectLeverage && this.leverageEl.options.length > 1) {
       this.leverageEl.selectedIndex = 1;
     }
@@ -221,6 +225,22 @@ export class DialoguePanel {
     }
     const npc = this.figure ? npcFor(this.figure.id) : null;
     this.leverageEl.hidden = Boolean(npc?.hideLeverage) || held.length === 0;
+  }
+
+  private paintFace(): void {
+    const figure = this.figure;
+    if (!figure) {
+      delete this.root.dataset.face;
+      this.skyEl.hidden = true;
+      this.skyEl.textContent = "";
+      return;
+    }
+    this.root.dataset.face = figure.portraitState;
+    const sky = weatherFor(figure.portraitState);
+    this.skyEl.hidden = !sky;
+    this.skyEl.textContent = sky ?? "";
+    this.skyEl.dataset.sky = bandAt(coverForPortrait(figure.portraitState)).id;
+    this.renderPortrait();
   }
 
   private renderPortrait(): void {
@@ -262,6 +282,7 @@ export class DialoguePanel {
     this.voice.halt();
     this.root.hidden = true;
     this.figure = null;
+    this.paintFace();
     this.inputEl.blur();
     this.refreshVoiceChrome("idle");
     this.callbacks.onClose();
@@ -458,7 +479,7 @@ export class DialoguePanel {
     figure.portraitState = npc.skipExhaustionClamp
       ? raised
       : clampPortraitByExhaustion(this.callbacks.exhaustion(), raised, before);
-    this.renderPortrait();
+    this.paintFace();
 
     // The rung that matters. Announced once, on the way up, so the picture can agree
     // with the face — «портрет "знает" — самый важный ассет в игре».

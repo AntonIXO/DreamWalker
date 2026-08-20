@@ -49,7 +49,7 @@ const TALKING: string[] = [
   "Говори словами, а не выбором из списка. Формулировка — и есть ход.",
   "Пробел в разговоре — микрофон. Пауза отправляет фразу, её всё ещё видно и можно поправить.",
   "Точный вопрос даёт больше и оставляет след. Осторожный безопасен и пуст.",
-  "Если фигура переспросила про твоё слово — она заметила. Другого предупреждения не будет.",
+  "Если фигура переспросила про твоё слово — она заметила. Чем яснее день, тем хуже.",
 ];
 
 function rowsHtml(list: readonly Row[]): string {
@@ -64,10 +64,16 @@ function rowsHtml(list: readonly Row[]): string {
 export interface ControlsCallbacks {
   /** Fired when the panel closes, so whatever opened it can come back. */
   onClose(): void;
+  /** Soundtrack mute, if the beds loaded. */
+  music?: {
+    enabled(): boolean;
+    toggle(): boolean;
+  };
 }
 
 export class ControlsPanel {
   private readonly root: HTMLElement;
+  private readonly musicEl: HTMLButtonElement | null;
 
   constructor(
     parent: HTMLElement,
@@ -84,11 +90,17 @@ export class ControlsPanel {
       <h3>Служебное</h3>
       <div class="keys dim">${rowsHtml(DEBUG)}</div>
       <div class="row">
+        ${this.callbacks.music ? `<button class="controls-music ghost" type="button"></button>` : ""}
         <button class="controls-close ghost end" type="button">Отойти</button>
       </div>
     `;
     parent.appendChild(this.root);
 
+    this.musicEl = this.root.querySelector(".controls-music");
+    this.musicEl?.addEventListener("click", () => {
+      this.callbacks.music?.toggle();
+      this.syncMusic();
+    });
     this.root
       .querySelector(".controls-close")!
       .addEventListener("click", () => this.close());
@@ -99,7 +111,15 @@ export class ControlsPanel {
   }
 
   open(): void {
+    this.syncMusic();
     this.root.hidden = false;
+  }
+
+  syncMusic(): void {
+    if (!this.musicEl || !this.callbacks.music) return;
+    const on = this.callbacks.music.enabled();
+    this.musicEl.textContent = on ? "Музыка: вкл" : "Музыка: выкл";
+    this.musicEl.setAttribute("aria-pressed", on ? "true" : "false");
   }
 
   close(): void {

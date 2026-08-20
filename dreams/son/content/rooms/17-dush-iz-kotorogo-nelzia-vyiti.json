@@ -22,31 +22,31 @@
   "props": [
     {
       "id": "dver",
-      "x": 3,
-      "y": 3,
+      "x": 6,
+      "y": 2,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
     },
     {
       "id": "ventil",
-      "x": 6,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 9,
+      "y": 2,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
     },
     {
       "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
-      "x": 8,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 11,
+      "y": 2,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
     }
@@ -55,8 +55,8 @@
     {
       "id": "dver",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 7,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "дверь",
       "clueId": null,
@@ -69,8 +69,8 @@
     {
       "id": "ventil",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 9.5,
+      "y": 3.15,
       "reach": 1.4,
       "prompt": "вентиль",
       "clueId": null,
@@ -83,8 +83,8 @@
     {
       "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 11.5,
+      "y": 3.15,
       "reach": 1.4,
       "prompt": "кафель, на одной плитке которого что-то нацарапано",
       "clueId": null,
@@ -196,13 +196,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
+      "x": 6,
       "y": 6
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 13,
+      "y": 7
     }
   ],
   "graphics": {

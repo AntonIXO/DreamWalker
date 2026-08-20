@@ -154,7 +154,7 @@ function figureWorld(
 }
 
 function seatFigure(
-  world: WorldState,
+  _world: WorldState,
   figure: FigureState,
   room: RoomState,
   x: number,

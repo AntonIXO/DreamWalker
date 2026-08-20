@@ -23,37 +23,37 @@
     {
       "id": "krovat",
       "x": 3,
-      "y": 3,
-      "w": 2,
-      "h": 2,
+      "y": 4,
+      "w": 5,
+      "h": 3,
       "solid": true,
       "role": null,
       "image": "assets/objects/21-komnata-niliufar--krovat.png"
     },
     {
       "id": "okno-s-vidom",
-      "x": 6,
-      "y": 3,
-      "w": 2,
+      "x": 7,
+      "y": 1,
+      "w": 3,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
     },
     {
       "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
-      "x": 8,
+      "x": 12,
       "y": 3,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
     },
     {
       "id": "veschi-tancevalnoi-gruppy",
-      "x": 11,
-      "y": 3,
+      "x": 16,
+      "y": 6,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -65,8 +65,8 @@
     {
       "id": "krovat",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 5.5,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "кровать",
       "clueId": null,
@@ -79,8 +79,8 @@
     {
       "id": "okno-s-vidom",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 8.5,
+      "y": 3.15,
       "reach": 1.4,
       "prompt": "окно с видом",
       "clueId": null,
@@ -93,7 +93,7 @@
     {
       "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
       "kind": "look",
-      "x": 9,
+      "x": 13,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
@@ -107,8 +107,8 @@
     {
       "id": "veschi-tancevalnoi-gruppy",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 17,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "вещи танцевальной группы",
       "clueId": null,
@@ -198,13 +198,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
-      "y": 6
+      "x": 8,
+      "y": 7
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 12,
+      "y": 8
     }
   ],
   "graphics": {

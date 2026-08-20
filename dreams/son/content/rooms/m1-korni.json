@@ -75,7 +75,13 @@
       "prompt": null
     }
   ],
-  "figureSlots": [],
+  "figureSlots": [
+    {
+      "id": "a",
+      "x": 8,
+      "y": 5
+    }
+  ],
   "graphics": {
     "floorRole": "floor",
     "wallRole": "wall",

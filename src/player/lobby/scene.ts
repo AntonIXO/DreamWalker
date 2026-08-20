@@ -7,7 +7,7 @@
  * so the drawings stay as crisp as the tiles once the camera zooms them.
  */
 
-import { Container, Graphics, Sprite } from "pixi.js";
+import { Container, Graphics, Sprite, type Texture } from "pixi.js";
 
 import { variantFor, type AtlasTextures } from "../render/atlasTextures";
 import { cellAt } from "./definition";
@@ -32,6 +32,7 @@ export class LobbyScene {
     private readonly definition: LobbyDefinition,
     artifact: DreamArtifact,
     atlas: AtlasTextures,
+    patientTexture: Texture | null = null,
   ) {
     this.colors = lobbyColors(artifact);
     this.root = new Container({
@@ -63,13 +64,6 @@ export class LobbyScene {
     signals.zIndex = 3;
 
     for (const piece of definition.furniture) {
-      const node = this.drawFurniture(piece.kind, piece.w, piece.h);
-      node.x = piece.x * definition.tileSize;
-      node.y = piece.y * definition.tileSize;
-      node.zIndex =
-        piece.y * definition.tileSize + piece.h * definition.tileSize;
-      node.eventMode = "none";
-      this.furniture.addChild(node);
       if (piece.kind === "terminal") {
         this.terminalLed.x = piece.x * definition.tileSize;
         this.terminalLed.y = piece.y * definition.tileSize;
@@ -80,6 +74,27 @@ export class LobbyScene {
         this.apparatusLed.y = piece.y * definition.tileSize;
         signals.addChild(this.apparatusLed);
       }
+      if (
+        patientTexture &&
+        (piece.kind === "bed" ||
+          piece.kind === "apparatus" ||
+          piece.kind === "drip")
+      ) {
+        continue;
+      }
+      const node = this.drawFurniture(piece.kind, piece.w, piece.h);
+      node.x = piece.x * definition.tileSize;
+      node.y = piece.y * definition.tileSize;
+      node.zIndex =
+        piece.y * definition.tileSize + piece.h * definition.tileSize;
+      node.eventMode = "none";
+      this.furniture.addChild(node);
+    }
+
+    if (patientTexture) {
+      this.furniture.addChild(
+        this.placePatient(patientTexture, definition.tileSize),
+      );
     }
 
     this.furniture.cacheAsTexture({
@@ -200,6 +215,32 @@ export class LobbyScene {
     }
 
     return layer;
+  }
+
+  /**
+   * The tank painting covers the south-west bed / apparatus / drip block.
+   * Scaled to a handful of tiles so it sits in the room instead of eating it.
+   */
+  private placePatient(texture: Texture, tileSize: number): Sprite {
+    const sprite = new Sprite({
+      texture,
+      anchor: { x: 0.5, y: 1 },
+      roundPixels: true,
+      eventMode: "none",
+      label: "lobby-patient",
+    });
+    const maxW = 8 * tileSize;
+    const maxH = 8 * tileSize;
+    const scale = Math.min(
+      maxW / Math.max(1, texture.width),
+      maxH / Math.max(1, texture.height),
+    );
+    sprite.scale.set(scale);
+    // Centre of bed (1..5) + apparatus (5..7), feet on the furniture's south edge.
+    sprite.x = Math.round(4 * tileSize);
+    sprite.y = Math.round(10 * tileSize);
+    sprite.zIndex = 10 * tileSize;
+    return sprite;
   }
 
   private drawFurniture(kind: FurnitureKind, w: number, h: number): Container {

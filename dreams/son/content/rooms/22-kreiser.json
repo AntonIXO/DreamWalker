@@ -22,18 +22,18 @@
   "props": [
     {
       "id": "scena-mikrofon",
-      "x": 3,
-      "y": 3,
+      "x": 9,
+      "y": 2,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/22-kreiser--scena-mikrofon.png"
     },
     {
       "id": "nakrytye-stoly",
-      "x": 6,
-      "y": 3,
+      "x": 4,
+      "y": 5,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -42,8 +42,8 @@
     },
     {
       "id": "spasatelnye-krugi",
-      "x": 8,
-      "y": 3,
+      "x": 14,
+      "y": 6,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,11 +52,11 @@
     },
     {
       "id": "voda-za-bortom-slishkom-blizko-k-palube",
-      "x": 11,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 1,
+      "y": 4,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
     }
@@ -65,8 +65,8 @@
     {
       "id": "scena-mikrofon",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 10,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "сцена, микрофон",
       "clueId": null,
@@ -79,8 +79,8 @@
     {
       "id": "nakrytye-stoly",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 5,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "накрытые столы",
       "clueId": null,
@@ -93,8 +93,8 @@
     {
       "id": "spasatelnye-krugi",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 15,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "спасательные круги",
       "clueId": null,
@@ -107,7 +107,7 @@
     {
       "id": "voda-za-bortom-slishkom-blizko-k-palube",
       "kind": "look",
-      "x": 12,
+      "x": 1.5,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "вода за бортом, слишком близко к палубе",
@@ -198,12 +198,12 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
+      "x": 7,
       "y": 6
     },
     {
       "id": "b",
-      "x": 14,
+      "x": 12,
       "y": 6
     }
   ],

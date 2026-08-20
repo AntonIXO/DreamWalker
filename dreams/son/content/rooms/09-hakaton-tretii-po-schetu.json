@@ -22,8 +22,8 @@
   "props": [
     {
       "id": "noutbuki-s-prodavlennymi-ekranami",
-      "x": 3,
-      "y": 3,
+      "x": 4,
+      "y": 5,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -32,8 +32,8 @@
     },
     {
       "id": "odinakovye-naushniki",
-      "x": 6,
-      "y": 3,
+      "x": 14,
+      "y": 4,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -42,8 +42,8 @@
     },
     {
       "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
-      "x": 8,
-      "y": 3,
+      "x": 9,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,8 +52,8 @@
     },
     {
       "id": "rozovyi-gashish-v-vitrine",
-      "x": 11,
-      "y": 3,
+      "x": 15,
+      "y": 6,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -62,11 +62,11 @@
     },
     {
       "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
-      "x": 13,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 11,
+      "y": 7,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
     }
@@ -75,8 +75,8 @@
     {
       "id": "noutbuki-s-prodavlennymi-ekranami",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 5,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "ноутбуки с продавленными экранами",
       "clueId": null,
@@ -89,8 +89,8 @@
     {
       "id": "odinakovye-naushniki",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 15,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "одинаковые наушники",
       "clueId": null,
@@ -103,8 +103,8 @@
     {
       "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 10,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
       "clueId": null,
@@ -117,8 +117,8 @@
     {
       "id": "rozovyi-gashish-v-vitrine",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 16,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "розовый гашиш в витрине",
       "clueId": null,
@@ -131,8 +131,8 @@
     {
       "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
       "kind": "look",
-      "x": 14,
-      "y": 5.15,
+      "x": 11.5,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "пять тысяч наличными, которые уже отдал",
       "clueId": null,
@@ -244,12 +244,12 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
+      "x": 7,
       "y": 6
     },
     {
       "id": "b",
-      "x": 14,
+      "x": 12,
       "y": 6
     }
   ],

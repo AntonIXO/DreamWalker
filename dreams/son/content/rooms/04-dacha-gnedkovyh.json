@@ -22,8 +22,8 @@
   "props": [
     {
       "id": "plita",
-      "x": 3,
-      "y": 3,
+      "x": 6,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -32,18 +32,18 @@
     },
     {
       "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
-      "x": 6,
+      "x": 15,
       "y": 3,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
     },
     {
       "id": "telefon-s-odnim-kontaktom-lesha",
-      "x": 8,
-      "y": 3,
+      "x": 11,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,8 +52,8 @@
     },
     {
       "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
-      "x": 11,
-      "y": 3,
+      "x": 2,
+      "y": 5,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -65,8 +65,8 @@
     {
       "id": "plita",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 7,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "плита",
       "clueId": null,
@@ -79,7 +79,7 @@
     {
       "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
       "kind": "look",
-      "x": 7,
+      "x": 16,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "отодвинутый кусок стены с чёрным проёмом",
@@ -93,8 +93,8 @@
     {
       "id": "telefon-s-odnim-kontaktom-lesha",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 12,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "телефон с одним контактом «Лёша»",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 3,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
       "clueId": null,
@@ -198,13 +198,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
-      "y": 6
+      "x": 7,
+      "y": 7
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 11,
+      "y": 7
     }
   ],
   "graphics": {

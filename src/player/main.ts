@@ -27,9 +27,14 @@ import {
 import { Camera, DEFAULT_CAMERA, FOLLOW_VIEW_TILES } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
 import { DreamFx } from "./render/dreamFx";
+import { Sky } from "./render/sky";
 import { RoomScene } from "./render/roomScene";
 import { Shiver } from "./render/shiver";
-import { ActorLayer, WalkerSprite } from "./render/walkerView";
+import {
+  ActorLayer,
+  WalkerSprite,
+  type AuthoredWalk,
+} from "./render/walkerView";
 import { Cycle, Journal } from "./game/cycle";
 import { WordNotebook } from "./game/wordNotebook";
 import { Action, Input } from "./game/input";
@@ -44,6 +49,7 @@ import { playerTile, walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
+import { forecastFor, type Forecast } from "./game/forecast";
 import { MEMORY_EXHAUSTION } from "./game/exhaustion";
 import { addExhaustion } from "./game/world";
 import { learnLeverage, leverageOn } from "./game/fates";
@@ -69,6 +75,7 @@ import { ModelThinkingIndicator } from "./ui/modelThinking";
 import { WordNotebookPanel } from "./ui/wordNotebook";
 import { ClueInspectPanel } from "./ui/clueInspect";
 import { VerbRing } from "./ui/verbRing";
+import { Soundtrack } from "./soundtrack";
 
 type AppPhase = "lobby" | "enteringDream" | "dream";
 
@@ -91,6 +98,33 @@ function loadArtifact(): DreamArtifact {
   return validateDreamArtifact(sonPack.artifact());
 }
 
+const SANITAR_WORLD_HEIGHT = 64;
+
+async function loadSanitarWalk(): Promise<AuthoredWalk | null> {
+  const southUrls = [0, 1].map(
+    (i) =>
+      new URL(`../../assets/figures/sanitar/s-${i}.png`, import.meta.url).href,
+  );
+  const eastUrls = [0, 1, 2, 3, 4, 5].map(
+    (i) =>
+      new URL(`../../assets/figures/sanitar/e-${i}.png`, import.meta.url).href,
+  );
+  const south = await Promise.all(
+    southUrls.map((url, i) => loadOptionalTexture(url, `sanitar-s-${i}`)),
+  );
+  const east = await Promise.all(
+    eastUrls.map((url, i) => loadOptionalTexture(url, `sanitar-e-${i}`)),
+  );
+  if (south.some((texture) => !texture) || east.some((texture) => !texture)) {
+    return null;
+  }
+  return {
+    south: south as Texture[],
+    east: east as Texture[],
+    worldHeight: SANITAR_WORLD_HEIGHT,
+  };
+}
+
 async function boot(): Promise<void> {
   const artifact = loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
@@ -101,8 +135,12 @@ async function boot(): Promise<void> {
       url: new URL("../../assets/figures/glaz.png", import.meta.url).href,
     },
     {
-      id: "kripto-bro",
+      id: "ubiitsa",
       url: new URL("../../assets/figures/autofag.png", import.meta.url).href,
+    },
+    {
+      id: "hudozhnik",
+      url: new URL("../../assets/figures/derevo.png", import.meta.url).href,
     },
   ];
   const figureTextures = new Map<string, Texture>();
@@ -180,6 +218,8 @@ async function boot(): Promise<void> {
     eventMode: "none",
     interactiveChildren: false,
   });
+  const sky = new Sky(app.screen.width, app.screen.height);
+  sky.attach(app.stage);
   app.stage.addChild(cameraRoot);
 
   // Everything the dream camera moves lives under here; UI does not. One render
@@ -209,7 +249,12 @@ async function boot(): Promise<void> {
   const actors = new ActorLayer(atlas, clueTextures, figureTextures);
   worldRoot.addChild(actors.root);
 
-  const playerSprite = new WalkerSprite(atlas, "player");
+  const sanitarWalk = await loadSanitarWalk();
+  const lobbyPatient = await loadOptionalTexture(
+    new URL("../../assets/figures/lobby-patient.png", import.meta.url).href,
+    "lobby-patient",
+  );
+  const playerSprite = new WalkerSprite(atlas, "player", sanitarWalk);
   actors.add(playerSprite);
 
   const tileSize = artifact.rooms[0]?.tileSize ?? 16;
@@ -449,6 +494,7 @@ async function boot(): Promise<void> {
       if (!result.ok) return;
       observations.noteFate(figure.id, verb);
       if (verb === "kill") {
+        soundtrack.play("kill");
         shiver.trigger(1);
         dreamFx.surge();
         hud.whisper("Он больше не там, где был.", 5);
@@ -550,8 +596,17 @@ async function boot(): Promise<void> {
     input.setCaptured(false);
   };
 
+  const soundtrack = new Soundtrack(undefined, () => controls.syncMusic());
   const controls = new ControlsPanel(uiLayer, {
     onClose: releaseLobbyPanel,
+    music: {
+      enabled: () => soundtrack.isEnabled,
+      toggle: () => soundtrack.toggle(),
+    },
+  });
+  soundtrack.attachChrome(uiLayer);
+  void soundtrack.load().catch((error: unknown) => {
+    console.error("[soundtrack]", error);
   });
   const connect = new ConnectPanel(uiLayer, {
     onChange: (settings) => lobby.setMind(settings),
@@ -563,6 +618,7 @@ async function boot(): Promise<void> {
     populationLoading = true;
     phase = "enteringDream";
     input.setCaptured(true);
+    soundtrack.setBed("game");
     try {
       const deal =
         mode === "live" && !populationInstalled
@@ -603,6 +659,7 @@ async function boot(): Promise<void> {
     } catch (error) {
       console.error("[population]", error);
       phase = "lobby";
+      soundtrack.setBed("menu");
       hud.whisper("Сон не смог вспомнить всех. Попробуй ещё раз.", 6);
       input.setCaptured(false);
       lobby.panelClosed();
@@ -621,17 +678,24 @@ async function boot(): Promise<void> {
     void enterDream(mode);
   };
 
-  const lobby = new LobbySession(uiLayer, artifact, atlas, camera, {
-    onTerminal: () => {
-      input.setCaptured(true);
-      connect.open();
+  const lobby = new LobbySession(
+    uiLayer,
+    artifact,
+    atlas,
+    camera,
+    {
+      onTerminal: () => {
+        input.setCaptured(true);
+        connect.open();
+      },
+      onControls: () => {
+        input.setCaptured(true);
+        controls.open();
+      },
+      onEnterDream: requestEntry,
     },
-    onControls: () => {
-      input.setCaptured(true);
-      controls.open();
-    },
-    onEnterDream: requestEntry,
-  });
+    { sanitarWalk, patientTexture: lobbyPatient },
+  );
   cameraRoot.addChild(lobby.scene.root);
   // Deliberately not awaited. `prepare.upload` resolves on a ticker tick, and a
   // backgrounded tab has no `requestAnimationFrame` — so awaiting it means the game
@@ -648,6 +712,7 @@ async function boot(): Promise<void> {
   const layoutView = (): void => {
     camera.resize(app.screen.width, app.screen.height);
     dreamFx.resize(app.screen.width, app.screen.height);
+    sky.resize(app.screen.width, app.screen.height);
     if (phase === "lobby" || phase === "enteringDream") {
       camera.setWorldSize(lobby.definition.width, lobby.definition.height);
       camera.fit(lobby.definition.width, lobby.definition.height);
@@ -776,8 +841,13 @@ async function boot(): Promise<void> {
     atlas,
     lobby,
     dreamFx,
+    sky,
+    soundtrack,
     get pressure(): DreamPressure {
       return pressureNow();
+    },
+    get forecast(): Forecast {
+      return forecastFor(world.figures, world.currentRoomId);
     },
     get phase(): AppPhase {
       return phase;
@@ -813,7 +883,9 @@ async function boot(): Promise<void> {
       }
       if (phase === "lobby") lobby.update(input, delta, panelOpen);
       else camera.update(delta);
+      soundtrack.setDucked(false);
       dreamFx.setEnabled(false);
+      sky.setEnabled(false);
       const heldNow =
         connect.isOpen ||
         controls.isOpen ||
@@ -839,6 +911,7 @@ async function boot(): Promise<void> {
     // latency, a cycle transition, or the finale owns the simulation.
     const simulationPaused = mind.waiting || restarting || finale.isOpen;
     hud.setMuted(held);
+    soundtrack.setDucked(dialogue.isOpen || finale.isOpen);
 
     if (!held && !simulationPaused) {
       session.update(input.axis(), delta);
@@ -1000,10 +1073,21 @@ async function boot(): Promise<void> {
     dreamFx.setPreset(room.graphics.glitchPreset);
     dreamFx.setPressure(pressureNow());
     dreamFx.update(delta);
+    const forecast = forecastFor(world.figures, world.currentRoomId);
+    sky.setEnabled(true);
+    sky.setCover(forecast.cover);
+    sky.update(delta);
 
     // --- draw
     const walker = session.player;
-    playerSprite.update(walker.x, walker.y, walker.facing, walkFrame(walker));
+    playerSprite.update(
+      walker.x,
+      walker.y,
+      walker.facing,
+      walkFrame(walker),
+      walker.moving,
+      walker.travelled,
+    );
     actors.syncFigures(figuresHere(), room.tileSize, world, camera.zoom);
     actors.syncInterests(interestsHere(), room.tileSize, world);
 
@@ -1023,6 +1107,7 @@ async function boot(): Promise<void> {
         remainingSeconds: cycle.remainingSeconds,
         journalCount: journal.size,
         whisper: prompt,
+        forecast,
       },
       delta,
     );

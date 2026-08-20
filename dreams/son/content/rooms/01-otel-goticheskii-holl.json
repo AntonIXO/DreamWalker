@@ -22,8 +22,8 @@
   "props": [
     {
       "id": "tri-tysiachi-nomerkov",
-      "x": 3,
-      "y": 3,
+      "x": 17,
+      "y": 7,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -32,27 +32,27 @@
     },
     {
       "id": "chuzhie-shtany-na-polu",
-      "x": 6,
-      "y": 3,
+      "x": 2,
+      "y": 8,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
     },
     {
       "id": "kanat-do-svoda",
-      "x": 8,
-      "y": 3,
-      "w": 2,
+      "x": 1,
+      "y": 2,
+      "w": 1,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
     },
     {
       "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
-      "x": 11,
+      "x": 14,
       "y": 3,
       "w": 2,
       "h": 2,
@@ -62,7 +62,7 @@
     },
     {
       "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
-      "x": 13,
+      "x": 5,
       "y": 3,
       "w": 2,
       "h": 2,
@@ -72,11 +72,11 @@
     },
     {
       "id": "vedro-i-shvabra-uborschika",
-      "x": 16,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 18,
+      "y": 9,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
     }
@@ -85,8 +85,8 @@
     {
       "id": "tri-tysiachi-nomerkov",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 18,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "три тысячи номерков",
       "clueId": null,
@@ -99,8 +99,8 @@
     {
       "id": "chuzhie-shtany-na-polu",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 3,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "чужие штаны на полу",
       "clueId": null,
@@ -113,8 +113,8 @@
     {
       "id": "kanat-do-svoda",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 1.5,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "канат до свода",
       "clueId": null,
@@ -127,7 +127,7 @@
     {
       "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
       "kind": "look",
-      "x": 12,
+      "x": 15,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
@@ -141,7 +141,7 @@
     {
       "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
       "kind": "look",
-      "x": 14,
+      "x": 6,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
@@ -155,8 +155,8 @@
     {
       "id": "vedro-i-shvabra-uborschika",
       "kind": "look",
-      "x": 17,
-      "y": 5.15,
+      "x": 18.5,
+      "y": 10.15,
       "reach": 1.4,
       "prompt": "ведро и швабра уборщика",
       "clueId": null,
@@ -290,18 +290,23 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
-      "y": 6
+      "x": 6,
+      "y": 7
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 13,
+      "y": 7
     },
     {
       "id": "c",
       "x": 10,
-      "y": 5
+      "y": 8
+    },
+    {
+      "id": "d",
+      "x": 8,
+      "y": 7
     }
   ],
   "graphics": {

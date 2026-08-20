@@ -62,6 +62,62 @@ const TILE_BY_CELL: Record<string, number> = {
   tree: Tile.TREE,
 };
 
+const SKY_FLOOR: ReadonlySet<string> = new Set([
+  "grass",
+  "grassTall",
+  "path",
+  "floor",
+  "floorAlt",
+  "threshold",
+]);
+
+const WALKABLE: ReadonlySet<string> = new Set([
+  "grass",
+  "grassTall",
+  "path",
+  "floor",
+  "floorAlt",
+  "threshold",
+  "void",
+]);
+
+/**
+ * Roads between places do not paint their ground. Interior tree fill is skipped
+ * too — otherwise the street is a cobbled dungeon and the sky only shows in the
+ * two-tile path. Trees that touch a walkable cell stay, as a silhouette.
+ */
+export function routeOpensOntoSky(
+  tags: readonly string[],
+  cell: string,
+  room?: { width: number; height: number; cells: readonly string[] },
+  x = 0,
+  y = 0,
+): boolean {
+  if (!tags.includes("route")) return false;
+  if (SKY_FLOOR.has(cell)) return true;
+  if (cell !== "tree" || !room) return false;
+  return !treeTouchesWalkable(room, x, y);
+}
+
+function treeTouchesWalkable(
+  room: { width: number; height: number; cells: readonly string[] },
+  x: number,
+  y: number,
+): boolean {
+  for (const [dx, dy] of [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+  ] as const) {
+    const nx = x + dx;
+    const ny = y + dy;
+    if (nx < 0 || ny < 0 || nx >= room.width || ny >= room.height) continue;
+    if (WALKABLE.has(cellAt(room, nx, ny))) return true;
+  }
+  return false;
+}
+
 interface BuiltRoom {
   container: Container;
   actors: Container;
@@ -339,7 +395,8 @@ export class RoomScene {
     for (let y = 0; y < room.height; y++) {
       for (let x = 0; x < room.width; x++) {
         const cell = cellAt(room, x, y);
-        if (cell === "void") continue;
+        if (cell === "void" || routeOpensOntoSky(room.tags, cell, room, x, y))
+          continue;
         const role = this.roleFor(room, cell);
         const textures = this.atlas.roles.get(role);
         if (textures && textures.length > 0) {

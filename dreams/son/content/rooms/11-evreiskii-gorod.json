@@ -22,19 +22,19 @@
   "props": [
     {
       "id": "kinder-siurpriz-s-lavochku",
-      "x": 3,
-      "y": 3,
+      "x": 6,
+      "y": 7,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
     },
     {
       "id": "fonari-kotorye-gasiat-pri-zvuke",
-      "x": 6,
+      "x": 14,
       "y": 3,
-      "w": 2,
+      "w": 1,
       "h": 2,
       "solid": true,
       "role": null,
@@ -43,20 +43,20 @@
     {
       "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
       "x": 8,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "y": 5,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
     },
     {
       "id": "stavni-na-vsem",
-      "x": 11,
+      "x": 9,
       "y": 3,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
     }
@@ -65,8 +65,8 @@
     {
       "id": "kinder-siurpriz-s-lavochku",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 7,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "киндер-сюрприз с лавочку",
       "clueId": null,
@@ -79,7 +79,7 @@
     {
       "id": "fonari-kotorye-gasiat-pri-zvuke",
       "kind": "look",
-      "x": 7,
+      "x": 14.5,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "фонари, которые гасят при звуке",
@@ -93,8 +93,8 @@
     {
       "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 8.5,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "расписание — не транспорта, а **безопасных часов**",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "stavni-na-vsem",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 10,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "ставни на всём",
       "clueId": null,
@@ -221,12 +221,12 @@
     {
       "id": "a",
       "x": 5,
-      "y": 6
+      "y": 8
     },
     {
       "id": "b",
       "x": 14,
-      "y": 6
+      "y": 8
     }
   ],
   "graphics": {

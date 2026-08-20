@@ -22,9 +22,9 @@
   "props": [
     {
       "id": "centroid",
-      "x": 3,
+      "x": 9,
       "y": 3,
-      "w": 2,
+      "w": 1,
       "h": 2,
       "solid": true,
       "role": null,
@@ -32,18 +32,18 @@
     },
     {
       "id": "vizitki-kotorye-ne-berutsia-v-ruku",
-      "x": 6,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 4,
+      "y": 4,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
     },
     {
       "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
-      "x": 8,
-      "y": 3,
+      "x": 15,
+      "y": 6,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,11 +52,11 @@
     },
     {
       "id": "kamen-s-rovno-otpilennoi-graniu",
-      "x": 11,
-      "y": 3,
+      "x": 6,
+      "y": 8,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
     }
@@ -65,7 +65,7 @@
     {
       "id": "centroid",
       "kind": "look",
-      "x": 4,
+      "x": 9.5,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "центроид",
@@ -79,7 +79,7 @@
     {
       "id": "vizitki-kotorye-ne-berutsia-v-ruku",
       "kind": "look",
-      "x": 7,
+      "x": 4.5,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "визитки, которые не берутся в руку",
@@ -93,8 +93,8 @@
     {
       "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 16,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "теодолит, показывающий одно и то же число независимо от направления",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "kamen-s-rovno-otpilennoi-graniu",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 7,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "камень с ровно отпиленной гранью",
       "clueId": null,
@@ -198,12 +198,12 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
+      "x": 7,
       "y": 6
     },
     {
       "id": "b",
-      "x": 14,
+      "x": 12,
       "y": 6
     }
   ],

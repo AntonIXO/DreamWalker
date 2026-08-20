@@ -32,30 +32,30 @@
     },
     {
       "id": "podezdnaia-dver-s-domofonom",
-      "x": 6,
-      "y": 3,
-      "w": 2,
-      "h": 2,
+      "x": 13,
+      "y": 2,
+      "w": 3,
+      "h": 3,
       "solid": true,
       "role": null,
       "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
     },
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
-      "x": 8,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 4,
+      "y": 5,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
     },
     {
       "id": "urna-nabitaia-akkuratno",
-      "x": 11,
-      "y": 3,
-      "w": 2,
-      "h": 2,
+      "x": 12,
+      "y": 6,
+      "w": 1,
+      "h": 1,
       "solid": true,
       "role": null,
       "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
@@ -79,7 +79,7 @@
     {
       "id": "podezdnaia-dver-s-domofonom",
       "kind": "look",
-      "x": 7,
+      "x": 14.5,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "подъездная дверь с домофоном",
@@ -93,8 +93,8 @@
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 4.5,
+      "y": 6.15,
       "reach": 0.9,
       "prompt": "бутылка рядом с Турышевым, не первая",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "urna-nabitaia-akkuratno",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 12.5,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "урна, набитая аккуратно",
       "clueId": null,
@@ -225,8 +225,13 @@
     },
     {
       "id": "b",
-      "x": 14,
+      "x": 11,
       "y": 6
+    },
+    {
+      "id": "c",
+      "x": 10,
+      "y": 7
     }
   ],
   "graphics": {

@@ -22,8 +22,8 @@
   "props": [
     {
       "id": "party",
-      "x": 3,
-      "y": 3,
+      "x": 1,
+      "y": 4,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -32,18 +32,18 @@
     },
     {
       "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
-      "x": 6,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 2,
+      "y": 5,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
     },
     {
       "id": "grusha-za-steklom",
-      "x": 8,
-      "y": 3,
+      "x": 7,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,11 +52,11 @@
     },
     {
       "id": "mat-v-uglu-s-rasstelennoi-posteliu",
-      "x": 11,
-      "y": 3,
+      "x": 17,
+      "y": 7,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
     }
@@ -65,8 +65,8 @@
     {
       "id": "party",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 2,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "парты",
       "clueId": null,
@@ -79,8 +79,8 @@
     {
       "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 2.5,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "листочки, на которых текст меняется, если отвести взгляд",
       "clueId": null,
@@ -93,8 +93,8 @@
     {
       "id": "grusha-za-steklom",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 8,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "груша за стеклом",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "mat-v-uglu-s-rasstelennoi-posteliu",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 18,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "мат в углу с расстеленной постелью",
       "clueId": null,
@@ -221,12 +221,12 @@
     {
       "id": "a",
       "x": 5,
-      "y": 6
+      "y": 7
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 10,
+      "y": 8
     }
   ],
   "graphics": {

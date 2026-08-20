@@ -22,41 +22,41 @@
   "props": [
     {
       "id": "riukzak",
-      "x": 3,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 7,
+      "y": 5,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
     },
     {
       "id": "liuk-v-kanalizaciiu",
-      "x": 6,
-      "y": 3,
+      "x": 16,
+      "y": 6,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
     },
     {
       "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
-      "x": 8,
-      "y": 3,
+      "x": 14,
+      "y": 5,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
     },
     {
       "id": "sledy-shin-kotoryh-utrom-ne-bylo",
-      "x": 11,
-      "y": 3,
+      "x": 10,
+      "y": 7,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
     }
@@ -65,8 +65,8 @@
     {
       "id": "riukzak",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 7.5,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "рюкзак",
       "clueId": null,
@@ -79,8 +79,8 @@
     {
       "id": "liuk-v-kanalizaciiu",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 17,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "люк в канализацию",
       "clueId": null,
@@ -93,8 +93,8 @@
     {
       "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 15,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "sledy-shin-kotoryh-utrom-ne-bylo",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 11,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "следы шин, которых утром не было",
       "clueId": null,
@@ -203,8 +203,8 @@
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 12,
+      "y": 7
     }
   ],
   "graphics": {

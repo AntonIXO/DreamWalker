@@ -8,16 +8,16 @@
  * Must stay free of Retro Diffusion I/O — it only reads markdown.
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REPO_ROOT } from "../project";
 
-export const PIXEL_PROMPTS_PATH = join(
-  REPO_ROOT,
-  "dream-walker-new",
-  "prompts-pixelart.md",
-);
+export const PIXEL_PROMPTS_PATH = existsSync(
+  join(REPO_ROOT, "dream-walker-new", "prompts-pixelart.md"),
+)
+  ? join(REPO_ROOT, "dream-walker-new", "prompts-pixelart.md")
+  : join(REPO_ROOT, "dream-walker-anton", "prompts-pixelart.md");
 
 export interface PixelPromptBook {
   style: string;

@@ -22,18 +22,18 @@
   "props": [
     {
       "id": "kolonny",
-      "x": 3,
-      "y": 3,
+      "x": 5,
+      "y": 2,
       "w": 2,
-      "h": 2,
+      "h": 3,
       "solid": true,
       "role": null,
       "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
     },
     {
       "id": "vr-shlemy-na-stoikah",
-      "x": 6,
-      "y": 3,
+      "x": 13,
+      "y": 4,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -42,21 +42,21 @@
     },
     {
       "id": "beidzh-konferencii-s-nechitaemym-nazvani",
-      "x": 8,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 6,
+      "y": 5,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
     },
     {
       "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
-      "x": 11,
-      "y": 3,
+      "x": 9,
+      "y": 2,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
     }
@@ -65,7 +65,7 @@
     {
       "id": "kolonny",
       "kind": "look",
-      "x": 4,
+      "x": 6,
       "y": 5.15,
       "reach": 1.4,
       "prompt": "колонны",
@@ -79,8 +79,8 @@
     {
       "id": "vr-shlemy-na-stoikah",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 14,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "VR-шлемы на стойках",
       "clueId": null,
@@ -93,8 +93,8 @@
     {
       "id": "beidzh-konferencii-s-nechitaemym-nazvani",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 6.5,
+      "y": 6.15,
       "reach": 1.4,
       "prompt": "бейдж конференции с нечитаемым названием",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 10,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "отель, у которого внутренний объём меньше внешнего",
       "clueId": null,
@@ -176,13 +176,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
-      "y": 6
+      "x": 6,
+      "y": 7
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 13,
+      "y": 7
     }
   ],
   "graphics": {

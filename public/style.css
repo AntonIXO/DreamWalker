@@ -59,6 +59,40 @@ body {
     pointer-events: auto;
 }
 
+/* Soundtrack mute. Lives on the UI layer so it stays clickable while a
+   panel has the keyboard; HUD itself is pointer-events: none. */
+.music-toggle {
+    position: absolute;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    z-index: 12;
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+    font: inherit;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: var(--ink);
+    background: rgba(8, 8, 11, 0.72);
+    border: 1px solid var(--edge);
+    cursor: pointer;
+}
+
+.music-toggle:hover,
+.music-toggle:focus-visible {
+    color: #fff;
+    border-color: var(--ink-dim);
+}
+
+.music-toggle:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px;
+}
+
+.music-toggle[aria-pressed="false"] {
+    color: var(--ink-dim);
+}
+
 #boot-error {
     position: absolute;
     inset: 0;
@@ -98,7 +132,8 @@ body {
 
 /* ---------------------------------------------------------------- HUD
    Almost nothing, on purpose. There is deliberately no suspicion meter:
-   being noticed has to arrive as something a figure says (§3). */
+   being noticed has to arrive as something a figure says (§3). The sky is
+   the same number, spoken backwards — nicer day, worse cover. */
 
 .hud {
     position: absolute;
@@ -123,6 +158,28 @@ body {
 
 .hud-room {
     color: var(--ink);
+}
+
+.hud-weather {
+    color: var(--ink-dim);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    flex: none;
+}
+
+.hud-weather[data-sky="drizzle"],
+.hud-weather[data-sky="dry"] {
+    color: var(--ink);
+}
+
+.hud-weather[data-sky="clearing"],
+.hud-weather[data-sky="clear"] {
+    color: #b8b4a8;
+}
+
+.hud-weather[data-sky="fine"],
+.hud-weather[data-sky="yesterday"] {
+    color: #cfc6a8;
 }
 
 .hud-aside {
@@ -180,8 +237,108 @@ body {
     opacity: 1;
 }
 
-.hud.lobby-mode .hud-top {
+.hud.lobby-mode .hud-top,
+.hud.lobby-mode .hud-witnesses {
     display: none;
+}
+
+.hud-witnesses {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 220ms var(--ease-out);
+}
+
+.hud-witness {
+    position: absolute;
+    bottom: 18%;
+    width: 16px;
+    height: 52px;
+    opacity: 0;
+    transition: opacity 220ms var(--ease-out);
+}
+
+.hud-witness[data-side="left"] {
+    left: calc(0.4rem + var(--i, 0) * 1.15rem);
+}
+
+.hud-witness[data-side="right"] {
+    right: calc(0.4rem + var(--i, 0) * 1.15rem);
+}
+
+.hud-witness.on {
+    opacity: 0.38;
+}
+
+.hud-witness.on[data-rank="wary"] {
+    opacity: 0.5;
+}
+
+.hud-witness.on[data-rank="knows"] {
+    opacity: 0.78;
+}
+
+.hud-witness i,
+.hud-witness b {
+    position: absolute;
+    left: 50%;
+    background: #09090c;
+    box-shadow: 0 0 0 1px #2a2924;
+}
+
+.hud-witness i {
+    top: 0;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    border-radius: 50%;
+}
+
+.hud-witness b {
+    top: 8px;
+    width: 11px;
+    height: 38px;
+    margin-left: -5.5px;
+    clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
+}
+
+.hud-witness.on[data-rank="interested"],
+.hud-witness.on[data-rank="wary"] {
+    animation: hud-witness-sway 4.8s var(--ease-in-out) infinite;
+}
+
+.hud-witness[data-rank="knows"] i::after {
+    content: "";
+    position: absolute;
+    right: -3px;
+    top: 3px;
+    width: 2px;
+    height: 2px;
+    background: var(--warn);
+    box-shadow: 0 0 5px var(--warn);
+}
+
+@keyframes hud-witness-sway {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hud-witness.on[data-rank="interested"],
+    .hud-witness.on[data-rank="wary"] {
+        animation: none;
+    }
+}
+
+.hud.muted .hud-witnesses {
+    opacity: 0;
+}
+
+@starting-style {
+    .hud-witness.on {
+        opacity: 0;
+    }
 }
 
 .lobby-chrome {
@@ -192,16 +349,16 @@ body {
 
 .lobby-stamp {
     position: absolute;
-    top: 1.1rem;
+    top: 0.55rem;
     left: 50%;
     transform: translateX(-50%);
-    width: min(46ch, calc(100vw - 2rem));
+    width: min(52ch, calc(100vw - 2rem));
     text-align: center;
 }
 
 .lobby-logo {
     display: block;
-    width: min(7.5rem, 32vw);
+    width: min(5rem, 16vw);
     height: auto;
     margin: 0 auto;
     /* html/body force pixelated for the tilemap; the cover is a painting. */
@@ -211,12 +368,28 @@ body {
 }
 
 .lobby-slogan {
-    margin: 0.4rem 0 0;
-    font-size: 1rem;
+    margin: 0.28rem 0 0;
+    font-size: 0.75rem;
     font-weight: 600;
-    line-height: 1.35;
+    line-height: 1.3;
     letter-spacing: 0.01em;
     color: var(--ink);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.55);
+}
+
+@media (max-aspect-ratio: 3/4) {
+    .lobby-stamp {
+        top: 1.1rem;
+    }
+
+    .lobby-logo {
+        width: min(8.5rem, 42vw);
+    }
+
+    .lobby-slogan {
+        margin-top: 0.5rem;
+        font-size: 0.9375rem;
+    }
 }
 
 .lobby-hint,
@@ -509,6 +682,47 @@ body {
     color: var(--ink-dim);
 }
 
+.dialogue-sky {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-dim);
+}
+
+.dialogue-sky[data-sky="drizzle"],
+.dialogue-sky[data-sky="dry"] {
+    color: var(--ink);
+}
+
+.dialogue-sky[data-sky="clearing"],
+.dialogue-sky[data-sky="clear"] {
+    color: #b8b4a8;
+}
+
+.dialogue-sky[data-sky="fine"],
+.dialogue-sky[data-sky="yesterday"] {
+    color: #cfc6a8;
+}
+
+.dialogue[data-face="neutral"] .dialogue-portrait > div {
+    transform: translateX(-12%);
+    filter: grayscale(0.45) brightness(0.82);
+}
+
+.dialogue[data-face="wary"] .dialogue-portrait > div {
+    transform: scale(1.16);
+    transform-origin: center 28%;
+}
+
+.dialogue[data-face="knows"] .dialogue-portrait > div {
+    filter: brightness(1.22) contrast(0.86) saturate(0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dialogue-portrait > div {
+        transition: none;
+    }
+}
+
 .dialogue-action {
     font-size: 0.6875rem;
     color: var(--ink-dim);
@@ -544,6 +758,7 @@ body {
     font-size: 2rem;
     background-repeat: no-repeat;
     image-rendering: pixelated;
+    transition: transform 220ms var(--ease-out), filter 220ms var(--ease-out);
 }
 
 .dialogue-log {
@@ -707,6 +922,12 @@ body {
 }
 
 @media (max-width: 34rem) {
+    .hud-witness {
+        width: 12px;
+        height: 40px;
+        bottom: 22%;
+    }
+
     .dialogue {
         grid-template-columns: 4rem minmax(0, 1fr);
         bottom: 0.5rem;

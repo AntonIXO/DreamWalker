@@ -4,9 +4,10 @@
 
 import { Action, Input, keyFor } from "../game/input";
 import type { MindSettings } from "../mind/settings";
-import { WalkerSprite } from "../render/walkerView";
+import { WalkerSprite, type AuthoredWalk } from "../render/walkerView";
 
 import type { AtlasTextures } from "../render/atlasTextures";
+import type { Texture } from "pixi.js";
 import type { Camera } from "../render/camera";
 import { LOBBY_DEFINITION } from "./definition";
 import { InspectPanel } from "./inspect";
@@ -45,12 +46,28 @@ export class LobbySession {
     atlas: AtlasTextures,
     private readonly camera: Camera,
     private readonly callbacks: LobbyCallbacks,
+    extras: {
+      sanitarWalk?: AuthoredWalk | null;
+      patientTexture?: Texture | null;
+    } = {},
   ) {
-    this.scene = new LobbyScene(this.definition, artifact, atlas);
+    this.scene = new LobbyScene(
+      this.definition,
+      artifact,
+      atlas,
+      extras.patientTexture ?? null,
+    );
     this.walker = createLobbyWalker(this.definition);
-    this.sprite = new WalkerSprite(atlas, "player");
+    this.sprite = new WalkerSprite(atlas, "player", extras.sanitarWalk ?? null);
     this.scene.actorLayer.addChild(this.sprite.sprite);
-    this.sprite.update(this.walker.x, this.walker.y, this.walker.facing, 0);
+    this.sprite.update(
+      this.walker.x,
+      this.walker.y,
+      this.walker.facing,
+      0,
+      false,
+      0,
+    );
 
     this.prompt = new LobbyPrompt(
       parent,
@@ -125,6 +142,8 @@ export class LobbySession {
       this.walker.y,
       this.walker.facing,
       lobbyWalkFrame(this.walker),
+      this.walker.moving,
+      this.walker.travelled,
     );
     this.camera.follow(this.walker.x, this.walker.y, deltaSeconds);
     this.camera.update(deltaSeconds);

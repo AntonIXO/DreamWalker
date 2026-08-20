@@ -9,11 +9,22 @@
 import { Container, Sprite, type Texture } from "pixi.js";
 
 import type { Direction } from "../../shared/roomGrid";
+import { WALK_STRIDE } from "../../shared/roomWalk";
 import type { AtlasTextures } from "./atlasTextures";
 import { originX, originY } from "../../shared/street";
 import type { FigureState, InterestState, WorldState } from "../game/world";
 
 export type { Direction };
+
+/** Cut-out walk cycle that replaces the atlas silhouette for one character. */
+export interface AuthoredWalk {
+  /** Front idle at [0], then front walk frames. Also used when facing north. */
+  south: readonly Texture[];
+  /** Profile walk, facing east. West is this set flipped. */
+  east: readonly Texture[];
+  /** Sprite height in world pixels. Texture is scaled to this. */
+  worldHeight: number;
+}
 
 function frameName(prefix: string, dir: Direction, frame: number): string {
   return `${prefix}_${dir}_${frame % 2}`;
@@ -26,12 +37,15 @@ export class WalkerSprite {
   private lastY = Number.NaN;
   private lastDir: Direction | "" = "";
   private lastFrame = -1;
+  private lastMoving = false;
+  private lastTravelled = -1;
 
   constructor(
     private readonly atlas: AtlasTextures,
     private readonly prefix: string,
+    private readonly authored: AuthoredWalk | null = null,
   ) {
-    const first = this.textureFor("s", 0);
+    const first = this.authored?.south[0] ?? this.textureFor("s", 0);
     this.sprite = new Sprite({
       texture: first,
       // Feet at the position, not the middle of the body.
@@ -39,6 +53,7 @@ export class WalkerSprite {
       roundPixels: true,
       eventMode: "none",
     });
+    if (this.authored) this.applyAuthoredScale(false);
   }
 
   private textureFor(dir: Direction, frame: number): Texture {
@@ -48,24 +63,72 @@ export class WalkerSprite {
     return texture;
   }
 
-  update(x: number, y: number, dir: Direction, frame: number): void {
+  private applyAuthoredScale(flip: boolean): void {
+    const walk = this.authored;
+    if (!walk) return;
+    const height = Math.max(1, this.sprite.texture.height);
+    const scale = walk.worldHeight / height;
+    this.sprite.scale.set(flip ? -scale : scale, scale);
+  }
+
+  private authoredTexture(
+    dir: Direction,
+    moving: boolean,
+    travelled: number,
+  ): Texture {
+    const walk = this.authored;
+    if (!walk) return this.textureFor(dir, 0);
+    const idle = walk.south[0];
+    if (!idle) return this.textureFor(dir, 0);
+    if (!moving) return idle;
+    const sheet =
+      dir === "e" || dir === "w"
+        ? walk.east.length > 0
+          ? walk.east
+          : walk.south
+        : walk.south;
+    if (sheet.length === 0) return idle;
+    const index = Math.floor(travelled / WALK_STRIDE) % sheet.length;
+    return sheet[index] ?? idle;
+  }
+
+  update(
+    x: number,
+    y: number,
+    dir: Direction,
+    frame: number,
+    moving = false,
+    travelled = 0,
+  ): void {
     if (
       x === this.lastX &&
       y === this.lastY &&
       dir === this.lastDir &&
-      frame === this.lastFrame
+      frame === this.lastFrame &&
+      moving === this.lastMoving &&
+      travelled === this.lastTravelled
     ) {
       return;
     }
+
     this.lastX = x;
     this.lastY = y;
     this.lastDir = dir;
     this.lastFrame = frame;
+    this.lastMoving = moving;
+    this.lastTravelled = travelled;
 
     this.sprite.x = Math.round(x);
     this.sprite.y = Math.round(y);
     // Sorting key: whoever stands lower draws in front.
     this.sprite.zIndex = Math.round(y);
+
+    if (this.authored) {
+      const texture = this.authoredTexture(dir, moving, travelled);
+      if (this.sprite.texture !== texture) this.sprite.texture = texture;
+      this.applyAuthoredScale(moving && dir === "w");
+      return;
+    }
 
     const name = frameName(this.prefix, dir, frame);
     if (name !== this.currentName) {

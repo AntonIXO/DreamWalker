@@ -57,6 +57,138 @@ const DOOR_X = 9;
 const DOOR_Y = 5;
 const DOOR_SPAN = 2;
 
+const ROOM_DOORWAYS: Record<
+  string,
+  Partial<Record<StreetDir, { x: number; y: number; w: number; h: number }>>
+> = {
+  "01-otel-goticheskii-holl": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "02-shkola-kabinet-russkogo": {
+    n: { x: 2, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "04-dacha-gnedkovyh": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 4, w: 1, h: 2 },
+  },
+  "05-shesterochka": {
+    n: { x: 8, y: 0, w: 4, h: 2 },
+    s: { x: 7, y: 10, w: 5, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "06-kanava-garazhi-podvorotni": {
+    n: { x: 8, y: 0, w: 4, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "08-kvartira-v-kotoroi-zhivut-drugie": {
+    n: { x: 11, y: 0, w: 2, h: 2 },
+    s: { x: 5, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "09-hakaton-tretii-po-schetu": {
+    n: { x: 3, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "10-komnata-s-grobami": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "12-tiurma-na-ovoschah": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "13-podzemnye-zaly-cu": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 3, h: 1 },
+    w: { x: 0, y: 4, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "14-poliklinika-v-kaluge": {
+    n: { x: 8, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "16-norvezhskaia-derevnia-i-pogreb": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "17-dush-iz-kotorogo-nelzia-vyiti": {
+    n: { x: 6, y: 0, w: 2, h: 2 },
+    s: { x: 8, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "19-dvor-i-oranzhevye-lavochki": {
+    n: { x: 7, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "20-ofis-sbera": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "21-komnata-niliufar": {
+    n: { x: 12, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "22-kreiser": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 8, y: 10, w: 3, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "23-nigeriia-konferenciia": {
+    n: { x: 8, y: 0, w: 3, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen": {
+    n: { x: 8, y: 0, w: 3, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+  "25-metro-i-poezd-kotoryi-ne-tot": {
+    n: { x: 9, y: 0, w: 2, h: 2 },
+    s: { x: 9, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 4, w: 1, h: 2 },
+  },
+  "m3-sklad-ostavlennogo": {
+    n: { x: 7, y: 0, w: 2, h: 2 },
+    s: { x: 7, y: 10, w: 2, h: 1 },
+    w: { x: 0, y: 5, w: 1, h: 2 },
+    e: { x: 19, y: 5, w: 1, h: 2 },
+  },
+};
+
 /**
  * Grid: +x is east, +y is south. The courtyard is the block you spawn on.
  *
@@ -144,6 +276,8 @@ function doorway(
   room: DreamRoom,
   dir: StreetDir,
 ): { x: number; y: number; w: number; h: number } {
+  const custom = ROOM_DOORWAYS[room.id]?.[dir];
+  if (custom) return custom;
   if (dir === "n") return { x: DOOR_X, y: 0, w: DOOR_SPAN, h: 2 };
   if (dir === "s") {
     return { x: DOOR_X, y: room.height - 1, w: DOOR_SPAN, h: 1 };
@@ -153,14 +287,15 @@ function doorway(
 }
 
 function entryFor(room: DreamRoom, dir: StreetDir): RoomEntry {
-  const midX = DOOR_X + 1;
-  const midY = DOOR_Y + 1;
-  if (dir === "n") return { id: "from-n", x: midX, y: 2.3, facing: "s" };
+  const door = doorway(room, dir);
+  const midX = door.x + door.w / 2;
+  const midY = door.y + door.h / 2;
+  if (dir === "n") return { id: "from-n", x: midX, y: door.h + 0.3, facing: "s" };
   if (dir === "s") {
-    return { id: "from-s", x: midX, y: room.height - 2.3, facing: "n" };
+    return { id: "from-s", x: midX, y: door.y - 0.3, facing: "n" };
   }
-  if (dir === "w") return { id: "from-w", x: 1.5, y: midY, facing: "e" };
-  return { id: "from-e", x: room.width - 1.5, y: midY, facing: "w" };
+  if (dir === "w") return { id: "from-w", x: door.w + 0.5, y: midY, facing: "e" };
+  return { id: "from-e", x: door.x - 0.5, y: midY, facing: "w" };
 }
 
 function ensureEntry(room: DreamRoom, entry: RoomEntry): void {
@@ -238,6 +373,7 @@ function emptyRoute(
   originX: number,
   originY: number,
   cells: string[],
+  entries?: RoomEntry[],
 ): DreamRoom {
   return {
     id,
@@ -252,7 +388,7 @@ function emptyRoute(
     cellVariants: {},
     props: [],
     hotspots: [],
-    entries: [
+    entries: entries ?? [
       { id: "from-w", x: 1.5, y: DOOR_Y + 1, facing: "e" },
       { id: "from-e", x: width - 1.5, y: DOOR_Y + 1, facing: "w" },
       { id: "from-n", x: DOOR_X + 1, y: 1.5, facing: "s" },
@@ -481,90 +617,110 @@ function pickUnique(
   return forced.toUpperCase();
 }
 
-function eastWestCells(id: string, width: number, height: number): string[] {
+function eastWestCells(
+  id: string,
+  width: number,
+  height: number,
+  yWest: number = DOOR_Y,
+  yEast: number = DOOR_Y,
+): string[] {
   const rnd = rngOf(id);
   const cells = grid(width, height, "t");
-  const yA = DOOR_Y;
-  const yB = DOOR_Y + 1;
   for (let x = 0; x < width; x++) {
-    paint(cells, x, yA, "p");
-    paint(cells, x, yB, "p");
+    const t = width > 1 ? x / (width - 1) : 0;
+    const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+    paint(cells, x, yCenter, "p");
+    paint(cells, x, yCenter + 1, "p");
   }
-  const variant = Math.floor(rnd() * 5);
+  const variant = Math.floor(rnd() * 4);
   if (variant === 0) {
     for (let x = 3; x < width - 3; x++) {
-      for (let y = yA - 2; y <= yB + 2; y++) {
-        paint(cells, x, y, rnd() < 0.25 ? "h" : "p");
+      const t = x / (width - 1);
+      const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+      for (let y = yCenter - 1; y <= yCenter + 2; y++) {
+        if (y >= 1 && y < height - 1 && cells[y]?.[x] === "t") {
+          paint(cells, x, y, rnd() < 0.35 ? "h" : "g");
+        }
       }
     }
   } else if (variant === 1) {
-    const ax = 3 + Math.floor(rnd() * Math.max(1, width - 8));
-    vstrip(cells, ax, 2, yA, "p");
-    vstrip(cells, ax + 1, 2, yA, "p");
-    paint(cells, ax, 2, "g");
-    paint(cells, ax + 1, 2, "g");
+    for (let x = 1; x < width - 1; x++) {
+      const t = x / (width - 1);
+      const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+      if (yCenter - 1 >= 1 && cells[yCenter - 1]?.[x] === "t") {
+        paint(cells, x, yCenter - 1, "g");
+      }
+      if (yCenter + 2 < height - 1 && cells[yCenter + 2]?.[x] === "t") {
+        paint(cells, x, yCenter + 2, "g");
+      }
+    }
   } else if (variant === 2) {
     const ax = 3 + Math.floor(rnd() * Math.max(1, width - 8));
-    vstrip(cells, ax, yB, height - 3, "p");
-    vstrip(cells, ax + 1, yB, height - 3, "p");
-    paint(cells, ax, height - 3, "g");
-    paint(cells, ax + 1, height - 3, "g");
-  } else if (variant === 3) {
-    const cx = Math.floor(width / 2);
-    paint(cells, cx, yA, "t");
-    paint(cells, cx, yB, "t");
-    paint(cells, cx, yA - 1, "p");
-    paint(cells, cx, yB + 1, "p");
-    paint(cells, cx - 1, yA - 1, "p");
-    paint(cells, cx + 1, yB + 1, "p");
+    const t = ax / (width - 1);
+    const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+    if (yCenter - 1 >= 1) paint(cells, ax, yCenter - 1, "h");
+    if (yCenter + 2 < height - 1) paint(cells, ax, yCenter + 2, "h");
   } else {
     for (let x = 1; x < width - 1; x++) {
-      paint(cells, x, yA - 1, rnd() < 0.35 ? "h" : "g");
-      paint(cells, x, yB + 1, rnd() < 0.35 ? "h" : "g");
+      const t = x / (width - 1);
+      const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+      if (yCenter - 1 >= 1) paint(cells, x, yCenter - 1, rnd() < 0.35 ? "h" : "g");
+      if (yCenter + 2 < height - 1) paint(cells, x, yCenter + 2, rnd() < 0.35 ? "h" : "g");
     }
   }
   stamp(cells, rnd, width, height);
   return freeze(cells);
 }
 
-function northSouthCells(id: string, width: number, height: number): string[] {
+function northSouthCells(
+  id: string,
+  width: number,
+  height: number,
+  xNorth: number = DOOR_X,
+  xSouth: number = DOOR_X,
+): string[] {
   const rnd = rngOf(id);
   const cells = grid(width, height, "t");
-  const xA = DOOR_X;
-  const xB = DOOR_X + 1;
   for (let y = 0; y < height; y++) {
-    paint(cells, xA, y, "p");
-    paint(cells, xB, y, "p");
+    const t = height > 1 ? y / (height - 1) : 0;
+    const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+    paint(cells, xCenter, y, "p");
+    paint(cells, xCenter + 1, y, "p");
   }
-  const variant = Math.floor(rnd() * 5);
+  const variant = Math.floor(rnd() * 4);
   if (variant === 0) {
     for (let y = 2; y < height - 2; y++) {
-      for (let x = xA - 2; x <= xB + 2; x++) {
-        paint(cells, x, y, rnd() < 0.25 ? "h" : "p");
+      const t = y / (height - 1);
+      const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+      for (let x = xCenter - 1; x <= xCenter + 2; x++) {
+        if (x >= 1 && x < width - 1 && cells[y]?.[x] === "t") {
+          paint(cells, x, y, rnd() < 0.35 ? "h" : "g");
+        }
       }
     }
   } else if (variant === 1) {
-    const ay = 2 + Math.floor(rnd() * Math.max(1, height - 6));
-    hstrip(cells, 2, xA, ay, "p");
-    hstrip(cells, 2, xA, ay + 1, "p");
-    paint(cells, 2, ay, "g");
-    paint(cells, 2, ay + 1, "g");
+    for (let y = 1; y < height - 1; y++) {
+      const t = y / (height - 1);
+      const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+      if (xCenter - 1 >= 1 && cells[y]?.[xCenter - 1] === "t") {
+        paint(cells, xCenter - 1, y, "g");
+      }
+      if (xCenter + 2 < width - 1 && cells[y]?.[xCenter + 2] === "t") {
+        paint(cells, xCenter + 2, y, "g");
+      }
+    }
   } else if (variant === 2) {
     const ay = 2 + Math.floor(rnd() * Math.max(1, height - 6));
-    hstrip(cells, xB, width - 3, ay, "p");
-    hstrip(cells, xB, width - 3, ay + 1, "p");
-    paint(cells, width - 3, ay, "g");
-    paint(cells, width - 3, ay + 1, "g");
-  } else if (variant === 3) {
-    const cy = Math.floor(height / 2);
-    paint(cells, xA, cy, "t");
-    paint(cells, xB, cy, "t");
-    paint(cells, xA - 1, cy, "p");
-    paint(cells, xB + 1, cy, "p");
+    const t = ay / (height - 1);
+    const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+    if (xCenter - 1 >= 1) paint(cells, xCenter - 1, ay, "h");
+    if (xCenter + 2 < width - 1) paint(cells, xCenter + 2, ay, "h");
   } else {
     for (let y = 1; y < height - 1; y++) {
-      paint(cells, xA - 1, y, rnd() < 0.35 ? "h" : "g");
-      paint(cells, xB + 1, y, rnd() < 0.35 ? "h" : "g");
+      const t = y / (height - 1);
+      const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+      if (xCenter - 1 >= 1) paint(cells, xCenter - 1, y, rnd() < 0.35 ? "h" : "g");
+      if (xCenter + 2 < width - 1) paint(cells, xCenter + 2, y, rnd() < 0.35 ? "h" : "g");
     }
   }
   stamp(cells, rnd, width, height);
@@ -573,44 +729,24 @@ function northSouthCells(id: string, width: number, height: number): string[] {
 
 function groveCells(id: string, width: number, height: number): string[] {
   const rnd = rngOf(id);
-  const cells = grid(width, height, "t");
+  const cells = grid(width, height, "g");
   const cx = Math.floor(width / 2);
   const cy = Math.floor(height / 2);
-  const variant = Math.floor(rnd() * 4);
-  if (variant === 0) {
-    for (let y = 2; y < height - 2; y++) {
-      for (let x = 2; x < width - 2; x++) {
-        paint(cells, x, y, rnd() < 0.45 ? "g" : rnd() < 0.5 ? "h" : "p");
-      }
-    }
-  } else if (variant === 1) {
-    hstrip(cells, 2, width - 3, cy, "p");
-    vstrip(cells, cx, 2, height - 3, "p");
-    for (let i = 0; i < 8; i++) {
-      paint(
-        cells,
-        2 + Math.floor(rnd() * Math.max(1, width - 4)),
-        2 + Math.floor(rnd() * Math.max(1, height - 4)),
-        "g",
-      );
-    }
-  } else if (variant === 2) {
-    for (let y = 1; y < height - 1; y++) {
-      for (let x = 1; x < width - 1; x++) {
-        const ring =
-          Math.abs(x - cx) + Math.abs(y - cy) < 3
-            ? "p"
-            : rnd() < 0.3
-              ? "g"
-              : "t";
-        paint(cells, x, y, ring);
-      }
-    }
-  } else {
-    for (let y = 2; y < height - 2; y++) {
-      hstrip(cells, 2, width - 3, y, y % 2 === 0 ? "p" : "g");
-      if (rnd() < 0.4)
-        paint(cells, 2 + Math.floor(rnd() * (width - 4)), y, "t");
+
+  // Cross pathways connecting all 4 edges
+  hstrip(cells, 0, width - 1, cy, "p");
+  hstrip(cells, 0, width - 1, cy + 1, "p");
+  vstrip(cells, cx, 0, height - 1, "p");
+  vstrip(cells, cx + 1, 0, height - 1, "p");
+
+  // Scatter some trees and tall grass on the corners, leaving paths fully open
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      if (Math.abs(x - cx) <= 1 || Math.abs(y - cy) <= 1) continue;
+      const r = rnd();
+      if (r < 0.25) paint(cells, x, y, "t");
+      else if (r < 0.55) paint(cells, x, y, "h");
+      else if (r < 0.7) paint(cells, x, y, "g");
     }
   }
   stamp(cells, rnd, width, height);
@@ -633,11 +769,11 @@ function stamp(
 function uniqueCells(id: string, rows: string[], used: Set<string>): string[] {
   const cells = rows.map((row) => row.split(""));
   const rnd = rngOf(`${id}:unique`);
-  let key = freeze(cells);
+  let key = freeze(cells).join("\n");
   let n = 0;
   while (used.has(key) && n < 40) {
     stamp(cells, rnd, cells[0]?.length ?? 1, cells.length);
-    key = freeze(cells);
+    key = freeze(cells).join("\n");
     n++;
   }
   used.add(key);
@@ -762,6 +898,11 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
       const wild = WILD.test(room.id) || WILD.test(neighbourId);
       const name = titleFor(wild ? "trail" : "street", pathId, usedTitles);
       const origin = originOf(cell);
+      const fromDir = dir;
+      const toDir = OPPOSITE[dir];
+      const doorFrom = doorway(room, fromDir);
+      const doorTo = doorway(neighbour, toDir);
+
       const path =
         dir === "e"
           ? emptyRoute(
@@ -773,9 +914,13 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               origin.y,
               uniqueCells(
                 pathId,
-                eastWestCells(pathId, ROAD_W, PLACE_H),
+                eastWestCells(pathId, ROAD_W, PLACE_H, doorFrom.y, doorTo.y),
                 usedLayouts,
               ),
+              [
+                { id: "from-w", x: 1.5, y: doorFrom.y + doorFrom.h / 2, facing: "e" },
+                { id: "from-e", x: ROAD_W - 1.5, y: doorTo.y + doorTo.h / 2, facing: "w" },
+              ],
             )
           : emptyRoute(
               pathId,
@@ -786,13 +931,15 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               origin.y + PLACE_H,
               uniqueCells(
                 pathId,
-                northSouthCells(pathId, PLACE_W, ROAD_H),
+                northSouthCells(pathId, PLACE_W, ROAD_H, doorFrom.x, doorTo.x),
                 usedLayouts,
               ),
+              [
+                { id: "from-n", x: doorFrom.x + doorFrom.w / 2, y: 1.5, facing: "s" },
+                { id: "from-s", x: doorTo.x + doorTo.w / 2, y: ROAD_H - 1.5, facing: "n" },
+              ],
             );
       dressRoute(path, usedLoot);
-      const fromDir = dir;
-      const toDir = OPPOSITE[dir];
       addDoor(
         room,
         makeDoor({
@@ -823,7 +970,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             toId: room.id,
             dir: "w",
             toEntry: "from-e",
-            rect: { x: 0, y: DOOR_Y, w: 1, h: DOOR_SPAN },
+            rect: { x: 0, y: doorFrom.y, w: 1, h: doorFrom.h },
           }),
         );
         addDoor(
@@ -833,7 +980,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             toId: neighbour.id,
             dir: "e",
             toEntry: "from-w",
-            rect: { x: ROAD_W - 1, y: DOOR_Y, w: 1, h: DOOR_SPAN },
+            rect: { x: ROAD_W - 1, y: doorTo.y, w: 1, h: doorTo.h },
           }),
         );
       } else {
@@ -844,7 +991,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             toId: room.id,
             dir: "n",
             toEntry: "from-s",
-            rect: { x: DOOR_X, y: 0, w: DOOR_SPAN, h: 1 },
+            rect: { x: doorFrom.x, y: 0, w: doorFrom.w, h: 1 },
           }),
         );
         addDoor(
@@ -854,7 +1001,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             toId: neighbour.id,
             dir: "s",
             toEntry: "from-n",
-            rect: { x: DOOR_X, y: ROAD_H - 1, w: DOOR_SPAN, h: 1 },
+            rect: { x: doorTo.x, y: ROAD_H - 1, w: doorTo.w, h: 1 },
           }),
         );
       }

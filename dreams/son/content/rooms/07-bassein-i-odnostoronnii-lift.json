@@ -22,18 +22,18 @@
   "props": [
     {
       "id": "bele-na-stenah",
-      "x": 3,
-      "y": 3,
+      "x": 8,
+      "y": 2,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
     },
     {
       "id": "panel-lifta-bez-knopki-vniz",
-      "x": 6,
-      "y": 3,
+      "x": 4,
+      "y": 2,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -42,20 +42,20 @@
     },
     {
       "id": "polotence-radi-kotorogo-prishel-ne-nahod",
-      "x": 8,
+      "x": 1,
       "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
     },
     {
       "id": "voda-v-chashe-basseina-slishkom-nepodviz",
-      "x": 11,
-      "y": 3,
-      "w": 2,
-      "h": 2,
+      "x": 4,
+      "y": 5,
+      "w": 12,
+      "h": 4,
       "solid": true,
       "role": null,
       "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
@@ -65,8 +65,8 @@
     {
       "id": "bele-na-stenah",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 9,
+      "y": 3.15,
       "reach": 1.4,
       "prompt": "бельё на стенах",
       "clueId": null,
@@ -79,8 +79,8 @@
     {
       "id": "panel-lifta-bez-knopki-vniz",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 5,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "панель лифта без кнопки «вниз»",
       "clueId": null,
@@ -93,8 +93,8 @@
     {
       "id": "polotence-radi-kotorogo-prishel-ne-nahod",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 1.5,
+      "y": 4.15,
       "reach": 1.4,
       "prompt": "полотенце, ради которого пришёл, — не находится",
       "clueId": null,
@@ -107,8 +107,8 @@
     {
       "id": "voda-v-chashe-basseina-slishkom-nepodviz",
       "kind": "look",
-      "x": 12,
-      "y": 5.15,
+      "x": 10,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "вода в чаше бассейна, слишком неподвижная",
       "clueId": null,
@@ -154,13 +154,13 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
-      "y": 6
+      "x": 2,
+      "y": 3
     },
     {
       "id": "b",
-      "x": 14,
-      "y": 6
+      "x": 17,
+      "y": 3
     }
   ],
   "graphics": {

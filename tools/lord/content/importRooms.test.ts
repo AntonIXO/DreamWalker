@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REPO_ROOT } from "../project";
@@ -12,10 +12,11 @@ import {
   toRoomCards,
 } from "./importRooms";
 
-const markdown = readFileSync(
-  join(REPO_ROOT, "dream-walker-new", "rooms.md"),
-  "utf8",
-);
+const roomsPath = existsSync(join(REPO_ROOT, "dream-walker-new", "rooms.md"))
+  ? join(REPO_ROOT, "dream-walker-new", "rooms.md")
+  : join(REPO_ROOT, "dream-walker-anton", "rooms.md");
+
+const markdown = readFileSync(roomsPath, "utf8");
 const parsed = parseRoomsDocument(markdown);
 
 describe("parseRoomsDocument", () => {

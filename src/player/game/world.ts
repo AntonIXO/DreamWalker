@@ -16,11 +16,10 @@
  */
 
 import type { DreamArtifact, FigurePlacement } from "../../shared/dream";
-import {
-  muralShowsTheRoom,
-  type DreamRoom,
-  type RoomDoor,
-  type RoomHotspot,
+import type {
+  DreamRoom,
+  RoomDoor,
+  RoomHotspot,
 } from "../../shared/room";
 import type { Direction } from "../../shared/roomGrid";
 import type { DoorTypeName } from "../../shared/tilecodes";
@@ -165,9 +164,6 @@ function cloneRoom(room: DreamRoom): RoomState {
     ),
     props: room.props.map((prop) => ({
       ...prop,
-      // The painting already has the table and the arch. A solid 2×2 sheet on
-      // those tiles is how a doorway in the picture became a wall.
-      solid: muralShowsTheRoom(room.graphics) ? false : prop.solid,
     })),
     hotspots: room.hotspots.map((hotspot) => ({ ...hotspot })),
     entries: room.entries.map((entry) => ({ ...entry })),

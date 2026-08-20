@@ -22,28 +22,28 @@
   "props": [
     {
       "id": "groby",
-      "x": 3,
+      "x": 5,
       "y": 3,
       "w": 2,
-      "h": 2,
+      "h": 4,
       "solid": true,
       "role": null,
       "image": "assets/objects/10-komnata-s-grobami--groby.png"
     },
     {
       "id": "schel-pod-potolkom",
-      "x": 6,
-      "y": 3,
+      "x": 9,
+      "y": 1,
       "w": 2,
-      "h": 2,
-      "solid": true,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
     },
     {
       "id": "tkan-s-kodami",
-      "x": 8,
-      "y": 3,
+      "x": 3,
+      "y": 7,
       "w": 2,
       "h": 2,
       "solid": true,
@@ -52,21 +52,21 @@
     },
     {
       "id": "paketiki-fsb",
-      "x": 11,
-      "y": 3,
+      "x": 16,
+      "y": 7,
       "w": 2,
       "h": 2,
-      "solid": true,
+      "solid": false,
       "role": null,
       "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
     },
     {
       "id": "telefon-kamera-otkryvaetsia-sem-sekund",
-      "x": 13,
-      "y": 3,
-      "w": 2,
-      "h": 2,
-      "solid": true,
+      "x": 10,
+      "y": 7,
+      "w": 1,
+      "h": 1,
+      "solid": false,
       "role": null,
       "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
     }
@@ -75,8 +75,8 @@
     {
       "id": "groby",
       "kind": "look",
-      "x": 4,
-      "y": 5.15,
+      "x": 6,
+      "y": 7.15,
       "reach": 1.4,
       "prompt": "гробы",
       "clueId": null,
@@ -89,8 +89,8 @@
     {
       "id": "schel-pod-potolkom",
       "kind": "look",
-      "x": 7,
-      "y": 5.15,
+      "x": 10,
+      "y": 2.15,
       "reach": 1.4,
       "prompt": "щель под потолком",
       "clueId": null,
@@ -103,8 +103,8 @@
     {
       "id": "tkan-s-kodami",
       "kind": "look",
-      "x": 9,
-      "y": 5.15,
+      "x": 4,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "ткань с кодами",
       "clueId": null,
@@ -117,8 +117,8 @@
     {
       "id": "paketiki-fsb",
       "kind": "clue",
-      "x": 12,
-      "y": 5.15,
+      "x": 17,
+      "y": 9.15,
       "reach": 1.4,
       "prompt": "пакетики ФСБ",
       "clueId": "clue-3",
@@ -131,8 +131,8 @@
     {
       "id": "telefon-kamera-otkryvaetsia-sem-sekund",
       "kind": "look",
-      "x": 14,
-      "y": 5.15,
+      "x": 10.5,
+      "y": 8.15,
       "reach": 1.4,
       "prompt": "телефон, камера открывается семь секунд",
       "clueId": null,
@@ -200,12 +200,12 @@
   "figureSlots": [
     {
       "id": "a",
-      "x": 5,
+      "x": 8,
       "y": 6
     },
     {
       "id": "b",
-      "x": 14,
+      "x": 11,
       "y": 6
     }
   ],
