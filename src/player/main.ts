@@ -27,7 +27,7 @@ import {
 import { Camera, DEFAULT_CAMERA, FOLLOW_VIEW_TILES } from "./render/camera";
 import { DebugOverlay } from "./render/debugOverlay";
 import { DreamFx } from "./render/dreamFx";
-import { Sky } from "./render/sky";
+import { loadSkyPaintings, Sky } from "./render/sky";
 import { RoomScene } from "./render/roomScene";
 import { Shiver } from "./render/shiver";
 import {
@@ -98,7 +98,8 @@ function loadArtifact(): DreamArtifact {
   return validateDreamArtifact(sonPack.artifact());
 }
 
-const SANITAR_WORLD_HEIGHT = 64;
+/** Two and a half tiles. Camera zoom is integer, so this stays a person, not a mural. */
+const SANITAR_WORLD_HEIGHT = 40;
 
 async function loadSanitarWalk(): Promise<AuthoredWalk | null> {
   const southUrls = [0, 1].map(
@@ -128,6 +129,7 @@ async function loadSanitarWalk(): Promise<AuthoredWalk | null> {
 async function boot(): Promise<void> {
   const artifact = loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
+  const skyPaintings = await loadSkyPaintings();
   // Cut-out originals: same pixels as the PNG, background already punched.
   const figureArt: Array<{ id: string; url: string }> = [
     {
@@ -218,7 +220,7 @@ async function boot(): Promise<void> {
     eventMode: "none",
     interactiveChildren: false,
   });
-  const sky = new Sky(app.screen.width, app.screen.height);
+  const sky = new Sky(app.screen.width, app.screen.height, skyPaintings);
   sky.attach(app.stage);
   app.stage.addChild(cameraRoot);
 
@@ -640,7 +642,7 @@ async function boot(): Promise<void> {
         for (const room of world.rooms) rooms.invalidate(room.id);
         session.enterRoomImmediate();
         session.noteCycleReset();
-        actors.syncFigures(figuresHere(), tileSize, world, camera.zoom);
+        actors.syncFigures(figuresHere(), tileSize, world);
         actors.syncInterests(interestsHere(), tileSize, world);
         populationInstalled = true;
       }
@@ -885,7 +887,11 @@ async function boot(): Promise<void> {
       else camera.update(delta);
       soundtrack.setDucked(false);
       dreamFx.setEnabled(false);
-      sky.setEnabled(false);
+      // Night sky in the letterbox, not the palette void. Weather is the
+      // readout; a black frame around the procedure room hid it.
+      sky.setEnabled(true);
+      sky.setCover(0);
+      sky.update(delta);
       const heldNow =
         connect.isOpen ||
         controls.isOpen ||
@@ -1088,7 +1094,7 @@ async function boot(): Promise<void> {
       walker.moving,
       walker.travelled,
     );
-    actors.syncFigures(figuresHere(), room.tileSize, world, camera.zoom);
+    actors.syncFigures(figuresHere(), room.tileSize, world);
     actors.syncInterests(interestsHere(), room.tileSize, world);
 
     if (room.id === "m11-zamok-po-vremeni") {

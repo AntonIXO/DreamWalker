@@ -1,42 +1,31 @@
 import { describe, expect, test } from "bun:test";
 
-import { SKY_FRAGMENT, SKY_VERTEX } from "./sky.frag";
-import { skyLook } from "./sky";
+import { paintingAt, SKY_PAINTINGS } from "./sky";
 import { routeOpensOntoSky } from "./roomScene";
 
-describe("shader source", () => {
-  test("declares the uniforms the controller writes", () => {
-    for (const name of [
-      "uTime",
-      "uCover",
-      "uReduced",
-      "uRain",
-      "uStars",
-      "uSunSize",
-      "uZenith",
-      "uHorizon",
-      "uCloud",
-      "uSun",
-    ]) {
-      expect(SKY_FRAGMENT).toContain(name);
-    }
-    expect(SKY_VERTEX).toContain("vTextureCoord");
-    expect(SKY_FRAGMENT).toContain("finalColor");
-  });
-});
-
-describe("skyLook", () => {
-  test("night is darker than a clear day", () => {
-    const night = skyLook(0);
-    const day = skyLook(1);
-    expect(night.zenith[0]!).toBeLessThan(day.zenith[0]!);
-    expect(night.stars).toBeGreaterThan(day.stars);
-    expect(day.sunSize).toBeGreaterThan(night.sunSize);
+describe("paintingAt", () => {
+  test("cover picks one still, it does not blend neighbouring files", () => {
+    expect(paintingAt(0)).toBe("night.jpg");
+    expect(paintingAt(0.17)).toBe("overcast.jpg");
+    expect(paintingAt(1)).toBe("yesterday.jpg");
   });
 
-  test("rain peaks in the middle, not at either end", () => {
-    expect(skyLook(0.4).rain).toBeGreaterThan(skyLook(0).rain);
-    expect(skyLook(0.4).rain).toBeGreaterThan(skyLook(1).rain);
+  test("a jump from night to knows names yesterday, not a tour of the weather", () => {
+    expect(paintingAt(0)).toBe("night.jpg");
+    expect(paintingAt(0.95)).toBe("yesterday.jpg");
+  });
+
+  test("every band has a painting", () => {
+    expect(SKY_PAINTINGS.map((stop) => stop.id)).toEqual([
+      "night",
+      "overcast",
+      "drizzle",
+      "dry",
+      "clearing",
+      "clear",
+      "fine",
+      "yesterday",
+    ]);
   });
 });
 

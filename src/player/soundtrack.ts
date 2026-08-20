@@ -73,7 +73,13 @@ export class Soundtrack {
   private readonly cues: Record<Cue, AudioBuffer | null> = { kill: null };
   private cueSource: AudioBufferSourceNode | null = null;
   private sting = false;
-  private readonly unlockEvents = ["pointerdown", "keydown"] as const;
+  private readonly unlockEvents = [
+    "pointerdown",
+    "pointerup",
+    "keydown",
+    "keyup",
+    "click",
+  ] as const;
   private bed: Bed = "menu";
   private enabled: boolean;
   private ducked = false;
@@ -282,6 +288,9 @@ export class Soundtrack {
       .resume()
       .then(() => {
         if (this.ctx.state === "suspended") return;
+        this.start(this.bed);
+        this.rampBed(this.bed, this.bedTarget(), 0.45);
+        this.rampMaster(masterGain(this.enabled, this.ducked), 0.3);
         for (const event of this.unlockEvents) {
           window.removeEventListener(event, this.unlock, { capture: true });
         }

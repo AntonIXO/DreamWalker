@@ -1,236 +1,147 @@
 /**
- * The dream's sky. Screen-space, behind the map, so a road that does not paint its
- * ground opens onto weather instead of a dungeon floor.
+ * The dream's sky. Screen-space paintings behind the map.
+ *
+ * Cover picks a still. Changing cover fades the still that is on screen into the
+ * still that belongs to the new cover — night goes straight to «как вчера», it does
+ * not flip through rain and noon as if they were slides. The under sprite stays
+ * opaque, so the renderer's clear colour never shows through a fade.
  */
 
 import {
-  Filter,
-  Rectangle,
+  Assets,
+  Container,
+  Graphics,
   Sprite,
   Texture,
-  UniformGroup,
-  type Container,
+  type Texture as PixiTexture,
 } from "pixi.js";
 
-import { prefersReducedMotion } from "../lobby/motion";
-import { SKY_FRAGMENT, SKY_VERTEX } from "./sky.frag";
+import type { SkyBand } from "../game/forecast";
 
-export interface SkySwatch {
-  zenith: Float32Array;
-  horizon: Float32Array;
-  cloud: Float32Array;
-  sun: Float32Array;
-  rain: number;
-  stars: number;
-  sunSize: number;
+export interface SkyPainting {
+  at: number;
+  id: SkyBand;
+  file: string;
 }
 
-const rgb = (hex: string): Float32Array => {
-  const n = Number.parseInt(hex.replace("#", ""), 16);
-  return new Float32Array([
-    ((n >> 16) & 255) / 255,
-    ((n >> 8) & 255) / 255,
-    (n & 255) / 255,
-  ]);
-};
-
-const mix = (a: Float32Array, b: Float32Array, t: number): Float32Array => {
-  const out = new Float32Array(3);
-  const k = Math.max(0, Math.min(1, t));
-  out[0] = a[0]! * (1 - k) + b[0]! * k;
-  out[1] = a[1]! * (1 - k) + b[1]! * k;
-  out[2] = a[2]! * (1 - k) + b[2]! * k;
-  return out;
-};
-
-const mixNum = (a: number, b: number, t: number): number => a * (1 - t) + b * t;
-
-/**
- * Key palettes along cover. Night is wet and closed. Full cover is a too-nice
- * afternoon — the weather figures talk about when they already know.
- */
-const KEYS: { at: number; look: SkySwatch }[] = [
-  {
-    at: 0,
-    look: {
-      zenith: rgb("#07080e"),
-      horizon: rgb("#161c28"),
-      cloud: rgb("#2a3140"),
-      sun: rgb("#3a4038"),
-      rain: 0,
-      stars: 0.85,
-      sunSize: 0.01,
-    },
-  },
-  {
-    at: 0.22,
-    look: {
-      zenith: rgb("#3a404c"),
-      horizon: rgb("#6a7280"),
-      cloud: rgb("#8a929c"),
-      sun: rgb("#c8c0b0"),
-      rain: 0.15,
-      stars: 0.08,
-      sunSize: 0.02,
-    },
-  },
-  {
-    at: 0.4,
-    look: {
-      zenith: rgb("#4a584c"),
-      horizon: rgb("#7a8874"),
-      cloud: rgb("#a8b0a0"),
-      sun: rgb("#d0d4c4"),
-      rain: 0.7,
-      stars: 0,
-      sunSize: 0.03,
-    },
-  },
-  {
-    at: 0.58,
-    look: {
-      zenith: rgb("#5a7a98"),
-      horizon: rgb("#d0c4a8"),
-      cloud: rgb("#e8e4dc"),
-      sun: rgb("#f0e8c8"),
-      rain: 0.08,
-      stars: 0,
-      sunSize: 0.05,
-    },
-  },
-  {
-    at: 0.78,
-    look: {
-      zenith: rgb("#3a88c8"),
-      horizon: rgb("#f0dca0"),
-      cloud: rgb("#f8f4ec"),
-      sun: rgb("#fff4c4"),
-      rain: 0,
-      stars: 0,
-      sunSize: 0.07,
-    },
-  },
-  {
-    at: 1,
-    look: {
-      zenith: rgb("#e8b85a"),
-      horizon: rgb("#fff4d0"),
-      cloud: rgb("#fffceb"),
-      sun: rgb("#fff8e0"),
-      rain: 0,
-      stars: 0,
-      sunSize: 0.14,
-    },
-  },
+export const SKY_PAINTINGS: readonly SkyPainting[] = [
+  { at: 0, id: "night", file: "night.jpg" },
+  { at: 0.1, id: "overcast", file: "overcast.jpg" },
+  { at: 0.24, id: "drizzle", file: "drizzle.jpg" },
+  { at: 0.38, id: "dry", file: "overcast.jpg" },
+  { at: 0.52, id: "clearing", file: "clearing.jpg" },
+  { at: 0.66, id: "clear", file: "clear.jpg" },
+  { at: 0.8, id: "fine", file: "fine.jpg" },
+  { at: 0.92, id: "yesterday", file: "yesterday.jpg" },
 ];
 
-export function skyLook(cover: number): SkySwatch {
-  const t = Math.max(0, Math.min(1, cover));
-  let from = KEYS[0]!;
-  let to = KEYS[KEYS.length - 1]!;
-  for (let i = 0; i < KEYS.length - 1; i++) {
-    const a = KEYS[i]!;
-    const b = KEYS[i + 1]!;
-    if (t >= a.at && t <= b.at) {
-      from = a;
-      to = b;
-      break;
-    }
+const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
+
+/** The still that belongs to this cover. No interpolation. */
+export function paintingAt(cover: number): string {
+  const t = clamp01(cover);
+  let file = SKY_PAINTINGS[0]!.file;
+  for (const stop of SKY_PAINTINGS) {
+    if (stop.at <= t) file = stop.file;
   }
-  const span = to.at - from.at;
-  const k = span <= 0 ? 0 : (t - from.at) / span;
-  return {
-    zenith: mix(from.look.zenith, to.look.zenith, k),
-    horizon: mix(from.look.horizon, to.look.horizon, k),
-    cloud: mix(from.look.cloud, to.look.cloud, k),
-    sun: mix(from.look.sun, to.look.sun, k),
-    rain: mixNum(from.look.rain, to.look.rain, k),
-    stars: mixNum(from.look.stars, to.look.stars, k),
-    sunSize: mixNum(from.look.sunSize, to.look.sunSize, k),
-  };
+  return file;
 }
 
-/** How quickly the sky catches up when someone looks up. Seconds. */
-const SETTLE = 0.85;
+export async function loadSkyPaintings(): Promise<
+  ReadonlyMap<string, PixiTexture>
+> {
+  const files = [...new Set(SKY_PAINTINGS.map((stop) => stop.file))];
+  const paintings = new Map<string, PixiTexture>();
+  await Promise.all(
+    files.map(async (file) => {
+      try {
+        const texture = await Assets.load<Texture>({
+          src: `/sky/${file}`,
+          alias: `sky:${file}`,
+          data: { scaleMode: "linear" },
+        });
+        if (!texture?.source) return;
+        texture.source.scaleMode = "linear";
+        paintings.set(file, texture);
+      } catch (error) {
+        console.warn(`[dream] sky painting skipped: ${file}`, error);
+      }
+    }),
+  );
+  return paintings;
+}
+
+/** Length of one still-to-still fade. */
+const FADE_SECONDS = 1.15;
 
 export class Sky {
-  readonly root: Sprite;
-  private readonly filter: Filter;
-  private readonly uniforms: UniformGroup;
-  private readonly area = new Rectangle();
+  readonly root = new Container({
+    label: "sky",
+    eventMode: "none",
+    interactiveChildren: false,
+  });
+  private readonly fill = new Graphics({
+    eventMode: "none",
+    label: "sky-fill",
+  });
+  private readonly under = new Sprite({ eventMode: "none", label: "sky-a" });
+  private readonly over = new Sprite({ eventMode: "none", label: "sky-b" });
   private enabled = false;
   private target = 0;
-  private cover = 0;
-  private time = 0;
+  private displayed: string;
+  private incoming: string | null = null;
+  private fade = 0;
+  private width = 0;
+  private height = 0;
 
-  constructor(width: number, height: number) {
-    this.uniforms = new UniformGroup({
-      uTime: { value: 0, type: "f32" },
-      uCover: { value: 0, type: "f32" },
-      uReduced: { value: 0, type: "f32" },
-      uRain: { value: 0, type: "f32" },
-      uStars: { value: 0, type: "f32" },
-      uSunSize: { value: 0.02, type: "f32" },
-      uZenith: { value: new Float32Array(3), type: "vec3<f32>" },
-      uHorizon: { value: new Float32Array(3), type: "vec3<f32>" },
-      uCloud: { value: new Float32Array(3), type: "vec3<f32>" },
-      uSun: { value: new Float32Array(3), type: "vec3<f32>" },
-    });
-    this.filter = Filter.from({
-      gl: { vertex: SKY_VERTEX, fragment: SKY_FRAGMENT },
-      resources: { sky: this.uniforms },
-      resolution: 0.5,
-      antialias: "off",
-      padding: 0,
-    });
-    this.root = new Sprite({
-      texture: Texture.WHITE,
-      eventMode: "none",
-      label: "sky",
-    });
-    this.root.filters = [this.filter];
+  constructor(
+    width: number,
+    height: number,
+    private readonly paintings: ReadonlyMap<string, PixiTexture>,
+  ) {
+    this.displayed = paintingAt(0);
+    this.root.addChild(this.fill, this.under, this.over);
     this.root.visible = false;
+    this.under.alpha = 1;
+    this.over.alpha = 0;
     this.resize(width, height);
+    this.show(this.displayed, this.displayed, 0);
   }
 
   setEnabled(enabled: boolean): void {
     this.enabled = enabled;
-    this.root.visible = enabled;
+    this.root.visible = enabled && this.paintings.size > 0;
   }
 
   setCover(cover: number): void {
-    this.target = Math.max(0, Math.min(1, cover));
+    this.target = clamp01(cover);
   }
 
   resize(width: number, height: number): void {
-    this.root.width = width;
-    this.root.height = height;
-    this.area.x = 0;
-    this.area.y = 0;
-    this.area.width = width;
-    this.area.height = height;
-    this.area.ceil();
-    this.root.filterArea = this.area;
+    this.width = width;
+    this.height = height;
+    this.fill.clear().rect(0, 0, width, height).fill(0x0a0a0d);
+    coverScreen(this.under, width, height);
+    coverScreen(this.over, width, height);
   }
 
   update(deltaSeconds: number): void {
     if (!this.enabled) return;
-    this.time += deltaSeconds;
-    const follow = 1 - Math.exp(-deltaSeconds / SETTLE);
-    this.cover += (this.target - this.cover) * follow;
-    const look = skyLook(this.cover);
-    const u = this.uniforms.uniforms;
-    u.uTime = this.time;
-    u.uCover = this.cover;
-    u.uReduced =
-      typeof window !== "undefined" && prefersReducedMotion() ? 1 : 0;
-    u.uRain = look.rain;
-    u.uStars = look.stars;
-    u.uSunSize = look.sunSize;
-    copy3(u.uZenith as Float32Array, look.zenith);
-    copy3(u.uHorizon as Float32Array, look.horizon);
-    copy3(u.uCloud as Float32Array, look.cloud);
-    copy3(u.uSun as Float32Array, look.sun);
+    const wanted = paintingAt(this.target);
+    if (this.incoming === null && wanted !== this.displayed) {
+      this.incoming = wanted;
+      this.fade = 0;
+    }
+    if (this.incoming !== null) {
+      this.fade = Math.min(1, this.fade + deltaSeconds / FADE_SECONDS);
+      this.show(this.displayed, this.incoming, this.fade);
+      if (this.fade >= 1) {
+        this.displayed = this.incoming;
+        this.incoming = null;
+        this.fade = 0;
+        this.show(this.displayed, this.displayed, 0);
+      }
+    }
   }
 
   attach(stage: Container): void {
@@ -238,14 +149,27 @@ export class Sky {
   }
 
   destroy(): void {
-    this.root.filters = [];
-    this.filter.destroy();
-    this.root.destroy();
+    this.root.destroy({ children: true });
+  }
+
+  private show(fromFile: string, toFile: string, t: number): void {
+    const from = this.paintings.get(fromFile) ?? Texture.WHITE;
+    const to = this.paintings.get(toFile) ?? from;
+    if (this.under.texture !== from) this.under.texture = from;
+    if (this.over.texture !== to) this.over.texture = to;
+    this.under.alpha = 1;
+    this.over.alpha = t;
+    coverScreen(this.under, this.width, this.height);
+    coverScreen(this.over, this.width, this.height);
   }
 }
 
-function copy3(into: Float32Array, from: Float32Array): void {
-  into[0] = from[0]!;
-  into[1] = from[1]!;
-  into[2] = from[2]!;
+function coverScreen(sprite: Sprite, width: number, height: number): void {
+  const texture = sprite.texture;
+  if (!texture || texture.width <= 0 || texture.height <= 0) return;
+  const scale = Math.max(width / texture.width, height / texture.height);
+  sprite.width = texture.width * scale;
+  sprite.height = texture.height * scale;
+  sprite.x = (width - sprite.width) / 2;
+  sprite.y = (height - sprite.height) / 2;
 }
