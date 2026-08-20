@@ -24,7 +24,7 @@ import { Container, Graphics, Sprite, type Texture } from "pixi.js";
 
 import { cellAt, type RoomCell } from "../../shared/roomGrid";
 import type { DreamArtifact } from "../../shared/dream";
-import { muralShowsTheRoom } from "../../shared/room";
+import { hidePropSprites, muralShowsTheRoom } from "../../shared/room";
 import { originX, originY } from "../../shared/street";
 import { Tile } from "../../shared/tilecodes";
 import {
@@ -62,15 +62,6 @@ const TILE_BY_CELL: Record<string, number> = {
   tree: Tile.TREE,
 };
 
-const SKY_FLOOR: ReadonlySet<string> = new Set([
-  "grass",
-  "grassTall",
-  "path",
-  "floor",
-  "floorAlt",
-  "threshold",
-]);
-
 const WALKABLE: ReadonlySet<string> = new Set([
   "grass",
   "grassTall",
@@ -82,9 +73,9 @@ const WALKABLE: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Roads between places do not paint their ground. Interior tree fill is skipped
- * too — otherwise the street is a cobbled dungeon and the sky only shows in the
- * two-tile path. Trees that touch a walkable cell stay, as a silhouette.
+ * A route still has a floor. Punching the path out left you walking on the sky
+ * photograph — космос underfoot. Interior tree fill is the only hole: the weather
+ * sits beside the road, not in it.
  */
 export function routeOpensOntoSky(
   tags: readonly string[],
@@ -94,7 +85,6 @@ export function routeOpensOntoSky(
   y = 0,
 ): boolean {
   if (!tags.includes("route")) return false;
-  if (SKY_FLOOR.has(cell)) return true;
   if (cell !== "tree" || !room) return false;
   return !treeTouchesWalkable(room, x, y);
 }
@@ -345,7 +335,7 @@ export class RoomScene {
     // One layer for everything standing in the room. Objects used to be a second layer
     // at the same z, drawn after — so an object always covered a prop regardless of who
     // was in front. They are the same kind of thing and now they sort against each other.
-    const props = this.drawProps(room, mural);
+    const props = this.drawProps(room);
     props.zIndex = 2;
     container.addChild(props);
 
@@ -538,64 +528,36 @@ export class RoomScene {
    * you can sleep on — so once they have art it is drawn at the hotspot's own position,
    * anchored at its foot so a walker standing below it draws in front.
    */
-  private drawProps(room: RoomState, mural: boolean): Container {
+  private drawProps(room: RoomState): Container {
     const layer = new Container({
       label: `room-props:${room.id}`,
       eventMode: "none",
       sortableChildren: true,
     });
     const size = room.tileSize;
-    if (mural) return layer;
+    // Atlas `prop` is a brown 16×16 block. Object sheets are the same colour with a
+    // silhouette stamped on. Neither belongs on a painted room or a generated street.
+    if (hidePropSprites(room)) return layer;
 
     for (const prop of room.props) {
-      const node = new Container({ eventMode: "none" });
       const objectTexture = this.objects.get(`${room.id}:${prop.id}`);
-      if (objectTexture) {
-        // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
-        // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
-        // with square art reads as a square thing on a wide footprint, not a stretched
-        // one — and anchored on the bottom edge so the art stands on its own base.
-        //
-        // This branch has to win over the atlas `prop` role. Every room names that role
-        // as a fallback, and the atlas always has a frame for it — a brown 16×16 block.
-        // Checking the role first painted those blocks over every hotspot and never
-        // reached the PNG that was generated for it.
-        const box = Math.min(prop.w, prop.h) * size;
-        const sprite = new Sprite({
-          texture: objectTexture,
-          roundPixels: true,
-          eventMode: "none",
-          anchor: { x: 0.5, y: 1 },
-          x: (prop.w * size) / 2,
-          y: prop.h * size,
-        });
-        sprite.setSize(box, box);
-        node.addChild(sprite);
-      } else {
-        const role = prop.role ?? room.graphics.propRole;
-        const textures = this.atlas.roles.get(role);
-        if (textures && textures.length > 0) {
-          for (let y = 0; y < prop.h; y++) {
-            for (let x = 0; x < prop.w; x++) {
-              node.addChild(
-                new Sprite({
-                  texture: variantFor(textures, prop.x + x, prop.y + y),
-                  x: x * size,
-                  y: y * size,
-                  roundPixels: true,
-                  eventMode: "none",
-                }),
-              );
-            }
-          }
-        } else {
-          node.addChild(
-            new Graphics({ eventMode: "none", roundPixels: true })
-              .rect(0, 0, prop.w * size, prop.h * size)
-              .fill(prop.solid ? this.colors.metal : this.colors.floor),
-          );
-        }
-      }
+      if (!objectTexture) continue;
+      const node = new Container({ eventMode: "none" });
+      // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
+      // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
+      // with square art reads as a square thing on a wide footprint, not a stretched
+      // one — and anchored on the bottom edge so the art stands on its own base.
+      const box = Math.min(prop.w, prop.h) * size;
+      const sprite = new Sprite({
+        texture: objectTexture,
+        roundPixels: true,
+        eventMode: "none",
+        anchor: { x: 0.5, y: 1 },
+        x: (prop.w * size) / 2,
+        y: prop.h * size,
+      });
+      sprite.setSize(box, box);
+      node.addChild(sprite);
       node.x = prop.x * size;
       node.y = prop.y * size;
       // Sort by the prop's foot, so a walker standing below it draws in front. The old

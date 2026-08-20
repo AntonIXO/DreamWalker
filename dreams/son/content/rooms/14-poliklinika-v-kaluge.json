@@ -26,7 +26,7 @@
       "y": 3,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
     },
@@ -56,7 +56,7 @@
       "y": 5,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
     }

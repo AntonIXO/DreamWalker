@@ -26,7 +26,7 @@
       "y": 2,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/22-kreiser--scena-mikrofon.png"
     },
@@ -56,7 +56,7 @@
       "y": 4,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
     }

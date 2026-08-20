@@ -76,9 +76,7 @@ export class LobbyScene {
       }
       if (
         patientTexture &&
-        (piece.kind === "bed" ||
-          piece.kind === "apparatus" ||
-          piece.kind === "drip")
+        (piece.kind === "apparatus" || piece.kind === "drip")
       ) {
         continue;
       }
@@ -91,12 +89,6 @@ export class LobbyScene {
       this.furniture.addChild(node);
     }
 
-    if (patientTexture) {
-      this.furniture.addChild(
-        this.placePatient(patientTexture, definition.tileSize),
-      );
-    }
-
     this.furniture.cacheAsTexture({
       scaleMode: "nearest",
       resolution: 1,
@@ -104,6 +96,12 @@ export class LobbyScene {
     });
 
     this.root.addChild(signals);
+
+    if (patientTexture) {
+      const patient = this.placePatient(patientTexture, definition.tileSize);
+      patient.zIndex = 1;
+      this.root.addChild(patient);
+    }
 
     this.actors = new Container({
       label: "lobby-actors",
@@ -218,8 +216,8 @@ export class LobbyScene {
   }
 
   /**
-   * The tank painting covers the south-west bed / apparatus / drip block.
-   * Scaled to a handful of tiles so it sits in the room instead of eating it.
+   * The tank sits on the apparatus tile, not across the whole south wall.
+   * Four tiles tall is the bed/apparatus block; eight ate half the lobby.
    */
   private placePatient(texture: Texture, tileSize: number): Sprite {
     const sprite = new Sprite({
@@ -229,15 +227,15 @@ export class LobbyScene {
       eventMode: "none",
       label: "lobby-patient",
     });
-    const maxW = 8 * tileSize;
-    const maxH = 8 * tileSize;
+    const maxW = 3 * tileSize;
+    const maxH = 4 * tileSize;
     const scale = Math.min(
       maxW / Math.max(1, texture.width),
       maxH / Math.max(1, texture.height),
     );
     sprite.scale.set(scale);
-    // Centre of bed (1..5) + apparatus (5..7), feet on the furniture's south edge.
-    sprite.x = Math.round(4 * tileSize);
+    // Apparatus is at (5, 7) w=2 h=3. Feet on its south edge, centred on it.
+    sprite.x = Math.round(6 * tileSize);
     sprite.y = Math.round(10 * tileSize);
     sprite.zIndex = 10 * tileSize;
     return sprite;
@@ -292,8 +290,6 @@ export class LobbyScene {
       g.rect(0, 6, pw, ph - 6).fill(c.metal);
       g.rect(2, 8, pw - 4, ph - 10).fill(c.paper);
       g.rect(4, 12, pw - 16, 10).fill(c.linen);
-      g.rect(pw - 14, 11, 10, 10).fill(c.skin);
-      g.rect(pw - 13, 12, 8, 4).fill(c.paper);
       g.rect(2, 8, pw - 4, 3).fill(c.ink);
     } else if (kind === "apparatus") {
       g.rect(2, 14, pw - 4, ph - 16).fill(c.metal);

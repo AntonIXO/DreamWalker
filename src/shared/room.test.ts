@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { muralShowsTheRoom, type RoomGraphics } from "./room";
+import { hidePropSprites, muralShowsTheRoom, type RoomGraphics } from "./room";
 
 function graphics(over: Partial<RoomGraphics> = {}): RoomGraphics {
   return {
@@ -36,5 +36,25 @@ describe("muralShowsTheRoom", () => {
         }),
       ),
     ).toBe(false);
+  });
+});
+
+describe("hidePropSprites", () => {
+  test("a generated street never shows object sheets", () => {
+    expect(
+      hidePropSprites({
+        tags: ["route"],
+        graphics: graphics(),
+      }),
+    ).toBe(true);
+  });
+
+  test("a painted room hides the brown fallback even if the PNG failed to load", () => {
+    expect(
+      hidePropSprites({
+        tags: [],
+        graphics: graphics({ backdropImage: "assets/rooms/08.png" }),
+      }),
+    ).toBe(true);
   });
 });

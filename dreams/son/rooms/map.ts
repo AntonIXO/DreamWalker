@@ -9,13 +9,7 @@
 
 import type { Direction } from "../../../src/shared/roomGrid";
 import { setCellMark } from "../../../src/shared/roomGrid";
-import type {
-  DreamRoom,
-  RoomDoor,
-  RoomEntry,
-  RoomHotspot,
-  RoomProp,
-} from "../../../src/shared/room";
+import type { DreamRoom, RoomDoor, RoomEntry } from "../../../src/shared/room";
 import { cloneRoom } from "./box";
 
 export type StreetDir = Direction;
@@ -538,66 +532,6 @@ const GROVE_NOUN = [
   "заросль",
 ];
 
-const LOOT: Array<{ image: string; prompt: string }> = [
-  {
-    image:
-      "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png",
-    prompt: "бутылка, уже не первая",
-  },
-  {
-    image:
-      "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png",
-    prompt: "урна не на своём месте",
-  },
-  {
-    image: "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png",
-    prompt: "рюкзак, который тяжелее, чем выглядит",
-  },
-  {
-    image:
-      "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png",
-    prompt: "следы шин поперёк тропы",
-  },
-  {
-    image:
-      "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png",
-    prompt: "корзина с тем, что не читается",
-  },
-  {
-    image:
-      "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png",
-    prompt: "наушники, оба левых",
-  },
-  {
-    image:
-      "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
-    prompt: "чужие штаны на гравии",
-  },
-  {
-    image:
-      "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png",
-    prompt: "сумка, которую уже искали",
-  },
-  {
-    image: "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png",
-    prompt: "киндер с лавочки",
-  },
-  {
-    image:
-      "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png",
-    prompt: "листья, которые шуршат не в такт",
-  },
-  {
-    image: "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
-    prompt: "бейдж на ветке",
-  },
-  {
-    image:
-      "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png",
-    prompt: "телефон с одним контактом",
-  },
-];
-
 function pickUnique(
   adjs: string[],
   nouns: string[],
@@ -780,8 +714,9 @@ function uniqueCells(id: string, rows: string[], used: Set<string>): string[] {
   return freeze(cells);
 }
 
-function dressRoute(room: DreamRoom, usedLoot: Set<string>): void {
+function dressRoute(room: DreamRoom): void {
   const rnd = rngOf(`${room.id}:loot`);
+  if (rnd() >= 0.35) return;
   const spots: Array<{ x: number; y: number }> = [];
   for (let y = 1; y < room.height - 1; y++) {
     for (let x = 1; x < room.width - 1; x++) {
@@ -794,46 +729,12 @@ function dressRoute(room: DreamRoom, usedLoot: Set<string>): void {
     }
   }
   if (spots.length === 0) return;
-  const unused = LOOT.filter((item) => !usedLoot.has(item.image));
-  const pool = unused.length > 0 ? unused : LOOT;
-  const loot = pool[Math.floor(rnd() * pool.length)];
-  if (!loot) return;
-  usedLoot.add(loot.image);
   const spot = spots[Math.floor(rnd() * spots.length)]!;
-  const propId = `${room.id}--find`;
-  const prop: RoomProp = {
-    id: propId,
-    x: spot.x,
-    y: spot.y,
-    w: 1,
-    h: 1,
-    solid: false,
-    role: null,
-    image: loot.image,
-  };
-  const hotspot: RoomHotspot = {
-    id: propId,
-    kind: "look",
-    x: spot.x + 0.5,
-    y: spot.y + 1.15,
-    reach: 1.3,
-    prompt: loot.prompt,
-    refusal: null,
-    clueId: null,
-    propId,
-    action: null,
-    once: false,
-    dwellMs: null,
-  };
-  room.props.push(prop);
-  room.hotspots.push(hotspot);
-  if (rnd() < 0.35) {
-    room.figureSlots.push({
-      id: "a",
-      x: Math.min(room.width - 3, Math.max(2, spot.x + 2)),
-      y: Math.min(room.height - 3, Math.max(2, spot.y)),
-    });
-  }
+  room.figureSlots.push({
+    id: "a",
+    x: Math.min(room.width - 3, Math.max(2, spot.x + 2)),
+    y: Math.min(room.height - 3, Math.max(2, spot.y)),
+  });
 }
 
 /**
@@ -882,7 +783,6 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
 
   const generated: DreamRoom[] = [];
   const usedTitles = new Set<string>();
-  const usedLoot = new Set<string>();
   const usedLayouts = new Set<string>();
   const dirs: StreetDir[] = ["e", "s"];
   for (const room of next) {
@@ -939,7 +839,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
                 { id: "from-s", x: doorTo.x + doorTo.w / 2, y: ROAD_H - 1.5, facing: "n" },
               ],
             );
-      dressRoute(path, usedLoot);
+      dressRoute(path);
       addDoor(
         room,
         makeDoor({
@@ -1041,7 +941,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               usedLayouts,
             ),
           );
-          dressRoute(woods, usedLoot);
+          dressRoute(woods);
           generated.push(woods);
           continue;
         }
@@ -1059,7 +959,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               usedLayouts,
             ),
           );
-          dressRoute(gap, usedLoot);
+          dressRoute(gap);
           generated.push(gap);
         }
         if (!hasSouth) {
@@ -1076,7 +976,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               usedLayouts,
             ),
           );
-          dressRoute(gap, usedLoot);
+          dressRoute(gap);
           generated.push(gap);
         }
         const corner = emptyRoute(
@@ -1092,7 +992,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             usedLayouts,
           ),
         );
-        dressRoute(corner, usedLoot);
+        dressRoute(corner);
         generated.push(corner);
       }
     }

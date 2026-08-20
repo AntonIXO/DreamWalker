@@ -102,6 +102,13 @@ describe("the street map", () => {
     expect(road.cells.some((row) => row.includes("t"))).toBe(true);
   });
 
+  test("generated streets do not scatter room-object sheets as loot", () => {
+    const images = rooms.flatMap((room) =>
+      isGeneratedRoom(room.id) ? room.props.filter((prop) => prop.image) : [],
+    );
+    expect(images).toEqual([]);
+  });
+
   test("every catalogue id that exists is on the grid or the hotel lift", () => {
     for (const room of rooms) {
       if (room.id === "07-bassein-i-odnostoronnii-lift") continue;

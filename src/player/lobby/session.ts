@@ -2,12 +2,13 @@
  * Prep-room play: walk, stand next to a thing, open the matching readout.
  */
 
+import type { Texture } from "pixi.js";
+
 import { Action, Input, keyFor } from "../game/input";
 import type { MindSettings } from "../mind/settings";
 import { WalkerSprite, type AuthoredWalk } from "../render/walkerView";
 
 import type { AtlasTextures } from "../render/atlasTextures";
-import type { Texture } from "pixi.js";
 import type { Camera } from "../render/camera";
 import { LOBBY_DEFINITION } from "./definition";
 import { InspectPanel } from "./inspect";

@@ -142,7 +142,7 @@
           "y": 8,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
         },
@@ -152,7 +152,7 @@
           "y": 2,
           "w": 1,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
         },
@@ -182,7 +182,7 @@
           "y": 9,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
         }
@@ -483,7 +483,7 @@
           "y": 5,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
         },
@@ -503,7 +503,7 @@
           "y": 7,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
         }
@@ -741,7 +741,7 @@
           "y": 4,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
         },
@@ -761,7 +761,7 @@
           "y": 8,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
         }
@@ -977,7 +977,7 @@
           "y": 3,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
         },
@@ -1213,7 +1213,7 @@
           "y": 3,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": null
         },
@@ -1233,7 +1233,7 @@
           "y": 2,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
         },
@@ -1465,7 +1465,7 @@
           "y": 5,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
         },
@@ -1475,7 +1475,7 @@
           "y": 6,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
         },
@@ -1485,7 +1485,7 @@
           "y": 5,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
         },
@@ -1495,7 +1495,7 @@
           "y": 7,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
         }
@@ -1701,7 +1701,7 @@
           "y": 2,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
         },
@@ -1721,7 +1721,7 @@
           "y": 3,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
         },
@@ -1905,7 +1905,7 @@
           "y": 2,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
         },
@@ -1915,7 +1915,7 @@
           "y": 5,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
         },
@@ -2193,7 +2193,7 @@
           "y": 7,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
         }
@@ -2445,7 +2445,7 @@
           "y": 1,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
         },
@@ -2465,7 +2465,7 @@
           "y": 7,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
         },
@@ -2475,7 +2475,7 @@
           "y": 7,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
         }
@@ -2675,7 +2675,7 @@
           "y": 7,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
         },
@@ -2695,7 +2695,7 @@
           "y": 5,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
         },
@@ -2705,7 +2705,7 @@
           "y": 3,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
         }
@@ -2943,7 +2943,7 @@
           "y": 1,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
         },
@@ -2973,7 +2973,7 @@
           "y": 5,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
         }
@@ -3215,7 +3215,7 @@
           "y": 3,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
         },
@@ -3235,7 +3235,7 @@
           "y": 7,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
         },
@@ -3255,7 +3255,7 @@
           "y": 6,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
         }
@@ -3497,7 +3497,7 @@
           "y": 3,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
         },
@@ -3527,7 +3527,7 @@
           "y": 5,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
         }
@@ -3753,7 +3753,7 @@
           "y": 6,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
         },
@@ -3763,7 +3763,7 @@
           "y": 3,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
         }
@@ -3979,7 +3979,7 @@
           "y": 4,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
         },
@@ -3989,7 +3989,7 @@
           "y": 3,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
         },
@@ -3999,7 +3999,7 @@
           "y": 6,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
         }
@@ -4205,7 +4205,7 @@
           "y": 2,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
         },
@@ -4215,7 +4215,7 @@
           "y": 2,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
         },
@@ -4225,7 +4225,7 @@
           "y": 2,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
         }
@@ -4449,7 +4449,7 @@
           "y": 3,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
         },
@@ -4459,7 +4459,7 @@
           "y": 3,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/18-kupol-bez-sten--zveri.png"
         },
@@ -4469,7 +4469,7 @@
           "y": 7,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
         }
@@ -4691,11 +4691,11 @@
         },
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
-          "x": 4,
-          "y": 5,
+          "x": 2,
+          "y": 4,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
         },
@@ -4742,9 +4742,9 @@
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
           "kind": "look",
-          "x": 4.5,
-          "y": 6.15,
-          "reach": 0.9,
+          "x": 2.5,
+          "y": 5.15,
+          "reach": 1.4,
           "prompt": "бутылка рядом с Турышевым, не первая",
           "clueId": null,
           "action": null,
@@ -4978,7 +4978,7 @@
           "y": 1,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
         }
@@ -5230,7 +5230,7 @@
           "y": 1,
           "w": 3,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
         },
@@ -5240,7 +5240,7 @@
           "y": 3,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
         },
@@ -5456,7 +5456,7 @@
           "y": 2,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/22-kreiser--scena-mikrofon.png"
         },
@@ -5486,7 +5486,7 @@
           "y": 4,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
         }
@@ -5712,7 +5712,7 @@
           "y": 5,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
         },
@@ -5722,7 +5722,7 @@
           "y": 2,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
         }
@@ -5916,7 +5916,7 @@
           "y": 6,
           "w": 2,
           "h": 2,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
         },
@@ -5936,7 +5936,7 @@
           "y": 7,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
         }
@@ -6120,7 +6120,7 @@
           "y": 2,
           "w": 4,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
         },
@@ -6130,7 +6130,7 @@
           "y": 4,
           "w": 1,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
         },
@@ -6140,7 +6140,7 @@
           "y": 5,
           "w": 2,
           "h": 1,
-          "solid": false,
+          "solid": true,
           "role": null,
           "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
         },
@@ -6842,34 +6842,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-2-e--find",
-          "x": 7,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-2-e--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -6965,34 +6939,8 @@
         "tttttt__tttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-2-s--find",
-          "x": 6,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-2-s--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "бейдж на ветке",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -7089,34 +7037,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-1-e--find",
-          "x": 8,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-1-e--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "листья, которые шуршат не в такт",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -7212,34 +7134,8 @@
         "ttttttt__ttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-1-s--find",
-          "x": 10,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-1-s--find",
-          "kind": "look",
-          "x": 10.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -7336,34 +7232,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-0-e--find",
-          "x": 8,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-0-e--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-0-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -7412,7 +7282,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 10,
+          "y": 6
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -7459,34 +7335,8 @@
         "ttt__ttttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-0-s--find",
-          "x": 9,
-          "y": 2,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-0-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 3.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-0-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -7583,34 +7433,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-4-e--find",
-          "x": 4,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-4-e--find",
-          "kind": "look",
-          "x": 4.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-4-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -7707,34 +7531,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-2-e--find",
-          "x": 4,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-2-e--find",
-          "kind": "look",
-          "x": 4.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -7830,34 +7628,8 @@
         "tttttttt____tttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-2-s--find",
-          "x": 9,
-          "y": 2,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-2-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 3.15,
-          "reach": 1.3,
-          "prompt": "корзина с тем, что не читается",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -7954,34 +7726,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-3-e--find",
-          "x": 8,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-3-e--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "урна не на своём месте",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-3-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -8077,34 +7823,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-3-s--find",
-          "x": 8,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-3-s--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-3-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -8201,34 +7921,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-3-e--find",
-          "x": 7,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-3-e--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "бутылка, уже не первая",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-3-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -8324,34 +8018,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-3-s--find",
-          "x": 7,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-3-s--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-3-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -8448,34 +8116,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-1-e--find",
-          "x": 7,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-1-e--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -8524,7 +8166,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 9,
+          "y": 4
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -8571,34 +8219,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-1-s--find",
-          "x": 9,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-1-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -8694,34 +8316,8 @@
         "tttttttt___ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-6-1-s--find",
-          "x": 6,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-6-1-s--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-6-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -8818,34 +8414,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-2-e--find",
-          "x": 6,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-2-e--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -8894,13 +8464,7 @@
           "prompt": null
         }
       ],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 8,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -8947,34 +8511,8 @@
         "tttttttttttt__tttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-2-s--find",
-          "x": 12,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-2-s--find",
-          "kind": "look",
-          "x": 12.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "бейдж на ветке",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -9023,13 +8561,7 @@
           "prompt": null
         }
       ],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 14,
-          "y": 4
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -9077,34 +8609,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-5-1-e--find",
-          "x": 6,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-5-1-e--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-5-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -9200,34 +8706,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-5-1-s--find",
-          "x": 15,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-5-1-s--find",
-          "kind": "look",
-          "x": 15.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "бутылка, уже не первая",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-5-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -9276,7 +8756,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 17,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -9324,34 +8810,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-4-1-e--find",
-          "x": 6,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-4-1-e--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-4-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -9447,34 +8907,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-4-1-s--find",
-          "x": 10,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-4-1-s--find",
-          "kind": "look",
-          "x": 10.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-4-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -9523,13 +8957,7 @@
           "prompt": null
         }
       ],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 12,
-          "y": 7
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -9577,34 +9005,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-1-e--find",
-          "x": 4,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-1-e--find",
-          "kind": "look",
-          "x": 4.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -9653,13 +9055,7 @@
           "prompt": null
         }
       ],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 6,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -9706,34 +9102,8 @@
         "tttttttt____tttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-1-s--find",
-          "x": 7,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-1-s--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -9782,7 +9152,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 9,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -9830,34 +9206,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-0-e--find",
-          "x": 10,
-          "y": 2,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-0-e--find",
-          "kind": "look",
-          "x": 10.5,
-          "y": 3.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-0-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -9953,34 +9303,8 @@
         "tt__tttttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-0-s--find",
-          "x": 6,
-          "y": 2,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-0-s--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 3.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-0-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -10077,34 +9401,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-0-e--find",
-          "x": 6,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-0-e--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "бутылка, уже не первая",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-0-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -10153,7 +9451,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 6
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -10200,34 +9504,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-0-s--find",
-          "x": 8,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-0-s--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "урна не на своём месте",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-0-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -10330,34 +9608,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-3-e--find",
-          "x": 7,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-3-e--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "корзина с тем, что не читается",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-3-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -10453,34 +9705,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-2-3-s--find",
-          "x": 9,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-2-3-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-2-3-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -10577,34 +9803,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-4-0-e--find",
-          "x": 4,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-4-0-e--find",
-          "kind": "look",
-          "x": 4.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-4-0-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -10700,34 +9900,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-4-0-s--find",
-          "x": 9,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-4-0-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "бутылка, уже не первая",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-4-0-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -10830,34 +10004,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-2-e--find",
-          "x": 10,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-2-e--find",
-          "kind": "look",
-          "x": 10.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -10953,34 +10101,8 @@
         "ttttttttttt__ttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-1-2-s--find",
-          "x": 11,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-1-2-s--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-1-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -11077,34 +10199,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-1-e--find",
-          "x": 2,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-1-e--find",
-          "kind": "look",
-          "x": 2.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -11200,34 +10296,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-1-s--find",
-          "x": 9,
-          "y": 3,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-1-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 4.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-1-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -11276,7 +10346,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 11,
+          "y": 3
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -11324,34 +10400,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-3-3-e--find",
-          "x": 7,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-3-3-e--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-3-3-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -11400,7 +10450,13 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 9,
+          "y": 7
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -11448,34 +10504,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-5-2-e--find",
-          "x": 11,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-5-2-e--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-5-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -11524,13 +10554,7 @@
           "prompt": null
         }
       ],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 11,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -11578,34 +10602,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-4-2-e--find",
-          "x": 6,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-4-2-e--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-4-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -11701,34 +10699,8 @@
         "tttttttt___ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-4-2-s--find",
-          "x": 8,
-          "y": 3,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-4-2-s--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 4.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-4-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -11825,34 +10797,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-4-e--find",
-          "x": 5,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-4-e--find",
-          "kind": "look",
-          "x": 5.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-4-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -11948,34 +10894,8 @@
         "ttttttttt__ttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-5-0-s--find",
-          "x": 9,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-5-0-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "бейдж на ветке",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-5-0-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -12072,34 +10992,8 @@
         "tttttttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-0-e--find",
-          "x": 6,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-0-e--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "бейдж на ветке",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-0-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12195,34 +11089,8 @@
         "tttttttt__tttttttttt"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "path-0-0-s--find",
-          "x": 9,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "path-0-0-s--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "path-0-0-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-n",
@@ -12318,34 +11186,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-0-0-se--find",
-          "x": 8,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-0-0-se--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-0-0-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12420,34 +11262,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-1-0-se--find",
-          "x": 9,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-1-0-se--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-1-0-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12475,13 +11291,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 11,
-          "y": 5
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -12528,34 +11338,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-0-se--find",
-          "x": 9,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-0-se--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-0-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12636,34 +11420,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-3-0-se--find",
-          "x": 7,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-3-0-se--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-3-0-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12691,13 +11449,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 9,
-          "y": 7
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -12744,34 +11496,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-4-0-se--find",
-          "x": 5,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-4-0-se--find",
-          "kind": "look",
-          "x": 5.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-4-0-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12799,7 +11525,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 7,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -12847,34 +11579,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-5-0-e--find",
-          "x": 8,
-          "y": 8,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-5-0-e--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 9.15,
-          "reach": 1.3,
-          "prompt": "урна не на своём месте",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-5-0-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -12902,7 +11608,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 10,
+          "y": 8
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -12949,34 +11661,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-5-0-se--find",
-          "x": 8,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-5-0-se--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "бутылка, уже не первая",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-5-0-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13004,7 +11690,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 10,
+          "y": 7
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13062,34 +11754,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-6-0--find",
-          "x": 9,
-          "y": 2,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-6-0--find",
-          "kind": "look",
-          "x": 9.5,
-          "y": 3.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-6-0--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13164,34 +11830,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-0-1-se--find",
-          "x": 3,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-0-1-se--find",
-          "kind": "look",
-          "x": 3.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "корзина с тем, что не читается",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-0-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13219,13 +11859,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 5,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13272,34 +11906,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-1-1-se--find",
-          "x": 6,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-1-1-se--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "корзина с тем, что не читается",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-1-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13374,34 +11982,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-1-se--find",
-          "x": 5,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-1-se--find",
-          "kind": "look",
-          "x": 5.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13429,13 +12011,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 7,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13482,34 +12058,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-3-1-se--find",
-          "x": 11,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-3-1-se--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-3-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13537,13 +12087,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 11,
-          "y": 5
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13590,34 +12134,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-4-1-se--find",
-          "x": 3,
-          "y": 3,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-4-1-se--find",
-          "kind": "look",
-          "x": 3.5,
-          "y": 4.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-4-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13645,13 +12163,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 5,
-          "y": 3
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13698,34 +12210,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-5-1-se--find",
-          "x": 11,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-5-1-se--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-5-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13801,34 +12287,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-6-1-e--find",
-          "x": 3,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-6-1-e--find",
-          "kind": "look",
-          "x": 3.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "урна не на своём месте",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-6-1-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -13856,7 +12316,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 7
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13903,34 +12369,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-6-1-se--find",
-          "x": 7,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-6-1-se--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "урна не на своём месте",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-6-1-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14011,34 +12451,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-0-2-se--find",
-          "x": 11,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-0-2-se--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-0-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14113,34 +12527,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-1-2-se--find",
-          "x": 2,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-1-2-se--find",
-          "kind": "look",
-          "x": 2.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-1-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14168,13 +12556,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 4,
-          "y": 5
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -14221,34 +12603,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-2-se--find",
-          "x": 4,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-2-se--find",
-          "kind": "look",
-          "x": 4.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "корзина с тем, что не читается",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14276,13 +12632,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 6,
-          "y": 5
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -14329,34 +12679,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-3-2-se--find",
-          "x": 7,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-3-2-se--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-3-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14431,34 +12755,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-4-2-se--find",
-          "x": 7,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-4-2-se--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-4-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14486,13 +12784,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 9,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -14539,34 +12831,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-5-2-s--find",
-          "x": 14,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-5-2-s--find",
-          "kind": "look",
-          "x": 14.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-5-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14647,34 +12913,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-5-2-se--find",
-          "x": 8,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-5-2-se--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-5-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14756,34 +12996,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-6-2-e--find",
-          "x": 7,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-6-2-e--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-6-2-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14858,34 +13072,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-6-2-s--find",
-          "x": 11,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-6-2-s--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-6-2-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -14966,34 +13154,90 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
+      "props": [],
+      "hotspots": [],
+      "entries": [
         {
-          "id": "gap-6-2-se--find",
-          "x": 8,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
         }
       ],
-      "hotspots": [
+      "doors": [],
+      "figureSlots": [
         {
-          "id": "gap-6-2-se--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "бутылка, уже не первая",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-6-2-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
+          "id": "a",
+          "x": 10,
+          "y": 5
         }
       ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-0-3-se",
+      "name": "КРИВАЯ КУРТИНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 20,
+      "originY": 74,
+      "cells": [
+        "gggggggppggggg",
+        "gggggggppgthgg",
+        "ggtghggppgghhg",
+        "ghgggggppgghhg",
+        "gggggggppggggg",
+        "pppppppppgpppp",
+        "pppppppphppppp",
+        "gtgghggpptghtg",
+        "ghhgghgppggtgg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15047,114 +13291,6 @@
       "level": 0
     },
     {
-      "id": "gap-0-3-se",
-      "name": "КРИВАЯ КУРТИНА",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 14,
-      "height": 10,
-      "originX": 20,
-      "originY": 74,
-      "cells": [
-        "gggggggppggggg",
-        "gggggggppgthgg",
-        "ggtghggppgghhg",
-        "ghgggggppgghhg",
-        "gggggggppggggg",
-        "pppppppppgpppp",
-        "pppppppphppppp",
-        "gtgghggpptghtg",
-        "ghhgghgppggtgg",
-        "gggggggppggggg"
-      ],
-      "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-0-3-se--find",
-          "x": 7,
-          "y": 3,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-0-3-se--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 4.15,
-          "reach": 1.3,
-          "prompt": "киндер с лавочки",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-0-3-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 12.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 8.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 9,
-          "y": 3
-        }
-      ],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
       "id": "gap-1-3-se",
       "name": "МАЛАЯ ПОСАДКА",
       "kind": "place",
@@ -15176,34 +13312,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-1-3-se--find",
-          "x": 5,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-1-3-se--find",
-          "kind": "look",
-          "x": 5.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-1-3-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15231,13 +13341,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 7,
-          "y": 6
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -15284,34 +13388,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-3-se--find",
-          "x": 6,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-3-se--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-3-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15386,34 +13464,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-3-3-s--find",
-          "x": 10,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-3-3-s--find",
-          "kind": "look",
-          "x": 10.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "корзина с тем, что не читается",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-3-3-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15488,34 +13540,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-3-3-se--find",
-          "x": 7,
-          "y": 6,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-3-3-se--find",
-          "kind": "look",
-          "x": 7.5,
-          "y": 7.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-3-3-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15591,34 +13617,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-4-3-e--find",
-          "x": 3,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-4-3-e--find",
-          "kind": "look",
-          "x": 3.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-4-3-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15693,34 +13693,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-4-3-s--find",
-          "x": 13,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-4-3-s--find",
-          "kind": "look",
-          "x": 13.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "листья, которые шуршат не в такт",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-4-3-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15748,13 +13722,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 15,
-          "y": 5
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -15801,34 +13769,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-4-3-se--find",
-          "x": 3,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-4-3-se--find",
-          "kind": "look",
-          "x": 3.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-4-3-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15856,13 +13798,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 5,
-          "y": 4
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -15920,34 +13856,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-5-3--find",
-          "x": 18,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-5-3--find",
-          "kind": "look",
-          "x": 18.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-5-3--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -15975,7 +13885,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 20,
+          "y": 4
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -16033,34 +13949,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-6-3--find",
-          "x": 12,
-          "y": 11,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-6-3--find",
-          "kind": "look",
-          "x": 12.5,
-          "y": 12.15,
-          "reach": 1.3,
-          "prompt": "рюкзак, который тяжелее, чем выглядит",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-6-3--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16141,34 +14031,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-0-4-s--find",
-          "x": 12,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-0-4-s--find",
-          "kind": "look",
-          "x": 12.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "урна не на своём месте",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-0-4-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16196,7 +14060,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 14,
+          "y": 4
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -16243,34 +14113,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-0-4-se--find",
-          "x": 6,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-0-4-se--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "наушники, оба левых",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-0-4-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16345,34 +14189,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-1-4-s--find",
-          "x": 11,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-1-4-s--find",
-          "kind": "look",
-          "x": 11.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-1-4-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16400,7 +14218,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 13,
+          "y": 4
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -16447,34 +14271,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-1-4-se--find",
-          "x": 8,
-          "y": 7,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-1-4-se--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 8.15,
-          "reach": 1.3,
-          "prompt": "листья, которые шуршат не в такт",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-1-4-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16550,34 +14348,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-4-e--find",
-          "x": 4,
-          "y": 8,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-4-e--find",
-          "kind": "look",
-          "x": 4.5,
-          "y": 9.15,
-          "reach": 1.3,
-          "prompt": "следы шин поперёк тропы",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-4-e--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16605,7 +14377,13 @@
         }
       ],
       "doors": [],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 6,
+          "y": 8
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -16652,34 +14430,8 @@
         "ggggggggggppgggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-4-s--find",
-          "x": 6,
-          "y": 4,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-4-s--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 5.15,
-          "reach": 1.3,
-          "prompt": "чужие штаны на гравии",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-4-s--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16754,34 +14506,8 @@
         "gggggggppggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "gap-2-4-se--find",
-          "x": 6,
-          "y": 3,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "gap-2-4-se--find",
-          "kind": "look",
-          "x": 6.5,
-          "y": 4.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "gap-2-4-se--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16867,34 +14593,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-3-4--find",
-          "x": 16,
-          "y": 2,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-3-4--find",
-          "kind": "look",
-          "x": 16.5,
-          "y": 3.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-3-4--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -16922,13 +14622,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 18,
-          "y": 2
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -16986,34 +14680,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-4-4--find",
-          "x": 8,
-          "y": 13,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-4-4--find",
-          "kind": "look",
-          "x": 8.5,
-          "y": 14.15,
-          "reach": 1.3,
-          "prompt": "телефон с одним контактом",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-4-4--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -17099,34 +14767,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-5-4--find",
-          "x": 20,
-          "y": 8,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-5-4--find",
-          "kind": "look",
-          "x": 20.5,
-          "y": 9.15,
-          "reach": 1.3,
-          "prompt": "листья, которые шуршат не в такт",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-5-4--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -17154,13 +14796,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 22,
-          "y": 8
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -17218,34 +14854,8 @@
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
-      "props": [
-        {
-          "id": "woods-6-4--find",
-          "x": 23,
-          "y": 5,
-          "w": 1,
-          "h": 1,
-          "solid": false,
-          "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
-        }
-      ],
-      "hotspots": [
-        {
-          "id": "woods-6-4--find",
-          "kind": "look",
-          "x": 23.5,
-          "y": 6.15,
-          "reach": 1.3,
-          "prompt": "сумка, которую уже искали",
-          "refusal": null,
-          "clueId": null,
-          "propId": "woods-6-4--find",
-          "action": null,
-          "once": false,
-          "dwellMs": null
-        }
-      ],
+      "props": [],
+      "hotspots": [],
       "entries": [
         {
           "id": "from-w",
@@ -17273,13 +14883,7 @@
         }
       ],
       "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 25,
-          "y": 5
-        }
-      ],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",

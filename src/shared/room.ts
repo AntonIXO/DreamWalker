@@ -204,6 +204,18 @@ export function muralShowsTheRoom(graphics: RoomGraphics): boolean {
   return graphics.backdropFit === "cells" && graphics.backdropImage != null;
 }
 
+/**
+ * Whether the room should hide prop sprites. Painted rooms already show the furniture;
+ * generated streets were scattering the same opaque object sheets as "loot".
+ */
+export function hidePropSprites(room: {
+  tags: readonly string[];
+  graphics: RoomGraphics;
+}): boolean {
+  if (room.tags.includes("route")) return true;
+  return muralShowsTheRoom(room.graphics);
+}
+
 export interface MetaConfig {
   /** §Part II — «от восьми до сорока секунд». */
   minMs: number;

@@ -36,7 +36,7 @@
       "y": 3,
       "w": 2,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
     },
@@ -46,7 +46,7 @@
       "y": 3,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/18-kupol-bez-sten--zveri.png"
     },
@@ -56,7 +56,7 @@
       "y": 7,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
     }

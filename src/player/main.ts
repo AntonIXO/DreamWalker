@@ -110,11 +110,18 @@ async function loadSanitarWalk(): Promise<AuthoredWalk | null> {
     (i) =>
       new URL(`../../assets/figures/sanitar/e-${i}.png`, import.meta.url).href,
   );
+  const northUrls = [0, 1, 2, 3, 4, 5].map(
+    (i) =>
+      new URL(`../../assets/figures/sanitar/n-${i}.png`, import.meta.url).href,
+  );
   const south = await Promise.all(
     southUrls.map((url, i) => loadOptionalTexture(url, `sanitar-s-${i}`)),
   );
   const east = await Promise.all(
     eastUrls.map((url, i) => loadOptionalTexture(url, `sanitar-e-${i}`)),
+  );
+  const north = await Promise.all(
+    northUrls.map((url, i) => loadOptionalTexture(url, `sanitar-n-${i}`)),
   );
   if (south.some((texture) => !texture) || east.some((texture) => !texture)) {
     return null;
@@ -122,6 +129,7 @@ async function loadSanitarWalk(): Promise<AuthoredWalk | null> {
   return {
     south: south as Texture[],
     east: east as Texture[],
+    north: north.every((texture) => texture) ? (north as Texture[]) : [],
     worldHeight: SANITAR_WORLD_HEIGHT,
   };
 }

@@ -18,10 +18,12 @@ export type { Direction };
 
 /** Cut-out walk cycle that replaces the atlas silhouette for one character. */
 export interface AuthoredWalk {
-  /** Front idle at [0], then front walk frames. Also used when facing north. */
+  /** Front idle at [0], then front walk frames. */
   south: readonly Texture[];
   /** Profile walk, facing east. West is this set flipped. */
   east: readonly Texture[];
+  /** Back idle at [0], then back walk frames. */
+  north?: readonly Texture[];
   /** Sprite height in world pixels. Texture is scaled to this. */
   worldHeight: number;
 }
@@ -78,15 +80,20 @@ export class WalkerSprite {
   ): Texture {
     const walk = this.authored;
     if (!walk) return this.textureFor(dir, 0);
-    const idle = walk.south[0];
-    if (!idle) return this.textureFor(dir, 0);
+    const front = walk.south[0];
+    const back = walk.north?.[0];
+    if (!front) return this.textureFor(dir, 0);
+    const idle = dir === "n" && back ? back : front;
     if (!moving) return idle;
+    const north = walk.north ?? [];
     const sheet =
       dir === "e" || dir === "w"
         ? walk.east.length > 0
           ? walk.east
           : walk.south
-        : walk.south;
+        : dir === "n" && north.length > 0
+          ? north
+          : walk.south;
     if (sheet.length === 0) return idle;
     const index = Math.floor(travelled / WALK_STRIDE) % sheet.length;
     return sheet[index] ?? idle;
@@ -147,10 +154,13 @@ export class WalkerSprite {
  * `sortableChildren`, so the ordering is decided by position rather than by the order
  * things happened to be created in.
  *
- * Authored paintings keep their source pixels. The camera zooms the stage, so the
- * sprite is scaled by `1/zoom` and lands on screen at the PNG's own size — not
- * downscaled into mud and not blown up with the tiles.
+ * Authored paintings are the same kind of actor as a walker: a few tiles tall,
+ * nearest-scaled, zoomed with the camera. Native PNG size on screen ate the room.
  */
+
+/** World-pixel cap for cut-out figure art. Three tiles tall, four wide. */
+const FIGURE_ART_HEIGHT = 48;
+const FIGURE_ART_WIDTH = 64;
 
 export class ActorLayer {
   readonly root = new Container({
@@ -179,7 +189,6 @@ export class ActorLayer {
     figures: readonly FigureState[],
     tileSize: number,
     world?: WorldState,
-    zoom = 1,
   ): void {
     const seen = new Set<string>();
 
@@ -209,7 +218,11 @@ export class ActorLayer {
           this.paintings.set(figure.id, sprite);
           this.root.addChild(sprite);
         }
-        sprite.scale.set(1 / Math.max(1, zoom));
+        const scale = Math.min(
+          FIGURE_ART_HEIGHT / Math.max(1, painting.height),
+          FIGURE_ART_WIDTH / Math.max(1, painting.width),
+        );
+        sprite.scale.set(scale);
         sprite.x = Math.round(x);
         sprite.y = Math.round(y);
         sprite.zIndex = Math.round(y);

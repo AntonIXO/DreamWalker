@@ -36,7 +36,7 @@
       "y": 8,
       "w": 2,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
     },
@@ -46,7 +46,7 @@
       "y": 2,
       "w": 1,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
     },
@@ -76,7 +76,7 @@
       "y": 9,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
     }

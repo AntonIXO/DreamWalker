@@ -36,7 +36,7 @@
       "y": 2,
       "w": 2,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
     },
@@ -46,7 +46,7 @@
       "y": 5,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
     },

@@ -36,7 +36,7 @@
       "y": 4,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
     },
@@ -46,7 +46,7 @@
       "y": 3,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
     },
@@ -56,7 +56,7 @@
       "y": 6,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
     }

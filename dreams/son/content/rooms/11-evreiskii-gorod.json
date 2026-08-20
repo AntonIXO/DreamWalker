@@ -26,7 +26,7 @@
       "y": 7,
       "w": 2,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
     },
@@ -46,7 +46,7 @@
       "y": 5,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
     },
@@ -56,7 +56,7 @@
       "y": 3,
       "w": 2,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
     }

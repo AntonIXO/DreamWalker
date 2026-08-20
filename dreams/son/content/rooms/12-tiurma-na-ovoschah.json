@@ -36,7 +36,7 @@
       "y": 1,
       "w": 2,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
     },
@@ -66,7 +66,7 @@
       "y": 5,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
     }

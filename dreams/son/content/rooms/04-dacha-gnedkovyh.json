@@ -36,7 +36,7 @@
       "y": 3,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
     },

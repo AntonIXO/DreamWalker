@@ -36,7 +36,7 @@
       "y": 1,
       "w": 3,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
     },
@@ -46,7 +46,7 @@
       "y": 3,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
     },

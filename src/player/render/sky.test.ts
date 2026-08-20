@@ -30,9 +30,9 @@ describe("paintingAt", () => {
 });
 
 describe("routeOpensOntoSky", () => {
-  test("a street does not paint its ground", () => {
-    expect(routeOpensOntoSky(["route"], "path")).toBe(true);
-    expect(routeOpensOntoSky(["route"], "grass")).toBe(true);
+  test("a street paints its path, so you do not walk on the sky", () => {
+    expect(routeOpensOntoSky(["route"], "path")).toBe(false);
+    expect(routeOpensOntoSky(["route"], "grass")).toBe(false);
   });
 
   test("a place keeps its floor", () => {
@@ -40,7 +40,7 @@ describe("routeOpensOntoSky", () => {
     expect(routeOpensOntoSky(["meta"], "floor")).toBe(false);
   });
 
-  test("only roadside trees stay, so the bulk of a street is sky", () => {
+  test("only the tree mass beside the road opens onto sky", () => {
     const room = {
       width: 5,
       height: 3,

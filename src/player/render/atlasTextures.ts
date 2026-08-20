@@ -118,6 +118,7 @@ export async function loadOptionalTexture(
   );
   if (!texture) return null;
   texture.source.scaleMode = "nearest";
+  texture.source.autoGenerateMipmaps = false;
   return texture;
 }
 

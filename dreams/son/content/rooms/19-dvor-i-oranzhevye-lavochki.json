@@ -42,11 +42,11 @@
     },
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
-      "x": 4,
-      "y": 5,
+      "x": 2,
+      "y": 4,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
     },
@@ -93,9 +93,9 @@
     {
       "id": "butylka-riadom-s-turyshevym-ne-pervaia",
       "kind": "look",
-      "x": 4.5,
-      "y": 6.15,
-      "reach": 0.9,
+      "x": 2.5,
+      "y": 5.15,
+      "reach": 1.4,
       "prompt": "бутылка рядом с Турышевым, не первая",
       "clueId": null,
       "action": null,

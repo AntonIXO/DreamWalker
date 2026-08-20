@@ -26,7 +26,7 @@
       "y": 2,
       "w": 2,
       "h": 2,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
     },
@@ -36,7 +36,7 @@
       "y": 2,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
     },
@@ -46,7 +46,7 @@
       "y": 2,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
     }

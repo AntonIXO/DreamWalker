@@ -26,7 +26,7 @@
       "y": 3,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
     },
@@ -46,7 +46,7 @@
       "y": 7,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
     },
@@ -66,7 +66,7 @@
       "y": 6,
       "w": 1,
       "h": 1,
-      "solid": false,
+      "solid": true,
       "role": null,
       "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
     }
