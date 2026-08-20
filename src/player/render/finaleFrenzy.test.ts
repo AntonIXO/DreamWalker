@@ -11,10 +11,12 @@ function createMockAtlas(): AtlasTextures {
   frames.set("player_s_0", Texture.WHITE);
   return {
     manifest: {
+      format: 5,
       image: "atlas.png",
       tileSize: 16,
       frames: {},
       roleFrames: {},
+      chosen: {},
     },
     imageUrl: "atlas.png",
     sheetWidth: 256,
