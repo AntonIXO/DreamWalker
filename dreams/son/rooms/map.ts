@@ -284,11 +284,13 @@ function entryFor(room: DreamRoom, dir: StreetDir): RoomEntry {
   const door = doorway(room, dir);
   const midX = door.x + door.w / 2;
   const midY = door.y + door.h / 2;
-  if (dir === "n") return { id: "from-n", x: midX, y: door.h + 0.3, facing: "s" };
+  if (dir === "n")
+    return { id: "from-n", x: midX, y: door.h + 0.3, facing: "s" };
   if (dir === "s") {
     return { id: "from-s", x: midX, y: door.y - 0.3, facing: "n" };
   }
-  if (dir === "w") return { id: "from-w", x: door.w + 0.5, y: midY, facing: "e" };
+  if (dir === "w")
+    return { id: "from-w", x: door.w + 0.5, y: midY, facing: "e" };
   return { id: "from-e", x: door.x - 0.5, y: midY, facing: "w" };
 }
 
@@ -562,7 +564,10 @@ function eastWestCells(
   const cells = grid(width, height, "t");
   for (let x = 0; x < width; x++) {
     const t = width > 1 ? x / (width - 1) : 0;
-    const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+    const yCenter = Math.min(
+      height - 3,
+      Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
+    );
     paint(cells, x, yCenter, "p");
     paint(cells, x, yCenter + 1, "p");
   }
@@ -570,7 +575,10 @@ function eastWestCells(
   if (variant === 0) {
     for (let x = 3; x < width - 3; x++) {
       const t = x / (width - 1);
-      const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+      const yCenter = Math.min(
+        height - 3,
+        Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
+      );
       for (let y = yCenter - 1; y <= yCenter + 2; y++) {
         if (y >= 1 && y < height - 1 && cells[y]?.[x] === "t") {
           paint(cells, x, y, rnd() < 0.35 ? "h" : "g");
@@ -580,7 +588,10 @@ function eastWestCells(
   } else if (variant === 1) {
     for (let x = 1; x < width - 1; x++) {
       const t = x / (width - 1);
-      const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+      const yCenter = Math.min(
+        height - 3,
+        Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
+      );
       if (yCenter - 1 >= 1 && cells[yCenter - 1]?.[x] === "t") {
         paint(cells, x, yCenter - 1, "g");
       }
@@ -591,15 +602,23 @@ function eastWestCells(
   } else if (variant === 2) {
     const ax = 3 + Math.floor(rnd() * Math.max(1, width - 8));
     const t = ax / (width - 1);
-    const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
+    const yCenter = Math.min(
+      height - 3,
+      Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
+    );
     if (yCenter - 1 >= 1) paint(cells, ax, yCenter - 1, "h");
     if (yCenter + 2 < height - 1) paint(cells, ax, yCenter + 2, "h");
   } else {
     for (let x = 1; x < width - 1; x++) {
       const t = x / (width - 1);
-      const yCenter = Math.min(height - 3, Math.max(1, Math.round(yWest * (1 - t) + yEast * t)));
-      if (yCenter - 1 >= 1) paint(cells, x, yCenter - 1, rnd() < 0.35 ? "h" : "g");
-      if (yCenter + 2 < height - 1) paint(cells, x, yCenter + 2, rnd() < 0.35 ? "h" : "g");
+      const yCenter = Math.min(
+        height - 3,
+        Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
+      );
+      if (yCenter - 1 >= 1)
+        paint(cells, x, yCenter - 1, rnd() < 0.35 ? "h" : "g");
+      if (yCenter + 2 < height - 1)
+        paint(cells, x, yCenter + 2, rnd() < 0.35 ? "h" : "g");
     }
   }
   stamp(cells, rnd, width, height);
@@ -617,7 +636,10 @@ function northSouthCells(
   const cells = grid(width, height, "t");
   for (let y = 0; y < height; y++) {
     const t = height > 1 ? y / (height - 1) : 0;
-    const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+    const xCenter = Math.min(
+      width - 3,
+      Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
+    );
     paint(cells, xCenter, y, "p");
     paint(cells, xCenter + 1, y, "p");
   }
@@ -625,7 +647,10 @@ function northSouthCells(
   if (variant === 0) {
     for (let y = 2; y < height - 2; y++) {
       const t = y / (height - 1);
-      const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+      const xCenter = Math.min(
+        width - 3,
+        Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
+      );
       for (let x = xCenter - 1; x <= xCenter + 2; x++) {
         if (x >= 1 && x < width - 1 && cells[y]?.[x] === "t") {
           paint(cells, x, y, rnd() < 0.35 ? "h" : "g");
@@ -635,7 +660,10 @@ function northSouthCells(
   } else if (variant === 1) {
     for (let y = 1; y < height - 1; y++) {
       const t = y / (height - 1);
-      const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+      const xCenter = Math.min(
+        width - 3,
+        Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
+      );
       if (xCenter - 1 >= 1 && cells[y]?.[xCenter - 1] === "t") {
         paint(cells, xCenter - 1, y, "g");
       }
@@ -646,15 +674,23 @@ function northSouthCells(
   } else if (variant === 2) {
     const ay = 2 + Math.floor(rnd() * Math.max(1, height - 6));
     const t = ay / (height - 1);
-    const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
+    const xCenter = Math.min(
+      width - 3,
+      Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
+    );
     if (xCenter - 1 >= 1) paint(cells, xCenter - 1, ay, "h");
     if (xCenter + 2 < width - 1) paint(cells, xCenter + 2, ay, "h");
   } else {
     for (let y = 1; y < height - 1; y++) {
       const t = y / (height - 1);
-      const xCenter = Math.min(width - 3, Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)));
-      if (xCenter - 1 >= 1) paint(cells, xCenter - 1, y, rnd() < 0.35 ? "h" : "g");
-      if (xCenter + 2 < width - 1) paint(cells, xCenter + 2, y, rnd() < 0.35 ? "h" : "g");
+      const xCenter = Math.min(
+        width - 3,
+        Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
+      );
+      if (xCenter - 1 >= 1)
+        paint(cells, xCenter - 1, y, rnd() < 0.35 ? "h" : "g");
+      if (xCenter + 2 < width - 1)
+        paint(cells, xCenter + 2, y, rnd() < 0.35 ? "h" : "g");
     }
   }
   stamp(cells, rnd, width, height);
@@ -818,8 +854,18 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
                 usedLayouts,
               ),
               [
-                { id: "from-w", x: 1.5, y: doorFrom.y + doorFrom.h / 2, facing: "e" },
-                { id: "from-e", x: ROAD_W - 1.5, y: doorTo.y + doorTo.h / 2, facing: "w" },
+                {
+                  id: "from-w",
+                  x: 1.5,
+                  y: doorFrom.y + doorFrom.h / 2,
+                  facing: "e",
+                },
+                {
+                  id: "from-e",
+                  x: ROAD_W - 1.5,
+                  y: doorTo.y + doorTo.h / 2,
+                  facing: "w",
+                },
               ],
             )
           : emptyRoute(
@@ -835,8 +881,18 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
                 usedLayouts,
               ),
               [
-                { id: "from-n", x: doorFrom.x + doorFrom.w / 2, y: 1.5, facing: "s" },
-                { id: "from-s", x: doorTo.x + doorTo.w / 2, y: ROAD_H - 1.5, facing: "n" },
+                {
+                  id: "from-n",
+                  x: doorFrom.x + doorFrom.w / 2,
+                  y: 1.5,
+                  facing: "s",
+                },
+                {
+                  id: "from-s",
+                  x: doorTo.x + doorTo.w / 2,
+                  y: ROAD_H - 1.5,
+                  facing: "n",
+                },
               ],
             );
       dressRoute(path);

@@ -8,12 +8,16 @@
  * them. A kill has no words; the sting is the sound of that.
  */
 
-export type Bed = "menu" | "game";
+export type Bed = "menu" | "game" | "finale";
 export type Cue = "kill";
 
 const BED_URLS: Record<Bed, string> = {
   menu: new URL("../../assets/soundtrack/main-menu.mp3", import.meta.url).href,
   game: new URL("../../assets/soundtrack/game.mp3", import.meta.url).href,
+  finale: new URL(
+    "../../assets/soundtrack/Пациента разъебало.mp3",
+    import.meta.url,
+  ).href,
 };
 
 const CUE_URLS: Record<Cue, string> = {
@@ -102,6 +106,7 @@ export class Soundtrack {
     this.voices = {
       menu: this.makeVoice(),
       game: this.makeVoice(),
+      finale: this.makeVoice(),
     };
 
     for (const event of this.unlockEvents) {

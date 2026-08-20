@@ -30,6 +30,7 @@ import { DreamFx } from "./render/dreamFx";
 import { loadSkyPaintings, Sky } from "./render/sky";
 import { RoomScene } from "./render/roomScene";
 import { Shiver } from "./render/shiver";
+import { FinaleFrenzy } from "./render/finaleFrenzy";
 import {
   ActorLayer,
   WalkerSprite,
@@ -284,6 +285,15 @@ async function boot(): Promise<void> {
   );
   shiver.onTrigger = (intensity) => dreamFx.burst(intensity);
   const transition = new EnterTransition(uiLayer);
+  const finaleFrenzy = new FinaleFrenzy(
+    atlas,
+    figureTextures,
+    sanitarWalk,
+    lobbyPatient,
+    app.screen.width,
+    app.screen.height,
+  );
+  app.stage.addChild(finaleFrenzy.root);
 
   const cycle = new Cycle(artifact);
   const journal = new Journal(artifact.slug);
@@ -576,6 +586,9 @@ async function boot(): Promise<void> {
       },
       onEnded: (kind) => {
         input.setCaptured(true);
+        soundtrack.setBed("finale");
+        soundtrack.setDucked(false);
+        finaleFrenzy.startSequence();
         journal.add(
           cycle.number,
           kind === "match"
@@ -711,7 +724,11 @@ async function boot(): Promise<void> {
   // backgrounded tab has no `requestAnimationFrame` — so awaiting it means the game
   // never finishes booting until the tab is looked at, and `window.dreamWalker` is
   // never exposed. Pre-uploading textures is an optimisation; boot is not.
-  void (app.renderer as { prepare?: { upload?: (target: unknown) => Promise<unknown> } }).prepare?.upload?.(lobby.scene.root);
+  void (
+    app.renderer as {
+      prepare?: { upload?: (target: unknown) => Promise<unknown> };
+    }
+  ).prepare?.upload?.(lobby.scene.root);
   lobby.setMind(mindSettings);
 
   /**
@@ -723,6 +740,7 @@ async function boot(): Promise<void> {
     camera.resize(app.screen.width, app.screen.height);
     dreamFx.resize(app.screen.width, app.screen.height);
     sky.resize(app.screen.width, app.screen.height);
+    finaleFrenzy.resize(app.screen.width, app.screen.height);
     if (phase === "lobby" || phase === "enteringDream") {
       camera.setWorldSize(lobby.definition.width, lobby.definition.height);
       camera.fit(lobby.definition.width, lobby.definition.height);
@@ -853,6 +871,7 @@ async function boot(): Promise<void> {
     dreamFx,
     sky,
     soundtrack,
+    finaleFrenzy,
     get pressure(): DreamPressure {
       return pressureNow();
     },
@@ -925,7 +944,9 @@ async function boot(): Promise<void> {
     // latency, a cycle transition, or the finale owns the simulation.
     const simulationPaused = mind.waiting || restarting || finale.isOpen;
     hud.setMuted(held);
-    soundtrack.setDucked(dialogue.isOpen || finale.isOpen);
+    soundtrack.setDucked(
+      dialogue.isOpen || (finale.isOpen && !finaleFrenzy.isSequenceActive),
+    );
 
     if (!held && !simulationPaused) {
       session.update(input.axis(), delta);
@@ -1087,6 +1108,7 @@ async function boot(): Promise<void> {
     dreamFx.setPreset(room.graphics.glitchPreset);
     dreamFx.setPressure(pressureNow());
     dreamFx.update(delta);
+    finaleFrenzy.update(delta);
     const forecast = forecastFor(world.figures, world.currentRoomId);
     sky.setEnabled(true);
     sky.setCover(forecast.cover);

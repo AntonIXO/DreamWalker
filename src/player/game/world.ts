@@ -16,11 +16,7 @@
  */
 
 import type { DreamArtifact, FigurePlacement } from "../../shared/dream";
-import type {
-  DreamRoom,
-  RoomDoor,
-  RoomHotspot,
-} from "../../shared/room";
+import type { DreamRoom, RoomDoor, RoomHotspot } from "../../shared/room";
 import type { Direction } from "../../shared/roomGrid";
 import type { DoorTypeName } from "../../shared/tilecodes";
 import type {
