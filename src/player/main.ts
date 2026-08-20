@@ -890,6 +890,7 @@ async function boot(): Promise<void> {
   let prompt: string | null = null;
   app.ticker.add((ticker) => {
     const delta = Math.min(ticker.deltaMS, 100) / 1000;
+    finaleFrenzy.update(delta);
 
     // The cycle must not burn in the procedure room. Heartbeat and inhabit wait
     // until the sanitar actually lies down next to the patient.
@@ -1108,7 +1109,6 @@ async function boot(): Promise<void> {
     dreamFx.setPreset(room.graphics.glitchPreset);
     dreamFx.setPressure(pressureNow());
     dreamFx.update(delta);
-    finaleFrenzy.update(delta);
     const forecast = forecastFor(world.figures, world.currentRoomId);
     sky.setEnabled(true);
     sky.setCover(forecast.cover);

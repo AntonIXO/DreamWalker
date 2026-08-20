@@ -12,6 +12,7 @@ import type { AuthoredWalk } from "./walkerView";
 
 interface Dancer {
   readonly sprite: Sprite;
+  readonly texture: Texture;
   startX: number;
   startY: number;
   targetOffsetX: number;
@@ -20,8 +21,6 @@ interface Dancer {
   currentY: number;
   baseScale: number;
   phase: number;
-  side: "left" | "right" | "back";
-  row: number;
 }
 
 interface ConfettiParticle {
@@ -37,7 +36,11 @@ interface ConfettiParticle {
 }
 
 const FRENZY_DELAY_SECONDS = 20;
-const CONFETTI_COUNT = 45;
+const DANCER_TARGET_HEIGHT = 68;
+const DANCER_TARGET_WIDTH = 64;
+const SANITAR_TARGET_HEIGHT = 92;
+const SANITAR_TARGET_WIDTH = 84;
+const CONFETTI_COUNT = 40;
 
 const DISCO_COLORS = [
   0xff3366, 0x33ccff, 0xffd700, 0x00ff88, 0xff66cc, 0x9933ff, 0xff9933,
@@ -53,7 +56,7 @@ export class FinaleFrenzy {
     zIndex: 1000,
   });
 
-  private readonly floorGfx = new Graphics();
+  private readonly stageGfx = new Graphics();
   private readonly troupeContainer = new Container({
     label: "dancing-troupe",
     sortableChildren: true,
@@ -94,13 +97,13 @@ export class FinaleFrenzy {
     this.width = width;
     this.height = height;
 
-    this.root.addChild(this.floorGfx);
+    this.root.addChild(this.stageGfx);
     this.root.addChild(this.troupeContainer);
     this.root.addChild(this.effectsContainer);
     this.effectsContainer.addChild(this.confettiGfx);
     this.troupeContainer.addChild(this.sanitarContainer);
 
-    // Collect all available character textures
+    // Collect distinct figure textures
     for (const texture of figureTextures.values()) {
       this.characterPool.push(texture);
     }
@@ -144,7 +147,7 @@ export class FinaleFrenzy {
       roundPixels: true,
     });
     this.sanitarContainer.addChild(this.sanitarSprite);
-    this.sanitarContainer.position.set(width / 2, height * 0.52);
+    this.sanitarContainer.position.set(width / 2, height * 0.54);
   }
 
   get isSequenceActive(): boolean {
@@ -195,7 +198,7 @@ export class FinaleFrenzy {
     this.width = width;
     this.height = height;
     if (!this.frenzyActive) {
-      this.sanitarContainer.position.set(width / 2, height * 0.52);
+      this.sanitarContainer.position.set(width / 2, height * 0.54);
     }
   }
 
@@ -203,83 +206,76 @@ export class FinaleFrenzy {
     this.cleanup();
 
     const centerX = this.width / 2;
-    const centerY = this.height * 0.54;
+    const centerY = this.height * 0.55;
 
-    // Formation layout:
-    // Left wing, Right wing, and Back row around center Sanitar
-    const totalDancers = Math.min(16, Math.max(10, this.characterPool.length));
+    // Formation: 10 backup dancers in a clean semi-circle arc around the center Sanitar
+    const totalDancers = Math.min(12, Math.max(8, this.characterPool.length));
 
-    // Form an arc / lineup of backup dancers
+    // Specific slot offsets relative to stage center
+    const offsets = [
+      { x: -75, y: 15 },
+      { x: 75, y: 15 },
+      { x: -145, y: 5 },
+      { x: 145, y: 5 },
+      { x: -215, y: -10 },
+      { x: 215, y: -10 },
+      { x: -105, y: -38 },
+      { x: 105, y: -38 },
+      { x: -40, y: -45 },
+      { x: 40, y: -45 },
+      { x: -280, y: -25 },
+      { x: 280, y: -25 },
+    ];
+
     for (let i = 0; i < totalDancers; i++) {
       const texture = this.characterPool[i % this.characterPool.length]!;
       const sprite = new Sprite({
         texture,
-        anchor: { x: 0.5, y: 0.85 },
+        anchor: { x: 0.5, y: 0.9 },
         roundPixels: true,
       });
 
-      const isEven = i % 2 === 0;
-      const rank = Math.floor(i / 2) + 1; // 1, 2, 3...
-      const side: "left" | "right" | "back" =
-        rank > 4 ? "back" : isEven ? "left" : "right";
+      // Calculate normalized scale so every dancer is proportionally 68px tall
+      const scale = Math.min(
+        DANCER_TARGET_HEIGHT / Math.max(1, texture.height),
+        DANCER_TARGET_WIDTH / Math.max(1, texture.width),
+      );
 
-      let targetOffsetX = 0;
-      let targetOffsetY = 0;
-      let startX = 0;
-      let startY = centerY;
+      const offset = offsets[i] ?? { x: (i - 5) * 50, y: 0 };
+      const startX = offset.x < 0 ? -80 : this.width + 80;
+      const startY = centerY + offset.y + (Math.random() - 0.5) * 40;
 
-      if (side === "left") {
-        targetOffsetX = -rank * 55 - 25;
-        targetOffsetY = (rank % 2 === 0 ? 10 : -15) + (rank - 1) * 8;
-        startX = -60 - Math.random() * 80;
-        startY = centerY + (Math.random() - 0.5) * 100;
-      } else if (side === "right") {
-        targetOffsetX = rank * 55 + 25;
-        targetOffsetY = (rank % 2 === 0 ? 10 : -15) + (rank - 1) * 8;
-        startX = this.width + 60 + Math.random() * 80;
-        startY = centerY + (Math.random() - 0.5) * 100;
-      } else {
-        // Back row arch
-        const backIdx = i - 8;
-        targetOffsetX = (backIdx - 2.5) * 65;
-        targetOffsetY = -60 - Math.abs(backIdx - 2.5) * 10;
-        startX = centerX + targetOffsetX * 3;
-        startY = -60;
-      }
-
-      const baseScale = 2.6;
-      sprite.scale.set(baseScale);
+      sprite.scale.set(scale);
       sprite.position.set(startX, startY);
-      sprite.zIndex = 10 + targetOffsetY;
+      sprite.zIndex = 10 + offset.y;
 
       this.troupeContainer.addChild(sprite);
       this.dancers.push({
         sprite,
+        texture,
         startX,
         startY,
-        targetOffsetX,
-        targetOffsetY,
+        targetOffsetX: offset.x,
+        targetOffsetY: offset.y,
         currentX: startX,
         currentY: startY,
-        baseScale,
-        phase: i * 0.45,
-        side,
-        row: rank,
+        baseScale: scale,
+        phase: i * 0.52,
       });
     }
 
     // Spawn stage confetti
     for (let i = 0; i < CONFETTI_COUNT; i++) {
       this.confetti.push({
-        x: centerX + (Math.random() - 0.5) * (this.width * 0.7),
-        y: Math.random() * this.height,
-        vx: (Math.random() - 0.5) * 120,
-        vy: -50 - Math.random() * 150,
-        size: 3 + Math.random() * 6,
+        x: centerX + (Math.random() - 0.5) * 600,
+        y: centerY - 250 + Math.random() * 350,
+        vx: (Math.random() - 0.5) * 100,
+        vy: -30 - Math.random() * 120,
+        size: 3 + Math.random() * 5,
         color: DISCO_COLORS[i % DISCO_COLORS.length]!,
         rotation: Math.random() * Math.PI * 2,
-        vRot: (Math.random() - 0.5) * 8,
-        alpha: 0.75 + Math.random() * 0.25,
+        vRot: (Math.random() - 0.5) * 6,
+        alpha: 0.8 + Math.random() * 0.2,
       });
     }
 
@@ -293,7 +289,7 @@ export class FinaleFrenzy {
     this.dancers.length = 0;
     this.confetti.length = 0;
     this.confettiGfx.clear();
-    this.floorGfx.clear();
+    this.stageGfx.clear();
   }
 
   update(delta: number): void {
@@ -310,23 +306,27 @@ export class FinaleFrenzy {
     }
 
     this.entryTime += delta;
-    const entryProgress = Math.min(1, this.entryTime / 1.4);
+    const entryProgress = Math.min(1, this.entryTime / 1.2);
     // Smooth ease-out entrance
     const ease = 1 - Math.pow(1 - entryProgress, 3);
 
     const centerX = this.width / 2;
-    const centerY = this.height * 0.54;
+    const centerY = this.height * 0.55;
 
-    // Draw disco stage spotlight / dance floor glow
-    this.floorGfx.clear();
-    const glowPulse = 0.85 + 0.15 * Math.sin(this.totalTime * 8);
-    this.floorGfx.ellipse(
-      centerX,
-      centerY + 18,
-      280 * glowPulse,
-      60 * glowPulse,
-    );
-    this.floorGfx.fill({ color: 0x221133, alpha: 0.45 });
+    // Draw stage dark background + glowing spotlight
+    this.stageGfx.clear();
+    // 1. Semi-translucent dark background so dancers stand out cleanly
+    this.stageGfx.rect(0, 0, this.width, this.height);
+    this.stageGfx.fill({ color: 0x050508, alpha: 0.65 });
+
+    // 2. Glowing disco spotlight on the floor
+    const pulse = 0.9 + 0.1 * Math.sin(this.totalTime * 8);
+    this.stageGfx.ellipse(centerX, centerY + 12, 340 * pulse, 75 * pulse);
+    this.stageGfx.fill({ color: 0x2d1a3a, alpha: 0.75 });
+
+    // Inner bright beam
+    this.stageGfx.ellipse(centerX, centerY + 12, 180 * pulse, 40 * pulse);
+    this.stageGfx.fill({ color: 0x4a2a60, alpha: 0.45 });
 
     // --- 1. Update Dancing Troupe Characters ---
     for (const dancer of this.dancers) {
@@ -340,31 +340,31 @@ export class FinaleFrenzy {
       if (entryProgress >= 1) {
         // Synchronized dance choreography to the music beat:
         // Rhythmic hop
-        const hop = Math.abs(Math.sin(this.totalTime * 8 + dancer.phase)) * 14;
+        const hop = Math.abs(Math.sin(this.totalTime * 9 + dancer.phase)) * 14;
         // Sway side to side
-        const sway = Math.sin(this.totalTime * 4 + dancer.phase) * 6;
+        const sway = Math.sin(this.totalTime * 4.5 + dancer.phase) * 6;
         dancer.currentX = finalX + sway;
         dancer.currentY = finalY - hop;
 
         // Squash & stretch to the beat
-        const bounce = Math.sin(this.totalTime * 12 + dancer.phase);
-        const squash = 1 + 0.16 * Math.abs(bounce);
-        const stretch = 1 - 0.12 * Math.abs(bounce);
+        const bounce = Math.sin(this.totalTime * 9 + dancer.phase);
+        const squash = 1 + 0.15 * Math.abs(bounce);
+        const stretch = 1 - 0.1 * Math.abs(bounce);
 
         // Direction facing (face inward toward center sanitar, or dance sway)
         const facingCenter = dancer.targetOffsetX < 0 ? 1 : -1;
         const flipSway =
-          Math.sin(this.totalTime * 4 + dancer.phase) > 0 ? 1 : -1;
+          Math.sin(this.totalTime * 4.5 + dancer.phase) > 0 ? 1 : -1;
         const facing = ease >= 1 ? flipSway * facingCenter : facingCenter;
 
         // Periodic group pirouette
         const barTime = this.totalTime % 3.6;
-        const isSpinning = barTime > 2.8;
+        const isSpinning = barTime > 2.9;
         if (isSpinning) {
-          dancer.sprite.rotation += 12 * delta;
+          dancer.sprite.rotation += 10 * delta;
         } else {
           dancer.sprite.rotation =
-            Math.sin(this.totalTime * 6 + dancer.phase) * 0.18;
+            Math.sin(this.totalTime * 6 + dancer.phase) * 0.15;
         }
 
         dancer.sprite.scale.set(
@@ -380,7 +380,7 @@ export class FinaleFrenzy {
     // --- 2. Update Dancing Center Sanitar ---
     // Fast leg shuffle from authored assets ("ногами из ассетов перебирает")
     this.sanitarFrameTimer += delta;
-    const frameInterval = 0.062; // ~16 fps rapid shuffle
+    const frameInterval = 0.06; // ~16.6 fps rapid shuffle
     if (this.sanitarFrameTimer >= frameInterval) {
       this.sanitarFrameTimer -= frameInterval;
       this.sanitarFrameIndex =
@@ -389,27 +389,31 @@ export class FinaleFrenzy {
     }
 
     // Spinning around ("и крутится")
-    const spinSpeed = 3.8 + Math.sin(this.totalTime * 4) * 1.6;
+    const spinSpeed = 3.6 + Math.sin(this.totalTime * 4) * 1.5;
     this.sanitarContainer.rotation += spinSpeed * delta;
 
     // Jumping & dance bounce in center
-    const sanitarHop = Math.abs(Math.sin(this.totalTime * 12)) * 22;
-    const sanitarSideStep = Math.sin(this.totalTime * 3) * 16;
+    const sanitarHop = Math.abs(Math.sin(this.totalTime * 12)) * 18;
+    const sanitarSideStep = Math.sin(this.totalTime * 3) * 14;
     this.sanitarContainer.position.set(
       centerX + sanitarSideStep,
       centerY - sanitarHop,
     );
 
-    // Center Sanitar scale & beat response
-    const baseSanitarScale = 4.8;
-    const sanitarBeat = Math.sin(this.totalTime * 14);
-    const sanitarSquash = 1 + 0.22 * Math.abs(sanitarBeat);
-    const sanitarStretch = 1 - 0.16 * Math.abs(sanitarBeat);
+    // Center Sanitar scale & beat response (normalized to 92px height)
+    const currentSanitarTexture = this.sanitarSprite.texture;
+    const rawSanitarScale = Math.min(
+      SANITAR_TARGET_HEIGHT / Math.max(1, currentSanitarTexture.height),
+      SANITAR_TARGET_WIDTH / Math.max(1, currentSanitarTexture.width),
+    );
+    const sanitarBeat = Math.sin(this.totalTime * 12);
+    const sanitarSquash = 1 + 0.18 * Math.abs(sanitarBeat);
+    const sanitarStretch = 1 - 0.12 * Math.abs(sanitarBeat);
     const sanitarFlip = Math.sin(this.totalTime * 6) >= 0 ? 1 : -1;
 
     this.sanitarSprite.scale.set(
-      baseSanitarScale * sanitarStretch * sanitarFlip,
-      baseSanitarScale * sanitarSquash,
+      rawSanitarScale * sanitarStretch * sanitarFlip,
+      rawSanitarScale * sanitarSquash,
     );
 
     // --- 3. Update Confetti Particles Over Group ---
@@ -417,14 +421,14 @@ export class FinaleFrenzy {
     for (const p of this.confetti) {
       p.x += p.vx * delta;
       p.y += p.vy * delta;
-      p.vy += 160 * delta; // Gentle gravity
+      p.vy += 140 * delta; // Gentle gravity
       p.rotation += p.vRot * delta;
 
       // Wrap around near dance stage
-      if (p.y > this.height * 0.75) {
-        p.y = centerY - 160 - Math.random() * 60;
-        p.x = centerX + (Math.random() - 0.5) * (this.width * 0.6);
-        p.vy = -40 - Math.random() * 120;
+      if (p.y > centerY + 80) {
+        p.y = centerY - 180 - Math.random() * 50;
+        p.x = centerX + (Math.random() - 0.5) * 550;
+        p.vy = -30 - Math.random() * 100;
       }
 
       this.confettiGfx.rect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
