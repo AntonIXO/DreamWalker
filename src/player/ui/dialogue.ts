@@ -58,6 +58,7 @@ export class DialoguePanel {
     private readonly artifact: DreamArtifact,
     private readonly atlas: AtlasTextures,
     private readonly callbacks: DialogueCallbacks,
+    private readonly portraitUrls: ReadonlyMap<string, string> = new Map(),
   ) {
     this.root = document.createElement("div");
     this.root.className = "dialogue";
@@ -172,6 +173,17 @@ export class DialoguePanel {
   private renderPortrait(): void {
     const figure = this.figure;
     if (!figure) return;
+    const authored = this.portraitUrls.get(figure.id);
+    if (authored) {
+      this.portraitEl.textContent = "";
+      Object.assign(this.portraitEl.style, {
+        backgroundImage: `url(${JSON.stringify(authored)})`,
+        backgroundPosition: "center",
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
+      });
+      return;
+    }
     const character = this.artifact.content.characters.find(
       (candidate) => candidate.id === figure.id,
     );
@@ -247,12 +259,15 @@ export class DialoguePanel {
           ),
       );
     } catch (error) {
-      pending.className = "said-by-them";
-      console.error(error);
+      // A missing model is silence, not a canned line in this person's mouth.
+      pending.remove();
+      const aborted =
+        (error instanceof DOMException && error.name === "AbortError") ||
+        (error instanceof Error && error.name === "AbortError");
+      if (!aborted) console.error(error);
       this.busy = false;
       this.inputEl.disabled = false;
       this.memoryEl.disabled = false;
-      this.leverageEl.disabled = false;
       this.leverageEl.disabled = false;
       this.inputEl.focus();
       return;

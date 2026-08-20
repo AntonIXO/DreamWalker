@@ -10,7 +10,13 @@ import {
   isTimeoutError,
 } from "ai-sdk-provider-codex-app-server";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { generateText, Output, streamText, type LanguageModel } from "ai";
+import {
+  generateText,
+  Output,
+  streamText,
+  type LanguageModel,
+  type ModelMessage,
+} from "ai";
 import { validateMnemonic, wordlists } from "bip39";
 import { z } from "zod";
 
@@ -46,6 +52,7 @@ import {
 } from "../shared/population";
 import { mayYieldShard } from "../shared/yield";
 import type { CodexAccountProcess } from "./codex-account";
+import { dialogueTurnMessages } from "./dialogue-messages";
 
 const MAX_PATCHES = 8;
 
@@ -64,7 +71,7 @@ export class AgentRuntimeError extends Error {
 const tellSchema = z.object({ quoted: z.string().min(1).max(120) });
 
 const dialogueSchema = z.object({
-  reply: z.string().min(1).max(180),
+  reply: z.string().min(1).max(900),
   tell: tellSchema.nullable(),
   yieldedShardId: z.string().max(120).nullable(),
   residueDelta: z.array(z.string().min(1).max(300)).max(3),
@@ -75,7 +82,7 @@ const dialogueSchema = z.object({
     })
     .nullable(),
   resonance: z.object({ declaration: z.string().min(1).max(240) }).nullable(),
-  figureMemorySummary: z.string().max(400),
+  figureMemorySummary: z.string().max(800),
   journalEntry: z.string().min(1).max(180).nullable(),
   portraitState: z.enum(["neutral", "interested", "wary", "knows"]),
   leverageLearned: z
@@ -251,14 +258,35 @@ const SLEEPER_INSTRUCTIONS = `Ты — спящий человек, чей со�
 
 const DIALOGUE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 
-Сейчас ты говоришь голосом одной фигуры сна. Регистр плоский, бытовой, без мистики.
-Чем точнее вопрос, тем больше информации можно отдать и тем заметнее чужой.
-Тайну целиком никогда не называй: фигура знает только переданную ей зацепку и отдаёт
-её кусок, не слово-ответ.
+Сейчас ты — одна фигура сна. Блок «КТО ТЫ» (soul) — это весь человек: биография,
+голос, желание, враньё, зацепка и цена за неё. Сжатые пометки в запросе — шпаргалка;
+если они расходятся с soul, верь soul.
 
-Ответ — максимум два коротких предложения и 180 символов.
-Если формулировка выдала чужого, tell.quoted обязан дословно цитировать непрерывный кусок
-его текущей реплики, а reply обязан естественно содержать эту точную цитату.
+Это разговор, не автоответчик. Собеседник должен захотеть ответить ещё раз.
+Говори так, как говорит живой человек с историей: деталь двора, имя, обида, шутка,
+вопрос в ответ, кусок воспоминания. Не отбивайся одной фразой «здесь всегда так»
+и не строй мистический хоррор. Страшное — если оно есть — говорится тем же тоном,
+что и про погоду, но вокруг него должна быть жизнь.
+
+Зацепка (слово или факт, который ты прячешь) живёт внутри твоей истории, а не
+вместо неё. Пока цену из soul не заплатили — рассказывай вокруг: намёк, сцена,
+имя, место, что было «тогда», без выдачи самого слова. Когда цену заплатили —
+расскажи ту историю целиком, в которой слово естественно падает, как деталь,
+а не как пароль. Тайну сна и сид-фразу целиком не называй никогда.
+
+Чем точнее и чужероднее вопрос, тем больше можно отдать — и тем заметнее, что
+он не отсюда. Не будь квестом и не подсказывай, куда идти, если soul этого
+не велит (Турышев — исключение: дорога у него, и только после того, как посидели).
+
+Реплики user — санитар, assistant — ты. Это память разговора в этом цикле,
+а не шпаргалка. Продолжай нить: имена, которые уже прозвучали, вопросы, на которые
+ты не ответил, шутки, обиды. Не представляйся заново и не спрашивай «как дела»,
+если это уже было. Односложные «да/ну/иди» — ошибка, если soul не велит замолчать.
+figureMemorySummary — что ты понял об этом человеке за цикл, включая то, что
+уже ушло из ближайших реплик.
+
+Если формулировка выдала чужого, tell.quoted обязан дословно цитировать непрерывный
+кусок его текущей реплики, а reply обязан естественно содержать эту точную цитату.
 resonance используй редко: только если фигура уже всё поняла (знает) и её дожали
 ещё одной прямой уликой на этом ходу. Уровень «знает» сам по себе не убивает.
 Если resonance заполнен, declaration должна быть её финальной произнесённой фразой.
@@ -269,15 +297,14 @@ resonance используй редко: только если фигура уж
 yieldedShardId заполняй лишь когда это условие выполнено.
 
 Предложенное воспоминание — инородное тело. memoryEffect заполняй только когда оно есть.
-figureMemorySummary компактно обновляет память этой фигуры о текущем цикле.
 journalEntry — один полезный факт о человеке, только если игрок узнал новый факт.
 residueDelta — до трёх коротких выводов спящего о санитаре.
 portraitState — neutral, interested, wary или knows. Это не числовая шкала.
 
 В мире есть люди, с которыми санитар уже что-то сделал: кого-то нет там, где он был,
 кто-то теперь молчит, кто-то стал слишком быстро соглашаться. Ты знаешь ровно столько,
-сколько знал бы человек на твоём месте. Говори об этом вскользь и бытово, никогда сводкой
-и никогда списком.
+сколько знал бы человек на твоём месте. Говори об этом вскользь, как о сплетне,
+никогда сводкой и никогда списком.
 
 Кирилл всегда цел и ничего не помнит. Никто здесь этому не удивляется, и удивляться
 нечему. Санитар, сказавший вслух, что с Кириллом что-то было, — не отсюда, и это самое
@@ -649,21 +676,24 @@ export class AgentRuntime {
   private async generate<T>(
     schema: z.ZodType<T>,
     system: string,
-    prompt: string,
+    input: string | ModelMessage[],
     signal?: AbortSignal,
     maxOutputTokens = 4096,
   ): Promise<T> {
+    const turn = Array.isArray(input)
+      ? { messages: input }
+      : { prompt: input };
     if (this.providerMode === "anthropic") {
-      const run = (nextPrompt: string) =>
+      const run = (next: string | ModelMessage[]) =>
         generateText({
           model: this.ensureModel(),
           system: structuredInstructions(system, schema),
-          prompt: nextPrompt,
+          ...(typeof next === "string" ? { prompt: next } : { messages: next }),
           maxOutputTokens,
           maxRetries: 1,
           abortSignal: signal,
         });
-      const first = await run(prompt);
+      const first = await run(input);
       if (this.options.verbose) {
         console.debug(
           "[agents] anthropic structured response",
@@ -679,7 +709,16 @@ export class AgentRuntime {
       } catch (error) {
         if (!(error instanceof AgentRuntimeError)) throw error;
         const repaired = await run(
-          `${prompt}\n\nПредыдущий ответ не прошёл схему. Верни исправленный полный JSON-объект. Не повторяй пояснения.`,
+          Array.isArray(input)
+            ? [
+                ...input,
+                {
+                  role: "user",
+                  content:
+                    "Предыдущий ответ не прошёл схему. Верни исправленный полный JSON-объект. Не повторяй пояснения.",
+                },
+              ]
+            : `${input}\n\nПредыдущий ответ не прошёл схему. Верни исправленный полный JSON-объект. Не повторяй пояснения.`,
         );
         return parseStructuredText(repaired.text, schema);
       }
@@ -687,7 +726,7 @@ export class AgentRuntime {
     const result = await generateText({
       model: this.ensureModel(),
       system,
-      prompt,
+      ...turn,
       output: Output.object({ schema }),
       abortSignal: signal,
       maxOutputTokens,
@@ -813,18 +852,14 @@ export class AgentRuntime {
       const shard = this.artifact.shards.find(
         (candidate) => candidate.id === figure.holdsShardId,
       );
-      const prompt = [
+      const situation = [
         `Жанровый контракт: ${this.artifact.genreContract}`,
         `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
         `Цикл: ${request.cycleNumber}`,
         `Истощение санитара (0..1): ${request.exhaustion.toFixed(2)}. При высоком он выглядит бесцельным, подозрение почти не растёт.`,
         `Фигура: ${figure.name}`,
         `Её роль: ${profile?.role ?? figure.role}`,
-        `Устойчивая личность: ${profile?.personality ?? figure.personality}`,
-        `Манера речи: ${profile?.voice ?? "говорит коротко"}`,
-        `Желание: ${profile?.desire ?? "сохранить порядок"}`,
-        `Страх: ${profile?.fear ?? "чужого в знакомом месте"}`,
-        `Запретная тема: ${profile?.taboo ?? "то, что было раньше"}`,
+        `Пометки (если расходятся с soul — soul важнее): личность ${profile?.personality ?? figure.personality}; голос ${profile?.voice ?? "как в soul"}; хочет ${profile?.desire ?? "своего"}; боится ${profile?.fear ?? "чужого"}; не говорит про ${profile?.taboo ?? "то, чего здесь знать неоткуда"}`,
         `Сейчас она: ${figure.activity}`,
         `Комната: ${figure.roomId}`,
         `Настроение места: ${population.roomMoods[figure.roomId] ?? "обычный день слегка не сходится сам с собой"}`,
@@ -833,13 +868,16 @@ export class AgentRuntime {
           : "У фигуры нет доступной зацепки.",
         `Уже известные игроку зацепки: ${request.knownShardIds.join(", ") || "нет"}`,
         `Память спящего: ${request.sleeper.summary || "пока пусто"}`,
-        `Краткая память этой фигуры в текущем цикле: ${request.figureMemory.summary || "пока ничего"}`,
-        `Последние реплики этой фигуры:\n${json(request.figureMemory.lines.slice(-6))}`,
+        `Что ты уже понял об этом человеке в этом цикле: ${request.figureMemory.summary || "пока ничего"}`,
         request.offeredMemory
           ? `Игрок отдаёт воспоминание ${request.offeredMemory.id}: ${request.offeredMemory.text}`
           : "Воспоминание не предложено.",
-        `Текущая реплика игрока, которую можно цитировать только дословно:\n${request.utterance}`,
       ].join("\n\n");
+      const messages = dialogueTurnMessages(
+        request.figureMemory.lines,
+        situation,
+        request.utterance,
+      );
 
       let output: DialogueResult;
       if (this.providerMode === "anthropic") {
@@ -849,7 +887,7 @@ export class AgentRuntime {
             this.dialogueInstructionsFor(figure.id),
             dialogueSchema,
           ),
-          prompt,
+          messages,
           maxOutputTokens: 4096,
           abortSignal: signal,
         });
@@ -870,7 +908,14 @@ export class AgentRuntime {
           output = await this.generate(
             dialogueSchema,
             this.dialogueInstructionsFor(figure.id),
-            `${prompt}\n\nПоток не прошёл схему. Верни исправленный полный объект.`,
+            [
+              ...messages,
+              {
+                role: "user",
+                content:
+                  "Поток не прошёл схему. Верни исправленный полный объект.",
+              },
+            ],
             signal,
           );
         }
@@ -878,7 +923,7 @@ export class AgentRuntime {
         const stream = streamText({
           model: this.ensureModel(),
           system: DIALOGUE_INSTRUCTIONS,
-          prompt,
+          messages,
           output: Output.object({ schema: dialogueSchema }),
           abortSignal: signal,
         });
@@ -900,11 +945,16 @@ export class AgentRuntime {
         (!request.utterance.includes(output.tell.quoted) ||
           !output.reply.includes(output.tell.quoted))
       ) {
-        const repairPrompt = `${prompt}\n\nТвой прошлый объект нарушил контракт: tell.quoted должен быть дословной подстрокой и текущей реплики, и reply. Верни исправленный полный объект. Прошлый объект:\n${json(output)}`;
         output = await this.generate(
           dialogueSchema,
           DIALOGUE_INSTRUCTIONS,
-          repairPrompt,
+          [
+            ...messages,
+            {
+              role: "user",
+              content: `Твой прошлый объект нарушил контракт: tell.quoted должен быть дословной подстрокой и текущей реплики, и reply. Верни исправленный полный объект. Прошлый объект:\n${json(output)}`,
+            },
+          ],
           signal,
         );
       }

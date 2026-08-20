@@ -5,4 +5,4 @@ export function normaliseAnthropicBaseURL(value: string): string {
 }
 
 /** Default model on the Anthropic-compatible Antigravity proxy. */
-export const DEFAULT_ANTHROPIC_MODEL = "gemini-3.6-flash-high";
+export const DEFAULT_ANTHROPIC_MODEL = "gemini-3.7-flash-high";

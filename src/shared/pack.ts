@@ -89,7 +89,8 @@ export interface FigureLookContext {
 
 /**
  * Authored behaviour for one figure. Lives in the dream folder, not in the engine.
- * `talk` returning a result skips the model entirely — that is the point.
+ * Live dialogue uses the figure's soul.md through the model; `talk` is the offline
+ * stand-in for tests, not a fallback the player hears when inference drops.
  */
 export interface FigureAi {
   id: string;

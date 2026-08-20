@@ -2,9 +2,9 @@
  * Which mind is playing the sleeper.
  *
  * One function, so the game only ever holds a `DreamMind` and never learns whether there
- * is a model behind it. `ScriptedMind` is not a placeholder to be replaced: with a key
- * configured it becomes the fallback the model falls back *to*, per call, so a dropped
- * connection costs a duller answer rather than a broken dream.
+ * is a model behind it. Heartbeat, examine and the finale may fall back to
+ * `ScriptedMind` when inference drops. Dialogue does not: a figure's voice is its
+ * soul.md through the model, not a canned line standing in for a missing reply.
  *
  * The concept assumes BYOK either way (§ "ключ приносит игрок") — the key belongs to
  * whoever is playing, and a dream costs its Lord nothing to run.

@@ -22,11 +22,11 @@ import type {
   TurnResponse,
 } from "./types";
 import { lookAt } from "../../../dreams/son/looks";
-import { npcFor, talkContext } from "../../../dreams/son/npcs";
 
 const REQUEST_TIMEOUT_MS = 25_000;
 const INHABIT_TIMEOUT_MS = 20_000;
-const TRANSCRIPT_LINES = 6;
+/** Spoken turns kept for the model. Two lines per exchange; this is the cycle. */
+const TRANSCRIPT_LINES = 80;
 
 export interface RemoteMindContext {
   cycleNumber(): number;
@@ -202,7 +202,11 @@ export async function inhabitDream(
   }
 }
 
-/** Server-backed mind with a deterministic per-call fallback. */
+/**
+ * Server-backed mind. Dialogue is a per-figure AI SDK chat: spoken lines stay in
+ * `figureMemories` for the cycle and go back as `messages`, not as a dump of the
+ * last handful. Cycle reset still forgets them (`forgetFigures`).
+ */
 export class RemoteMind implements DreamMind {
   readonly name = "remote";
   private readonly figureMemories = new Map<string, FigureMemory>();
@@ -246,7 +250,7 @@ export class RemoteMind implements DreamMind {
     if (error instanceof RemoteMindError && error.code === "aborted")
       return false;
     this.failures++;
-    console.warn("[mind] remote call fell back to ScriptedMind:", error);
+    console.warn("[mind] remote call failed:", error);
     return true;
   }
 
@@ -259,12 +263,6 @@ export class RemoteMind implements DreamMind {
       lines: [],
     };
     const offeredMemory = this.memory.memory(request.offeredMemoryId);
-    const local = this.localTurn(request, offeredMemory?.text ?? null);
-    if (local) {
-      onPartial?.(local.reply);
-      this.rememberTurn(request, local, offeredMemory?.id ?? null);
-      return local;
-    }
     const controller = this.controller();
     const payload: DialogueRequestPayload = {
       slug: this.world.artifact.slug,
@@ -287,65 +285,14 @@ export class RemoteMind implements DreamMind {
         controller.signal,
         onPartial,
       );
-      figureMemory.lines.push(
-        { speaker: "sanitar", text: request.utterance },
-        { speaker: "figure", text: result.reply },
-      );
-      figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
-      figureMemory.summary = result.figureMemorySummary.slice(-400);
-      this.figureMemories.set(request.figureId, figureMemory);
-      if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
-      if (result.tell) {
-        this.memory.addTell(
-          this.context.cycleNumber(),
-          request.figureId,
-          result.tell.quoted,
-        );
-      }
-      this.memory.addResidue(result.residueDelta);
-      if (offeredMemory) this.memory.spendMemory(offeredMemory.id);
+      this.rememberTurn(request, result, offeredMemory?.id ?? null);
       return result;
     } catch (error) {
-      if (!this.failed(error)) throw error;
-      const result = await this.fallback.turn(request, onPartial);
-      figureMemory.lines.push(
-        { speaker: "sanitar", text: request.utterance },
-        { speaker: "figure", text: result.reply },
-      );
-      figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
-      figureMemory.summary = result.figureMemorySummary.slice(-400);
-      this.figureMemories.set(request.figureId, figureMemory);
-      if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
-      if (result.tell) {
-        this.memory.addTell(
-          this.context.cycleNumber(),
-          request.figureId,
-          result.tell.quoted,
-        );
-      }
-      this.memory.addResidue(result.residueDelta);
-      if (offeredMemory) this.memory.spendMemory(offeredMemory.id);
-      return result;
+      this.failed(error);
+      throw error;
     } finally {
       this.finish(controller);
     }
-  }
-
-  private localTurn(
-    request: TurnRequest,
-    offeredMemoryText: string | null,
-  ): TurnResponse | null {
-    const ctx = talkContext(this.world, {
-      figureId: request.figureId,
-      utterance: request.utterance,
-      offeredMemoryText,
-      leverageOffered: request.leverageOffered ?? null,
-      knownClueIds: [],
-      knownShardIds: [...this.memory.knownShardIds],
-      cycle: this.context.cycleNumber(),
-    });
-    if (!ctx) return null;
-    return npcFor(request.figureId).talk(ctx);
   }
 
   private rememberTurn(
@@ -362,7 +309,7 @@ export class RemoteMind implements DreamMind {
       { speaker: "figure", text: result.reply },
     );
     figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
-    figureMemory.summary = result.figureMemorySummary.slice(-400);
+    figureMemory.summary = result.figureMemorySummary.slice(-800);
     this.figureMemories.set(request.figureId, figureMemory);
     if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
     if (result.tell) {
