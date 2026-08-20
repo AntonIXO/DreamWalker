@@ -14,7 +14,13 @@ export class LobbyPrompt {
     this.root.className = "lobby-chrome";
     this.root.innerHTML = `
       <div class="lobby-stamp">
-        <span class="lobby-stamp-mark">DREAM WALKER</span>
+        <img
+          class="lobby-logo"
+          src="/logo.jpg"
+          alt="Dream Walker"
+          width="512"
+          height="512"
+        />
         <p class="lobby-slogan"></p>
       </div>
       <div class="lobby-hint"></div>

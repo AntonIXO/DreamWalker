@@ -195,6 +195,15 @@ export interface RoomGraphics {
   glitchPreset: "none" | "split" | "double-edge" | "wrong-palette";
 }
 
+/**
+ * A cells-fitted painting is the room. Atlas prop tiles and object sheets on top of
+ * it are the brown blocks sitting on the furniture — every room names `prop` as a
+ * fallback, and the object PNGs are opaque 2×2 stamps laid in a row at y=3.
+ */
+export function muralShowsTheRoom(graphics: RoomGraphics): boolean {
+  return graphics.backdropFit === "cells" && graphics.backdropImage != null;
+}
+
 export interface MetaConfig {
   /** §Part II — «от восьми до сорока секунд». */
   minMs: number;

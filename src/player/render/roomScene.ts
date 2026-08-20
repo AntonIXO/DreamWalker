@@ -12,7 +12,8 @@
  *   0  backdrop — the authored PNG, when there is one
  *   1  tiles    — atlas floor/wall art from the ASCII mask, drawn *under* the backdrop
  *                 so a room with art shows the art and a room without still walks
- *   2  props    — authored rects: the prop's own PNG if it has one, else atlas tiles
+ *   2  props    — authored rects: the prop's own PNG if it has one, else atlas tiles.
+ *                 Skipped when a cells mural is loaded: the painting is the furniture.
  *   3  actors   — the walker and the figures, y-sorted
  *
  * A meta-space sets `backdropFit: "screen"`: its picture is parented outside the camera
@@ -23,6 +24,7 @@ import { Container, Graphics, Sprite, type Texture } from "pixi.js";
 
 import { cellAt, type RoomCell } from "../../shared/roomGrid";
 import type { DreamArtifact } from "../../shared/dream";
+import { muralShowsTheRoom } from "../../shared/room";
 import { originX, originY } from "../../shared/street";
 import { Tile } from "../../shared/tilecodes";
 import {
@@ -274,14 +276,20 @@ export class RoomScene {
       container.addChild(sprite);
     }
 
-    const doors = this.drawDoors(room);
+    // A loaded cells mural is the furniture and the architecture. Drawing atlas
+    // `doorOpen` / `prop` tiles over it is how a painted apartment grew a row of brown
+    // triangles and a beige strip across its north wall.
+    const mural =
+      muralShowsTheRoom(room.graphics) && this.backdrops.has(room.id);
+
+    const doors = this.drawDoors(room, mural);
     doors.zIndex = 1.5;
     container.addChild(doors);
 
     // One layer for everything standing in the room. Objects used to be a second layer
     // at the same z, drawn after — so an object always covered a prop regardless of who
     // was in front. They are the same kind of thing and now they sort against each other.
-    const props = this.drawProps(room);
+    const props = this.drawProps(room, mural);
     props.zIndex = 2;
     container.addChild(props);
 
@@ -378,17 +386,23 @@ export class RoomScene {
   }
 
   /**
-   * Thresholds sit above the backdrop so a painted courtyard still shows its south
+   * Thresholds sit above the tiles so a room without a mural still shows its south
    * door. Atlas roles `doorOpen` / `doorLocked` / `doorSealed` already exist.
+   *
+   * A cells mural already painted the architecture; stamping those roles on top of
+   * it covers the picture with beige blocks, including across a painted archway.
    */
-  private drawDoors(room: RoomState): Container {
+  private drawDoors(room: RoomState, mural: boolean): Container {
     const layer = new Container({
       label: `room-doors:${room.id}`,
       eventMode: "none",
     });
     const size = room.tileSize;
-    if (room.tags.includes("route")) return layer;
+    if (mural || room.tags.includes("route")) return layer;
     for (const door of room.doors) {
+      // Open street doorways are holes in the wall, not beige tiles pasted on the
+      // painting. Locked and lift doors still need a mark.
+      if (door.threshold === "door" && door.type === "open") continue;
       const role =
         door.type === "sealed"
           ? "doorSealed"
@@ -431,6 +445,7 @@ export class RoomScene {
     ) {
       return ROLE_BY_CELL[cell] ?? cell;
     }
+    if (cell === "threshold" && room.tags.includes("route")) return "path";
     if (cell === "floor" || cell === "floorAlt") return room.graphics.floorRole;
     if (cell === "wall" || cell === "wallFace") return room.graphics.wallRole;
     return ROLE_BY_CELL[cell] ?? "floor";
@@ -466,13 +481,14 @@ export class RoomScene {
    * you can sleep on — so once they have art it is drawn at the hotspot's own position,
    * anchored at its foot so a walker standing below it draws in front.
    */
-  private drawProps(room: RoomState): Container {
+  private drawProps(room: RoomState, mural: boolean): Container {
     const layer = new Container({
       label: `room-props:${room.id}`,
       eventMode: "none",
       sortableChildren: true,
     });
     const size = room.tileSize;
+    if (mural) return layer;
 
     for (const prop of room.props) {
       const node = new Container({ eventMode: "none" });

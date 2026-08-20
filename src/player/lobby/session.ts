@@ -80,8 +80,7 @@ export class LobbySession {
   get mindReady(): boolean {
     if (!this.settings) return false;
     return (
-      this.settings.state === "connected" ||
-      this.settings.provider !== "codex"
+      this.settings.state === "connected" || this.settings.provider !== "codex"
     );
   }
 

@@ -167,8 +167,7 @@ async function api(
   }
 
   if (pathname === "/api/codex/account" && request.method === "GET") {
-    if (agents.providerMode !== "codex")
-      return json(agents.connectionStatus());
+    if (agents.providerMode !== "codex") return json(agents.connectionStatus());
     const snapshot = account.snapshot();
     return json(
       snapshot.state === "connected" || snapshot.state === "incompatible"

@@ -8,6 +8,10 @@
  * The panel is thin. It sends what was typed to the `DreamMind` and prints what comes
  * back, including the tell — which is rendered as the figure's own line, not as a
  * warning, because the moment it looks like a UI alert it stops being a conversation.
+ *
+ * A microphone fills the same box. Edge's (and Chromium's) speech-to-text lands as a
+ * draft the player can still edit — voice is a way to speak, not a second channel that
+ * bypasses wording.
  */
 
 import { highestPortraitState } from "../../shared/content";
@@ -19,6 +23,12 @@ import type { AtlasTextures } from "../render/atlasTextures";
 import { setMarkdown } from "./markdown";
 import type { ModelThinkingIndicator } from "./modelThinking";
 import { npcFor } from "../../../dreams/son/npcs";
+import {
+  loadVoicePref,
+  saveVoicePref,
+  VoiceInput,
+  type VoiceStatus,
+} from "./speech";
 
 export interface DialogueCallbacks {
   onOpen(figure: FigureState): void;
@@ -48,8 +58,14 @@ export class DialoguePanel {
   private readonly inputEl: HTMLInputElement;
   private readonly memoryEl: HTMLSelectElement;
   private readonly leverageEl: HTMLSelectElement;
+  private readonly micEl: HTMLButtonElement;
+  private readonly hintEl: HTMLElement;
+  private readonly voice: VoiceInput;
   private figure: FigureState | null = null;
   private busy = false;
+  private voiceMode = false;
+  private applyingCaption = false;
+  private idlePlaceholder = "что ты скажешь";
 
   constructor(
     parent: HTMLElement,
@@ -70,8 +86,19 @@ export class DialoguePanel {
         <div class="dialogue-action" hidden></div>
         <div class="dialogue-log"></div>
         <form class="dialogue-form">
-          <input class="dialogue-input" type="text" autocomplete="off" spellcheck="false"
-                 placeholder="что ты скажешь" maxlength="240" />
+          <div class="dialogue-compose">
+            <input class="dialogue-input" type="text" autocomplete="off" spellcheck="false"
+                   placeholder="что ты скажешь" maxlength="240" />
+            <button class="dialogue-mic" type="button" hidden
+                    aria-label="Говорить" aria-pressed="false" title="Говорить">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path fill="currentColor"
+                      d="M8 1.75c1.24 0 2.25 1.01 2.25 2.25v4a2.25 2.25 0 1 1-4.5 0v-4c0-1.24 1.01-2.25 2.25-2.25z"/>
+                <path fill="none" stroke="currentColor" stroke-width="1.25"
+                      d="M3.75 7.25a4.25 4.25 0 0 0 8.5 0M8 11.5V14.25M5.5 14.25h5"/>
+              </svg>
+            </button>
+          </div>
           <select class="dialogue-memory" aria-label="Предложить воспоминание">
             <option value="">не отдавать воспоминание</option>
           </select>
@@ -91,11 +118,34 @@ export class DialoguePanel {
     this.inputEl = this.root.querySelector(".dialogue-input")!;
     this.memoryEl = this.root.querySelector(".dialogue-memory")!;
     this.leverageEl = this.root.querySelector(".dialogue-leverage")!;
+    this.micEl = this.root.querySelector(".dialogue-mic")!;
+    this.hintEl = this.root.querySelector(".dialogue-hint")!;
+    this.voice = new VoiceInput({
+      onCaption: (text) => this.applyCaption(text),
+      onUtterance: (text) => {
+        if (!this.isOpen || this.busy) return;
+        this.applyCaption(text);
+        void this.send();
+      },
+      onStatus: (status) => this.refreshVoiceChrome(status),
+    });
 
     this.root.querySelector("form")!.addEventListener("submit", (event) => {
       event.preventDefault();
       void this.send();
     });
+    this.inputEl.addEventListener("input", () => {
+      if (this.applyingCaption) return;
+      this.voice.noteTyped(this.inputEl.value);
+    });
+    this.micEl.addEventListener("mousedown", (event) => event.preventDefault());
+    this.micEl.addEventListener("click", () => this.toggleVoice());
+    window.addEventListener("keydown", this.onVoiceKey);
+
+    if (this.voice.supported) {
+      this.micEl.hidden = false;
+      this.voiceMode = loadVoicePref();
+    }
   }
 
   get isOpen(): boolean {
@@ -138,7 +188,8 @@ export class DialoguePanel {
     this.nameEl.textContent = figure.name;
     this.actionEl.hidden = true;
     const npc = npcFor(figure.id);
-    this.inputEl.placeholder = npc.placeholder ?? "что ты скажешь";
+    this.idlePlaceholder = npc.placeholder ?? "что ты скажешь";
+    this.inputEl.placeholder = this.idlePlaceholder;
     this.memoryEl.hidden = npc.hideMemoryOffer === true;
     this.renderPortrait();
     this.logEl.replaceChildren();
@@ -156,6 +207,8 @@ export class DialoguePanel {
     }
     this.inputEl.value = "";
     this.inputEl.focus();
+    this.refreshVoiceChrome(this.voice.currentStatus);
+    this.syncVoice();
     this.callbacks.onOpen(figure);
   }
 
@@ -206,10 +259,23 @@ export class DialoguePanel {
   close(): void {
     if (this.root.hidden) return;
     if (this.busy) this.mind.abort();
+    this.voice.halt();
     this.root.hidden = true;
     this.figure = null;
     this.inputEl.blur();
+    this.refreshVoiceChrome("idle");
     this.callbacks.onClose();
+  }
+
+  /**
+   * Esc peels the microphone first. Closing the conversation is a second press,
+   * same as every other nested panel: one layer at a time.
+   */
+  cancelListening(): boolean {
+    if (!this.voice.active) return false;
+    this.voice.halt();
+    this.refreshVoiceChrome(this.voice.currentStatus);
+    return true;
   }
 
   private line(text: string, className: string): HTMLElement {
@@ -221,16 +287,110 @@ export class DialoguePanel {
     return node;
   }
 
+  private applyCaption(text: string): void {
+    this.applyingCaption = true;
+    this.inputEl.value = text;
+    this.inputEl.setSelectionRange(text.length, text.length);
+    this.applyingCaption = false;
+  }
+
+  /**
+   * Space is the mic. It has to work even if the box is not focused — a player who
+   * just walked up and pressed E should be able to talk without clicking anything.
+   * An already-typed line still gets a real space, so correcting a misheard word
+   * does not start the recognizer.
+   */
+  private readonly onVoiceKey = (event: KeyboardEvent): void => {
+    if (!this.isOpen || !this.voice.supported) return;
+    if (event.code !== "Space" || event.altKey || event.metaKey) return;
+    if (event.isComposing) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.tagName === "SELECT") return;
+    if (event.repeat) {
+      event.preventDefault();
+      return;
+    }
+    const steal =
+      this.voice.active ||
+      this.voiceMode ||
+      this.inputEl.value.trim() === "" ||
+      target === this.micEl;
+    if (!steal) return;
+    event.preventDefault();
+    this.toggleVoice();
+  };
+
+  private toggleVoice(): void {
+    if (!this.voice.supported) return;
+    if (!this.voiceMode) {
+      this.voiceMode = true;
+      saveVoicePref(true);
+      this.syncVoice();
+      this.refreshVoiceChrome(this.voice.currentStatus);
+      return;
+    }
+    if (this.voice.active) {
+      this.voiceMode = false;
+      saveVoicePref(false);
+      this.voice.halt();
+      this.refreshVoiceChrome(this.voice.currentStatus);
+      return;
+    }
+    this.syncVoice();
+    this.refreshVoiceChrome(this.voice.currentStatus);
+  }
+
+  private syncVoice(): void {
+    const shouldListen =
+      this.voiceMode && this.isOpen && !this.busy && this.figure !== null;
+    if (shouldListen) this.voice.listen(this.inputEl.value);
+    else this.voice.halt();
+  }
+
+  private refreshVoiceChrome(status: VoiceStatus): void {
+    const listening = status === "listening" || status === "hearing";
+    if (this.voiceMode && listening) {
+      this.root.dataset.voice = status;
+    } else if (this.voiceMode) {
+      this.root.dataset.voice = "on";
+    } else {
+      this.root.dataset.voice = "off";
+    }
+    this.micEl.setAttribute("aria-pressed", this.voiceMode ? "true" : "false");
+    this.micEl.setAttribute("aria-label", listening ? "Замолчать" : "Говорить");
+    this.micEl.title = listening ? "Замолчать (Пробел)" : "Говорить (Пробел)";
+    this.inputEl.placeholder = listening ? "говори" : this.idlePlaceholder;
+    this.hintEl.textContent = voiceHint(
+      status,
+      this.voiceMode,
+      this.voice.supported,
+    );
+  }
+
+  private setFormEnabled(enabled: boolean): void {
+    this.inputEl.disabled = !enabled;
+    this.memoryEl.disabled = !enabled;
+    this.leverageEl.disabled = !enabled;
+  }
+
+  private finishTurn(): void {
+    this.busy = false;
+    this.setFormEnabled(true);
+    this.refreshMemories();
+    this.syncVoice();
+    this.inputEl.focus();
+  }
+
   private async send(): Promise<void> {
     const figure = this.figure;
     const utterance = this.inputEl.value.trim();
     if (!figure || !utterance || this.busy) return;
 
+    this.voice.halt();
     this.busy = true;
     this.inputEl.value = "";
-    this.inputEl.disabled = true;
-    this.memoryEl.disabled = true;
-    this.leverageEl.disabled = true;
+    this.setFormEnabled(false);
+    this.refreshVoiceChrome(this.voice.currentStatus);
     const offeredMemoryId = this.memoryEl.value || null;
     const leverageOffered = this.leverageEl.value || null;
     this.line(utterance, "said-by-you");
@@ -265,11 +425,7 @@ export class DialoguePanel {
         (error instanceof DOMException && error.name === "AbortError") ||
         (error instanceof Error && error.name === "AbortError");
       if (!aborted) console.error(error);
-      this.busy = false;
-      this.inputEl.disabled = false;
-      this.memoryEl.disabled = false;
-      this.leverageEl.disabled = false;
-      this.inputEl.focus();
+      this.finishTurn();
       return;
     }
 
@@ -277,10 +433,7 @@ export class DialoguePanel {
     // make it a common one. Whatever they were going to say is lost, as it should be.
     if (this.figure !== figure) {
       this.busy = false;
-      this.inputEl.disabled = false;
-      this.memoryEl.disabled = false;
-      this.leverageEl.disabled = false;
-      this.leverageEl.disabled = false;
+      this.setFormEnabled(true);
       return;
     }
 
@@ -357,17 +510,28 @@ export class DialoguePanel {
       this.callbacks.onResonance(response.resonance.declaration);
     }
 
-    this.busy = false;
-    this.inputEl.disabled = false;
-    this.memoryEl.disabled = false;
-    this.leverageEl.disabled = false;
-    this.refreshMemories();
-    this.inputEl.focus();
+    this.finishTurn();
   }
 
   destroy(): void {
+    window.removeEventListener("keydown", this.onVoiceKey);
+    this.voice.destroy();
     this.root.remove();
   }
+}
+
+function voiceHint(
+  status: VoiceStatus,
+  voiceMode: boolean,
+  supported: boolean,
+): string {
+  if (!supported) return "Esc — отойти";
+  if (status === "blocked") return "микрофон закрыт в браузере";
+  if (status === "failed") return "не расслышал — Пробел ещё раз";
+  if (status === "hearing") return "слышу… пауза отправит";
+  if (status === "listening") return "говори · Пробел — замолчать";
+  if (voiceMode) return "Пробел — говорить · Esc — отойти";
+  return "Esc — отойти · Пробел — говорить";
 }
 
 /** The key is opaque on purpose; the readable half lives in the soul, server-side. */

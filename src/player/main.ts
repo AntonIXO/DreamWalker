@@ -94,26 +94,22 @@ function loadArtifact(): DreamArtifact {
 async function boot(): Promise<void> {
   const artifact = loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
-  // Authored figure paintings live in repo `assets/` until they have walk sheets.
-  // The Eye replaces the watcher silhouette; the autophage goes to the crypto-bro,
-  // whose face nobody in the dream has seen.
-  const figureArt: Array<{ id: string; alias: string; url: string }> = [
+  // Cut-out originals: same pixels as the PNG, background already punched.
+  const figureArt: Array<{ id: string; url: string }> = [
     {
       id: "glaz",
-      alias: "figure-glaz",
-      url: new URL("../../assets/ВоНеСиМо-patient.png", import.meta.url).href,
+      url: new URL("../../assets/figures/glaz.png", import.meta.url).href,
     },
     {
       id: "kripto-bro",
-      alias: "figure-kripto-bro",
-      url: new URL("../../assets/autofag.png", import.meta.url).href,
+      url: new URL("../../assets/figures/autofag.png", import.meta.url).href,
     },
   ];
   const figureTextures = new Map<string, Texture>();
   const figurePortraitUrls = new Map<string, string>();
   await Promise.all(
-    figureArt.map(async ({ id, alias, url }) => {
-      const texture = await loadOptionalTexture(url, alias);
+    figureArt.map(async ({ id, url }) => {
+      const texture = await loadOptionalTexture(url, `figure-${id}`);
       if (!texture) return;
       figureTextures.set(id, texture);
       figurePortraitUrls.set(id, url);
@@ -467,7 +463,9 @@ async function boot(): Promise<void> {
         hud.whisper(`${figure.name} идёт за тобой.`, 4);
         journal.addPerson(cycle.number, figure.id, figure.name, "Идёт следом.");
       }
-      for (const roomId of result.affectedRooms) rooms.invalidate(roomId);
+      // Kill and lead change who is standing here, not the walls. Invalidating the
+      // room destroyed the painting and left a black hole until you walked away
+      // and back.
     },
   });
 
@@ -586,7 +584,7 @@ async function boot(): Promise<void> {
         for (const room of world.rooms) rooms.invalidate(room.id);
         session.enterRoomImmediate();
         session.noteCycleReset();
-        actors.syncFigures(figuresHere(), tileSize, world);
+        actors.syncFigures(figuresHere(), tileSize, world, camera.zoom);
         actors.syncInterests(interestsHere(), tileSize, world);
         populationInstalled = true;
       }
@@ -688,12 +686,23 @@ async function boot(): Promise<void> {
   });
 
   heartbeat.onBeat((outcome) => {
-    // A shifted wall mask means the room has to be rebuilt; everything else the sleeper
-    // does is state the next frame reads for itself.
-    for (const roomId of outcome.affectedRooms) rooms.invalidate(roomId);
-    if (outcome.affectedRooms.includes(world.currentRoomId)) {
-      rooms.show(currentRoom(world));
+    // Only geometry needs a rebuild. `show()` here used to hide the rest of the
+    // street and leave a black square until you left and came back.
+    let geometry = false;
+    for (const entry of outcome.entries) {
+      if (!entry.result.ok) continue;
+      if (
+        entry.patch.kind !== "shiftWalls" &&
+        entry.patch.kind !== "sealDoor" &&
+        entry.patch.kind !== "openDoor" &&
+        entry.patch.kind !== "retypeDoor"
+      ) {
+        continue;
+      }
+      geometry = true;
+      for (const roomId of entry.result.affectedRooms) rooms.invalidate(roomId);
     }
+    if (geometry) session.enterRoomImmediate();
     shiver.trigger(Math.min(1, outcome.affectedRooms.length / 2));
     for (const note of outcome.notes) journal.add(cycle.number, note);
     if (outcome.notes.length > 0) hud.whisper(outcome.notes[0]!);
@@ -845,8 +854,8 @@ async function boot(): Promise<void> {
         dialogue.currentFigureId,
         world.currentRoomId,
         {
-          x: session.player.x / room.tileSize - (room.originX ?? 0),
-          y: session.player.y / room.tileSize - (room.originY ?? 0),
+          x: session.player.x / room.tileSize,
+          y: session.player.y / room.tileSize,
         },
       );
     }
@@ -894,7 +903,9 @@ async function boot(): Promise<void> {
       else if (clueInspect.isOpen) clueInspect.close();
       else if (verbRing.isOpen) verbRing.close();
       else if (finale.isOpen && !finale.isTrapped) finale.close();
-      else dialogue.close();
+      else if (dialogue.cancelListening()) {
+        // They only meant to stop talking, not to walk away.
+      } else dialogue.close();
     }
 
     if (input.consume(Action.HEARTBEAT)) {
@@ -993,7 +1004,7 @@ async function boot(): Promise<void> {
     // --- draw
     const walker = session.player;
     playerSprite.update(walker.x, walker.y, walker.facing, walkFrame(walker));
-    actors.syncFigures(figuresHere(), room.tileSize, world);
+    actors.syncFigures(figuresHere(), room.tileSize, world, camera.zoom);
     actors.syncInterests(interestsHere(), room.tileSize, world);
 
     if (room.id === "m11-zamok-po-vremeni") {

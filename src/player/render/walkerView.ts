@@ -83,12 +83,11 @@ export class WalkerSprite {
  * Everyone who can be occluded by everyone else lives in one container with
  * `sortableChildren`, so the ordering is decided by position rather than by the order
  * things happened to be created in.
+ *
+ * Authored paintings keep their source pixels. The camera zooms the stage, so the
+ * sprite is scaled by `1/zoom` and lands on screen at the PNG's own size — not
+ * downscaled into mud and not blown up with the tiles.
  */
-/**
- * Authored figure paintings are larger than a 16px walker so the silhouette is
- * readable. Contain in a 3-tile box; feet stay on the tile the walker would occupy.
- */
-const FIGURE_PAINTING_TILES = 3;
 
 export class ActorLayer {
   readonly root = new Container({
@@ -117,6 +116,7 @@ export class ActorLayer {
     figures: readonly FigureState[],
     tileSize: number,
     world?: WorldState,
+    zoom = 1,
   ): void {
     const seen = new Set<string>();
 
@@ -143,14 +143,10 @@ export class ActorLayer {
             eventMode: "none",
             label: `figure-art:${figure.id}`,
           });
-          const scale = Math.min(
-            (tileSize * FIGURE_PAINTING_TILES) / Math.max(1, painting.width),
-            (tileSize * FIGURE_PAINTING_TILES) / Math.max(1, painting.height),
-          );
-          sprite.scale.set(scale);
           this.paintings.set(figure.id, sprite);
           this.root.addChild(sprite);
         }
+        sprite.scale.set(1 / Math.max(1, zoom));
         sprite.x = Math.round(x);
         sprite.y = Math.round(y);
         sprite.zIndex = Math.round(y);

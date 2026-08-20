@@ -9,7 +9,13 @@
 
 import type { Direction } from "../../../src/shared/roomGrid";
 import { setCellMark } from "../../../src/shared/roomGrid";
-import type { DreamRoom, RoomDoor, RoomEntry } from "../../../src/shared/room";
+import type {
+  DreamRoom,
+  RoomDoor,
+  RoomEntry,
+  RoomHotspot,
+  RoomProp,
+} from "../../../src/shared/room";
 import { cloneRoom } from "./box";
 
 export type StreetDir = Direction;
@@ -210,9 +216,18 @@ function originOf(cell: Cell): { x: number; y: number } {
   return { x: cell.x * STRIDE_X, y: cell.y * STRIDE_Y };
 }
 
-function routeName(fromId: string, toId: string): string {
-  if (WILD.test(fromId) || WILD.test(toId)) return "ТРОПА";
-  return "УЛИЦА";
+function titleFor(
+  kind: "street" | "trail" | "grove",
+  id: string,
+  used: Set<string>,
+): string {
+  if (kind === "trail") {
+    return pickUnique(TRAIL_ADJ, TRAIL_NOUN, rngOf(id), used, "тропа");
+  }
+  if (kind === "grove") {
+    return pickUnique(GROVE_ADJ, GROVE_NOUN, rngOf(id), used, "роща");
+  }
+  return pickUnique(STREET_ADJ, STREET_NOUN, rngOf(id), used, "переулок");
 }
 
 function emptyRoute(
@@ -266,80 +281,423 @@ function emptyRoute(
   };
 }
 
-function sprinkle(x: number, y: number, salt: number): boolean {
-  let hash = (x * 73856093) ^ (y * 19349663) ^ (salt * 83492791);
-  hash = Math.imul(hash ^ (hash >>> 15), 2246822507);
-  return ((hash >>> 0) & 7) === 0;
+function rngOf(seed: string): () => number {
+  let s = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    s = Math.imul(s ^ seed.charCodeAt(i), 16777619);
+  }
+  s = s >>> 0 || 1;
+  return () => {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
 }
 
-function eastWestCells(width: number, height: number): string[] {
-  const rows: string[] = [];
-  for (let y = 0; y < height; y++) {
-    let row = "";
-    for (let x = 0; x < width; x++) {
-      const onPath = y >= DOOR_Y && y < DOOR_Y + DOOR_SPAN;
-      const atEnd = x === 0 || x === width - 1;
-      if (onPath && atEnd) {
-        row += "_";
-        continue;
-      }
-      if (onPath) {
-        row += "p";
-        continue;
-      }
-      if (y === DOOR_Y - 1 || y === DOOR_Y + DOOR_SPAN) {
-        row += x === 0 || x === width - 1 ? "t" : sprinkle(x, y, 3) ? "h" : "g";
-        continue;
-      }
-      row += "t";
-    }
-    rows.push(row);
-  }
-  return rows;
+function grid(width: number, height: number, fill: string): string[][] {
+  return Array.from({ length: height }, () =>
+    Array.from({ length: width }, () => fill),
+  );
 }
 
-function northSouthCells(width: number, height: number): string[] {
-  const rows: string[] = [];
-  for (let y = 0; y < height; y++) {
-    let row = "";
-    for (let x = 0; x < width; x++) {
-      const onPath = x >= DOOR_X && x < DOOR_X + DOOR_SPAN;
-      const atEnd = y === 0 || y === height - 1;
-      if (onPath && atEnd) {
-        row += "_";
-        continue;
-      }
-      if (onPath) {
-        row += "p";
-        continue;
-      }
-      if (x === DOOR_X - 1 || x === DOOR_X + DOOR_SPAN) {
-        row +=
-          y === 0 || y === height - 1 ? "t" : sprinkle(x, y, 5) ? "h" : "g";
-        continue;
-      }
-      row += "t";
-    }
-    rows.push(row);
-  }
-  return rows;
+function paint(cells: string[][], x: number, y: number, mark: string): void {
+  const row = cells[y];
+  if (!row || x < 0 || x >= row.length) return;
+  row[x] = mark;
 }
 
-function groveCells(width: number, height: number): string[] {
-  const rows: string[] = [];
-  for (let y = 0; y < height; y++) {
-    let row = "";
-    for (let x = 0; x < width; x++) {
-      const edge = y === 0 || y === height - 1 || x === 0 || x === width - 1;
-      if (edge) {
-        row += "t";
-        continue;
-      }
-      row += sprinkle(x, y, 11) ? "h" : sprinkle(x, y, 9) ? "g" : "t";
+function hstrip(
+  cells: string[][],
+  x0: number,
+  x1: number,
+  y: number,
+  mark: string,
+): void {
+  const lo = Math.min(x0, x1);
+  const hi = Math.max(x0, x1);
+  for (let x = lo; x <= hi; x++) paint(cells, x, y, mark);
+}
+
+function vstrip(
+  cells: string[][],
+  x: number,
+  y0: number,
+  y1: number,
+  mark: string,
+): void {
+  const lo = Math.min(y0, y1);
+  const hi = Math.max(y0, y1);
+  for (let y = lo; y <= hi; y++) paint(cells, x, y, mark);
+}
+
+function freeze(cells: string[][]): string[] {
+  return cells.map((row) => row.join(""));
+}
+
+const STREET_ADJ = [
+  "тихий",
+  "чужой",
+  "мокрый",
+  "второй",
+  "задний",
+  "пустой",
+  "ночной",
+  "крашеный",
+  "узкий",
+  "широкий",
+  "глухой",
+  "знакомый",
+];
+const STREET_NOUN = [
+  "переулок",
+  "двор",
+  "тротуар",
+  "проход",
+  "тупик",
+  "съезд",
+  "коридор",
+  "карман",
+];
+const TRAIL_ADJ = [
+  "кривая",
+  "сырая",
+  "чужая",
+  "короткая",
+  "нижняя",
+  "верхняя",
+  "забытая",
+  "вытоптанная",
+  "корявая",
+  "тихая",
+];
+const TRAIL_NOUN = [
+  "тропа",
+  "просека",
+  "низина",
+  "обход",
+  "щель",
+  "гряда",
+  "лощина",
+  "кромка",
+];
+const GROVE_ADJ = [
+  "редкая",
+  "густая",
+  "чужая",
+  "малая",
+  "внутренняя",
+  "мокрая",
+  "сухая",
+  "кривая",
+  "дальняя",
+  "ближняя",
+];
+const GROVE_NOUN = [
+  "роща",
+  "поляна",
+  "чаща",
+  "посадка",
+  "пустошь",
+  "куртина",
+  "опушка",
+  "заросль",
+];
+
+const LOOT: Array<{ image: string; prompt: string }> = [
+  {
+    image:
+      "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png",
+    prompt: "бутылка, уже не первая",
+  },
+  {
+    image:
+      "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png",
+    prompt: "урна не на своём месте",
+  },
+  {
+    image: "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png",
+    prompt: "рюкзак, который тяжелее, чем выглядит",
+  },
+  {
+    image:
+      "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png",
+    prompt: "следы шин поперёк тропы",
+  },
+  {
+    image:
+      "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png",
+    prompt: "корзина с тем, что не читается",
+  },
+  {
+    image:
+      "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png",
+    prompt: "наушники, оба левых",
+  },
+  {
+    image:
+      "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
+    prompt: "чужие штаны на гравии",
+  },
+  {
+    image:
+      "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png",
+    prompt: "сумка, которую уже искали",
+  },
+  {
+    image: "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png",
+    prompt: "киндер с лавочки",
+  },
+  {
+    image:
+      "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png",
+    prompt: "листья, которые шуршат не в такт",
+  },
+  {
+    image: "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
+    prompt: "бейдж на ветке",
+  },
+  {
+    image:
+      "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png",
+    prompt: "телефон с одним контактом",
+  },
+];
+
+function pickUnique(
+  adjs: string[],
+  nouns: string[],
+  rnd: () => number,
+  used: Set<string>,
+  fallback: string,
+): string {
+  for (let i = 0; i < 80; i++) {
+    const title = `${adjs[Math.floor(rnd() * adjs.length)]!} ${nouns[Math.floor(rnd() * nouns.length)]!}`;
+    if (!used.has(title)) {
+      used.add(title);
+      return title.toUpperCase();
     }
-    rows.push(row);
   }
-  return rows;
+  const forced = `${fallback} ${used.size + 1}`;
+  used.add(forced);
+  return forced.toUpperCase();
+}
+
+function eastWestCells(id: string, width: number, height: number): string[] {
+  const rnd = rngOf(id);
+  const cells = grid(width, height, "t");
+  const yA = DOOR_Y;
+  const yB = DOOR_Y + 1;
+  for (let x = 0; x < width; x++) {
+    paint(cells, x, yA, "p");
+    paint(cells, x, yB, "p");
+  }
+  const variant = Math.floor(rnd() * 5);
+  if (variant === 0) {
+    for (let x = 3; x < width - 3; x++) {
+      for (let y = yA - 2; y <= yB + 2; y++) {
+        paint(cells, x, y, rnd() < 0.25 ? "h" : "p");
+      }
+    }
+  } else if (variant === 1) {
+    const ax = 3 + Math.floor(rnd() * Math.max(1, width - 8));
+    vstrip(cells, ax, 2, yA, "p");
+    vstrip(cells, ax + 1, 2, yA, "p");
+    paint(cells, ax, 2, "g");
+    paint(cells, ax + 1, 2, "g");
+  } else if (variant === 2) {
+    const ax = 3 + Math.floor(rnd() * Math.max(1, width - 8));
+    vstrip(cells, ax, yB, height - 3, "p");
+    vstrip(cells, ax + 1, yB, height - 3, "p");
+    paint(cells, ax, height - 3, "g");
+    paint(cells, ax + 1, height - 3, "g");
+  } else if (variant === 3) {
+    const cx = Math.floor(width / 2);
+    paint(cells, cx, yA, "t");
+    paint(cells, cx, yB, "t");
+    paint(cells, cx, yA - 1, "p");
+    paint(cells, cx, yB + 1, "p");
+    paint(cells, cx - 1, yA - 1, "p");
+    paint(cells, cx + 1, yB + 1, "p");
+  } else {
+    for (let x = 1; x < width - 1; x++) {
+      paint(cells, x, yA - 1, rnd() < 0.35 ? "h" : "g");
+      paint(cells, x, yB + 1, rnd() < 0.35 ? "h" : "g");
+    }
+  }
+  stamp(cells, rnd, width, height);
+  return freeze(cells);
+}
+
+function northSouthCells(id: string, width: number, height: number): string[] {
+  const rnd = rngOf(id);
+  const cells = grid(width, height, "t");
+  const xA = DOOR_X;
+  const xB = DOOR_X + 1;
+  for (let y = 0; y < height; y++) {
+    paint(cells, xA, y, "p");
+    paint(cells, xB, y, "p");
+  }
+  const variant = Math.floor(rnd() * 5);
+  if (variant === 0) {
+    for (let y = 2; y < height - 2; y++) {
+      for (let x = xA - 2; x <= xB + 2; x++) {
+        paint(cells, x, y, rnd() < 0.25 ? "h" : "p");
+      }
+    }
+  } else if (variant === 1) {
+    const ay = 2 + Math.floor(rnd() * Math.max(1, height - 6));
+    hstrip(cells, 2, xA, ay, "p");
+    hstrip(cells, 2, xA, ay + 1, "p");
+    paint(cells, 2, ay, "g");
+    paint(cells, 2, ay + 1, "g");
+  } else if (variant === 2) {
+    const ay = 2 + Math.floor(rnd() * Math.max(1, height - 6));
+    hstrip(cells, xB, width - 3, ay, "p");
+    hstrip(cells, xB, width - 3, ay + 1, "p");
+    paint(cells, width - 3, ay, "g");
+    paint(cells, width - 3, ay + 1, "g");
+  } else if (variant === 3) {
+    const cy = Math.floor(height / 2);
+    paint(cells, xA, cy, "t");
+    paint(cells, xB, cy, "t");
+    paint(cells, xA - 1, cy, "p");
+    paint(cells, xB + 1, cy, "p");
+  } else {
+    for (let y = 1; y < height - 1; y++) {
+      paint(cells, xA - 1, y, rnd() < 0.35 ? "h" : "g");
+      paint(cells, xB + 1, y, rnd() < 0.35 ? "h" : "g");
+    }
+  }
+  stamp(cells, rnd, width, height);
+  return freeze(cells);
+}
+
+function groveCells(id: string, width: number, height: number): string[] {
+  const rnd = rngOf(id);
+  const cells = grid(width, height, "t");
+  const cx = Math.floor(width / 2);
+  const cy = Math.floor(height / 2);
+  const variant = Math.floor(rnd() * 4);
+  if (variant === 0) {
+    for (let y = 2; y < height - 2; y++) {
+      for (let x = 2; x < width - 2; x++) {
+        paint(cells, x, y, rnd() < 0.45 ? "g" : rnd() < 0.5 ? "h" : "p");
+      }
+    }
+  } else if (variant === 1) {
+    hstrip(cells, 2, width - 3, cy, "p");
+    vstrip(cells, cx, 2, height - 3, "p");
+    for (let i = 0; i < 8; i++) {
+      paint(
+        cells,
+        2 + Math.floor(rnd() * Math.max(1, width - 4)),
+        2 + Math.floor(rnd() * Math.max(1, height - 4)),
+        "g",
+      );
+    }
+  } else if (variant === 2) {
+    for (let y = 1; y < height - 1; y++) {
+      for (let x = 1; x < width - 1; x++) {
+        const ring =
+          Math.abs(x - cx) + Math.abs(y - cy) < 3
+            ? "p"
+            : rnd() < 0.3
+              ? "g"
+              : "t";
+        paint(cells, x, y, ring);
+      }
+    }
+  } else {
+    for (let y = 2; y < height - 2; y++) {
+      hstrip(cells, 2, width - 3, y, y % 2 === 0 ? "p" : "g");
+      if (rnd() < 0.4)
+        paint(cells, 2 + Math.floor(rnd() * (width - 4)), y, "t");
+    }
+  }
+  stamp(cells, rnd, width, height);
+  return freeze(cells);
+}
+
+function stamp(
+  cells: string[][],
+  rnd: () => number,
+  width: number,
+  height: number,
+): void {
+  const ux = 2 + Math.floor(rnd() * Math.max(1, width - 5));
+  const uy = 2 + Math.floor(rnd() * Math.max(1, height - 5));
+  paint(cells, ux, uy, "p");
+  paint(cells, ux + 1, uy, "g");
+  paint(cells, ux, uy + 1, "h");
+}
+
+function uniqueCells(id: string, rows: string[], used: Set<string>): string[] {
+  const cells = rows.map((row) => row.split(""));
+  const rnd = rngOf(`${id}:unique`);
+  let key = freeze(cells);
+  let n = 0;
+  while (used.has(key) && n < 40) {
+    stamp(cells, rnd, cells[0]?.length ?? 1, cells.length);
+    key = freeze(cells);
+    n++;
+  }
+  used.add(key);
+  return freeze(cells);
+}
+
+function dressRoute(room: DreamRoom, usedLoot: Set<string>): void {
+  const rnd = rngOf(`${room.id}:loot`);
+  const spots: Array<{ x: number; y: number }> = [];
+  for (let y = 1; y < room.height - 1; y++) {
+    for (let x = 1; x < room.width - 1; x++) {
+      const mark = room.cells[y]?.[x];
+      if (mark !== "p" && mark !== "g" && mark !== "h") continue;
+      const onMouth =
+        x <= 1 || x >= room.width - 2 || y <= 1 || y >= room.height - 2;
+      if (onMouth) continue;
+      spots.push({ x, y });
+    }
+  }
+  if (spots.length === 0) return;
+  const unused = LOOT.filter((item) => !usedLoot.has(item.image));
+  const pool = unused.length > 0 ? unused : LOOT;
+  const loot = pool[Math.floor(rnd() * pool.length)];
+  if (!loot) return;
+  usedLoot.add(loot.image);
+  const spot = spots[Math.floor(rnd() * spots.length)]!;
+  const propId = `${room.id}--find`;
+  const prop: RoomProp = {
+    id: propId,
+    x: spot.x,
+    y: spot.y,
+    w: 1,
+    h: 1,
+    solid: false,
+    role: null,
+    image: loot.image,
+  };
+  const hotspot: RoomHotspot = {
+    id: propId,
+    kind: "look",
+    x: spot.x + 0.5,
+    y: spot.y + 1.15,
+    reach: 1.3,
+    prompt: loot.prompt,
+    refusal: null,
+    clueId: null,
+    propId,
+    action: null,
+    once: false,
+    dwellMs: null,
+  };
+  room.props.push(prop);
+  room.hotspots.push(hotspot);
+  if (rnd() < 0.35) {
+    room.figureSlots.push({
+      id: "a",
+      x: Math.min(room.width - 3, Math.max(2, spot.x + 2)),
+      y: Math.min(room.height - 3, Math.max(2, spot.y)),
+    });
+  }
 }
 
 /**
@@ -387,6 +745,9 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
   }
 
   const generated: DreamRoom[] = [];
+  const usedTitles = new Set<string>();
+  const usedLoot = new Set<string>();
+  const usedLayouts = new Set<string>();
   const dirs: StreetDir[] = ["e", "s"];
   for (const room of next) {
     const cell = STREET_CELLS[room.id];
@@ -398,7 +759,8 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
       const neighbour = byId.get(neighbourId);
       if (!neighbour) continue;
       const pathId = `path-${cell.x}-${cell.y}-${dir}`;
-      const name = routeName(room.id, neighbourId);
+      const wild = WILD.test(room.id) || WILD.test(neighbourId);
+      const name = titleFor(wild ? "trail" : "street", pathId, usedTitles);
       const origin = originOf(cell);
       const path =
         dir === "e"
@@ -409,7 +771,11 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               PLACE_H,
               origin.x + PLACE_W,
               origin.y,
-              eastWestCells(ROAD_W, PLACE_H),
+              uniqueCells(
+                pathId,
+                eastWestCells(pathId, ROAD_W, PLACE_H),
+                usedLayouts,
+              ),
             )
           : emptyRoute(
               pathId,
@@ -418,8 +784,13 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               ROAD_H,
               origin.x,
               origin.y + PLACE_H,
-              northSouthCells(PLACE_W, ROAD_H),
+              uniqueCells(
+                pathId,
+                northSouthCells(pathId, PLACE_W, ROAD_H),
+                usedLayouts,
+              ),
             );
+      dressRoute(path, usedLoot);
       const fromDir = dir;
       const toDir = OPPOSITE[dir];
       addDoor(
@@ -429,7 +800,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
           toId: pathId,
           dir: fromDir,
           toEntry: `from-${toDir}`,
-          prompt: name === "ТРОПА" ? "на тропу" : "на улицу",
+          prompt: wild ? "на тропу" : "на улицу",
         }),
       );
       ensureEntry(room, entryFor(room, fromDir));
@@ -440,7 +811,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
           toId: pathId,
           dir: toDir,
           toEntry: `from-${fromDir}`,
-          prompt: name === "ТРОПА" ? "на тропу" : "на улицу",
+          prompt: wild ? "на тропу" : "на улицу",
         }),
       );
       ensureEntry(neighbour, entryFor(neighbour, toDir));
@@ -510,56 +881,72 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
         const hasSouth = at.has(`${x},${y + 1}`);
         const origin = originOf({ x, y });
         if (!hasPlace) {
-          generated.push(
-            emptyRoute(
+          const woods = emptyRoute(
+            `woods-${x}-${y}`,
+            titleFor("grove", `woods-${x}-${y}`, usedTitles),
+            STRIDE_X,
+            STRIDE_Y,
+            origin.x,
+            origin.y,
+            uniqueCells(
               `woods-${x}-${y}`,
-              "РОЩА",
-              STRIDE_X,
-              STRIDE_Y,
-              origin.x,
-              origin.y,
-              groveCells(STRIDE_X, STRIDE_Y),
+              groveCells(`woods-${x}-${y}`, STRIDE_X, STRIDE_Y),
+              usedLayouts,
             ),
           );
+          dressRoute(woods, usedLoot);
+          generated.push(woods);
           continue;
         }
         if (!hasEast) {
-          generated.push(
-            emptyRoute(
+          const gap = emptyRoute(
+            `gap-${x}-${y}-e`,
+            titleFor("grove", `gap-${x}-${y}-e`, usedTitles),
+            ROAD_W,
+            PLACE_H,
+            origin.x + PLACE_W,
+            origin.y,
+            uniqueCells(
               `gap-${x}-${y}-e`,
-              "РОЩА",
-              ROAD_W,
-              PLACE_H,
-              origin.x + PLACE_W,
-              origin.y,
-              groveCells(ROAD_W, PLACE_H),
+              groveCells(`gap-${x}-${y}-e`, ROAD_W, PLACE_H),
+              usedLayouts,
             ),
           );
+          dressRoute(gap, usedLoot);
+          generated.push(gap);
         }
         if (!hasSouth) {
-          generated.push(
-            emptyRoute(
+          const gap = emptyRoute(
+            `gap-${x}-${y}-s`,
+            titleFor("grove", `gap-${x}-${y}-s`, usedTitles),
+            PLACE_W,
+            ROAD_H,
+            origin.x,
+            origin.y + PLACE_H,
+            uniqueCells(
               `gap-${x}-${y}-s`,
-              "РОЩА",
-              PLACE_W,
-              ROAD_H,
-              origin.x,
-              origin.y + PLACE_H,
-              groveCells(PLACE_W, ROAD_H),
+              groveCells(`gap-${x}-${y}-s`, PLACE_W, ROAD_H),
+              usedLayouts,
             ),
           );
+          dressRoute(gap, usedLoot);
+          generated.push(gap);
         }
-        generated.push(
-          emptyRoute(
+        const corner = emptyRoute(
+          `gap-${x}-${y}-se`,
+          titleFor("grove", `gap-${x}-${y}-se`, usedTitles),
+          ROAD_W,
+          ROAD_H,
+          origin.x + PLACE_W,
+          origin.y + PLACE_H,
+          uniqueCells(
             `gap-${x}-${y}-se`,
-            "РОЩА",
-            ROAD_W,
-            ROAD_H,
-            origin.x + PLACE_W,
-            origin.y + PLACE_H,
-            groveCells(ROAD_W, ROAD_H),
+            groveCells(`gap-${x}-${y}-se`, ROAD_W, ROAD_H),
+            usedLayouts,
           ),
         );
+        dressRoute(corner, usedLoot);
+        generated.push(corner);
       }
     }
   }

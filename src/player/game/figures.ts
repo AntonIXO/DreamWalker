@@ -1,9 +1,21 @@
-import { cellAt, isSolidCell, rectBlocks } from "../../shared/roomGrid";
+import {
+  cellAt,
+  isSolidCell,
+  isWalkableCell,
+  rectBlocks,
+} from "../../shared/roomGrid";
 import { makeRng } from "../../shared/rng";
+import {
+  isEdgeOpening,
+  isStreetWorld,
+  originX,
+  originY,
+  pickRoomAtTile,
+} from "../../shared/street";
 import { applyPatch } from "./patch";
 import { WALK_SPEED } from "../../shared/roomWalk";
 import { whoIsLed } from "./fates";
-import type { FigureState, WorldState } from "./world";
+import type { FigureState, RoomState, WorldState } from "./world";
 
 function phaseAt(progress: number): FigureState["agendaPhase"] {
   if (progress < 1 / 3) return "early";
@@ -102,6 +114,10 @@ function beginFollowStep(
   figure: FigureState,
   toward: { x: number; y: number },
 ): void {
+  if (isStreetWorld(world.rooms)) {
+    beginFollowStepWorld(world, figure, toward);
+    return;
+  }
   const away = Math.hypot(toward.x - figure.x, toward.y - figure.y);
   if (away <= FOLLOW_GAP) {
     figure.walking = false;
@@ -126,6 +142,171 @@ function beginFollowStep(
   figure.targetY = best.y;
   figure.facing = best.facing;
   figure.walking = true;
+}
+
+function figureWorld(
+  world: WorldState,
+  figure: FigureState,
+): { x: number; y: number } {
+  const room = world.roomById.get(figure.roomId);
+  if (!room) return { x: figure.x, y: figure.y };
+  return { x: originX(room) + figure.x, y: originY(room) + figure.y };
+}
+
+function seatFigure(
+  world: WorldState,
+  figure: FigureState,
+  room: RoomState,
+  x: number,
+  y: number,
+): void {
+  if (figure.roomId !== room.id) {
+    figure.roomId = room.id;
+    figure.revision++;
+  }
+  figure.x = x;
+  figure.y = y;
+}
+
+function worldStepOpen(
+  world: WorldState,
+  figure: FigureState,
+  tx: number,
+  ty: number,
+): RoomState | null {
+  const placed = pickRoomAtTile(world.rooms, tx, ty, figure.roomId);
+  if (!placed) return null;
+  const room = world.roomById.get(placed.id);
+  if (!room) return null;
+  const lx = tx - originX(room);
+  const ly = ty - originY(room);
+  if (
+    !isWalkableCell(cellAt(room, lx, ly)) &&
+    !isEdgeOpening(world.rooms, room, lx, ly)
+  ) {
+    return null;
+  }
+  if (rectBlocks(room.props, lx, ly)) return null;
+  if (
+    world.interests.some(
+      (interest) =>
+        interest.roomId === room.id &&
+        Math.round(interest.x) === lx &&
+        Math.round(interest.y) === ly,
+    )
+  ) {
+    return null;
+  }
+  return room;
+}
+
+/**
+ * Follow in world tiles so a doorway onto a street is just another step, not a wall.
+ */
+function beginFollowStepWorld(
+  world: WorldState,
+  figure: FigureState,
+  toward: { x: number; y: number },
+): void {
+  const pos = figureWorld(world, figure);
+  const away = Math.hypot(toward.x - pos.x, toward.y - pos.y);
+  if (away <= FOLLOW_GAP) {
+    figure.walking = false;
+    figure.walkWait = 0.2;
+    return;
+  }
+  const x = Math.round(pos.x);
+  const y = Math.round(pos.y);
+  const options = [
+    { x: x + 1, y, facing: "e" as const },
+    { x: x - 1, y, facing: "w" as const },
+    { x, y: y + 1, facing: "s" as const },
+    { x, y: y - 1, facing: "n" as const },
+  ];
+  let best: (typeof options)[number] | null = null;
+  let bestRoom: RoomState | null = null;
+  let bestAway = away;
+  for (const candidate of options) {
+    const room = worldStepOpen(world, figure, candidate.x, candidate.y);
+    if (!room) continue;
+    const distance = Math.hypot(toward.x - candidate.x, toward.y - candidate.y);
+    if (distance < bestAway) {
+      bestAway = distance;
+      best = candidate;
+      bestRoom = room;
+    }
+  }
+  if (!best || !bestRoom) {
+    figure.walkWait = 0.4;
+    return;
+  }
+  const localX = best.x - originX(bestRoom);
+  const localY = best.y - originY(bestRoom);
+  figure.facing = best.facing;
+  if (bestRoom.id !== figure.roomId) {
+    seatFigure(world, figure, bestRoom, localX, localY);
+    figure.targetX = null;
+    figure.targetY = null;
+    figure.walking = false;
+    figure.walkWait = 0;
+    return;
+  }
+  figure.targetX = localX;
+  figure.targetY = localY;
+  figure.walking = true;
+}
+
+function standIn(
+  room: RoomState,
+  prefer: { x: number; y: number },
+): { x: number; y: number } | null {
+  const ok = (x: number, y: number): boolean => {
+    const tx = Math.round(x);
+    const ty = Math.round(y);
+    if (tx < 0 || ty < 0 || tx >= room.width || ty >= room.height) return false;
+    if (!isWalkableCell(cellAt(room, tx, ty))) return false;
+    if (rectBlocks(room.props, tx, ty)) return false;
+    return true;
+  };
+  if (ok(prefer.x, prefer.y)) return prefer;
+  for (let radius = 1; radius <= 4; radius++) {
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        const x = prefer.x + dx;
+        const y = prefer.y + dy;
+        if (ok(x, y)) return { x, y };
+      }
+    }
+  }
+  for (let y = 1; y < room.height - 1; y++) {
+    for (let x = 1; x < room.width - 1; x++) {
+      if (ok(x, y)) return { x, y };
+    }
+  }
+  return null;
+}
+
+/**
+ * Take a led figure through a threshold. Routes have no slots, so this does not
+ * ask `moveFigure` — that patch is for the sleeper seating someone, not for a walk.
+ */
+export function escortFigure(
+  world: WorldState,
+  figureId: string,
+  toRoomId: string,
+  at: { x: number; y: number },
+): boolean {
+  const figure = world.figures.find((entry) => entry.id === figureId);
+  const room = world.roomById.get(toRoomId);
+  if (!figure || !room) return false;
+  if (figure.roomId === toRoomId) return true;
+  const stand = standIn(room, at);
+  if (!stand) return false;
+  seatFigure(world, figure, room, stand.x, stand.y);
+  figure.targetX = null;
+  figure.targetY = null;
+  figure.walking = false;
+  return true;
 }
 
 function walkFigure(
@@ -168,7 +349,10 @@ export function updateFigures(
   deltaSeconds: number,
   frozenFigureId: string | null,
   visibleRoomId: string,
-  /** Where the sanitar is, in tiles, for whoever is being led. */
+  /**
+   * Where the sanitar is, in tiles, for whoever is being led. On a street map
+   * these are world tiles so a doorway onto a route is just another step.
+   */
   follower: { x: number; y: number } | null = null,
 ): void {
   const phase = phaseAt(cycleProgress);
@@ -177,8 +361,10 @@ export function updateFigures(
     const following = figure.id === led && follower !== null;
     // An agenda is a life. Being led is not one, so a led figure has no schedule.
     if (!following) scheduleFigure(world, figure, phase, visibleRoomId);
-    if (figure.id === frozenFigureId) {
+    if (figure.id === frozenFigureId || figure.id === "glaz") {
       figure.walking = false;
+      figure.targetX = null;
+      figure.targetY = null;
       continue;
     }
     // Slightly under the sanitar's own speed, or they fall behind on the first corner

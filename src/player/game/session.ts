@@ -24,6 +24,7 @@ import {
   worldBounds,
 } from "../../shared/street";
 import { findTarget, type InteractTarget } from "./interact";
+import { escortFigure } from "./figures";
 import { whoIsLed } from "./fates";
 import { applyPatch } from "./patch";
 import {
@@ -251,7 +252,7 @@ export class DreamSession {
       this.showRoom(room);
       this.dwellMs.clear();
 
-      this.leadAlong(roomId);
+      this.leadAlong(roomId, from);
       const visits = noteVisit(this.world, roomId);
       this.escalateRevisit(room, visits);
       if (style !== "cut") this.shiver.trigger(style === "rift" ? 0.6 : 0.3);
@@ -309,10 +310,11 @@ export class DreamSession {
     if (!next || next.id === this.world.currentRoomId) return;
     const room = this.world.roomById.get(next.id);
     if (!room) return;
+    const from = this.world.currentRoomId;
     this.world.currentRoomId = room.id;
     this.showRoom(room, false);
     this.dwellMs.clear();
-    this.leadAlong(room.id);
+    this.leadAlong(room.id, from);
     const visits = noteVisit(this.world, room.id);
     this.escalateRevisit(room, visits);
     this.callbacks.onEnterRoom(room, visits);
@@ -345,19 +347,20 @@ export class DreamSession {
   /**
    * Whoever is being led comes through the threshold too.
    *
-   * `moveFigure` is safe on this path: the "not the room the player is in" refusal lives
-   * in `scheduleFigure` and in `Heartbeat.apply`, and neither is on it. It already
-   * refuses meta-spaces, so nobody can be dragged into М1 — «разговаривать не с кем».
+   * Routes have no figure slots, so this does not go through `moveFigure` — that
+   * patch seats someone, and a street is not a seat. They stand on the doorway
+   * they just walked into.
    */
-  private leadAlong(roomId: string): void {
+  private leadAlong(toRoomId: string, fromRoomId: string): void {
     const led = whoIsLed(this.world);
     if (!led) return;
-    applyPatch(this.world, {
-      kind: "moveFigure",
-      figureId: led,
-      toRoomId: roomId,
-      reason: "led by the sanitar",
-    });
+    const dest = this.world.roomById.get(toRoomId);
+    if (!dest) return;
+    const door = dest.doors.find((entry) => entry.toRoomId === fromRoomId);
+    const at = door
+      ? { x: door.x + door.w / 2, y: door.y + door.h / 2 }
+      : toLocalPixels(dest, this.player.x, this.player.y);
+    escortFigure(this.world, led, toRoomId, at);
   }
 
   /**

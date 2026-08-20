@@ -712,9 +712,7 @@ export class AgentRuntime {
     signal?: AbortSignal,
     maxOutputTokens = 4096,
   ): Promise<T> {
-    const turn = Array.isArray(input)
-      ? { messages: input }
-      : { prompt: input };
+    const turn = Array.isArray(input) ? { messages: input } : { prompt: input };
     if (this.usesJsonInText) {
       const run = (next: string | ModelMessage[]) =>
         generateText({

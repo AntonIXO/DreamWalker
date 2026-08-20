@@ -152,6 +152,31 @@ export function isContinuousDoor(
   return doorOnSharedEdge(from, door, to);
 }
 
+/**
+ * Whether this local tile is a street opening: a door you walk through into the
+ * neighbouring room's floor, including when the mask still says wall.
+ */
+export function isEdgeOpening(
+  rooms: readonly PlacedRoom[],
+  room: PlacedRoom,
+  lx: number,
+  ly: number,
+): boolean {
+  for (const door of room.doors) {
+    if (
+      lx < door.x ||
+      ly < door.y ||
+      lx >= door.x + door.w ||
+      ly >= door.y + door.h
+    ) {
+      continue;
+    }
+    const dest = rooms.find((candidate) => candidate.id === door.toRoomId);
+    if (isContinuousDoor(room, door, dest)) return true;
+  }
+  return false;
+}
+
 /** Rooms that occupy this world tile, stacked floors included. */
 export function roomsAtWorldTile(
   rooms: readonly PlacedRoom[],
@@ -226,7 +251,12 @@ export function blockedInWorld(
       if (!room) return true;
       const lx = tx - originX(room);
       const ly = ty - originY(room);
-      if (isSolidCell(cellAt(room, lx, ly))) return true;
+      if (isSolidCell(cellAt(room, lx, ly))) {
+        // A door on a shared edge is an opening, even when the author left `#` on
+        // the ring. Discrete rooms fire that by pressing into the wall; a street
+        // walk would otherwise bounce off a painted south doorway.
+        if (!isEdgeOpening(rooms, room, lx, ly)) return true;
+      }
       if (rectBlocks(room.props, lx, ly)) return true;
     }
   }
