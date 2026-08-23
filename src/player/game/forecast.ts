@@ -8,6 +8,7 @@
  */
 
 import { portraitRank, type PortraitState } from "../../shared/content";
+import { t, type SupportedLocale } from "../../shared/i18n";
 
 export type SkyBand =
   | "night"
@@ -23,6 +24,14 @@ interface SkyStop {
   at: number;
   id: SkyBand;
   weather: string | null;
+}
+
+export function weatherTextFor(
+  band: SkyBand,
+  locale?: SupportedLocale,
+): string | null {
+  if (band === "night") return null;
+  return t(`weather.${band}`, undefined, locale);
 }
 
 /**
@@ -84,8 +93,12 @@ export function coverForPortrait(state: PortraitState): number {
   return rank < 0 ? 0 : rank / top;
 }
 
-export function weatherFor(state: PortraitState): string | null {
-  return bandAt(coverForPortrait(state)).weather;
+export function weatherFor(
+  state: PortraitState,
+  locale?: SupportedLocale,
+): string | null {
+  const stop = bandAt(coverForPortrait(state));
+  return weatherTextFor(stop.id, locale);
 }
 
 export function skyCover(
@@ -115,6 +128,7 @@ export function forecastFor(
     readonly portraitState: PortraitState;
   }[],
   roomId: string,
+  locale?: SupportedLocale,
 ): Forecast {
   let sky: PortraitState = "neutral";
   for (const figure of figures) {
@@ -138,7 +152,7 @@ export function forecastFor(
     sky,
     cover,
     band: stop.id,
-    weather: stop.weather,
+    weather: weatherTextFor(stop.id, locale),
     crowd,
   };
 }

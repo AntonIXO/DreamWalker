@@ -15,6 +15,7 @@
  */
 
 import { highestPortraitState } from "../../shared/content";
+import { getLocale, t } from "../../shared/i18n";
 import { clampPortraitByExhaustion } from "../game/exhaustion";
 import { bandAt, coverForPortrait, weatherFor } from "../game/forecast";
 import type { FigureState } from "../game/world";
@@ -166,9 +167,14 @@ export class DialoguePanel {
 
   private refreshMemories(): void {
     const previous = this.memoryEl.value;
-    this.memoryEl.replaceChildren(new Option("не отдавать воспоминание", ""));
+    this.memoryEl.replaceChildren(new Option(t("dialogue.keep_memory"), ""));
     for (const memory of this.mind.availableMemories()) {
-      this.memoryEl.add(new Option(`отдать: ${memory.text}`, memory.id));
+      this.memoryEl.add(
+        new Option(
+          t("dialogue.offer_memory_prefix", { text: memory.text }),
+          memory.id,
+        ),
+      );
     }
     this.memoryEl.value = [...this.memoryEl.options].some(
       (option) => option.value === previous,
@@ -192,7 +198,7 @@ export class DialoguePanel {
     this.nameEl.textContent = figure.name;
     this.actionEl.hidden = true;
     const npc = npcFor(figure.id);
-    this.idlePlaceholder = npc.placeholder ?? "что ты скажешь";
+    this.idlePlaceholder = npc.placeholder ?? t("dialogue.placeholder");
     this.inputEl.placeholder = this.idlePlaceholder;
     this.memoryEl.hidden = npc.hideMemoryOffer === true;
     this.logEl.replaceChildren();
@@ -219,9 +225,10 @@ export class DialoguePanel {
   private refreshLeverage(): void {
     const figure = this.figure;
     const held = figure ? this.callbacks.leverageOn(figure.id) : [];
-    this.leverageEl.replaceChildren(new Option("не называть", ""));
+    this.leverageEl.replaceChildren(new Option(t("dialogue.keep_secret"), ""));
+    const namePrefix = getLocale() === "ru" ? "назвать: " : "name: ";
     for (const id of held) {
-      this.leverageEl.add(new Option(`назвать: ${labelFor(id)}`, id));
+      this.leverageEl.add(new Option(`${namePrefix}${labelFor(id)}`, id));
     }
     const npc = this.figure ? npcFor(this.figure.id) : null;
     this.leverageEl.hidden = Boolean(npc?.hideLeverage) || held.length === 0;
@@ -377,10 +384,19 @@ export class DialoguePanel {
     } else {
       this.root.dataset.voice = "off";
     }
+    const isRu = getLocale() === "ru";
+    const muteLabel = isRu ? "Замолчать" : "Mute";
+    const speakLabel = t("dialogue.mic_label");
     this.micEl.setAttribute("aria-pressed", this.voiceMode ? "true" : "false");
-    this.micEl.setAttribute("aria-label", listening ? "Замолчать" : "Говорить");
-    this.micEl.title = listening ? "Замолчать (Пробел)" : "Говорить (Пробел)";
-    this.inputEl.placeholder = listening ? "говори" : this.idlePlaceholder;
+    this.micEl.setAttribute("aria-label", listening ? muteLabel : speakLabel);
+    this.micEl.title = listening
+      ? `${muteLabel} (${isRu ? "Пробел" : "Space"})`
+      : `${speakLabel} (${isRu ? "Пробел" : "Space"})`;
+    this.inputEl.placeholder = listening
+      ? isRu
+        ? "говори"
+        : "speak"
+      : this.idlePlaceholder;
     this.hintEl.textContent = voiceHint(
       status,
       this.voiceMode,
@@ -546,13 +562,27 @@ function voiceHint(
   voiceMode: boolean,
   supported: boolean,
 ): string {
-  if (!supported) return "Esc — отойти";
-  if (status === "blocked") return "микрофон закрыт в браузере";
-  if (status === "failed") return "не расслышал — Пробел ещё раз";
-  if (status === "hearing") return "слышу… пауза отправит";
-  if (status === "listening") return "говори · Пробел — замолчать";
-  if (voiceMode) return "Пробел — говорить · Esc — отойти";
-  return "Esc — отойти · Пробел — говорить";
+  const isRu = getLocale() === "ru";
+  if (!supported) return isRu ? "Esc — отойти" : "Esc — step back";
+  if (status === "blocked")
+    return isRu
+      ? "микрофон закрыт в браузере"
+      : "microphone blocked in browser";
+  if (status === "failed")
+    return isRu
+      ? "не расслышал — Пробел ещё раз"
+      : "could not hear — Space again";
+  if (status === "hearing")
+    return isRu ? "слышу… пауза отправит" : "listening… pause will send";
+  if (status === "listening")
+    return isRu ? "говори · Пробел — замолчать" : "speak · Space to mute";
+  if (voiceMode)
+    return isRu
+      ? "Пробел — говорить · Esc — отойти"
+      : "Space — speak · Esc — step back";
+  return isRu
+    ? "Esc — отойти · Пробел — говорить"
+    : "Esc — step back · Space — speak";
 }
 
 /** The key is opaque on purpose; the readable half lives in the soul, server-side. */

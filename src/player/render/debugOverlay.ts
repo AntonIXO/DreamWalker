@@ -12,6 +12,7 @@
 
 import type { TileRect } from "../../shared/rect";
 import { cellAt } from "../../shared/roomGrid";
+import { t } from "../../shared/i18n";
 import type { DreamPressure } from "../game/pressure";
 import type { BeatEntry, Heartbeat } from "../mind/heartbeat";
 import type { WorldState } from "../game/world";
@@ -44,7 +45,7 @@ export class DebugOverlay {
     this.root.className = "debug";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <div class="debug-head">F1 — карта сна · B — удар сердца · K — выдать ключи</div>
+      <div class="debug-head">${t("debug.head")}</div>
       <canvas class="debug-map"></canvas>
       <div class="debug-stats"></div>
       <div class="debug-log"></div>

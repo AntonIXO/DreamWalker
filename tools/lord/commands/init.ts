@@ -191,9 +191,16 @@ export async function initCommand(
   console.log();
   console.log(renderSwatches(palette.colors));
 
+  const langFlag = flags.lang ?? flags.language;
+  const languageRaw =
+    typeof langFlag === "string" ? langFlag.toLowerCase() : undefined;
+  const language =
+    languageRaw === "en" || languageRaw === "ru" ? languageRaw : undefined;
+
   const draft: DreamDraft = {
     format: DREAM_FORMAT_VERSION,
     slug,
+    ...(language ? { language } : {}),
     title,
     genreContract,
     styleWords,

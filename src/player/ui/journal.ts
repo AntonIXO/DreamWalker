@@ -1,4 +1,5 @@
 import { Journal, type JournalEntry } from "../game/cycle";
+import { t } from "../../shared/i18n";
 import { setMarkdown } from "./markdown";
 
 export interface JournalCallbacks {
@@ -8,7 +9,10 @@ export interface JournalCallbacks {
 /** The accumulating people notebook from §5, grouped by who the player met. */
 export class JournalPanel {
   private readonly root: HTMLElement;
+  private readonly titleEl: HTMLElement;
+  private readonly subtitleEl: HTMLElement;
   private readonly body: HTMLElement;
+  private readonly closeBtn: HTMLButtonElement;
 
   constructor(
     parent: HTMLElement,
@@ -19,15 +23,16 @@ export class JournalPanel {
     this.root.className = "panel journal-panel";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <h2>Журнал людей</h2>
-      <p>Люди забывают каждый цикл. Твои записи — нет.</p>
+      <h2 class="journal-title"></h2>
+      <p class="journal-subtitle"></p>
       <div class="journal-people"></div>
-      <div class="row"><button class="ghost end" type="button">Закрыть</button></div>
+      <div class="row"><button class="ghost end" type="button"></button></div>
     `;
+    this.titleEl = this.root.querySelector(".journal-title")!;
+    this.subtitleEl = this.root.querySelector(".journal-subtitle")!;
     this.body = this.root.querySelector(".journal-people")!;
-    this.root
-      .querySelector("button")!
-      .addEventListener("click", () => this.close());
+    this.closeBtn = this.root.querySelector("button")!;
+    this.closeBtn.addEventListener("click", () => this.close());
     parent.appendChild(this.root);
   }
 
@@ -48,7 +53,7 @@ export class JournalPanel {
     for (const entry of entries) {
       const item = document.createElement("li");
       const cycle = document.createElement("span");
-      cycle.textContent = `цикл ${entry.cycle}`;
+      cycle.textContent = t("journal.cycle_entry", { cycle: entry.cycle });
       const text = document.createElement("span");
       setMarkdown(text, entry.text);
       item.append(cycle, text);
@@ -59,14 +64,19 @@ export class JournalPanel {
   }
 
   refresh(): void {
+    this.titleEl.textContent = t("journal.title");
+    this.subtitleEl.textContent = t("journal.subtitle");
+    this.closeBtn.textContent = t("ui.close");
+
     const grouped = new Map<string, JournalEntry[]>();
     const world: JournalEntry[] = [];
+    const unknownLabel = t("ui.unknown_person");
     for (const entry of this.journal.all()) {
       if (!entry.personId) {
         world.push(entry);
         continue;
       }
-      const key = `${entry.personId}\0${entry.personName ?? "Неизвестный"}`;
+      const key = `${entry.personId}\0${entry.personName ?? unknownLabel}`;
       const list = grouped.get(key) ?? [];
       list.push(entry);
       grouped.set(key, list);
@@ -75,11 +85,13 @@ export class JournalPanel {
       ...[...grouped].map(([key, entries]) =>
         this.section(key.split("\0")[1]!, entries),
       ),
-      ...(world.length > 0 ? [this.section("Другие наблюдения", world)] : []),
+      ...(world.length > 0
+        ? [this.section(t("journal.other_observations"), world)]
+        : []),
     );
     if (this.body.childElementCount === 0) {
       const empty = document.createElement("p");
-      empty.textContent = "Пока ты никого не узнал.";
+      empty.textContent = t("journal.empty");
       this.body.appendChild(empty);
     }
   }

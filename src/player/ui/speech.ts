@@ -10,6 +10,8 @@
  * misheard word has to land in the box where the player can still change it.
  */
 
+import { getLocale } from "../../shared/i18n";
+
 export type VoiceStatus =
   "unsupported" | "idle" | "listening" | "hearing" | "blocked" | "failed";
 
@@ -59,7 +61,9 @@ export interface VoiceOptions {
 }
 
 const PREF_KEY = "dream-walker.voice";
-const DEFAULT_LANG = "ru-RU";
+export function defaultVoiceLang(): string {
+  return getLocale() === "ru" ? "ru-RU" : "en-US";
+}
 const DEFAULT_SILENCE_MS = 1100;
 const DEFAULT_MAX_LENGTH = 240;
 
@@ -137,7 +141,7 @@ export class VoiceInput {
     private readonly handlers: VoiceHandlers,
     options: VoiceOptions = {},
   ) {
-    this.lang = options.lang ?? DEFAULT_LANG;
+    this.lang = options.lang ?? defaultVoiceLang();
     this.silenceMs = options.silenceMs ?? DEFAULT_SILENCE_MS;
     this.maxLength = options.maxLength ?? DEFAULT_MAX_LENGTH;
     this.createEngine = options.createEngine ?? defaultEngine;

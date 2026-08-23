@@ -1,6 +1,7 @@
 /** ChatGPT device OAuth, or a server-configured Anthropic / OpenAI-compatible provider. */
 
 import type { DeviceLogin } from "../../shared/ai";
+import { getLocale, t } from "../../shared/i18n";
 import {
   cancelDeviceLogin,
   DEFAULT_MIND_SETTINGS,
@@ -18,20 +19,28 @@ export interface ConnectCallbacks {
 function limitLine(settings: MindSettings): string {
   const window = settings.primary;
   if (!window) return "";
+  const locale = getLocale();
+  const dateLocale = locale === "ru" ? "ru-RU" : "en-US";
   const reset = window.resetsAt
-    ? new Date(window.resetsAt * 1000).toLocaleString("ru-RU")
-    : "неизвестно";
-  return `Лимит: ${Math.round(window.usedPercent)}% · сброс ${reset}`;
+    ? new Date(window.resetsAt * 1000).toLocaleString(dateLocale)
+    : t("connect.unknown_reset");
+  return t("connect.limit_line", {
+    pct: Math.round(window.usedPercent),
+    reset,
+  });
 }
 
 export class ConnectPanel {
   private readonly root: HTMLElement;
+  private readonly titleEl: HTMLElement;
   private readonly descriptionEl: HTMLElement;
   private readonly statusEl: HTMLElement;
   private readonly loginBox: HTMLElement;
+  private readonly loginInstructionsEl: HTMLElement;
   private readonly loginButton: HTMLButtonElement;
   private readonly cancelButton: HTMLButtonElement;
   private readonly logoutButton: HTMLButtonElement;
+  private readonly closeButton: HTMLButtonElement;
   private settings: MindSettings = { ...DEFAULT_MIND_SETTINGS };
   private login: DeviceLogin | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -44,40 +53,40 @@ export class ConnectPanel {
     this.root.className = "panel connect";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <h2>Разум сна</h2>
-      <p class="connect-description">
-        Подключение использует лимиты твоего плана ChatGPT через Codex OAuth. Игра
-        покажет одноразовый код; API-ключ не нужен и не принимается.
-      </p>
+      <h2 class="connect-title"></h2>
+      <p class="connect-description"></p>
       <div class="connect-account"></div>
       <div class="connect-login" hidden>
         <a class="connect-url" target="_blank" rel="noreferrer"></a>
         <button class="connect-code ghost" type="button"></button>
-        <p>Открой ссылку, введи код и вернись сюда.</p>
+        <p class="connect-instructions"></p>
       </div>
       <div class="connect-status"></div>
       <div class="row">
-        <button class="connect-start" type="button">Подключить ChatGPT</button>
-        <button class="connect-cancel ghost" type="button" hidden>Отменить код</button>
-        <button class="connect-logout ghost" type="button" hidden>Отключить</button>
-        <button class="connect-close ghost" type="button">Отойти</button>
+        <button class="connect-start" type="button"></button>
+        <button class="connect-cancel ghost" type="button" hidden></button>
+        <button class="connect-logout ghost" type="button" hidden></button>
+        <button class="connect-close ghost" type="button"></button>
       </div>
     `;
     parent.appendChild(this.root);
 
+    this.titleEl = this.root.querySelector(".connect-title")!;
     this.descriptionEl = this.root.querySelector(".connect-description")!;
     this.statusEl = this.root.querySelector(".connect-status")!;
     this.loginBox = this.root.querySelector(".connect-login")!;
+    this.loginInstructionsEl = this.root.querySelector(
+      ".connect-instructions",
+    )!;
     this.loginButton = this.root.querySelector(".connect-start")!;
     this.cancelButton = this.root.querySelector(".connect-cancel")!;
     this.logoutButton = this.root.querySelector(".connect-logout")!;
+    this.closeButton = this.root.querySelector(".connect-close")!;
 
     this.loginButton.addEventListener("click", () => void this.startLogin());
     this.cancelButton.addEventListener("click", () => void this.cancelLogin());
     this.logoutButton.addEventListener("click", () => void this.logout());
-    this.root
-      .querySelector(".connect-close")!
-      .addEventListener("click", () => this.close());
+    this.closeButton.addEventListener("click", () => this.close());
     this.root.querySelector(".connect-code")!.addEventListener("click", () => {
       if (this.login) void navigator.clipboard.writeText(this.login.userCode);
     });
@@ -91,14 +100,21 @@ export class ConnectPanel {
   }
 
   private render(): void {
+    this.titleEl.textContent = t("connect.title");
+    this.loginInstructionsEl.textContent = t("connect.instructions");
+    this.loginButton.textContent = t("connect.btn_connect");
+    this.cancelButton.textContent = t("connect.btn_cancel");
+    this.logoutButton.textContent = t("connect.btn_logout");
+    this.closeButton.textContent = t("ui.step_back");
+
     const account = this.root.querySelector<HTMLElement>(".connect-account")!;
     const connected = this.settings.state === "connected";
     const serverBound = this.settings.provider !== "codex";
     this.descriptionEl.textContent = serverBound
       ? this.settings.provider === "openai"
-        ? "Разум этого сна подключён владельцем сервера через OpenAI-compatible CloseRouter. Ключ остаётся на сервере."
-        : "Разум этого сна подключён владельцем сервера через Anthropic-compatible endpoint. Ключ остаётся на сервере."
-      : "Подключение использует лимиты твоего плана ChatGPT через Codex OAuth. Игра покажет одноразовый код; API-ключ не нужен и не принимается.";
+        ? t("connect.desc_openai")
+        : t("connect.desc_anthropic")
+      : t("connect.desc_codex");
     account.textContent = connected
       ? [
           this.settings.email,
@@ -108,8 +124,7 @@ export class ConnectPanel {
         ]
           .filter(Boolean)
           .join("\n")
-      : (this.settings.message ??
-        "Модель не подключена; работает сценарный сон.");
+      : (this.settings.message ?? t("connect.model_not_connected"));
     account.style.whiteSpace = "pre-line";
 
     this.loginButton.hidden = connected || serverBound;
@@ -131,21 +146,24 @@ export class ConnectPanel {
     if (this.settings.state === "connected") {
       this.login = null;
       this.stopPolling();
-      this.say("Разум отвечает.", "ok");
+      this.say(t("connect.status_ready"), "ok");
     } else if (this.settings.state === "incompatible") {
-      this.say(this.settings.message ?? "Нужная модель недоступна.", "bad");
+      this.say(
+        this.settings.message ?? t("connect.status_incompatible"),
+        "bad",
+      );
     } else if (this.settings.state === "error") {
-      this.say(this.settings.message ?? "Подключение не удалось.", "bad");
+      this.say(this.settings.message ?? t("connect.status_error"), "bad");
     }
     this.render();
   }
 
   private async startLogin(): Promise<void> {
     this.loginButton.disabled = true;
-    this.say("Готовлю код…");
+    this.say(t("connect.status_preparing"));
     try {
       this.login = await startDeviceLogin();
-      this.say("Ожидаю подтверждения.");
+      this.say(t("connect.status_waiting"));
       this.startPolling();
       this.render();
       window.open(this.login.verificationUrl, "_blank", "noopener,noreferrer");
@@ -182,7 +200,7 @@ export class ConnectPanel {
     try {
       this.settings = await logoutMind();
       this.login = null;
-      this.say("ChatGPT отключён. Сон отвечает сам.", "ok");
+      this.say(t("connect.status_disconnected"), "ok");
       this.render();
     } catch (error) {
       this.say(error instanceof Error ? error.message : String(error), "bad");

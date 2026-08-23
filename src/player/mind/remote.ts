@@ -1,3 +1,4 @@
+import { getLocale } from "../../shared/i18n";
 import type {
   AiStreamEvent,
   CycleExitRequestPayload,
@@ -191,7 +192,7 @@ export async function inhabitDream(
   try {
     return await streamRequest<DreamPopulation>(
       "/api/ai/inhabit",
-      { slug },
+      { slug, locale: getLocale() },
       controller.signal,
     );
   } catch (error) {
@@ -276,6 +277,7 @@ export class RemoteMind implements DreamMind {
       sleeper: this.memory.sleeper,
       world: snapshot(this.world, "upper-dynamic", request.figureId),
       exhaustion: this.world.exhaustion,
+      locale: getLocale(),
     };
 
     try {
@@ -339,6 +341,7 @@ export class RemoteMind implements DreamMind {
       // A thing is still part of the dream, and the dream does not notice what happened
       // to Кирилл either.
       world: snapshot(this.world, "upper-dynamic", "__thing__"),
+      locale: getLocale(),
     };
     try {
       const result = await streamRequest<
@@ -366,6 +369,7 @@ export class RemoteMind implements DreamMind {
         [...this.figureMemories].map(([id, memory]) => [id, memory.lines]),
       ),
       world: snapshot(this.world),
+      locale: getLocale(),
     };
     try {
       const result = await streamRequest<
@@ -386,6 +390,7 @@ export class RemoteMind implements DreamMind {
     const payload: FinaleRequestPayload = {
       slug: this.world.artifact.slug,
       words,
+      locale: getLocale(),
     };
     try {
       return await streamRequest<Awaited<ReturnType<DreamMind["judge"]>>>(

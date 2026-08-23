@@ -17,6 +17,7 @@
  */
 
 import type { VerbOption, Verb } from "../../shared/verbs";
+import { t } from "../../shared/i18n";
 import type { FigureState } from "../game/world";
 
 export interface VerbRingCallbacks {
@@ -28,6 +29,8 @@ export class VerbRing {
   private readonly root: HTMLElement;
   private readonly nameEl: HTMLElement;
   private readonly listEl: HTMLElement;
+  private readonly labelEl: HTMLElement;
+  private readonly hintEl: HTMLElement;
   private figure: FigureState | null = null;
   private options: VerbOption[] = [];
   private confirming: Verb | null = null;
@@ -40,14 +43,16 @@ export class VerbRing {
     this.root.className = "panel verb-ring";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <span class="system-label">ЗАПИСЬ</span>
+      <span class="system-label verb-system-label"></span>
       <h2 class="verb-who"></h2>
       <ol class="verb-list"></ol>
-      <p class="dim">1–4 — выбрать · Esc — отойти</p>
+      <p class="dim verb-hint"></p>
     `;
     parent.appendChild(this.root);
+    this.labelEl = this.root.querySelector(".verb-system-label")!;
     this.nameEl = this.root.querySelector(".verb-who")!;
     this.listEl = this.root.querySelector(".verb-list")!;
+    this.hintEl = this.root.querySelector(".verb-hint")!;
     this.root.addEventListener("keydown", (event) => this.onKey(event));
   }
 
@@ -61,6 +66,8 @@ export class VerbRing {
     this.options = options;
     this.confirming = null;
     this.nameEl.textContent = figure.name;
+    this.labelEl.textContent = t("verbRing.title");
+    this.hintEl.textContent = t("verbRing.hint");
     this.render();
     this.root.hidden = false;
     this.root.tabIndex = -1;
@@ -80,7 +87,8 @@ export class VerbRing {
     for (const [index, option] of this.options.entries()) {
       const row = document.createElement("li");
       row.className = option.refusal ? "verb refused" : "verb";
-      const label = this.confirming === option.verb ? "точно?" : option.label;
+      const label =
+        this.confirming === option.verb ? t("verbRing.confirm") : option.label;
       row.textContent = `${index + 1} — ${label}`;
       if (option.refusal) {
         const why = document.createElement("span");

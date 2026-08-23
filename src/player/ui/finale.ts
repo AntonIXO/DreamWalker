@@ -1,4 +1,5 @@
 import type { DreamArtifact } from "../../shared/dream";
+import { t } from "../../shared/i18n";
 import type { WordNotebook } from "../game/wordNotebook";
 import type { DreamMind } from "../mind/types";
 import { setMarkdown } from "./markdown";
@@ -37,10 +38,15 @@ export interface FinaleCallbacks {
 
 export class FinalePanel {
   private readonly root: HTMLElement;
+  private readonly systemLabelEl: HTMLElement;
+  private readonly titleEl: HTMLElement;
+  private readonly instructionsEl: HTMLElement;
   private readonly form: HTMLElement;
   private readonly inputs: HTMLInputElement[] = [];
   private readonly reply: HTMLElement;
   private readonly submit: HTMLButtonElement;
+  private readonly leaveBtn: HTMLButtonElement;
+  private readonly closeBtn: HTMLButtonElement;
   private busy = false;
   private ended = false;
   private kind: EndingKind | null = null;
@@ -57,19 +63,27 @@ export class FinalePanel {
     this.root.className = "panel finale";
     this.root.hidden = true;
     this.root.innerHTML = `
-      <span class="system-label">СЕРДЦЕ СНА</span>
-      <h2>Двенадцать слов</h2>
-      <p>Аппарат знает шесть позиций. Расставь остальные — порядок является частью ключа.</p>
+      <span class="system-label finale-system-label"></span>
+      <h2 class="finale-title"></h2>
+      <p class="finale-instructions"></p>
       <div class="mnemonic-slots"></div>
       <p class="finale-reply"></p>
       <div class="row">
-        <button class="finale-submit" type="button">Забрать битки</button>
-        <button class="finale-leave ghost" type="button">Уйти, не забрав</button>
-        <button class="finale-close ghost" type="button">Назад</button>
+        <button class="finale-submit" type="button"></button>
+        <button class="finale-leave ghost" type="button"></button>
+        <button class="finale-close ghost" type="button"></button>
       </div>
     `;
     parent.appendChild(this.root);
+    this.systemLabelEl = this.root.querySelector(".finale-system-label")!;
+    this.titleEl = this.root.querySelector(".finale-title")!;
+    this.instructionsEl = this.root.querySelector(".finale-instructions")!;
     this.form = this.root.querySelector(".mnemonic-slots")!;
+    this.reply = this.root.querySelector(".finale-reply")!;
+    this.submit = this.root.querySelector(".finale-submit")!;
+    this.leaveBtn = this.root.querySelector(".finale-leave")!;
+    this.closeBtn = this.root.querySelector(".finale-close")!;
+
     const suggestions = document.createElement("datalist");
     suggestions.id = "notebook-word-suggestions";
     this.root.appendChild(suggestions);
@@ -93,15 +107,12 @@ export class FinalePanel {
       }
       this.form.appendChild(slot);
     });
-    this.reply = this.root.querySelector(".finale-reply")!;
-    this.submit = this.root.querySelector(".finale-submit")!;
+
     this.submit.addEventListener("click", () => void this.judge());
-    this.root.querySelector(".finale-leave")!.addEventListener("click", () => {
-      this.showEnding("Дверь с той стороны.", "walk-away");
+    this.leaveBtn.addEventListener("click", () => {
+      this.showEnding(t("finale.door_other_side"), "walk-away");
     });
-    this.root
-      .querySelector(".finale-close")!
-      .addEventListener("click", () => this.close());
+    this.closeBtn.addEventListener("click", () => this.close());
   }
 
   get isOpen(): boolean {
@@ -118,6 +129,13 @@ export class FinalePanel {
   }
 
   open(): void {
+    this.systemLabelEl.textContent = t("ui.system_label_heart");
+    this.titleEl.textContent = t("finale.title");
+    this.instructionsEl.textContent = t("finale.instructions");
+    this.submit.textContent = t("finale.submit");
+    this.leaveBtn.textContent = t("finale.leave");
+    this.closeBtn.textContent = t("ui.back");
+
     this.ended = false;
     this.reply.textContent = "";
     this.form.hidden = false;
@@ -143,10 +161,7 @@ export class FinalePanel {
     this.root.hidden = false;
     this.form.hidden = true;
     this.submit.hidden = true;
-    this.showEnding(
-      `${declaration}\n\nДва разума входят в резонанс. Сон обрывается вместе с ними.`,
-      "resonance",
-    );
+    this.showEnding(t("finale.resonance", { declaration }), "resonance");
     this.callbacks.onOpen();
   }
 
@@ -163,9 +178,9 @@ export class FinalePanel {
     this.busy = true;
     this.submit.disabled = true;
     this.inputs.forEach((input) => (input.disabled = true));
-    this.reply.textContent = "Аппарат проверяет порядок…";
+    this.reply.textContent = t("finale.checking");
     try {
-      const result = await this.thinking.run("Проверяет сид-фразу", () =>
+      const result = await this.thinking.run(t("ui.thinking_mnemonic"), () =>
         this.mind.judge(this.fullPhrase()),
       );
       if (result.verdict === "match") {
@@ -173,7 +188,7 @@ export class FinalePanel {
         const ledger = paid.length > 0 ? `\n\n${paid.join("\n")}` : "";
         if (result.locked) {
           this.showEnding(
-            `${result.reply}\n\nЗаперто. Таймер считает вверх.`,
+            t("finale.locked_ending", { reply: result.reply }),
             "locked",
           );
           return;
@@ -215,16 +230,13 @@ export class FinalePanel {
     const column = words
       .map((word, index) => `${String(index + 1).padStart(2)}. ${word ?? "—"}`)
       .join("\n");
-    this.showEnding(`Он проснулся.\n\n${column}`, "unfinished");
+    this.showEnding(t("finale.failed_heading", { column }), "unfinished");
   }
 
   /** «Пустота» — every memory spent. The one screen with no way back to a menu. */
   openVoid(): void {
     this.open();
-    this.showEnding(
-      "Рука сжата вокруг пустоты. Пальцы не разжимаются.",
-      "void",
-    );
+    this.showEnding(t("finale.void_ending"), "void");
   }
 
   private showEnding(text: string, kind: EndingKind): void {

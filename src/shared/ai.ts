@@ -1,6 +1,7 @@
 import type { MapPatch } from "./map-patch";
 import type { PortraitState } from "./content";
 import type { FigureFate, Verb } from "./verbs";
+import type { SupportedLocale } from "./i18n";
 
 /** The one Codex configuration this game is designed and tuned against. */
 export const DREAM_MODEL = "gpt-5.6-luna";
@@ -134,6 +135,7 @@ export interface InhabitRequestPayload {
   slug: string;
   /** Skip the model and return a shuffled catalog deal immediately. */
   fallback?: boolean;
+  locale?: SupportedLocale;
 }
 
 export interface FigureMemory {
@@ -222,6 +224,7 @@ export interface DialogueRequestPayload {
   world: WorldSnapshot;
   /** 0..1. High exhaustion is camouflage. The engine also clamps the face. */
   exhaustion: number;
+  locale?: SupportedLocale;
 }
 
 export interface Tell {
@@ -273,6 +276,7 @@ export interface ExamineRequestPayload {
   y: number;
   knownShardIds: string[];
   world: WorldSnapshot;
+  locale?: SupportedLocale;
 }
 
 export interface ExamineResult {
@@ -299,6 +303,7 @@ export interface CycleExitRequestPayload {
   sleeper: SleeperMemory;
   transcripts: Record<string, FigureTranscriptLine[]>;
   world: WorldSnapshot;
+  locale?: SupportedLocale;
 }
 
 export interface AiObservation {
@@ -328,6 +333,7 @@ export interface CycleExitResult {
 export interface FinaleRequestPayload {
   slug: string;
   words: string[];
+  locale?: SupportedLocale;
 }
 
 export interface FinaleResult {

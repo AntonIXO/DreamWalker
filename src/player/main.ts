@@ -16,7 +16,18 @@ import {
   type Texture,
 } from "pixi.js";
 
-import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
+import {
+  localizeDream,
+  validateDreamArtifact,
+  type DreamArtifact,
+} from "../shared/dream";
+import {
+  getLocale,
+  onLocaleChange,
+  setLocale,
+  t,
+  type SupportedLocale,
+} from "../shared/i18n";
 import { sonPack } from "../../dreams/son/pack";
 import { LOCK_STARTED_AT } from "../../dreams/son/meta";
 import {
@@ -96,7 +107,7 @@ function showBootError(title: string, detail: string): void {
 }
 
 function loadArtifact(): DreamArtifact {
-  return validateDreamArtifact(sonPack.artifact());
+  return localizeDream(validateDreamArtifact(sonPack.artifact()), getLocale());
 }
 
 /** Two and a half tiles. Camera zoom is integer, so this stays a person, not a mural. */
@@ -400,12 +411,15 @@ async function boot(): Promise<void> {
         input.setCaptured(true);
         observations.noteApproach(figure.id);
         const roomName =
-          world.roomById.get(figure.roomId)?.name ?? "неизвестное место";
+          world.roomById.get(figure.roomId)?.name ?? t("ui.unknown_place");
         journal.addPerson(
           cycle.number,
           figure.id,
           figure.name,
-          `${figure.activity}. Встречен: ${roomName}.`,
+          t("journal.met_in", {
+            activity: figure.activity,
+            room: roomName,
+          }),
         );
       },
       onClose: () => input.setCaptured(false),
@@ -415,7 +429,7 @@ async function boot(): Promise<void> {
           cycle.number,
           figure.id,
           figure.name,
-          `Заметил чужого по словам «${quoted}».`,
+          t("journal.noticed_words", { quoted }),
           "tell",
         );
       },
@@ -428,7 +442,7 @@ async function boot(): Promise<void> {
           cycle.number,
           figure.id,
           figure.name,
-          "Понял и молчит.",
+          t("journal.understood_silent"),
           "tell",
         );
       },
@@ -437,7 +451,7 @@ async function boot(): Promise<void> {
         addExhaustion(world, MEMORY_EXHAUSTION);
         mindMemory.setExhaustion(world.exhaustion);
         session.noteMemorySpent();
-        journal.add(cycle.number, "Ты оставил в этом сне часть себя.");
+        journal.add(cycle.number, t("journal.left_part_of_self"));
         // «Пустота» — nothing left to spend, so the sanitar stays. Not dead; stuck.
         if (mindMemory.availableMemories().length === 0) {
           input.setCaptured(true);
@@ -455,10 +469,10 @@ async function boot(): Promise<void> {
           cycle.number,
           aboutFigureId,
           about?.name ?? aboutFigureId,
-          "Про него сказали лишнее.",
+          t("journal.said_too_much"),
           "tell",
         );
-        hud.whisper("Ты теперь знаешь про него то, чего знать не должен.", 5);
+        hud.whisper(t("ui.whisper_leverage_learned"), 5);
       },
       onPressed: (figure, outcome) => {
         applyPatch(
@@ -478,8 +492,8 @@ async function boot(): Promise<void> {
           figure.id,
           figure.name,
           outcome === "broken"
-            ? "Замолчал насовсем."
-            : "Отдал и говорит иначе.",
+            ? t("journal.shut_forever")
+            : t("journal.gave_up_different"),
           "tell",
         );
       },
@@ -517,17 +531,22 @@ async function boot(): Promise<void> {
         soundtrack.play("kill");
         shiver.trigger(1);
         dreamFx.surge();
-        hud.whisper("Он больше не там, где был.", 5);
+        hud.whisper(t("ui.whisper_no_longer_there"), 5);
         journal.addPerson(
           cycle.number,
           figure.id,
           figure.name,
-          "Его больше нет.",
+          t("journal.no_longer_exists"),
           "tell",
         );
       } else {
-        hud.whisper(`${figure.name} идёт за тобой.`, 4);
-        journal.addPerson(cycle.number, figure.id, figure.name, "Идёт следом.");
+        hud.whisper(t("ui.whisper_following", { name: figure.name }), 4);
+        journal.addPerson(
+          cycle.number,
+          figure.id,
+          figure.name,
+          t("journal.following_you"),
+        );
       }
       // Kill and lead change who is standing here, not the walls. Invalidating the
       // room destroyed the painting and left a black hole until you walked away
@@ -566,21 +585,31 @@ async function boot(): Promise<void> {
       onClose: () => input.setCaptured(false),
       whatWasPaid: () => {
         const memories = mindMemory.spentMemoryTexts().map((text) => text);
+        const isRu = getLocale() === "ru";
         const fates = world.fateHistory.map((record) => {
           const name =
             world.baseFigures.find((f) => f.id === record.figureId)?.name ??
             record.figureId;
           const what =
             record.fate === "dead"
-              ? "убит"
+              ? isRu
+                ? "убит"
+                : "killed"
               : record.fate === "broken"
-                ? "замолчал"
+                ? isRu
+                  ? "замолчал"
+                  : "silenced"
                 : record.fate === "gone"
-                  ? "уведён"
+                  ? isRu
+                    ? "уведён"
+                    : "led away"
                   : record.fate === "leveraged"
-                    ? "сломан"
+                    ? isRu
+                      ? "сломан"
+                      : "broken"
                     : "";
-          return what ? `${name} — ${what}, цикл ${record.cycle}.` : "";
+          const cycleWord = isRu ? "цикл" : "cycle";
+          return what ? `${name} — ${what}, ${cycleWord} ${record.cycle}.` : "";
         });
         return [...memories, ...fates].filter(Boolean);
       },
@@ -592,18 +621,18 @@ async function boot(): Promise<void> {
         journal.add(
           cycle.number,
           kind === "match"
-            ? "Ты назвал тайну сна."
+            ? t("journal.named_secret")
             : kind === "empty"
-              ? "Фраза была верна. Кошелёк был пуст."
+              ? t("journal.empty_wallet")
               : kind === "unfinished"
-                ? "Он проснулся раньше, чем ты собрал фразу."
+                ? t("journal.woke_up_early")
                 : kind === "void"
-                  ? "Отдавать больше нечего."
+                  ? t("journal.nothing_left_to_spend")
                   : kind === "walk-away"
-                    ? "Ты ушёл, не забрав тайну."
+                    ? t("journal.walked_away")
                     : kind === "locked"
-                      ? "Фраза была верна. Замок ещё считает вверх."
-                      : "Фигура назвала тебя чужим.",
+                      ? t("journal.locked_timer")
+                      : t("journal.named_intruder"),
         );
       },
     },
@@ -631,6 +660,23 @@ async function boot(): Promise<void> {
   void soundtrack.load().catch((error: unknown) => {
     console.error("[soundtrack]", error);
   });
+
+  const langToggle = document.createElement("button");
+  langToggle.className = "lang-toggle";
+  langToggle.type = "button";
+  const syncLangToggle = (loc = getLocale()): void => {
+    langToggle.textContent = loc.toUpperCase();
+    langToggle.setAttribute("aria-label", t("ui.language"));
+    langToggle.title = t("ui.language");
+  };
+  syncLangToggle();
+  langToggle.addEventListener("click", () => {
+    const nextLocale: SupportedLocale = getLocale() === "ru" ? "en" : "ru";
+    setLocale(nextLocale);
+  });
+  onLocaleChange((loc) => syncLangToggle(loc));
+  uiLayer.appendChild(langToggle);
+
   const connect = new ConnectPanel(uiLayer, {
     onChange: (settings) => lobby.setMind(settings),
     onClose: releaseLobbyPanel,
@@ -648,17 +694,17 @@ async function boot(): Promise<void> {
           ? inhabitDream(artifact.slug, artifact)
           : Promise.resolve(fallbackPopulation(artifact, { shuffle: true }));
       if (mode === "live" && !populationInstalled) {
-        hud.whisper("Сон вспоминает, кто здесь живёт…", 10);
+        hud.whisper(t("ui.whisper_remembering"), 10);
       }
       await transition.play();
       if (!populationInstalled) {
         const population = await thinking.run(
-          "Населяет сон персонажами и деталями",
+          t("ui.thinking_deal"),
           () => deal,
         );
         installPopulation(world, population);
         if (population.source === "fallback") {
-          hud.whisper("Сон отвечает сам, без модели.", 6);
+          hud.whisper(t("ui.whisper_fallback_mind"), 6);
         }
         for (const room of world.rooms) rooms.invalidate(room.id);
         session.enterRoomImmediate();
@@ -683,7 +729,7 @@ async function boot(): Promise<void> {
       console.error("[population]", error);
       phase = "lobby";
       soundtrack.setBed("menu");
-      hud.whisper("Сон не смог вспомнить всех. Попробуй ещё раз.", 6);
+      hud.whisper(t("ui.whisper_failed_population"), 6);
       input.setCaptured(false);
       lobby.panelClosed();
     } finally {

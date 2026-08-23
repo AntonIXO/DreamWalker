@@ -39,3 +39,5 @@ public/dream
 *.sln
 *.sw?
 dreams/*/wallet.local.json
+.claude
+

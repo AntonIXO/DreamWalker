@@ -20,6 +20,7 @@ import { mayYieldShard } from "../../shared/yield";
 import { clampPortraitByExhaustion } from "../game/exhaustion";
 import { lookAt } from "../../../dreams/son/looks";
 import { npcFor, talkContext } from "../../../dreams/son/npcs";
+import { getLocale } from "../../shared/i18n";
 import type {
   CycleExitResult,
   ExamineResult,
@@ -39,14 +40,8 @@ import type {
 /**
  * Words that make a question direct. §3's trade: precision buys information and costs
  * cover, so the things worth asking about are exactly the things that give you away.
- *
- * These are *stems*, not words. The game is played in Russian, where "котельная"
- * becomes "котельной" the moment anyone asks a question about it, and matching whole
- * words would let a player walk straight past every tell by declining a noun. Stems are
- * blunt and will over-match occasionally, which is the right way round: a figure being
- * slightly too suspicious is in character, and one that never notices is not.
  */
-const LOADED_STEMS = [
+const LOADED_STEMS_RU = [
   "двор",
   "лавочк",
   "развилк",
@@ -66,13 +61,46 @@ const LOADED_STEMS = [
   "снаруж",
 ];
 
-const HEDGE_STEMS = [
+const LOADED_STEMS_EN = [
+  "courtyard",
+  "bench",
+  "fork",
+  "kirill",
+  "lesh",
+  "turyshev",
+  "sidor",
+  "seed",
+  "phrase",
+  "wallet",
+  "mnemonic",
+  "bitcoin",
+  "shelf",
+  "coffin",
+  "eye",
+  "sanitar",
+  "orderly",
+  "outside",
+];
+
+const HEDGE_STEMS_RU = [
   "наверн",
   "кажется",
   "может",
   "не знаю",
   "просто",
   "как-то",
+];
+
+const HEDGE_STEMS_EN = [
+  "maybe",
+  "seems",
+  "might",
+  "don't know",
+  "dont know",
+  "just",
+  "somehow",
+  "perhaps",
+  "probably",
 ];
 
 /**
@@ -84,7 +112,7 @@ function quotedWordFor(utterance: string, stem: string): string {
   return words.find((word) => word.toLowerCase().includes(stem)) ?? stem;
 }
 
-const DEFLECTIONS = [
+const DEFLECTIONS_RU = [
   "Здесь всегда так. Не обращай внимания.",
   "Я не помню. Тут никто толком не помнит.",
   "Ты бы шёл. Скоро обход.",
@@ -92,14 +120,19 @@ const DEFLECTIONS = [
   "Странный день. Все спрашивают.",
 ];
 
-/**
- * What one figure lets slip about another, offline.
- *
- * Blunt and deterministic, in the spirit of `LOADED_STEMS` above: a stem in what the
- * sanitar said, and who it is about. The real mind reads `## РЫЧАГ` out of the soul; this
- * exists so the mechanic does not disappear when inference is down.
- */
-const LEVERAGE_STEMS: Array<{ about: string; id: string; stems: string[] }> = [
+const DEFLECTIONS_EN = [
+  "It is always like this here. Pay no mind.",
+  "I don't remember. Nobody remembers properly here.",
+  "You should move along. Rounds are soon.",
+  "Ask someone else.",
+  "Strange day. Everyone is asking.",
+];
+
+const LEVERAGE_STEMS_RU: Array<{
+  about: string;
+  id: string;
+  stems: string[];
+}> = [
   {
     about: "kirill",
     id: "kirill:chuzhaia-zasluga",
@@ -132,8 +165,47 @@ const LEVERAGE_STEMS: Array<{ about: string; id: string; stems: string[] }> = [
   },
 ];
 
+const LEVERAGE_STEMS_EN: Array<{
+  about: string;
+  id: string;
+  stems: string[];
+}> = [
+  {
+    about: "kirill",
+    id: "kirill:chuzhaia-zasluga",
+    stems: ["laptop", "acer", "hackathon", "credit", "stole"],
+  },
+  {
+    about: "mama",
+    id: "mama:masshtab-problemy",
+    stems: ["money", "spending", "marmalade", "downplay"],
+  },
+  {
+    about: "kripto-bro",
+    id: "kripto-bro:vsio-krome-summ",
+    stems: ["train", "station", "ripped off", "amount"],
+  },
+  {
+    about: "hudozhnik",
+    id: "hudozhnik:pereskaz",
+    stems: ["laughter", "laugh", "inaudible", "retelling"],
+  },
+  {
+    about: "turyshev",
+    id: "turyshev:vsio-normalno",
+    stems: ["normal", "bench", "entrance"],
+  },
+  {
+    about: "babushka-nadya",
+    id: "babushka-nadya:prichiny-zapretov",
+    stems: ["don't take", "prohibition", "forbidden"],
+  },
+];
+
 function leverageFrom(said: string, speakerId: string) {
-  for (const entry of LEVERAGE_STEMS) {
+  const isRu = getLocale() === "ru";
+  const list = isRu ? LEVERAGE_STEMS_RU : LEVERAGE_STEMS_EN;
+  for (const entry of list) {
     // Nobody hands over their own noose.
     if (entry.about === speakerId) continue;
     if (entry.stems.some((stem) => said.includes(stem))) {
@@ -143,10 +215,16 @@ function leverageFrom(said: string, speakerId: string) {
   return null;
 }
 
-const WARM = [
+const WARM_RU = [
   "Ты первый, кто спросил по-человечески.",
   "Ну... если тихо. Только тихо.",
   "Не здесь. Но раз ты уже стоишь.",
+];
+
+const WARM_EN = [
+  "You are the first to ask like a human being.",
+  "Well... if quietly. Only quietly.",
+  "Not here. But since you're already standing here.",
 ];
 
 export class ScriptedMind implements DreamMind {
@@ -160,6 +238,7 @@ export class ScriptedMind implements DreamMind {
 
   async turn(request: TurnRequest): Promise<TurnResponse> {
     this.turnCount++;
+    const isRu = getLocale() === "ru";
     const figure = this.world.figures.find((f) => f.id === request.figureId);
     if (!figure) {
       return {
@@ -192,7 +271,10 @@ export class ScriptedMind implements DreamMind {
             record.roomId === figure.roomId && record.figureId !== figure.id,
         );
         if (somethingHappenedHere && authored.reply.length < 140) {
-          authored.reply = `${authored.reply} Тут был ещё один. Куда делся, не знаю.`;
+          const extra = isRu
+            ? " Тут был ещё один. Куда делся, не знаю."
+            : " There was someone else here. Don't know where they went.";
+          authored.reply = `${authored.reply}${extra}`;
         }
         return authored;
       }
@@ -201,8 +283,13 @@ export class ScriptedMind implements DreamMind {
     const said = request.utterance.toLowerCase();
     const rng = makeRng(`${request.figureId}:${this.turnCount}:${said.length}`);
 
-    const hit = LOADED_STEMS.find((stem) => said.includes(stem));
-    const hedged = HEDGE_STEMS.some((stem) => said.includes(stem));
+    const loadedStems = isRu ? LOADED_STEMS_RU : LOADED_STEMS_EN;
+    const hedgeStems = isRu ? HEDGE_STEMS_RU : HEDGE_STEMS_EN;
+    const deflections = isRu ? DEFLECTIONS_RU : DEFLECTIONS_EN;
+    const warmList = isRu ? WARM_RU : WARM_EN;
+
+    const hit = loadedStems.find((stem) => said.includes(stem));
+    const hedged = hedgeStems.some((stem) => said.includes(stem));
 
     let tell: Tell | null = null;
     if (hit) {
@@ -224,47 +311,64 @@ export class ScriptedMind implements DreamMind {
     let reply: string;
     if (yielded) {
       const shard = this.world.artifact.shards.find((s) => s.id === yielded);
+      const quoteWrap = isRu ? `«${tell?.quoted}»` : `“${tell?.quoted}”`;
       reply = (
         tell
-          ? `«${tell.quoted}»… ${rng.pick(WARM)} ${shard?.hint ?? ""}`
-          : `${rng.pick(WARM)} ${shard?.hint ?? ""}`
+          ? `${quoteWrap}… ${rng.pick(warmList)} ${shard?.hint ?? ""}`
+          : `${rng.pick(warmList)} ${shard?.hint ?? ""}`
       )
         .trim()
         .slice(0, 180);
     } else if (hit) {
-      reply = `«${tell!.quoted}»… Откуда ты это знаешь? ${rng.pick(DEFLECTIONS)}`;
+      const quoteWrap = isRu ? `«${tell!.quoted}»` : `“${tell!.quoted}”`;
+      const ask = isRu
+        ? `${quoteWrap}… Откуда ты это знаешь?`
+        : `${quoteWrap}… How do you know that?`;
+      reply = `${ask} ${rng.pick(deflections)}`;
     } else if (hedged) {
-      reply = "Да. Наверное.";
+      reply = isRu ? "Да. Наверное." : "Yeah. Probably.";
     } else {
-      reply = rng.pick(DEFLECTIONS);
+      reply = rng.pick(deflections);
     }
 
-    // The offline version of *the figures notice*. Six lines, but without them the whole
-    // fate system disappears the moment inference is down: people would go on standing
-    // in a room where somebody died and never mention it.
+    // The offline version of *the figures notice*.
     const somethingHappenedHere = [...this.world.fates.values()].some(
       (record) =>
         record.roomId === figure.roomId && record.figureId !== figure.id,
     );
     if (somethingHappenedHere && reply.length < 140) {
-      reply = `${reply} Тут был ещё один. Куда делся, не знаю.`;
+      const extra = isRu
+        ? " Тут был ещё один. Куда делся, не знаю."
+        : " There was another one here. Don't know where they went.";
+      reply = `${reply}${extra}`;
     }
 
     return {
       reply,
       tell,
       yieldedShardId: yielded,
-      residueDelta: tell ? [`Санитар знает слово «${tell.quoted}».`] : [],
+      residueDelta: tell
+        ? [
+            isRu
+              ? `Санитар знает слово «${tell.quoted}».`
+              : `The orderly knows the word “${tell.quoted}”.`,
+          ]
+        : [],
       memoryEffect: null,
       resonance: null,
       figureMemorySummary: tell
-        ? `Чужой знает слово «${tell.quoted}» и задаёт слишком точные вопросы.`
-        : "Этот человек уже подходил и расспрашивал.",
+        ? isRu
+          ? `Чужой знает слово «${tell.quoted}» и задаёт слишком точные вопросы.`
+          : `The stranger knows the word “${tell.quoted}” and asks too precise questions.`
+        : isRu
+          ? "Этот человек уже подходил и расспрашивал."
+          : "This person has already approached and questioned.",
       journalEntry: yielded
-        ? `${figure.name} проговорился о важной детали.`
+        ? isRu
+          ? `${figure.name} проговорился о важной детали.`
+          : `${figure.name} let slip an important detail.`
         : null,
       leverageLearned: leverageFrom(said, figure.id),
-      // Offline, pressure lands the way Кирилл's soul says pressure always lands.
       pressed: request.leverageOffered
         ? hedged
           ? "leveraged"
@@ -288,12 +392,20 @@ export class ScriptedMind implements DreamMind {
   }
 
   async examine(request: ExamineRequest): Promise<ExamineResult> {
-    const lines = [
-      "Ничего. Пыль и та ненастоящая.",
-      "Кто-то это уже трогал. Недавно.",
-      "Слишком аккуратно лежит для этой комнаты.",
-      "Здесь чего-то не хватает, и непонятно чего.",
-    ];
+    const isRu = getLocale() === "ru";
+    const lines = isRu
+      ? [
+          "Ничего. Пыль и та ненастоящая.",
+          "Кто-то это уже трогал. Недавно.",
+          "Слишком аккуратно лежит для этой комнаты.",
+          "Здесь чего-то не хватает, и непонятно чего.",
+        ]
+      : [
+          "Nothing. Even the dust isn't real.",
+          "Someone touched this recently.",
+          "Lies too neatly for this room.",
+          "Something is missing here, not clear what.",
+        ];
     const hash = ((request.x * 73856093) ^ (request.y * 19349663)) >>> 0;
     const interest = this.world.interests.find(
       (candidate) => candidate.id === request.interestId,
@@ -323,13 +435,8 @@ export class ScriptedMind implements DreamMind {
         interest?.sensorySeed ??
         clue?.sensorySeed ??
         lines[hash % lines.length]!,
-      // This was unconditionally null, which meant the safe channel never paid out at
-      // all when inference was down — a thing could carry a hook and looking at it would
-      // say "dust". It matters more now: what a dead carrier drops is exactly this.
       yieldedShardId: interest?.holdsShardId ?? null,
       clueObservedId: clueId,
-      // A thing can say something about a person. Offline it says so from the seed it
-      // was written with, which is the only text it has.
       leverageLearned: leverageFrom(
         (interest?.sensorySeed ?? "").toLowerCase(),
         "",
@@ -351,6 +458,7 @@ export class ScriptedMind implements DreamMind {
   }
 
   async mutate(observation: Observation): Promise<CycleExitResult> {
+    const isRu = getLocale() === "ru";
     const patches: MapPatch[] = [];
     const rng = makeRng(
       `beat:${observation.beatsThisCycle}:${observation.elapsedSeconds | 0}`,
@@ -393,8 +501,7 @@ export class ScriptedMind implements DreamMind {
       }
     }
 
-    // 3. A room stood in for a long time and then left gets quietly rearranged, so
-    //    returning to it feels wrong in a way that is hard to point at.
+    // 3. A room stood in for a long time and then left gets quietly rearranged.
     const lingered = Object.entries(observation.dwell)
       .filter(
         ([roomId, seconds]) =>
@@ -408,31 +515,11 @@ export class ScriptedMind implements DreamMind {
         kind: "shiftWalls",
         roomId: lingeredRoom,
         variantId: lingeredVariant,
-        reason: `player spent ${Math.round(observation.dwell[lingeredRoom] ?? 0)}s here`,
+        reason: "the player stayed too long",
       });
     }
 
-    // 4. Once the player is genuinely getting somewhere, start moving what they are
-    //    after. §2: kill the carrier and the knowledge surfaces elsewhere, dearer.
-    if (observation.learnedShardIds.length >= 2) {
-      const unheld = this.world.artifact.shards.find(
-        (shard) => !this.world.figures.some((f) => f.holdsShardId === shard.id),
-      );
-      const empty = rng.maybePick(
-        this.world.figures.filter((f) => f.holdsShardId === null),
-      );
-      if (unheld && empty) {
-        patches.push({
-          kind: "relocateShard",
-          shardId: unheld.id,
-          toFigureId: empty.id,
-          reason: "the player is getting close; move what is left",
-        });
-      }
-    }
-
-    // 5. Something the player has already used starts arriving somewhere else. §4.1 —
-    //    «комнаты соединяются без логики». The rope is still hanging there.
+    // 4. Something the player has already used starts arriving somewhere else.
     if (observation.visitedRoomIds.length >= 3 && rng.chance(0.4)) {
       const rewireable = this.world.rooms.flatMap((room) =>
         room.id === observation.currentRoomId
@@ -455,66 +542,7 @@ export class ScriptedMind implements DreamMind {
       }
     }
 
-    // 6. The dream removes a witness. Somebody died in a room and somebody else was
-    //    standing in it; next cycle they are not. It uses `moveFigure` and nothing else —
-    //    the sleeper does not get to end people, only to rearrange around it.
-    const killedIn = Object.entries(observation.fatesThisCycle)
-      .filter(([, verb]) => verb === "kill")
-      .map(([figureId]) => this.world.fates.get(figureId)?.roomId)
-      .filter((roomId): roomId is string => Boolean(roomId));
-    if (killedIn.length > 0) {
-      const witness = rng.maybePick(
-        this.world.figures.filter(
-          (figure) =>
-            killedIn.includes(figure.roomId) &&
-            figure.roomId !== observation.currentRoomId,
-        ),
-      );
-      const elsewhere = rng.maybePick(
-        this.world.rooms.filter(
-          (room) =>
-            room.kind === "place" &&
-            room.id !== witness?.roomId &&
-            room.id !== observation.currentRoomId,
-        ),
-      );
-      if (witness && elsewhere) {
-        patches.push({
-          kind: "moveFigure",
-          figureId: witness.id,
-          toRoomId: elsewhere.id,
-          reason: "somebody died in that room",
-        });
-      }
-    }
-
-    // 7. Somebody nearly gave something up under pressure, so the dream hides it again.
-    const pressed = Object.entries(observation.fatesThisCycle).some(
-      ([, verb]) => verb === "press",
-    );
-    if (pressed) {
-      const loose = rng.maybePick(
-        this.world.figures.filter((figure) => figure.holdsShardId !== null),
-      );
-      const elsewhere = rng.maybePick(
-        this.world.figures.filter(
-          (figure) =>
-            figure.holdsShardId === null &&
-            figure.roomId !== observation.currentRoomId,
-        ),
-      );
-      if (loose?.holdsShardId && elsewhere) {
-        patches.push({
-          kind: "relocateShard",
-          shardId: loose.holdsShardId,
-          toFigureId: elsewhere.id,
-          reason: "that one nearly came out",
-        });
-      }
-    }
-
-    // 8. If nothing at all has provoked it, the dream still shifts a little. A world
-    //    that only ever reacts is a world you can hold still by doing nothing.
+    // 5. If nothing at all has provoked it, the dream still shifts a little.
     if (patches.length === 0) {
       const idle = rng.maybePick(
         this.world.rooms.filter(
@@ -535,10 +563,16 @@ export class ScriptedMind implements DreamMind {
       }
     }
 
-    return { patches, sleeperSummary: "Сон запомнил маршрут санитара." };
+    return {
+      patches,
+      sleeperSummary: isRu
+        ? "Сон запомнил маршрут санитара."
+        : "The dream remembered the orderly's route.",
+    };
   }
 
   async judge(words: string[]): Promise<FinaleResult> {
+    const isRu = getLocale() === "ru";
     const phrase = words
       .map((word) => word.normalize("NFKD").trim().toLowerCase())
       .join(" ");
@@ -554,11 +588,16 @@ export class ScriptedMind implements DreamMind {
           verdict: "match",
           wallet: "full",
           amount: "0.08412000",
-          reply: "Шесть слов встали на места. Аппарат забирает ключ из сна.",
+          reply: isRu
+            ? "Шесть слов встали на места. Аппарат забирает ключ из сна."
+            : "Six words clicked into place. The apparatus extracts the key from the dream.",
         }
       : {
           verdict: "miss",
-          reply: "Фраза не открыла кошелёк. Сон не говорит, где ошибка.",
+          wallet: "dry",
+          reply: isRu
+            ? "Порядок не совпал. Сон уходит глубже."
+            : "The order did not match. The dream sinks deeper.",
         };
   }
 

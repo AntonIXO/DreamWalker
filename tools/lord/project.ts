@@ -24,7 +24,9 @@ import {
   type HeartbeatConfig,
   type Palette,
   type Shard,
+  type DreamTranslation,
 } from "../../src/shared/dream";
+import type { SupportedLocale } from "../../src/shared/i18n";
 import type { DreamRoom, DreamSpawn } from "../../src/shared/room";
 import {
   fallbackPortraits,
@@ -60,6 +62,7 @@ export interface Provenance {
 export interface DreamDraft {
   format: number;
   slug: string;
+  language?: SupportedLocale;
   title: string;
   genreContract: string;
   styleWords: string[];
@@ -87,6 +90,7 @@ export interface DreamDraft {
   atlas: string;
   authoredAt: string;
   provenance: Provenance;
+  translations?: Partial<Record<SupportedLocale, DreamTranslation>>;
 }
 
 export const DEFAULT_CYCLE: CycleConfig = {

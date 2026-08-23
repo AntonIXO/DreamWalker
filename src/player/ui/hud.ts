@@ -12,6 +12,7 @@
  */
 
 import { formatClock } from "../game/cycle";
+import { t } from "../../shared/i18n";
 import {
   EMPTY_FORECAST,
   type CrowdMark,
@@ -91,7 +92,7 @@ export class Hud {
 
   update(model: HudModel, deltaSeconds: number): void {
     this.roomEl.textContent = model.roomName;
-    this.cycleEl.textContent = `цикл ${model.cycleNumber}`;
+    this.cycleEl.textContent = t("hud.cycle", { n: model.cycleNumber });
     this.clockEl.textContent = formatClock(model.remainingSeconds);
     // The last half-minute is the only time the clock is allowed to be loud.
     this.clockEl.classList.toggle("urgent", model.remainingSeconds <= 30);

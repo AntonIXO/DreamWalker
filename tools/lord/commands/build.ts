@@ -156,6 +156,7 @@ export async function buildCommand(
   const artifact: DreamArtifact = {
     format: DREAM_FORMAT_VERSION,
     slug: draft.slug,
+    ...(draft.language ? { language: draft.language } : {}),
     title: draft.title,
     genreContract: draft.genreContract,
     styleWords: draft.styleWords,
@@ -172,6 +173,7 @@ export async function buildCommand(
     heartbeat: draft.heartbeat,
     atlas: draft.atlas,
     authoredAt: draft.authoredAt,
+    ...(draft.translations ? { translations: draft.translations } : {}),
   };
 
   // Round-trips through JSON so the validator sees exactly what the player will fetch.

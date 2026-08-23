@@ -2,6 +2,7 @@
  * Short diegetic readouts. Not a menu: the player already chose the object in the room.
  */
 
+import { t } from "../../shared/i18n";
 import { setMarkdown } from "../ui/markdown";
 
 export interface InspectAction {
@@ -71,7 +72,7 @@ export class InspectPanel {
     const close = document.createElement("button");
     close.type = "button";
     close.className = "ghost end";
-    close.textContent = "Отойти";
+    close.textContent = t("ui.step_back");
     close.addEventListener("click", () => this.close());
     this.actionsEl.appendChild(close);
 

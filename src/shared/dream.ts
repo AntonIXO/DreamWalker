@@ -20,6 +20,7 @@
 
 import type { StyleProfile } from "./art/style";
 import type { DreamContent } from "./content";
+import type { SupportedLocale } from "./i18n";
 import { THRESHOLD_KINDS, type DreamRoom, type DreamSpawn } from "./room";
 import { DOOR_TYPES, type DoorTypeName } from "./tilecodes";
 
@@ -122,12 +123,57 @@ export interface Palette {
 }
 
 // ---------------------------------------------------------------------------
+// Multilingual Translations
+// ---------------------------------------------------------------------------
+
+export interface DreamRoomTranslation {
+  name?: string;
+  atmosphere?: string;
+  revisitNote?: string;
+  hotspots?: Record<string, { prompt?: string; refusal?: string }>;
+}
+
+export interface CharacterTranslation {
+  name?: string;
+  personality?: string;
+  role?: string;
+  voice?: string;
+  desire?: string;
+  fear?: string;
+  taboo?: string;
+  initialActivity?: string;
+}
+
+export interface ClueTranslation {
+  sensorySeed?: string;
+  marker?: string;
+}
+
+export interface ShardTranslation {
+  id: string;
+  hint: string;
+}
+
+export interface DreamTranslation {
+  title?: string;
+  genreContract?: string;
+  styleWords?: string[];
+  shards?: ShardTranslation[];
+  rooms?: Record<string, DreamRoomTranslation>;
+  characters?: Record<string, CharacterTranslation>;
+  clues?: Record<string, ClueTranslation>;
+  endings?: Record<string, string>;
+}
+
+// ---------------------------------------------------------------------------
 // The artifact
 // ---------------------------------------------------------------------------
 
 export interface DreamArtifact {
   format: number;
   slug: string;
+  /** Primary authoring language of the dream (defaults to 'ru' if omitted). */
+  language?: SupportedLocale;
   title: string;
   /** §6 — what a miracle looks like here. Without it, later adaptations show their seams. */
   genreContract: string;
@@ -159,6 +205,109 @@ export interface DreamArtifact {
   /** Path to the atlas manifest, relative to the artifact directory. */
   atlas: string;
   authoredAt: string;
+  /** Optional localizations for other languages. */
+  translations?: Partial<Record<SupportedLocale, DreamTranslation>>;
+}
+
+/**
+ * Overlays a localized translation on top of a DreamArtifact.
+ * Leaves base strings untouched when translation is missing or language matches base.
+ */
+export function localizeDream(
+  artifact: DreamArtifact,
+  locale: SupportedLocale,
+): DreamArtifact {
+  const baseLang = artifact.language ?? "ru";
+  if (
+    baseLang === locale ||
+    !artifact.translations ||
+    !artifact.translations[locale]
+  ) {
+    return artifact;
+  }
+
+  const tr = artifact.translations[locale]!;
+
+  const title = tr.title ?? artifact.title;
+  const genreContract = tr.genreContract ?? artifact.genreContract;
+  const styleWords = tr.styleWords ?? artifact.styleWords;
+
+  const shards = artifact.shards.map((s) => {
+    const trShard = tr.shards?.find((ts) => ts.id === s.id);
+    return trShard ? { ...s, hint: trShard.hint } : s;
+  });
+
+  const rooms = artifact.rooms.map((room) => {
+    const trRoom = tr.rooms?.[room.id];
+    if (!trRoom) return room;
+
+    const hotspots = room.hotspots.map((hs) => {
+      const trHs = trRoom.hotspots?.[hs.id];
+      if (!trHs) return hs;
+      return {
+        ...hs,
+        prompt: trHs.prompt ?? hs.prompt,
+        refusal: trHs.refusal !== undefined ? trHs.refusal : hs.refusal,
+      };
+    });
+
+    return {
+      ...room,
+      name: trRoom.name ?? room.name,
+      atmosphere: trRoom.atmosphere ?? room.atmosphere,
+      revisit: {
+        ...room.revisit,
+        note: trRoom.revisitNote ?? room.revisit.note,
+      },
+      hotspots,
+    };
+  });
+
+  const figures = artifact.figures.map((fig) => {
+    const trChar = tr.characters?.[fig.id];
+    return trChar?.name ? { ...fig, name: trChar.name } : fig;
+  });
+
+  const characters = artifact.content.characters.map((char) => {
+    const trChar = tr.characters?.[char.id];
+    if (!trChar) return char;
+    return {
+      ...char,
+      name: trChar.name ?? char.name,
+      personality: trChar.personality ?? char.personality,
+      role: trChar.role ?? char.role,
+      voice: trChar.voice ?? char.voice,
+      desire: trChar.desire ?? char.desire,
+      fear: trChar.fear ?? char.fear,
+      taboo: trChar.taboo ?? char.taboo,
+      initialActivity: trChar.initialActivity ?? char.initialActivity,
+    };
+  });
+
+  const clues = artifact.content.clues.map((clue) => {
+    const trClue = tr.clues?.[clue.id];
+    if (!trClue) return clue;
+    return {
+      ...clue,
+      sensorySeed: trClue.sensorySeed ?? clue.sensorySeed,
+      marker: trClue.marker ?? clue.marker,
+    };
+  });
+
+  return {
+    ...artifact,
+    title,
+    genreContract,
+    styleWords,
+    shards,
+    rooms,
+    figures,
+    content: {
+      ...artifact.content,
+      characters,
+      clues,
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -939,6 +1088,114 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
   }
   num(heartbeat.callBudgetPerCycle, "dream.heartbeat.callBudgetPerCycle");
   num(heartbeat.maxPatchesPerBeat, "dream.heartbeat.maxPatchesPerBeat");
+
+  // --- language & translations
+  if (root.language !== undefined && root.language !== null) {
+    const lang = str(root.language, "dream.language");
+    if (lang !== "ru" && lang !== "en") {
+      fail("dream.language", `expected "ru" or "en", got ${lang}`);
+    }
+  }
+
+  if (root.translations !== undefined && root.translations !== null) {
+    const translations = obj(root.translations, "dream.translations");
+    for (const [localeKey, trVal] of Object.entries(translations)) {
+      if (localeKey !== "ru" && localeKey !== "en") {
+        fail(`dream.translations`, `unsupported locale key ${localeKey}`);
+      }
+      const tr = obj(trVal, `dream.translations.${localeKey}`);
+      if (tr.title !== undefined)
+        str(tr.title, `dream.translations.${localeKey}.title`);
+      if (tr.genreContract !== undefined)
+        str(tr.genreContract, `dream.translations.${localeKey}.genreContract`);
+      if (tr.styleWords !== undefined) {
+        arr(
+          tr.styleWords,
+          `dream.translations.${localeKey}.styleWords`,
+        ).forEach((w, j) =>
+          str(w, `dream.translations.${localeKey}.styleWords[${j}]`),
+        );
+      }
+      if (tr.rooms !== undefined) {
+        const trRooms = obj(tr.rooms, `dream.translations.${localeKey}.rooms`);
+        for (const [roomId, trRoomVal] of Object.entries(trRooms)) {
+          if (!roomIds.has(roomId)) {
+            fail(
+              `dream.translations.${localeKey}.rooms`,
+              `references unknown room ${roomId}`,
+            );
+          }
+          const trRoom = obj(
+            trRoomVal,
+            `dream.translations.${localeKey}.rooms.${roomId}`,
+          );
+          if (trRoom.name !== undefined)
+            str(
+              trRoom.name,
+              `dream.translations.${localeKey}.rooms.${roomId}.name`,
+            );
+          if (trRoom.atmosphere !== undefined)
+            str(
+              trRoom.atmosphere,
+              `dream.translations.${localeKey}.rooms.${roomId}.atmosphere`,
+            );
+          if (trRoom.revisitNote !== undefined)
+            str(
+              trRoom.revisitNote,
+              `dream.translations.${localeKey}.rooms.${roomId}.revisitNote`,
+            );
+        }
+      }
+      if (tr.characters !== undefined) {
+        const trChars = obj(
+          tr.characters,
+          `dream.translations.${localeKey}.characters`,
+        );
+        for (const [charId, trCharVal] of Object.entries(trChars)) {
+          if (!figureIds.has(charId)) {
+            fail(
+              `dream.translations.${localeKey}.characters`,
+              `references unknown figure ${charId}`,
+            );
+          }
+          const trChar = obj(
+            trCharVal,
+            `dream.translations.${localeKey}.characters.${charId}`,
+          );
+          if (trChar.name !== undefined)
+            str(
+              trChar.name,
+              `dream.translations.${localeKey}.characters.${charId}.name`,
+            );
+        }
+      }
+      if (tr.clues !== undefined) {
+        const trClues = obj(tr.clues, `dream.translations.${localeKey}.clues`);
+        for (const [clueId, trClueVal] of Object.entries(trClues)) {
+          if (!clueIds.has(clueId)) {
+            fail(
+              `dream.translations.${localeKey}.clues`,
+              `references unknown clue ${clueId}`,
+            );
+          }
+          const trClue = obj(
+            trClueVal,
+            `dream.translations.${localeKey}.clues.${clueId}`,
+          );
+          if (trClue.sensorySeed !== undefined)
+            str(
+              trClue.sensorySeed,
+              `dream.translations.${localeKey}.clues.${clueId}.sensorySeed`,
+            );
+          if (trClue.marker !== undefined)
+            str(
+              trClue.marker,
+              `dream.translations.${localeKey}.clues.${clueId}.marker`,
+            );
+        }
+      }
+    }
+  }
 
   return root as unknown as DreamArtifact;
 }

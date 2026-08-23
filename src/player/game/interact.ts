@@ -12,6 +12,7 @@ import { findHotspot } from "../../shared/roomGrid";
 import { toLocalPixels } from "../../shared/street";
 import type { RoomHotspot } from "../../shared/room";
 import { availableVerbs, type VerbOption } from "../../shared/verbs";
+import { t, type SupportedLocale } from "../../shared/i18n";
 import { fateOf, leverageOn, whoIsLed } from "./fates";
 import type { PlayerState } from "./player";
 import {
@@ -94,21 +95,26 @@ function verbsFor(
   world: WorldState,
   room: RoomState,
   figure: FigureState,
+  locale?: SupportedLocale,
 ): VerbOption[] {
-  return availableVerbs({
-    figureId: figure.id,
-    fate: fateOf(world, figure.id),
-    leverage: leverageOn(world, figure.id),
-    lethalMeans: lethalMeansIn(room),
-    leading: whoIsLed(world),
-    roomKind: room.kind,
-  });
+  return availableVerbs(
+    {
+      figureId: figure.id,
+      fate: fateOf(world, figure.id),
+      leverage: leverageOn(world, figure.id),
+      lethalMeans: lethalMeansIn(room),
+      leading: whoIsLed(world),
+      roomKind: room.kind,
+    },
+    locale,
+  );
 }
 
 export function findTarget(
   world: WorldState,
   room: RoomState,
   player: PlayerState,
+  locale?: SupportedLocale,
 ): InteractTarget | null {
   // A door that just turned us away outranks everything: the player pressed into it on
   // purpose, and saying why is more useful than offering to look at a nearby chair.
@@ -118,7 +124,7 @@ export function findTarget(
       return {
         kind: "door",
         doorId: door.id,
-        prompt: doorRefusal(door),
+        prompt: doorRefusal(door, locale),
       };
     }
   }
@@ -133,17 +139,21 @@ export function findTarget(
   );
 
   const asFigure = (state: FigureState): InteractTarget => {
-    const verbs = verbsFor(world, room, state);
+    const verbs = verbsFor(world, room, state, locale);
     // One extra word on the prompt when there is anything else to do, rather than a
     // second HUD element. The key label is not spelled out here — `ui/controls.ts`
     // derives it from the binding, so rebinding does not lie.
     const more = verbs.some(
       (option) => option.verb !== "talk" && !option.refusal,
     );
+    const talkPrompt = t("interact.talk_to", { name: state.name }, locale);
+    const moreActions = more
+      ? t("interact.more_actions", undefined, locale)
+      : "";
     return {
       kind: "figure",
       figure: state,
-      prompt: `заговорить с ${state.name}${more ? " · F — иначе" : ""}`,
+      prompt: `${talkPrompt}${moreActions}`,
       verbs,
     };
   };

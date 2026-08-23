@@ -93,6 +93,42 @@ body {
     color: var(--ink-dim);
 }
 
+.lang-toggle {
+    position: absolute;
+    right: 0.7rem;
+    top: 0.7rem;
+    z-index: 12;
+    min-width: 2.1rem;
+    height: 2.1rem;
+    padding: 0 0.55rem;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: var(--ink);
+    background: rgba(8, 8, 11, 0.72);
+    border: 1px solid var(--edge);
+    cursor: pointer;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    display: grid;
+    place-items: center;
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+    color: #fff;
+    border-color: var(--ink-dim);
+}
+
+.lang-toggle:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px;
+}
+
 #boot-error {
     position: absolute;
     inset: 0;
@@ -375,6 +411,45 @@ body {
     letter-spacing: 0.01em;
     color: var(--ink);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.55);
+}
+
+.lobby-lang-picker {
+    display: inline-flex;
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+    pointer-events: auto !important;
+}
+
+.lobby-lang-btn {
+    padding: 0.25rem 0.6rem;
+    font: inherit;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    background: rgba(8, 8, 11, 0.82);
+    border: 1px solid var(--edge);
+    cursor: pointer;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition:
+        color 120ms ease,
+        border-color 120ms ease,
+        background 120ms ease;
+}
+
+.lobby-lang-btn:hover,
+.lobby-lang-btn:focus-visible {
+    color: #fff;
+    border-color: var(--ink);
+}
+
+.lobby-lang-btn.active {
+    color: #fff;
+    border-color: var(--ink);
+    background: rgba(40, 40, 50, 0.9);
 }
 
 @media (max-aspect-ratio: 3/4) {
@@ -972,6 +1047,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--gap);
+    z-index: 50;
+    pointer-events: auto !important;
+    touch-action: manipulation;
     /* A scrim without a second element: the shadow spreads far enough to cover
        any viewport, so the panel dims the world behind it by existing. */
     box-shadow:
@@ -1191,6 +1269,7 @@ body {
 
 .panel button {
     padding: 0.5rem 1.1rem;
+    min-height: 2.2rem;
     font: inherit;
     font-size: 0.8125rem;
     letter-spacing: 0.02em;
@@ -1198,10 +1277,39 @@ body {
     background: var(--ink);
     border: 1px solid var(--ink);
     cursor: pointer;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
     transition:
         background 120ms ease,
         border-color 120ms ease,
         color 120ms ease;
+}
+
+.lang-picker {
+    display: flex;
+    gap: 0.25rem;
+    pointer-events: auto !important;
+}
+
+.lang-btn {
+    padding: 0.35rem 0.75rem;
+    min-height: 2rem;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.lang-btn.active {
+    color: #fff !important;
+    border-color: var(--ink) !important;
+    background: rgba(40, 40, 50, 0.9) !important;
 }
 
 .panel button:hover {

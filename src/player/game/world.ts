@@ -16,6 +16,7 @@
  */
 
 import type { DreamArtifact, FigurePlacement } from "../../shared/dream";
+import { t, type SupportedLocale } from "../../shared/i18n";
 import type { DreamRoom, RoomDoor, RoomHotspot } from "../../shared/room";
 import type { Direction } from "../../shared/roomGrid";
 import type { DoorTypeName } from "../../shared/tilecodes";
@@ -425,19 +426,19 @@ export function canPassDoor(world: WorldState, door: RoomDoor): boolean {
 }
 
 /** Reason a door will not open, phrased for the player rather than for a log. */
-export function doorRefusal(door: RoomDoor): string {
+export function doorRefusal(door: RoomDoor, locale?: SupportedLocale): string {
   if (door.prompt) return door.prompt;
   switch (door.type) {
     case "keyLock":
-      return "Заперто. Нужно то, чего у тебя нет.";
+      return t("doors.key_lock", undefined, locale);
     case "leverLock":
-      return "Не открывается с этой стороны.";
+      return t("doors.lever_lock", undefined, locale);
     case "puzzleLock":
-      return "Дверь не считает тебя тем, кто может пройти.";
+      return t("doors.puzzle_lock", undefined, locale);
     case "sealed":
-      return "Прохода больше нет. Он был здесь.";
+      return t("doors.sealed", undefined, locale);
     default:
-      return "Не открывается.";
+      return t("doors.default_refusal", undefined, locale);
   }
 }
 

@@ -24,6 +24,8 @@
  * Callers build a flat `VerbContext`, the way `mayYieldShard` takes `visitCounts`.
  */
 
+import { t, type SupportedLocale } from "./i18n";
+
 export const VERBS = ["talk", "press", "lead", "kill"] as const;
 export type Verb = (typeof VERBS)[number];
 
@@ -96,40 +98,50 @@ export interface VerbContext {
 
 export interface VerbOption {
   verb: Verb;
-  /** Russian infinitive, shown in the ring. */
+  /** Action infinitive, shown in the ring. */
   label: string;
   /** Null when it can be done. A short flat sentence when it cannot. */
   refusal: string | null;
 }
 
-const LABELS: Record<Verb, string> = {
-  talk: "заговорить",
-  press: "надавить",
-  lead: "увести",
-  kill: "убить",
-};
+export function labelFor(verb: Verb, locale?: SupportedLocale): string {
+  return t(`verbs.label.${verb}`, undefined, locale);
+}
 
-function refusalFor(verb: Verb, ctx: VerbContext): string | null {
+function refusalFor(
+  verb: Verb,
+  ctx: VerbContext,
+  locale?: SupportedLocale,
+): string | null {
   // Nothing is done to somebody who is not there any more.
-  if (ctx.fate === "dead" || ctx.fate === "gone") return "Здесь уже никого.";
-  if (ctx.fate === "broken" && verb !== "talk") return "Он больше не слушает.";
+  if (ctx.fate === "dead" || ctx.fate === "gone")
+    return t("verbs.refusal.nobody", undefined, locale);
+  if (ctx.fate === "broken" && verb !== "talk")
+    return t("verbs.refusal.broken", undefined, locale);
 
   switch (verb) {
     case "talk":
       return null;
     case "press":
-      if (PRESS_PROOF.has(ctx.figureId)) return "Давить на него бесполезно.";
-      if (ctx.leverage.length === 0) return "Надавить нечем.";
+      if (PRESS_PROOF.has(ctx.figureId))
+        return t("verbs.refusal.press_proof", undefined, locale);
+      if (ctx.leverage.length === 0)
+        return t("verbs.refusal.no_leverage", undefined, locale);
       return null;
     case "lead":
-      if (UNLEADABLE.has(ctx.figureId)) return "Он никуда с тобой не пойдёт.";
-      if (ctx.fate === "led") return "Он и так идёт следом.";
-      if (ctx.leading !== null) return "Ты уже ведёшь одного.";
+      if (UNLEADABLE.has(ctx.figureId))
+        return t("verbs.refusal.unleadable", undefined, locale);
+      if (ctx.fate === "led")
+        return t("verbs.refusal.already_led", undefined, locale);
+      if (ctx.leading !== null)
+        return t("verbs.refusal.leading_another", undefined, locale);
       return null;
     case "kill":
-      if (UNKILLABLE.has(ctx.figureId)) return "Не этого.";
+      if (UNKILLABLE.has(ctx.figureId))
+        return t("verbs.refusal.unkillable", undefined, locale);
       // Never a knife: the room has to offer something (§9, §4.6).
-      if (!ctx.lethalMeans) return "Здесь нечем.";
+      if (!ctx.lethalMeans)
+        return t("verbs.refusal.no_lethal_means", undefined, locale);
       return null;
   }
 }
@@ -141,18 +153,25 @@ function refusalFor(verb: Verb, ctx: VerbContext): string | null {
  * the row would make blackmail a secret rather than a cost. The flat register of §8
  * carries a struck line far better than it carries an absent feature.
  */
-export function availableVerbs(ctx: VerbContext): VerbOption[] {
+export function availableVerbs(
+  ctx: VerbContext,
+  locale?: SupportedLocale,
+): VerbOption[] {
   // «Ходить можно, разговаривать не с кем» — nobody is ever in a meta-space anyway.
   if (ctx.roomKind === "meta") return [];
   return VERBS.map((verb) => ({
     verb,
-    label: LABELS[verb],
-    refusal: refusalFor(verb, ctx),
+    label: labelFor(verb, locale),
+    refusal: refusalFor(verb, ctx, locale),
   }));
 }
 
-export function canDo(verb: Verb, ctx: VerbContext): boolean {
-  return refusalFor(verb, ctx) === null;
+export function canDo(
+  verb: Verb,
+  ctx: VerbContext,
+  locale?: SupportedLocale,
+): boolean {
+  return refusalFor(verb, ctx, locale) === null;
 }
 
 /** Whether there is anything to hold over this figure at all. */

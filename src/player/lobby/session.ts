@@ -2,6 +2,7 @@
  * Prep-room play: walk, stand next to a thing, open the matching readout.
  */
 
+import { t } from "../../shared/i18n";
 import type { Texture } from "pixi.js";
 
 import { Action, Input, keyFor } from "../game/input";
@@ -70,11 +71,7 @@ export class LobbySession {
       0,
     );
 
-    this.prompt = new LobbyPrompt(
-      parent,
-      this.definition.copy.hint ?? "",
-      this.definition.copy.slogan ?? "",
-    );
+    this.prompt = new LobbyPrompt(parent);
     this.inspect = new InspectPanel(parent, {
       onClose: () => {
         this.held = false;
@@ -152,10 +149,12 @@ export class LobbySession {
 
   private promptFor(hotspot: LobbyHotspot): string {
     if (hotspot.kind === "dream-entry") {
-      return this.mindReady
-        ? (this.definition.copy["entry.ready"] ?? "начать смену")
-        : (this.definition.copy["entry.blocked"] ?? hotspot.prompt);
+      return this.mindReady ? t("lobby.entry_ready") : t("lobby.entry_blocked");
     }
+    if (hotspot.kind === "terminal") return t("lobby.terminal_prompt");
+    if (hotspot.kind === "patient") return t("lobby.patient_prompt");
+    if (hotspot.kind === "controls") return t("lobby.controls_prompt");
+    if (hotspot.kind === "settings") return t("lobby.settings_prompt");
     return hotspot.prompt;
   }
 
@@ -190,21 +189,21 @@ export class LobbySession {
     if (hotspot.kind === "patient") {
       this.held = true;
       this.inspect.open({
-        title: this.definition.copy["patient.title"] ?? "Пациент",
-        category: this.definition.copy["patient.category"] ?? "СМЕНА",
-        body: this.definition.copy["patient.body"] ?? "",
+        title: t("lobby.patient_title"),
+        category: t("lobby.patient_category"),
+        body: t("lobby.patient_body"),
       });
       return;
     }
     if (hotspot.kind === "settings") {
       this.held = true;
       const motion = prefersReducedMotion()
-        ? this.definition.copy["settings.reduced"]
-        : this.definition.copy["settings.full"];
+        ? t("lobby.settings_reduced")
+        : t("lobby.settings_full");
       this.inspect.open({
-        title: this.definition.copy["settings.title"] ?? "Дверь",
-        category: this.definition.copy["settings.category"] ?? "ЗАПИСЬ",
-        body: `${this.definition.copy["settings.body"] ?? ""}\n\n${motion ?? ""}`,
+        title: t("lobby.settings_title"),
+        category: t("lobby.settings_category"),
+        body: `${t("lobby.settings_body")}\n\n${motion}`,
       });
       return;
     }
@@ -213,7 +212,7 @@ export class LobbySession {
       const actions = [];
       if (this.mindReady) {
         actions.push({
-          label: this.definition.copy["entry.start"] ?? "Полезли",
+          label: t("lobby.entry_start"),
           onClick: () => {
             this.inspect.close();
             this.callbacks.onEnterDream("live");
@@ -221,7 +220,7 @@ export class LobbySession {
         });
       }
       actions.push({
-        label: this.definition.copy["entry.train"] ?? "Учебный прогон",
+        label: t("lobby.entry_train"),
         kind: "ghost" as const,
         onClick: () => {
           this.inspect.close();
@@ -229,11 +228,11 @@ export class LobbySession {
         },
       });
       this.inspect.open({
-        title: this.definition.copy["entry.title"] ?? "Аппарат",
-        category: this.definition.copy["entry.category"] ?? "АППАРАТ",
+        title: t("lobby.entry_title"),
+        category: t("lobby.entry_category"),
         body: this.mindReady
-          ? (this.definition.copy["entry.readyBody"] ?? "")
-          : (this.definition.copy["entry.blockedBody"] ?? ""),
+          ? t("lobby.entry_ready_body")
+          : t("lobby.entry_blocked_body"),
         actions,
       });
     }

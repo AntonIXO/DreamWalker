@@ -1,8 +1,14 @@
 import { WordNotebook } from "../game/wordNotebook";
+import { t } from "../../shared/i18n";
 
 export class WordNotebookPanel {
   private readonly root: HTMLElement;
   private readonly count: HTMLElement;
+  private readonly systemLabelEl: HTMLElement;
+  private readonly titleEl: HTMLElement;
+  private readonly instructionEl: HTMLElement;
+  private readonly alphabetNoteEl: HTMLElement;
+  private readonly closeBtn: HTMLButtonElement;
   private readonly inputs: HTMLInputElement[];
 
   constructor(
@@ -15,16 +21,22 @@ export class WordNotebookPanel {
     this.root.hidden = true;
     this.root.innerHTML = `
       <header class="panel-title-row">
-        <div><span class="system-label">УЛИКИ</span><h2>Шесть слов</h2></div>
+        <div><span class="system-label notebook-system-label"></span><h2 class="notebook-title"></h2></div>
         <span class="word-observed"></span>
       </header>
-      <p>Запиши свои гипотезы. Игра не скажет, угадал ли ты предмет.</p>
+      <p class="notebook-instruction"></p>
       <div class="word-notebook-grid"></div>
-      <p class="dim">Только английские буквы. Порядок здесь ничего не означает.</p>
-      <div class="row"><button class="ghost end" type="button">Закрыть</button></div>
+      <p class="dim notebook-alphabet-note"></p>
+      <div class="row"><button class="ghost end" type="button"></button></div>
     `;
     parent.appendChild(this.root);
+    this.systemLabelEl = this.root.querySelector(".notebook-system-label")!;
+    this.titleEl = this.root.querySelector(".notebook-title")!;
+    this.instructionEl = this.root.querySelector(".notebook-instruction")!;
+    this.alphabetNoteEl = this.root.querySelector(".notebook-alphabet-note")!;
     this.count = this.root.querySelector(".word-observed")!;
+    this.closeBtn = this.root.querySelector("button")!;
+
     const grid = this.root.querySelector(".word-notebook-grid")!;
     this.inputs = Array.from({ length: 6 }, (_, index) => {
       const label = document.createElement("label");
@@ -36,7 +48,7 @@ export class WordNotebookPanel {
       input.spellcheck = false;
       input.maxLength = 24;
       input.value = this.notebook.words[index] ?? "";
-      input.placeholder = "hypothesis";
+      input.placeholder = t("wordNotebook.placeholder");
       input.addEventListener("input", () => {
         this.notebook.set(index, input.value);
         input.value = this.notebook.words[index] ?? "";
@@ -45,9 +57,7 @@ export class WordNotebookPanel {
       grid.appendChild(label);
       return input;
     });
-    this.root
-      .querySelector("button")!
-      .addEventListener("click", () => this.close());
+    this.closeBtn.addEventListener("click", () => this.close());
   }
 
   get isOpen(): boolean {
@@ -55,8 +65,17 @@ export class WordNotebookPanel {
   }
 
   open(): void {
-    this.count.textContent = `осмотрено ${this.notebook.observedCount}/6`;
+    this.systemLabelEl.textContent = t("ui.system_label_clue");
+    this.titleEl.textContent = t("wordNotebook.title");
+    this.instructionEl.textContent = t("wordNotebook.instruction");
+    this.alphabetNoteEl.textContent = t("wordNotebook.alphabet_note");
+    this.closeBtn.textContent = t("ui.close");
+
+    this.count.textContent = t("wordNotebook.observed", {
+      n: this.notebook.observedCount,
+    });
     this.inputs.forEach((input, index) => {
+      input.placeholder = t("wordNotebook.placeholder");
       input.value = this.notebook.words[index] ?? "";
     });
     this.root.hidden = false;
