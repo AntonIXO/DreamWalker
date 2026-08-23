@@ -27,7 +27,6 @@ const CUE_URLS: Record<Cue, string> = {
 
 export const MUSIC_PREF_KEY = "dream-walker.music";
 const BED_GAIN = 0.46;
-const BED_UNDER_STING = 0.12;
 const CUE_GAIN = 0.78;
 const DUCKED_MASTER = 0.28;
 const FADE_SECONDS = 1.55;
@@ -67,6 +66,9 @@ interface Voice {
   readonly gain: GainNode;
   buffer: AudioBuffer | null;
   source: AudioBufferSourceNode | null;
+  startedAt: number;
+  offset: number;
+  pausedAt: number;
 }
 
 export class Soundtrack {
@@ -123,11 +125,17 @@ export class Soundtrack {
     return this.enabled;
   }
 
+  get isStingPlaying(): boolean {
+    return this.sting;
+  }
+
   /** Fetch and decode beds and cues. Safe to call once at boot; play waits on unlock. */
   async load(): Promise<void> {
     await Promise.all([this.loadBeds(), this.loadCues()]);
-    this.start(this.bed);
-    this.rampBed(this.bed, this.bedTarget(), 0.6);
+    if (!this.sting) {
+      this.startVoice(this.voices[this.bed], 0);
+      this.rampBed(this.bed, BED_GAIN, 0.6);
+    }
     this.rampMaster(masterGain(this.enabled, this.ducked), 0.4);
     void this.ctx.resume().catch(() => {
       /* Autoplay policy: unlock() retries on the first gesture. */
@@ -136,42 +144,37 @@ export class Soundtrack {
 
   setBed(bed: Bed): void {
     if (this.bed === bed) {
-      this.start(bed);
+      if (!this.sting) {
+        this.startVoice(this.voices[bed]);
+        this.rampBed(bed, BED_GAIN, FADE_SECONDS);
+      }
       return;
     }
-    const previous = this.bed;
+
+    // Changing beds stops any currently playing one-shot cue
+    this.stopCue();
+
     this.bed = bed;
-    this.start(bed);
 
-    if (bed === "finale") {
-      this.stopCue();
-      // Cut all other playing music immediately
-      (Object.keys(this.voices) as Bed[]).forEach((other) => {
-        if (other !== "finale") {
-          const voice = this.voices[other];
-          this.ramp(voice.gain.gain, 0, 0.05);
-          if (voice.source) {
-            try {
-              voice.source.stop();
-            } catch {
-              // Ignore if already stopped
-            }
-            voice.source.disconnect();
-            voice.source = null;
-          }
-        }
-      });
-      this.rampBed("finale", this.bedTarget(), 0.2);
-      return;
-    }
+    // Immediately silence and stop all other bed voices so only one track plays at a time
+    (Object.keys(this.voices) as Bed[]).forEach((other) => {
+      if (other !== bed) {
+        const voice = this.voices[other];
+        this.ramp(voice.gain.gain, 0, 0.05);
+        this.stopVoice(voice, false);
+      }
+    });
 
-    this.rampBed(previous, 0, FADE_SECONDS);
-    this.rampBed(bed, this.bedTarget(), FADE_SECONDS);
+    const targetVoice = this.voices[bed];
+    targetVoice.pausedAt = 0;
+    this.startVoice(targetVoice, 0);
+    this.rampBed(bed, BED_GAIN, bed === "finale" ? 0.2 : FADE_SECONDS);
   }
 
   /**
-   * One-shot. A second kill cuts the first — two two-minute stings stacked
-   * is a mess, and the new body is the one that counts.
+   * One-shot kill track. When triggered, the active bed is paused immediately
+   * so only one music track plays at a time. When the kill track finishes,
+   * the active bed resumes playback from where it was paused.
    */
   play(cue: Cue): void {
     const buffer = this.cues[cue];
@@ -179,7 +182,11 @@ export class Soundtrack {
     void this.ctx.resume().catch(() => {
       /* Kill is itself a gesture; unlock() will catch a stubborn context. */
     });
+
     this.stopCue();
+    this.pauseCurrentBed();
+    this.sting = true;
+
     const source = this.ctx.createBufferSource();
     source.buffer = buffer;
     source.connect(this.cueBus);
@@ -187,12 +194,10 @@ export class Soundtrack {
       if (this.cueSource !== source) return;
       this.cueSource = null;
       this.sting = false;
-      this.rampBed(this.bed, this.bedTarget(), 1.2);
+      this.resumeCurrentBed(1.2);
     };
     source.start();
     this.cueSource = source;
-    this.sting = true;
-    this.rampBed(this.bed, this.bedTarget(), 0.45);
   }
 
   setDucked(ducked: boolean): void {
@@ -236,6 +241,9 @@ export class Soundtrack {
     }
     document.removeEventListener("visibilitychange", this.onVisibility);
     this.stopCue();
+    (Object.keys(this.voices) as Bed[]).forEach((id) => {
+      this.stopVoice(this.voices[id], false);
+    });
     this.chrome?.remove();
     this.chrome = null;
     void this.ctx.close();
@@ -261,20 +269,17 @@ export class Soundtrack {
     );
   }
 
-  private bedTarget(): number {
-    return this.sting ? BED_UNDER_STING : BED_GAIN;
-  }
-
   private stopCue(): void {
     if (!this.cueSource) return;
-    this.cueSource.onended = null;
+    const source = this.cueSource;
+    this.cueSource = null;
+    source.onended = null;
     try {
-      this.cueSource.stop();
+      source.stop();
     } catch {
       // Already stopped.
     }
-    this.cueSource.disconnect();
-    this.cueSource = null;
+    source.disconnect();
     this.sting = false;
   }
 
@@ -282,18 +287,60 @@ export class Soundtrack {
     const gain = this.ctx.createGain();
     gain.gain.value = 0;
     gain.connect(this.master);
-    return { gain, buffer: null, source: null };
+    return {
+      gain,
+      buffer: null,
+      source: null,
+      startedAt: 0,
+      offset: 0,
+      pausedAt: 0,
+    };
   }
 
-  private start(bed: Bed): void {
-    const voice = this.voices[bed];
+  private startVoice(voice: Voice, offset = 0): void {
     if (voice.source || !voice.buffer) return;
+    const duration = voice.buffer.duration;
+    const safeOffset =
+      duration > 0 ? ((offset % duration) + duration) % duration : 0;
     const source = this.ctx.createBufferSource();
     source.buffer = voice.buffer;
     source.loop = true;
     source.connect(voice.gain);
-    source.start();
+    source.start(0, safeOffset);
     voice.source = source;
+    voice.startedAt = this.ctx.currentTime;
+    voice.offset = safeOffset;
+  }
+
+  private stopVoice(voice: Voice, savePosition = false): void {
+    if (!voice.source) return;
+    if (savePosition && voice.buffer && voice.buffer.duration > 0) {
+      const elapsed = Math.max(0, this.ctx.currentTime - voice.startedAt);
+      voice.pausedAt = (voice.offset + elapsed) % voice.buffer.duration;
+    }
+    const source = voice.source;
+    voice.source = null;
+    try {
+      source.stop();
+    } catch {
+      // Ignore if already stopped
+    }
+    source.disconnect();
+  }
+
+  private pauseCurrentBed(): void {
+    const voice = this.voices[this.bed];
+    this.ramp(voice.gain.gain, 0, 0.05);
+    this.stopVoice(voice, true);
+  }
+
+  private resumeCurrentBed(fadeSeconds = 1.2): void {
+    if (this.sting) return;
+    const voice = this.voices[this.bed];
+    const offset = voice.pausedAt || 0;
+    voice.pausedAt = 0;
+    this.startVoice(voice, offset);
+    this.rampBed(this.bed, BED_GAIN, fadeSeconds);
   }
 
   private rampBed(bed: Bed, target: number, seconds: number): void {
@@ -316,8 +363,11 @@ export class Soundtrack {
       .resume()
       .then(() => {
         if (this.ctx.state === "suspended") return;
-        this.start(this.bed);
-        this.rampBed(this.bed, this.bedTarget(), 0.45);
+        if (!this.sting) {
+          const voice = this.voices[this.bed];
+          this.startVoice(voice, voice.pausedAt);
+          this.rampBed(this.bed, BED_GAIN, 0.45);
+        }
         this.rampMaster(masterGain(this.enabled, this.ducked), 0.3);
         for (const event of this.unlockEvents) {
           window.removeEventListener(event, this.unlock, { capture: true });
