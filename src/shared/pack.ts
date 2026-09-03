@@ -38,6 +38,8 @@ export interface ScriptHost {
   removeProp(propId: string): void;
   retargetRift(doorId: string, toRoomId: string): void;
   openDoor(doorId: string): void;
+  /** Mark a clue as seen. Meta-rooms cannot hold interests, so a grabbed object uses this. */
+  observeClue(clueId: string): void;
   hideFigure(figureId: string): void;
   showFigure(figureId: string, roomId: string): void;
   figureInWorld(figureId: string): boolean;

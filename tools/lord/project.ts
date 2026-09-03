@@ -13,6 +13,7 @@
  *   public/dream/                   a copy of the build output, for the dev server
  */
 
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile, readdir, access } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,6 +45,10 @@ export const DREAMS_DIR = join(REPO_ROOT, "dreams");
 export const PUBLIC_DREAM_DIR = join(REPO_ROOT, "public", "dream");
 /** Where the Lord keeps the picture a dream's look is measured from (§7.1). */
 export const ASSETS_DIR = join(REPO_ROOT, "assets");
+/** Mission text. Prefer the current diary; fall back to the old folder name. */
+export const BIBLE_DIR = existsSync(join(REPO_ROOT, "dream-walker-anton"))
+  ? join(REPO_ROOT, "dream-walker-anton")
+  : join(REPO_ROOT, "dream-walker-new");
 
 /**
  * Provenance for the generators. None of this is read at runtime — it exists so a
@@ -100,8 +105,6 @@ export const DEFAULT_CYCLE: CycleConfig = {
 };
 
 export const DEFAULT_HEARTBEAT: HeartbeatConfig = {
-  // Long enough that the world feels stable, short enough that you notice it is not.
-  intervalMs: 45_000,
   callBudgetPerCycle: 12,
   maxPatchesPerBeat: 2,
 };

@@ -27,7 +27,7 @@ bun install
 
 bun run lord init son            # title, genre contract, style words, palette
 bun run lord secret son          # the sealed mnemonic
-bun run lord import son          # rooms + souls from dream-walker-new/
+bun run lord import son          # rooms + souls from dream-walker-anton/
 bun run lord rooms son --rebind  # attach bible links
 bun run lord rooms son --check   # walk doors and links from the courtyard
 bun run lord figures son         # default deal (Turyshev on the bench, …)
@@ -67,7 +67,7 @@ src/server/        OAuth/account RPC, AI agents, API, and static production serv
 
 ## How the world is made
 
-There is no generated overworld. The diary in `dream-walker-bible.md` / `dream-walker-new/`
+There is no generated overworld. The diary in `dream-walker-bible.md` / `dream-walker-anton/`
 *is* the mission: 25 places, 4 meta-spaces, 14 figures. Rooms are ASCII boxes with
 authored connections. You leave a room by walking into a threshold — a door, a staircase,
 a one-way lift, or a `rift`, which is a doorway that comes out somewhere it should not.

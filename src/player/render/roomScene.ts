@@ -445,8 +445,42 @@ export class RoomScene {
       eventMode: "none",
     });
     const size = room.tileSize;
+    // A rift is drawn even over a painting. Every meta-space ships with a backdrop, so
+    // leaving it to the mural meant the one threshold that does not lead where it should
+    // was the one threshold the player could not see. §4.1: the створ is always visible;
+    // it is the destination that lies.
+    for (const door of room.doors) {
+      if (door.threshold !== "rift") continue;
+      const marks = this.atlas.roles.get("warp");
+      for (let y = door.y; y < door.y + door.h; y++) {
+        for (let x = door.x; x < door.x + door.w; x++) {
+          if (marks && marks.length > 0) {
+            layer.addChild(
+              new Sprite({
+                texture: variantFor(marks, x, y),
+                x: x * size,
+                y: y * size,
+                alpha: door.type === "sealed" ? 0.45 : 0.85,
+                roundPixels: true,
+                eventMode: "none",
+              }),
+            );
+            continue;
+          }
+          layer.addChild(
+            new Graphics({ eventMode: "none", roundPixels: true })
+              .rect(x * size, y * size, size, size)
+              .fill({
+                color: this.colors.accent,
+                alpha: door.type === "sealed" ? 0.45 : 0.85,
+              }),
+          );
+        }
+      }
+    }
     if (mural || room.tags.includes("route")) return layer;
     for (const door of room.doors) {
+      if (door.threshold === "rift") continue;
       // Open street doorways are holes in the wall, not beige tiles pasted on the
       // painting. Locked and lift doors still need a mark.
       if (door.threshold === "door" && door.type === "open") continue;

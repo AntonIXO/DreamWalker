@@ -10,7 +10,7 @@ import type { FigureFate } from "./verbs";
  * The terrain patches are gone. `retileRoom` and `growTerrain` existed because the world
  * was a tile grid the generator had painted, so the most natural thing a sleeper could do
  * to it was repaint some. With authored rooms the equivalent gestures are better ones,
- * and both come straight out of `dream-walker-new/rooms.md`:
+ * and both come straight out of `dream-walker-anton/rooms.md`:
  *
  *   - **`relink`** — the sleeper rewires where an object throws you. §4.1: «комнаты
  *     соединяются без логики, но переход всегда через порог». The door still exists; it

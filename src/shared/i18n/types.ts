@@ -33,8 +33,10 @@ export interface TranslationSchema {
     esc_step_back: string;
     esc_close: string;
     thinking_deal: string;
+    thinking_next_cycle: string;
     thinking_mnemonic: string;
     whisper_remembering: string;
+    whisper_cycle_restart: string;
     whisper_fallback_mind: string;
     whisper_failed_population: string;
     whisper_burnt_memory: string;
@@ -140,6 +142,7 @@ export interface TranslationSchema {
     met_in: string;
     noticed_words: string;
     understood_silent: string;
+    burned_memory: string;
     left_part_of_self: string;
     said_too_much: string;
     shut_forever: string;
@@ -187,6 +190,11 @@ export interface TranslationSchema {
     locked_ending: string;
     failed_heading: string;
     void_ending: string;
+    miss: string;
+    locked: string;
+    dry: string;
+    full: string;
+    dream_silent: string;
   };
   connect: {
     title: string;

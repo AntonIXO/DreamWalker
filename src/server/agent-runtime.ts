@@ -18,7 +18,6 @@ import {
   type LanguageModel,
   type ModelMessage,
 } from "ai";
-import { validateMnemonic, wordlists } from "bip39";
 import { z } from "zod";
 
 import {
@@ -40,19 +39,23 @@ import {
 import type { SupportedLocale } from "../shared/i18n";
 import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
 import { sonArtifact } from "../../dreams/son/pack";
+import { moneyTellFor, readDreamWallet } from "../../dreams/son/server";
+import { t } from "../shared/i18n";
 import {
-  moneyTellFor,
-  readDreamWallet,
-  walletIsLocked,
+  EMPTY_AMOUNT,
+  effectiveWalletKind,
+  isRunId,
+  rollWallet,
   type DreamWallet,
-} from "../../dreams/son/server";
+} from "../shared/wallet";
 import type { MapPatch } from "../shared/map-patch";
 import {
   buildPopulation,
   populationSlots,
   type PopulationProposal,
 } from "../shared/population";
-import { mayYieldShard } from "../shared/yield";
+import { isWellFormedPhrase, normalisePhraseWords } from "../shared/mnemonic";
+import { figureHookPrompt, mayYieldShard, shardPrice } from "../shared/yield";
 import type { CodexAccountProcess } from "./codex-account";
 import type { AiProviderMode, AnthropicBackend, OpenAIBackend } from "./config";
 import { dialogueTurnMessages } from "./dialogue-messages";
@@ -347,10 +350,37 @@ The more precise and foreign the question, the more you can yield — and the mo
 that the intruder is not from here. Do not act like a quest NPC and do not suggest where to go
 unless the soul dictates it (Turyshev is the exception: the way forward is with him, and only after sitting).
 
+figureMemorySummary — what you have understood about this person over the cycle, including
+what has already fallen out of the recent lines.
+
 User messages = orderly, assistant = you. Continue the thread naturally.
 If the wording gave away an intruder, tell.quoted must verbatim quote an unbroken excerpt of their current line,
 and reply must naturally contain that exact quote.
-portraitState — neutral, interested, wary, or knows. Not a numeric scale.`;
+Use resonance rarely: only when the figure has already understood everything (knows) and was pushed
+once more with a direct piece of evidence on this turn. The level "knows" does not kill by itself.
+If resonance is filled, declaration must be the figure's final spoken line.
+
+Кирилл yields his hook only for recognition. Папа only if asked for advice and heard out.
+The artist only if the orderly has already been up the rope or named the laughter. The Eye gives
+up the last one only if the orderly says himself why he came. Fill yieldedShardId only when that
+condition has been met — the request tells you the price and whether it was just paid.
+
+The offered memory is a foreign body. Fill memoryEffect only when there is one.
+journalEntry — one useful fact about the person, only if the player learned something new.
+residueDelta — up to three short conclusions the sleeper draws about the orderly.
+portraitState — neutral, interested, wary, or knows. Not a numeric scale.
+
+There are people in this world the orderly has already done something to: someone is not where he
+was, someone is silent now, someone agrees too fast. You know exactly as much as a person in your
+place would. Mention it in passing, as gossip, never as a summary and never as a list.
+
+Кирилл is always whole and remembers nothing. Nobody here is surprised by that, and there is nothing
+to be surprised by. An orderly who says out loud that something happened to Кирилл is not from here,
+and that is the loudest tell in the game.
+
+You can break: if the orderly named the thing you hide, you either give up your piece and talk
+differently afterwards — shorter, faster, agreeing — or you close up for good.
+You cannot lie about having been pressed.`;
 
 const EXAMINE_INSTRUCTIONS = `${SLEEPER_INSTRUCTIONS}
 
@@ -601,7 +631,7 @@ export class AgentRuntime {
 
     this.agentCwd = mkdtempSync(join(tmpdir(), "dream-walker-agent-"));
     this.dreamDir = join(process.cwd(), "dreams", this.artifact.slug);
-    this.wallet = this.readWalletState();
+    this.walletOverride = readDreamWallet(this.dreamDir);
   }
 
   /**
@@ -634,15 +664,42 @@ export class AgentRuntime {
   }
 
   /**
-   * Whether this dream's wallet was ever going to have anything in it.
+   * Whether this run's wallet was ever going to have anything in it.
    *
-   * `endings.md`: about one dream in four is dry, and it is decided when the dream is
-   * made rather than rolled at the finale — «броска в финале нет, иначе игрок справедливо
-   * решит, что его кинула не игра, а рандом». It must never reach the artifact: a flag in
-   * a served file turns the whole discovery loop into a `curl`.
+   * `endings.md`: about one dream in four is dry, and it is decided when the sanitar
+   * lies down rather than rolled at the finale — «броска в финале нет, иначе игрок
+   * справедливо решит, что его кинула не игра, а рандом». The roll is seeded off the run
+   * id, so it is fixed for the whole descent, survives a reload, and can be recomputed
+   * after a server restart without storing anything.
+   *
+   * It must never reach the artifact or a response: a flag in a served file turns the
+   * whole discovery loop into a `curl`. The client learns it only through what the dream
+   * says about money.
    */
-  private readWalletState(): DreamWallet {
-    return readDreamWallet(this.dreamDir);
+  private walletFor(runId: string): DreamWallet {
+    if (this.walletOverride) return this.walletOverride;
+    const cached = this.wallets.get(runId);
+    if (cached) return cached;
+    const rolled = rollWallet(this.artifact.slug, runId);
+    // Bounded: a public server sees many run ids and must not grow a map per visitor.
+    if (this.wallets.size >= 64) {
+      const oldest = this.wallets.keys().next().value;
+      if (oldest !== undefined) this.wallets.delete(oldest);
+    }
+    this.wallets.set(runId, rolled);
+    return rolled;
+  }
+
+  /** A run id is only ever a seed, so its shape is all that has to be trusted. */
+  private assertRunId(runId: string): string {
+    if (!isRunId(runId)) {
+      throw new AgentRuntimeError(
+        "invalid_request",
+        "Заход не опознан.",
+        false,
+      );
+    }
+    return runId;
   }
 
   /**
@@ -660,14 +717,27 @@ export class AgentRuntime {
     const base =
       locale === "en" ? DIALOGUE_INSTRUCTIONS_EN : DIALOGUE_INSTRUCTIONS;
     const soul = this.soulFor(figureId);
-    if (!soul) return base;
+    const figure = this.artifact.figures.find((entry) => entry.id === figureId);
+    const shard = figure?.holdsShardId
+      ? this.artifact.shards.find((entry) => entry.id === figure.holdsShardId)
+      : undefined;
+    const hook =
+      shard && figure
+        ? figureHookPrompt(figure.id, shard.hint, locale === "en" ? "en" : "ru")
+        : null;
     const header = locale === "en" ? "WHO YOU ARE" : "КТО ТЫ";
-    return `${base}\n\n--- ${header} ---\n${soul}`;
+    const hookHeader = locale === "en" ? "HOOK" : "ЗАЦЕПКА";
+    const parts = [base];
+    if (hook) parts.push(`--- ${hookHeader} ---\n${hook}`);
+    if (soul) parts.push(`--- ${header} ---\n${soul}`);
+    return parts.join("\n\n");
   }
 
   private readonly souls = new Map<string, string | null>();
   private readonly dreamDir: string;
-  private readonly wallet: DreamWallet;
+  /** `wallet.local.json`, when the Lord pinned this dream. Null means roll per run. */
+  private readonly walletOverride: DreamWallet | null;
+  private readonly wallets = new Map<string, DreamWallet>();
 
   get providerMode(): AiProviderMode {
     if (this.options.openai) return "openai";
@@ -853,12 +923,17 @@ export class AgentRuntime {
     assertSlug(this.artifact, request.slug);
     // A cached deal made every run the same. The sleeper has to compose a new
     // arrangement from the full catalog each time the sanitar lies down.
+    const runId = this.assertRunId(request.runId);
+    // The deal is seeded off the run id for the same reason the wallet is: a reload
+    // must not reseat everyone while the wallet stays where it was rolled.
+    const deal = {
+      shuffle: true as const,
+      seed: runId,
+      dryWallet: this.walletFor(runId).wallet === "dry",
+    };
 
     if (request.fallback) {
-      const fallback = buildPopulation(this.artifact, null, "fallback", {
-        shuffle: true,
-        dryWallet: this.wallet.wallet === "dry",
-      });
+      const fallback = buildPopulation(this.artifact, null, "fallback", deal);
       this.populationValue = fallback;
       return fallback;
     }
@@ -922,7 +997,7 @@ export class AgentRuntime {
         this.artifact,
         proposal as PopulationProposal,
         "ai",
-        { shuffle: true, dryWallet: this.wallet.wallet === "dry" },
+        deal,
       );
       this.populationValue = population;
       return population;
@@ -931,10 +1006,7 @@ export class AgentRuntime {
         "[agents] population generation fell back:",
         classify(error).message,
       );
-      const fallback = buildPopulation(this.artifact, null, "fallback", {
-        shuffle: true,
-        dryWallet: this.wallet.wallet === "dry",
-      });
+      const fallback = buildPopulation(this.artifact, null, "fallback", deal);
       this.populationValue = fallback;
       return fallback;
     } finally {
@@ -968,6 +1040,30 @@ export class AgentRuntime {
       const shard = this.artifact.shards.find(
         (candidate) => candidate.id === figure.holdsShardId,
       );
+      const visits = new Map(
+        request.world.rooms.map((room) => [room.id, room.visitCount]),
+      );
+      /**
+       * Whether this figure's price has been paid, decided by the engine.
+       *
+       * It is computed here rather than only after the answer because the clamp below
+       * can take a word away but cannot invent one: if the gate is open and the model
+       * does not think to yield, the player paid and got nothing. Bible §5 prices each
+       * of the four hooks that sit on people, so the model is told the price and told
+       * whether it has just been met.
+       */
+      const gateOpen =
+        figure.holdsShardId !== null &&
+        !request.knownShardIds.includes(figure.holdsShardId) &&
+        mayYieldShard({
+          figureId: figure.id,
+          utterance: request.utterance,
+          visitCounts: visits,
+          leveraged: request.leverageOffered !== null,
+        });
+      const allowedShard = gateOpen ? figure.holdsShardId : null;
+      const isEn = request.locale === "en";
+      const price = shardPrice(figure.id, isEn ? "en" : "ru");
       const situation = [
         `Жанровый контракт: ${this.artifact.genreContract}`,
         `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
@@ -982,6 +1078,22 @@ export class AgentRuntime {
         shard
           ? `Единственная доступная фигуре зацепка: ${shard.id} — ${shard.hint}`
           : "У фигуры нет доступной зацепки.",
+        shard && price
+          ? isEn
+            ? `The price of this hook: ${price}.`
+            : `Цена этой зацепки: ${price}.`
+          : isEn
+            ? "This figure has no special price."
+            : "Особой цены у этой фигуры нет.",
+        shard
+          ? gateOpen
+            ? isEn
+              ? "The price was paid in this very line. Give up your piece now: name it as an everyday detail of your own life, never as an answer and never as a word from a list. Fill yieldedShardId."
+              : "Цена уплачена прямо в этой реплике. Отдай свой кусок сейчас: назови его как бытовую деталь своей жизни, не как ответ и не как слово из списка. Заполни yieldedShardId."
+            : isEn
+              ? "The price has not been paid. Leave yieldedShardId empty and hint at nothing."
+              : "Цена не уплачена. yieldedShardId оставь пустым и ничего не подсказывай про зацепку."
+          : "",
         `Уже известные игроку зацепки: ${request.knownShardIds.join(", ") || "нет"}`,
         `Память спящего: ${request.sleeper.summary || "пока пусто"}`,
         `Что ты уже понял об этом человеке в этом цикле: ${request.figureMemory.summary || "пока ничего"}`,
@@ -1091,20 +1203,6 @@ export class AgentRuntime {
         output.tell = null;
       }
 
-      const visits = new Map(
-        request.world.rooms.map((room) => [room.id, room.visitCount]),
-      );
-      const allowedShard =
-        figure.holdsShardId !== null &&
-        !request.knownShardIds.includes(figure.holdsShardId) &&
-        mayYieldShard({
-          figureId: figure.id,
-          utterance: request.utterance,
-          visitCounts: visits,
-          leveraged: request.leverageOffered !== null,
-        })
-          ? figure.holdsShardId
-          : null;
       output.yieldedShardId =
         output.yieldedShardId === allowedShard ? allowedShard : null;
       output.memoryEffect =
@@ -1179,7 +1277,10 @@ export class AgentRuntime {
       }
       const subjectName =
         worldInterest?.name ?? authoredHotspot?.prompt ?? "деталь";
-      const tell = moneyTellFor(this.wallet.wallet, request.hotspotId);
+      const tell = moneyTellFor(
+        effectiveWalletKind(this.walletFor(this.assertRunId(request.runId))),
+        request.hotspotId,
+      );
       const sensory =
         tell ??
         authoredInterest?.sensorySeed ??
@@ -1355,48 +1456,46 @@ export class AgentRuntime {
   ): Promise<FinaleResult> {
     try {
       assertSlug(this.artifact, request.slug);
+      const runId = this.assertRunId(request.runId);
+      const locale = request.locale ?? "ru";
       if (signal.aborted) throw new DOMException("Aborted", "AbortError");
-      const words = request.words.map((word) =>
-        word.normalize("NFKD").trim().toLowerCase(),
-      );
+      const words = normalisePhraseWords(request.words);
       const phrase = words.join(" ");
       const hash = createHash("sha256").update(phrase).digest("hex");
       const exact =
-        words.length === 12 &&
-        words.every(Boolean) &&
-        validateMnemonic(phrase, wordlists.english) &&
+        isWellFormedPhrase(words) &&
         hash === this.artifact.content.mnemonic.hash;
       if (!exact) {
-        return {
-          verdict: "miss",
-          reply: "Фраза не открыла кошелёк. Сон не говорит, где ошибка.",
-        };
+        return { verdict: "miss", reply: t("finale.miss", undefined, locale) };
       }
       // `endings.md` — the phrase can be right and the wallet still empty. That is the
       // whole point: «настоящий гоп-стоп отличается тем, что у терпилы может не оказаться
       // денег». The tells were readable all along; the sanitar chose not to spend a cycle
       // on them.
-      if (walletIsLocked(this.wallet)) {
-        return {
-          verdict: "match",
-          locked: true,
-          reply:
-            "Фраза встала на места. Ячейка не открывается. Таймер считает вверх.",
-        };
-      }
-      return this.wallet.wallet === "dry"
-        ? {
+      const wallet = this.walletFor(runId);
+      switch (effectiveWalletKind(wallet)) {
+        // `story.md` §3 layer 2: the lock is the owner's own discipline, not the dream's.
+        case "locked":
+          return {
+            verdict: "match",
+            locked: true,
+            reply: t("finale.locked", undefined, locale),
+          };
+        case "dry":
+          return {
             verdict: "match",
             wallet: "dry",
-            amount: "0.00000000",
-            reply: "Фраза встала на места. Кошелёк пуст. Он всегда был пуст.",
-          }
-        : {
+            amount: EMPTY_AMOUNT,
+            reply: t("finale.dry", undefined, locale),
+          };
+        default:
+          return {
             verdict: "match",
             wallet: "full",
-            amount: this.wallet.amount,
-            reply: "Фраза встала на места. Аппарат забирает ключ из сна.",
+            amount: wallet.amount,
+            reply: t("finale.full", undefined, locale),
           };
+      }
     } catch (error) {
       throw classify(error);
     }

@@ -9,6 +9,7 @@ import {
   toLocalPixels,
   toWorldPixels,
 } from "../../shared/street";
+import { MindMemory } from "../mind/memory";
 import { ScriptedMind } from "../mind/scripted";
 import { findTarget } from "./interact";
 import { applyPatch, installPopulation } from "./patch";
@@ -89,15 +90,24 @@ describe("son is playable", () => {
 
   test("every meta-space is on the street map, with a door", () => {
     const world = createWorld(artifact);
-    const rifts = artifact.rooms.flatMap((room) =>
-      room.doors.filter((door) => door.threshold === "rift"),
-    );
-    expect(rifts).toEqual([]);
+    // A rift is an extra створ out of a meta-space, never the way into one: every meta
+    // room is still entered on foot, so no arrangement can strand the player.
+    for (const room of artifact.rooms) {
+      for (const door of room.doors) {
+        if (door.threshold !== "rift") continue;
+        expect(room.id).toMatch(/^m\d+-/);
+        expect(artifact.rooms.some((other) => other.id === door.toRoomId)).toBe(
+          true,
+        );
+      }
+    }
     for (const meta of artifact.rooms.filter((room) => room.kind === "meta")) {
-      expect(meta.doors.length).toBeGreaterThan(0);
+      expect(meta.doors.some((door) => door.threshold !== "rift")).toBe(true);
       expect(
         artifact.rooms.some((room) =>
-          room.doors.some((door) => door.toRoomId === meta.id),
+          room.doors.some(
+            (door) => door.toRoomId === meta.id && door.threshold !== "rift",
+          ),
         ),
       ).toBe(true);
     }
@@ -179,7 +189,7 @@ describe("son is playable", () => {
 
   test("examining the shelf inscription yields the tutorial clue", async () => {
     const world = createWorld(artifact);
-    const mind = new ScriptedMind(world);
+    const mind = new ScriptedMind(world, new MindMemory(world.artifact.slug));
     const result = await mind.examine({
       x: 3,
       y: 5.2,
@@ -193,7 +203,7 @@ describe("son is playable", () => {
 
   test("Turyshev answers without a network call", async () => {
     const world = createWorld(artifact);
-    const mind = new ScriptedMind(world);
+    const mind = new ScriptedMind(world, new MindMemory(world.artifact.slug));
     const result = await mind.turn({
       figureId: "turyshev",
       utterance: "Куда мне идти?",

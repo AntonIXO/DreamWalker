@@ -16,11 +16,21 @@
  */
 
 import { makeRng } from "../../shared/rng";
+import {
+  isWellFormedPhrase,
+  normalisePhraseWords,
+} from "../../shared/mnemonic";
 import { mayYieldShard } from "../../shared/yield";
 import { clampPortraitByExhaustion } from "../game/exhaustion";
 import { lookAt } from "../../../dreams/son/looks";
 import { npcFor, talkContext } from "../../../dreams/son/npcs";
-import { getLocale } from "../../shared/i18n";
+import { getLocale, t } from "../../shared/i18n";
+import {
+  EMPTY_AMOUNT,
+  effectiveWalletKind,
+  rollWallet,
+} from "../../shared/wallet";
+import type { MindMemory } from "./memory";
 import type {
   CycleExitResult,
   ExamineResult,
@@ -232,7 +242,10 @@ export class ScriptedMind implements DreamMind {
   readonly waiting = false;
   private turnCount = 0;
 
-  constructor(private readonly world: WorldState) {}
+  constructor(
+    private readonly world: WorldState,
+    private readonly memory: MindMemory,
+  ) {}
 
   // --- conversation ------------------------------------------------------
 
@@ -571,11 +584,14 @@ export class ScriptedMind implements DreamMind {
     };
   }
 
+  /**
+   * Training-mode judge. The same hash as the server, then the same wallet roll off the
+   * same run id, so a training run shows every outcome the live one can — and never a
+   * prize the live one would not have paid.
+   */
   async judge(words: string[]): Promise<FinaleResult> {
-    const isRu = getLocale() === "ru";
-    const phrase = words
-      .map((word) => word.normalize("NFKD").trim().toLowerCase())
-      .join(" ");
+    const normalised = normalisePhraseWords(words);
+    const phrase = normalised.join(" ");
     const digest = await crypto.subtle.digest(
       "SHA-256",
       new TextEncoder().encode(phrase),
@@ -583,22 +599,31 @@ export class ScriptedMind implements DreamMind {
     const hash = [...new Uint8Array(digest)]
       .map((byte) => byte.toString(16).padStart(2, "0"))
       .join("");
-    return hash === this.world.artifact.content.mnemonic.hash
-      ? {
+    const exact =
+      isWellFormedPhrase(normalised) &&
+      hash === this.world.artifact.content.mnemonic.hash;
+    if (!exact) {
+      return { verdict: "miss", reply: t("finale.miss") };
+    }
+    const wallet = rollWallet(this.world.artifact.slug, this.memory.runId);
+    switch (effectiveWalletKind(wallet)) {
+      case "locked":
+        return { verdict: "match", locked: true, reply: t("finale.locked") };
+      case "dry":
+        return {
+          verdict: "match",
+          wallet: "dry",
+          amount: EMPTY_AMOUNT,
+          reply: t("finale.dry"),
+        };
+      default:
+        return {
           verdict: "match",
           wallet: "full",
-          amount: "0.08412000",
-          reply: isRu
-            ? "Шесть слов встали на места. Аппарат забирает ключ из сна."
-            : "Six words clicked into place. The apparatus extracts the key from the dream.",
-        }
-      : {
-          verdict: "miss",
-          wallet: "dry",
-          reply: isRu
-            ? "Порядок не совпал. Сон уходит глубже."
-            : "The order did not match. The dream sinks deeper.",
+          amount: wallet.amount,
+          reply: t("finale.full"),
         };
+    }
   }
 
   availableMemories(): readonly [] {

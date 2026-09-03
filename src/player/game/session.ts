@@ -23,7 +23,8 @@ import {
   toLocalPixels,
   worldBounds,
 } from "../../shared/street";
-import { findTarget, type InteractTarget } from "./interact";
+import { findHotspot } from "../../shared/roomGrid";
+import { findTarget, reachableHotspots, type InteractTarget } from "./interact";
 import { escortFigure } from "./figures";
 import { whoIsLed } from "./fates";
 import { applyPatch } from "./patch";
@@ -55,6 +56,7 @@ export interface SessionCallbacks {
   whisper?(text: string): void;
   cycleNumber?(): number;
   knownClueIds?(): readonly string[];
+  observeClue?(clueId: string): void;
 }
 
 interface MetaVisit {
@@ -183,6 +185,23 @@ export class DreamSession {
       if (script.onUse?.(host, hotspot)) return true;
     }
     return false;
+  }
+
+  /**
+   * Talk was refused; the press still belongs to whatever object is underfoot.
+   * М6 seats a figure on the same tile as the shore hotspot, and the figure wins
+   * the target tie — without this the pond never sees the third approach.
+   */
+  useNearbyHotspot(): boolean {
+    const room = this.room;
+    const local = toLocalPixels(room, this.player.x, this.player.y);
+    const hotspot = findHotspot(
+      reachableHotspots(this.world, room),
+      local.x,
+      local.y,
+      room.tileSize,
+    );
+    return hotspot ? this.use(hotspot) : false;
   }
 
   /** Pack scripts may refuse talk. */
@@ -447,6 +466,7 @@ export class DreamSession {
           toRoomId,
           reason: "pack script",
         });
+        session.showRoom(session.room, false);
       },
       openDoor: (doorId) => {
         applyPatch(world, {
@@ -455,6 +475,10 @@ export class DreamSession {
           to: "open",
           reason: "pack script",
         });
+        session.showRoom(session.room, false);
+      },
+      observeClue: (clueId) => {
+        session.callbacks.observeClue?.(clueId);
       },
       hideFigure: (figureId) => {
         const figure = world.figures.find((entry) => entry.id === figureId);

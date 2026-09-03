@@ -4,6 +4,7 @@ import {
   type CodexAccountStatus,
   type DeviceLogin,
 } from "../../shared/ai";
+import { getLocale, t, type SupportedLocale } from "../../shared/i18n";
 
 export type MindSettings = CodexAccountStatus;
 
@@ -63,12 +64,20 @@ export async function logoutMind(): Promise<MindSettings> {
   );
 }
 
-export function describeMind(settings: MindSettings): string {
+export function describeMind(
+  settings: MindSettings,
+  locale: SupportedLocale = getLocale(),
+): string {
   if (settings.state === "connected") {
     return `${settings.model} · ${settings.effort} · ${settings.provider}`;
   }
-  if (settings.state === "authorizing") return "ожидает подтверждения";
+  if (settings.state === "authorizing")
+    return t("connect.status_waiting", undefined, locale);
   if (settings.state === "incompatible")
-    return settings.message ?? "модель недоступна";
-  return "сон отвечает сам, без модели";
+    return (
+      settings.message ?? t("connect.status_incompatible", undefined, locale)
+    );
+  if (settings.state === "error")
+    return settings.message ?? t("connect.status_error", undefined, locale);
+  return t("connect.model_not_connected", undefined, locale);
 }

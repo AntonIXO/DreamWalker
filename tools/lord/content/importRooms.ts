@@ -1,5 +1,5 @@
 /**
- * Reading `dream-walker-new/rooms.md` into room cards.
+ * Reading `dream-walker-anton/rooms.md` into room cards.
  *
  * The importer parses *structure* and refuses to invent *geometry*. It can read which
  * rooms exist, what is in them, where their links point and what they do to the chart,

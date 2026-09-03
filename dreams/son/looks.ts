@@ -1,8 +1,17 @@
 import type { ExamineResult } from "../../src/shared/ai";
 
+/**
+ * What the sanitar sees when the model is not answering.
+ *
+ * These lines must stay neutral about money. `endings.md` makes the money scenes the
+ * one honest signal of whether the wallet is dry, and that signal is decided per run and
+ * kept on the server — a line here that leaned either way would answer the question in
+ * a file the browser already has. `isMoneyHotspot` sends those hotspots to the server
+ * even when a line exists here; these are the training-run stand-ins.
+ */
 const LINES: Record<string, string> = {
   nadpis: "Никогда не верьте маме, она не сдерживает свои обещания!",
-  iacheika: "Деньги видны. До них двадцать сантиметров. Таймер считает вверх.",
+  iacheika: "Стекло, и за ним двадцать сантиметров. Таймер считает вверх.",
   zapiska: "Чтобы была мотивация. Тем же почерком, что в шкафу.",
   paket: "Ледяной. Рука не вынимается. Крови на полу нет.",
   noutbuk: "Курсор в незакрытой скобке. Строка дописывается сама.",
@@ -12,7 +21,7 @@ const LINES: Record<string, string> = {
   "urna-nabitaia-akkuratno":
     "В урне что-то бумажное, сложенное слишком ровно для мусора.",
   "piat-tysiach-nalichnymi-kotorye-uzhe-otd":
-    "Пять тысяч уже не лежат. Лежит чувство, что их отдали не туда.",
+    "Пять тысяч. Про них здесь говорят так, будто счёт ещё не закрыт.",
 };
 
 export function lookAt(

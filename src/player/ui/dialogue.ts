@@ -215,11 +215,16 @@ export class DialoguePanel {
     if (preselectLeverage && this.leverageEl.options.length > 1) {
       this.leverageEl.selectedIndex = 1;
     }
-    this.inputEl.value = "";
+    this.clearDraft();
     this.inputEl.focus();
     this.refreshVoiceChrome(this.voice.currentStatus);
     this.syncVoice();
     this.callbacks.onOpen(figure);
+  }
+
+  /** Empty the box without closing. Leftover typing next to «Ну ладно.» reads as a bug. */
+  clearDraft(): void {
+    this.inputEl.value = "";
   }
 
   private refreshLeverage(): void {

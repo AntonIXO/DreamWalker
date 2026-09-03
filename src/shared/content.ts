@@ -11,7 +11,7 @@
 
 /**
  * The four portrait states, which are also the four rungs of the suspicion ladder in
- * `dream-walker-new/characters/README.md`:
+ * `dream-walker-anton/characters/README.md`:
  *
  *   0 занят собой · 1 заинтересовался · 2 насторожился · 3 знает
  *

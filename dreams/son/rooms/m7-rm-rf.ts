@@ -1,7 +1,19 @@
 import { boxRoom, look, prop } from "./box";
 
-const NOTES = [
-  { id: "zametki", x: 3, y: 3, prompt: "заметки на стене" },
+const NOTES: Array<{
+  id: string;
+  x: number;
+  y: number;
+  prompt: string;
+  clueId?: string;
+}> = [
+  {
+    id: "zametki",
+    x: 3,
+    y: 3,
+    prompt: "заметки на стене",
+    clueId: "clue-1",
+  },
   { id: "shemy", x: 6, y: 3, prompt: "схемы" },
   { id: "monitor", x: 9, y: 3, prompt: "монитор" },
   { id: "stol", x: 12, y: 4, prompt: "стол, за которым работали" },
@@ -25,6 +37,7 @@ export const M7 = boxRoom({
       y: item.y + 2.15,
       prompt: item.prompt,
       propId: item.id,
+      clueId: item.clueId ?? null,
     }),
   ),
   backdropImage: "assets/rooms/09-hakaton-tretii-po-schetu.png",

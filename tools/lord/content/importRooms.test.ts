@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { REPO_ROOT } from "../project";
+import { BIBLE_DIR } from "../project";
 import {
   linkMatchesObject,
   normaliseMinus,
@@ -12,12 +12,18 @@ import {
   toRoomCards,
 } from "./importRooms";
 
-const roomsPath = existsSync(join(REPO_ROOT, "dream-walker-new", "rooms.md"))
-  ? join(REPO_ROOT, "dream-walker-new", "rooms.md")
-  : join(REPO_ROOT, "dream-walker-anton", "rooms.md");
+const roomsPath = join(BIBLE_DIR, "rooms.md");
 
 const markdown = readFileSync(roomsPath, "utf8");
 const parsed = parseRoomsDocument(markdown);
+
+describe("the bible path", () => {
+  test("lord import reads dream-walker-anton, not a missing dream-walker-new", () => {
+    expect(BIBLE_DIR.endsWith("dream-walker-anton")).toBe(true);
+    expect(existsSync(join(BIBLE_DIR, "rooms.md"))).toBe(true);
+    expect(existsSync(join(BIBLE_DIR, "rooms-meta.md"))).toBe(true);
+  });
+});
 
 describe("parseRoomsDocument", () => {
   test("finds all 25 places and 4 meta-spaces", () => {

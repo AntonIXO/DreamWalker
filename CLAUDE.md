@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A top-down web game where a "sanitar" infiltrates a sleeping person's dream.
-`dream-walker-bible.md` and `dream-walker-new/` are the grammar; `dream-walker-concept.md`
+`dream-walker-bible.md` and `dream-walker-anton/` are the grammar; `dream-walker-concept.md`
 is the AI/engine seam. This repo is the technical foundation: world editor, artifact
 format, player, heartbeat, and the model.
 
@@ -41,7 +41,7 @@ The Lord flow, in order. Each command also takes flags (`--title`, `--seed`, `--
 ```bash
 bun run lord init <slug>     # title, genre contract, style words, palette
 bun run lord secret <slug>   # the sealed line + hooks
-bun run lord import <slug>   # pull rooms/characters from dream-walker-new/
+bun run lord import <slug>   # pull rooms/characters from dream-walker-anton/
 bun run lord rooms <slug>    # list / --rebind bible links / --check walkability
 bun run lord art <slug>      # 4 tilesets per role, press 1-4
 bun run lord figures <slug>  # place figures, assign hooks
@@ -90,7 +90,7 @@ rooms, no lock whose key sits behind it. The artifact carries `secretHash` only.
 
 ### Catalog (author time)
 
-There is no worldgen. `dream-walker-new/rooms.md` and `characters/*/SOUL.md` are the
+There is no worldgen. `dream-walker-anton/rooms.md` and `characters/*/SOUL.md` are the
 mission. `lord import` / `lord rooms --rebind` attach those links to authored ASCII
 rooms. `lord rooms --check` walks doors **and** links from the courtyard spawn.
 

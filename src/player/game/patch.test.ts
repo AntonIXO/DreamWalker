@@ -12,6 +12,7 @@ import { describe, expect, test } from "bun:test";
 import fixture from "../../shared/__fixtures__/tiny-dream.json";
 import { validateDreamArtifact, type DreamArtifact } from "../../shared/dream";
 import type { DreamPopulation } from "../../shared/ai";
+import { MindMemory } from "../mind/memory";
 import { ScriptedMind } from "../mind/scripted";
 import { applyPatch, installPopulation, patchTouches } from "./patch";
 import { createWorld, noteVisit, resetWorld, type WorldState } from "./world";
@@ -311,7 +312,7 @@ describe("ScriptedMind.judge", () => {
     JSON.parse(JSON.stringify(fixture)),
   ) as DreamArtifact;
   const world = createWorld(artifact);
-  const mind = new ScriptedMind(world);
+  const mind = new ScriptedMind(world, new MindMemory(world.artifact.slug));
   const words = [...Array(11).fill("abandon"), "about"];
 
   test("accepts the exact ordered phrase", async () => {
@@ -329,6 +330,12 @@ describe("ScriptedMind.judge", () => {
 
   test("rejects a short phrase", async () => {
     await expect(mind.judge(words.slice(0, 11))).resolves.toMatchObject({
+      verdict: "miss",
+    });
+  });
+
+  test("rejects twelve words that are not BIP-39", async () => {
+    await expect(mind.judge(Array(12).fill("qwerty"))).resolves.toMatchObject({
       verdict: "miss",
     });
   });

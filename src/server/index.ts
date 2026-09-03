@@ -191,6 +191,12 @@ async function api(
   }
 
   if (pathname === "/api/codex/login/cancel" && request.method === "POST") {
+    if (agents.providerMode !== "codex") {
+      return json(
+        { error: "Inference provider is configured by the server." },
+        409,
+      );
+    }
     try {
       const body = await readJson<{ loginId?: string }>(request);
       await account.cancelLogin(body.loginId);

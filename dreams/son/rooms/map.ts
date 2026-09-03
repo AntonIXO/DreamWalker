@@ -8,7 +8,13 @@
  */
 
 import type { Direction } from "../../../src/shared/roomGrid";
-import { setCellMark } from "../../../src/shared/roomGrid";
+import {
+  cellAt,
+  isWalkableCell,
+  rectBlocks,
+  setCellMark,
+} from "../../../src/shared/roomGrid";
+import { rectsOverlap } from "../../../src/shared/rect";
 import type { DreamRoom, RoomDoor, RoomEntry } from "../../../src/shared/room";
 import { cloneRoom } from "./box";
 
@@ -244,10 +250,6 @@ export function isGeneratedRoom(id: string): boolean {
   return /^(path|gap|woods)-/.test(id);
 }
 
-function isPuzzleDoor(door: RoomDoor): boolean {
-  return /^m8-5854--day-\d+$/.test(door.id);
-}
-
 function restoreRing(room: DreamRoom): void {
   const cells = room.cells.map((row) => row.split(""));
   for (let y = 0; y < room.height; y++) {
@@ -331,6 +333,50 @@ function makeDoor(input: {
 
 function addDoor(room: DreamRoom, door: RoomDoor): void {
   room.doors.push(door);
+}
+
+/**
+ * Where an authored rift can actually stand once the streets are in.
+ *
+ * A rift lives on the wall-face row by default, which is why it reads as a doorway you
+ * press into rather than a hole you walk through. It may not sit on a street doorway, on
+ * a solid prop, or outside the ring. Authored coordinates win when they fit; otherwise
+ * the rift slides along the wall to the first free span, and a rift with nowhere to go is
+ * dropped loudly rather than shipped pointing at nothing.
+ */
+function placeRift(
+  room: DreamRoom,
+  door: RoomDoor,
+  byId: ReadonlyMap<string, DreamRoom>,
+): RoomDoor | null {
+  if (!byId.has(door.toRoomId)) {
+    console.warn(
+      `[map] rift ${door.id} dropped: ${door.toRoomId} is not a room here`,
+    );
+    return null;
+  }
+  const fits = (x: number, y: number): boolean => {
+    if (x < 1 || y < 1) return false;
+    if (x + door.w > room.width - 1 || y + door.h > room.height - 1)
+      return false;
+    const rect = { x, y, w: door.w, h: door.h };
+    if (room.doors.some((other) => rectsOverlap(rect, other))) return false;
+    for (let ty = y; ty < y + door.h; ty++) {
+      for (let tx = x; tx < x + door.w; tx++) {
+        if (rectBlocks(room.props, tx, ty)) return false;
+        // Off the wall face the rift is stood on rather than pressed into, so its
+        // cells have to be floor the walker can actually reach.
+        if (ty !== 1 && !isWalkableCell(cellAt(room, tx, ty))) return false;
+      }
+    }
+    return true;
+  };
+  if (fits(door.x, door.y)) return door;
+  for (let x = 1; x + door.w <= room.width - 1; x++) {
+    if (fits(x, door.y)) return { ...door, x };
+  }
+  console.warn(`[map] rift ${door.id} dropped: no free wall in ${room.id}`);
+  return null;
 }
 
 function punch(room: DreamRoom, door: RoomDoor): void {
@@ -785,14 +831,18 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
     if (byId.has(id)) at.set(`${cell.x},${cell.y}`, id);
   }
 
+  // Authored rifts are put back after the streets are drawn, so `riftFits` can see the
+  // generated doorways it must not sit on. §4.1: the streets are the spine and a rift is
+  // an extra створ — never the only way anywhere, or the map stops being crossable.
+  const riftsByRoom = new Map<string, RoomDoor[]>();
+
   for (const room of next) {
-    const kept = room.doors
-      .filter((door) => isPuzzleDoor(door))
-      .map((door) => ({
-        ...door,
-        threshold: "door" as const,
-        toEntryId: door.toEntryId ?? "default",
-      }));
+    riftsByRoom.set(
+      room.id,
+      room.doors
+        .filter((door) => door.threshold === "rift")
+        .map((door) => ({ ...door, toEntryId: "default" })),
+    );
     restoreRing(room);
     const cell = STREET_CELLS[room.id];
     if (cell) {
@@ -814,7 +864,6 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
         facing: "n",
       });
     }
-    for (const door of kept) addDoor(room, door);
   }
 
   const generated: DreamRoom[] = [];
@@ -1106,9 +1155,19 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
     });
   }
 
+  for (const room of next) {
+    for (const door of riftsByRoom.get(room.id) ?? []) {
+      const placed = placeRift(room, door, byId);
+      if (placed) addDoor(room, placed);
+    }
+  }
+
   const all = [...next, ...generated];
   for (const room of all) {
     for (const door of room.doors) {
+      // A rift is not punched: it stays set into the wall, and the walker fires it by
+      // pressing into the solid cell ahead (`player.ts` doorAhead). Punching it would
+      // turn the wall row into a hole and let the player walk out of the room.
       if (door.threshold !== "door" && door.threshold !== "lift") continue;
       punch(room, door);
     }

@@ -23,6 +23,31 @@ describe("Cycle", () => {
     expect(cycle.remainingSeconds).toBe(60);
   });
 
+  test("the fourth expiry is the last — `endings.md` gives four cycles", () => {
+    const four = {
+      cycle: { durationMs: 60_000, maxCycles: 4 },
+    } as DreamArtifact;
+    const cycle = new Cycle(four);
+    for (let played = 1; played < 4; played++) {
+      expect(cycle.update(60)).toBe(true);
+      // Asked the way the game asks it: after the timer, before the restart.
+      expect(cycle.isFinal).toBe(false);
+      cycle.restart();
+    }
+    expect(cycle.number).toBe(4);
+    expect(cycle.update(60)).toBe(true);
+    expect(cycle.isFinal).toBe(true);
+  });
+
+  test("a dream without a limit never ends on the clock", () => {
+    const endless = {
+      cycle: { durationMs: 60_000, maxCycles: null },
+    } as DreamArtifact;
+    const cycle = new Cycle(endless);
+    for (let i = 0; i < 9; i++) cycle.restart();
+    expect(cycle.isFinal).toBe(false);
+  });
+
   test("formats the countdown", () => {
     expect(formatClock(125.9)).toBe("2:05");
   });

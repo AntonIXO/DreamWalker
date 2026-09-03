@@ -29,7 +29,7 @@ import {
 import type { DreamRoom } from "../../../src/shared/room";
 import { loadRoomFiles, loadRoomSettings } from "../content/files";
 import { parseRoomsDocument, toRoomCards } from "../content/importRooms";
-import { dreamDir, loadDraft, REPO_ROOT, saveDraft } from "../project";
+import { BIBLE_DIR, dreamDir, loadDraft, saveDraft } from "../project";
 import { color, heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
 
@@ -255,10 +255,7 @@ export async function roomsCommand(
   // A rift is architecture now: it has to go in a wall somebody drew, so the tool's job
   // is to say what is missing rather than to invent a doorway and call it done.
   if (flags.rifts) {
-    const markdown = await readFile(
-      join(REPO_ROOT, "dream-walker-new", "rooms.md"),
-      "utf8",
-    );
+    const markdown = await readFile(join(BIBLE_DIR, "rooms.md"), "utf8");
     const parsed = parseRoomsDocument(markdown);
     const { rifts } = toRoomCards(parsed);
     const loaded = await loadRoomFiles(slug);

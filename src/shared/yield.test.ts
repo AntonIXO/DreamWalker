@@ -1,6 +1,12 @@
 import { describe, expect, test } from "bun:test";
 
-import { clueIdForShard, mayYieldShard, POOL_ROOM_ID } from "./yield";
+import {
+  clueIdForShard,
+  figureHookPrompt,
+  mayYieldShard,
+  shardPrice,
+  POOL_ROOM_ID,
+} from "./yield";
 
 describe("mayYieldShard", () => {
   const none = new Map<string, number>();
@@ -108,5 +114,71 @@ describe("pressure satisfies a gate, it does not go round it", () => {
         }),
       ).toBe(false);
     }
+  });
+});
+
+describe("figureHookPrompt", () => {
+  test("pins the artist's price and hint so the model is not guessing the object", () => {
+    const ru = figureHookPrompt("hudozhnik", "холст с чужим смехом");
+    expect(ru).toContain("ЗАЦЕПКА");
+    expect(ru).toContain("холст с чужим смехом");
+    expect(ru).toContain(shardPrice("hudozhnik", "ru"));
+    const en = figureHookPrompt(
+      "hudozhnik",
+      "a canvas of someone else's laugh",
+      "en",
+    );
+    expect(en).toContain("HOOK");
+    expect(en).toContain(shardPrice("hudozhnik", "en"));
+    expect(figureHookPrompt("turyshev", "whatever")).toBeNull();
+  });
+});
+
+describe("the gates speak both languages", () => {
+  const none = new Map<string, number>();
+  const opens = (figureId: string, utterance: string): boolean =>
+    mayYieldShard({ figureId, utterance, visitCounts: none });
+
+  test("the Eye hears an admission in English too", () => {
+    expect(opens("glaz", "How is the weather?")).toBe(false);
+    expect(opens("glaz", "I came here to take the seed phrase.")).toBe(true);
+  });
+
+  test("Кирилл is recognised in English too", () => {
+    expect(opens("kirill", "Move aside.")).toBe(false);
+    expect(opens("kirill", "You were right about the mods.")).toBe(true);
+  });
+
+  test("папа is asked for advice in English too", () => {
+    expect(opens("papa", "Nice bench.")).toBe(false);
+    expect(opens("papa", "What should I do about the leg?")).toBe(true);
+  });
+
+  test("the artist hears the hall named in English too", () => {
+    expect(opens("hudozhnik", "Good evening.")).toBe(false);
+    expect(opens("hudozhnik", "I could only hear the laughter.")).toBe(true);
+  });
+
+  test("the artist opens after the pool, whatever was said", () => {
+    expect(
+      mayYieldShard({
+        figureId: "hudozhnik",
+        utterance: "Ничего особенного.",
+        visitCounts: new Map([[POOL_ROOM_ID, 1]]),
+      }),
+    ).toBe(true);
+  });
+});
+
+describe("shardPrice", () => {
+  test("names a price for each of the four figures that carry a word", () => {
+    for (const id of ["glaz", "kirill", "papa", "hudozhnik"]) {
+      expect(shardPrice(id)).toBeTruthy();
+      expect(shardPrice(id, "en")).toBeTruthy();
+    }
+  });
+
+  test("a figure with no price gets none", () => {
+    expect(shardPrice("mama")).toBeNull();
   });
 });

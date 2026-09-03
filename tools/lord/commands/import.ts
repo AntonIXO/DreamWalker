@@ -1,5 +1,5 @@
 /**
- * `lord import <slug>` — turn `dream-walker-new/` into an authorable dream.
+ * `lord import <slug>` — turn `dream-walker-anton/` into an authorable dream.
  *
  * One command because the two halves are not independent: characters have to be placed
  * in rooms, and the roster is what makes the validator's 1:1 figure↔character rule
@@ -17,11 +17,11 @@ import type { DreamRoom } from "../../../src/shared/room";
 import { ARCHETYPES } from "../art/silhouettes";
 import { parseSoul, toCharacterCard } from "../content/importCharacters";
 import { parseRoomsDocument, toRoomCards } from "../content/importRooms";
-import { dreamDir, loadDraft, REPO_ROOT, saveDraft } from "../project";
+import { BIBLE_DIR, dreamDir, loadDraft, saveDraft } from "../project";
 import { color, heading, note, ok, warn } from "../term/prompt";
 import type { Flags } from "../cli";
 
-const SOURCE = join(REPO_ROOT, "dream-walker-new");
+const SOURCE = BIBLE_DIR;
 
 async function writeIfMissing(path: string, body: string): Promise<boolean> {
   try {

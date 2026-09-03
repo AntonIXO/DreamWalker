@@ -1,6 +1,9 @@
 import type { DreamMemory, SleeperMemory } from "../../shared/ai";
+import { isRunId, newRunId } from "../../shared/wallet";
 
 interface StoredMindState {
+  /** One descent into the dream. Seeds the wallet and the deal; a reload keeps it. */
+  runId: string;
   knownShardIds: string[];
   sleeper: SleeperMemory;
   memories: DreamMemory[];
@@ -9,6 +12,7 @@ interface StoredMindState {
 
 function emptyState(): StoredMindState {
   return {
+    runId: newRunId(),
     knownShardIds: [],
     sleeper: { summary: "", tells: [] },
     memories: [],
@@ -34,6 +38,7 @@ export class MindMemory {
       if (!raw) return emptyState();
       const parsed = JSON.parse(raw) as Partial<StoredMindState>;
       return {
+        runId: isRunId(parsed.runId) ? parsed.runId : newRunId(),
         knownShardIds: Array.isArray(parsed.knownShardIds)
           ? parsed.knownShardIds.filter(
               (id): id is string => typeof id === "string",
@@ -76,6 +81,17 @@ export class MindMemory {
 
   get knownShardIds(): readonly string[] {
     return this.state.knownShardIds;
+  }
+
+  get runId(): string {
+    return this.state.runId;
+  }
+
+  /** A new descent: new wallet, new deal. Words, tells and memories stay — §5. */
+  newRun(): string {
+    this.state.runId = newRunId();
+    this.save();
+    return this.state.runId;
   }
 
   get sleeper(): SleeperMemory {

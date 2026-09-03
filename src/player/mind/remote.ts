@@ -1,4 +1,4 @@
-import { getLocale } from "../../shared/i18n";
+import { getLocale, t } from "../../shared/i18n";
 import type {
   AiStreamEvent,
   CycleExitRequestPayload,
@@ -6,12 +6,14 @@ import type {
   DreamPopulation,
   ExamineRequestPayload,
   FinaleRequestPayload,
+  FinaleResult,
   FigureTranscriptLine,
   FigureMemory,
   WorldSnapshot,
 } from "../../shared/ai";
 import type { DreamArtifact } from "../../shared/dream";
 import { fallbackPopulation } from "../../shared/population";
+import { isMoneyHotspot, rollWallet } from "../../shared/wallet";
 import { RETURNS_WHOLE } from "../../shared/verbs";
 import type { WorldState } from "../game/world";
 import { MindMemory } from "./memory";
@@ -186,18 +188,23 @@ async function streamRequest<T>(
 export async function inhabitDream(
   slug: string,
   artifact: DreamArtifact,
+  runId: string,
 ): Promise<DreamPopulation> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), INHABIT_TIMEOUT_MS);
   try {
     return await streamRequest<DreamPopulation>(
       "/api/ai/inhabit",
-      { slug, locale: getLocale() },
+      { slug, runId, locale: getLocale() },
       controller.signal,
     );
   } catch (error) {
     console.warn("[mind] inhabit fell back to catalog deal:", error);
-    return fallbackPopulation(artifact, { shuffle: true });
+    return fallbackPopulation(artifact, {
+      shuffle: true,
+      seed: runId,
+      dryWallet: rollWallet(slug, runId).wallet === "dry",
+    });
   } finally {
     clearTimeout(timeout);
   }
@@ -326,11 +333,16 @@ export class RemoteMind implements DreamMind {
   }
 
   async examine(request: ExamineRequest) {
-    const looked = lookAt(request.hotspotId ?? null);
+    // Money hotspots go to the server even when a line is authored for them: the
+    // sensory line there depends on the wallet, and the wallet lives only server-side.
+    const looked = isMoneyHotspot(request.hotspotId)
+      ? null
+      : lookAt(request.hotspotId ?? null);
     if (looked) return looked;
     const controller = this.controller();
     const payload: ExamineRequestPayload = {
       slug: this.world.artifact.slug,
+      runId: this.memory.runId,
       cycleNumber: this.context.cycleNumber(),
       roomId: request.roomId,
       interestId: request.interestId,
@@ -389,6 +401,7 @@ export class RemoteMind implements DreamMind {
     const controller = this.controller();
     const payload: FinaleRequestPayload = {
       slug: this.world.artifact.slug,
+      runId: this.memory.runId,
       words,
       locale: getLocale(),
     };
@@ -400,7 +413,13 @@ export class RemoteMind implements DreamMind {
       );
     } catch (error) {
       if (!this.failed(error)) throw error;
-      return this.fallback.judge(words);
+      // The finale is the one place a stand-in must not guess. A dropped connection
+      // is a miss with its own line, never a prize.
+      const silent: FinaleResult = {
+        verdict: "miss",
+        reply: t("finale.dream_silent"),
+      };
+      return silent;
     } finally {
       this.finish(controller);
     }

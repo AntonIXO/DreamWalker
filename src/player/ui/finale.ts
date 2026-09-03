@@ -22,6 +22,14 @@ export type EndingKind =
   | "walk-away"
   | "locked";
 
+/** After any ending, leaving is no longer a choice. Void has no way back at all. */
+export function endingChrome(kind: EndingKind): {
+  leaveHidden: boolean;
+  closeHidden: boolean;
+} {
+  return { leaveHidden: true, closeHidden: kind === "void" };
+}
+
 export interface FinaleCallbacks {
   onOpen(): void;
   onClose(): void;
@@ -248,8 +256,11 @@ export class FinalePanel {
     this.submit.hidden = true;
     const leave = this.root.querySelector<HTMLButtonElement>(".finale-leave");
     const close = this.root.querySelector<HTMLButtonElement>(".finale-close");
-    if (leave) leave.hidden = kind === "void";
-    if (close) close.hidden = kind === "void";
+    // The run is over, so leaving is no longer a choice anyone can make: the button
+    // used to survive «Взял» and let the player walk away from a prize they had taken.
+    const chrome = endingChrome(kind);
+    if (leave) leave.hidden = chrome.leaveHidden;
+    if (close) close.hidden = chrome.closeHidden;
     this.callbacks.onEnded(kind);
   }
 

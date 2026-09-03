@@ -1,5 +1,5 @@
 /**
- * Reading `dream-walker-new/characters/<id>/SOUL.md` into character cards.
+ * Reading `dream-walker-anton/characters/<id>/SOUL.md` into character cards.
  *
  * A soul is written for a model, not for a schema: `characters/README.md` says it «идёт
  * в системный промпт как есть». So the file is copied whole and used verbatim, and only
@@ -61,7 +61,7 @@ function section(markdown: string, label: string): string {
  * instruction about a rule the model will then try to honour. `## ТОНУС` is the
  * Upper/Downer chart, which `game/pressure.ts` replaced.
  *
- * Stripped here rather than in `dream-walker-new/characters/*.md`: those are the author's
+ * Stripped here rather than in `dream-walker-anton/characters/*.md`: those are the author's
  * writing, and the day a mechanic comes back the line is still there.
  */
 const RETIRED_SECTIONS = ["ТОНУС"];

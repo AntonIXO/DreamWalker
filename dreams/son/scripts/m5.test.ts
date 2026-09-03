@@ -35,6 +35,7 @@ function fakeHost(overrides: Partial<ScriptHost> = {}): ScriptHost & {
     showFigure: () => undefined,
     figureInWorld: () => false,
     whisper: () => undefined,
+    observeClue: () => undefined,
     entered: null as string | null,
     flags,
     ...overrides,

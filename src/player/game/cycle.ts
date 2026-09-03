@@ -155,6 +155,19 @@ export class Cycle {
     if (!Number.isFinite(milliseconds) || milliseconds <= 0) return;
     this.remainingMs += milliseconds;
   }
+
+  /**
+   * Whether the cycle that just ran out was the last one.
+   *
+   * `endings.md` gives the sanitar four cycles and then throws them out with whatever
+   * they have. Asked *before* the restart, so the fourth expiry ends the run: asking
+   * after it meant `number` had already become five, and the dream was reset underneath
+   * the ending screen.
+   */
+  get isFinal(): boolean {
+    const max = this.artifact.cycle.maxCycles;
+    return max !== null && this.index >= max;
+  }
 }
 
 export function formatClock(seconds: number): string {

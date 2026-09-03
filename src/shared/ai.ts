@@ -133,6 +133,8 @@ export interface DreamPopulation {
 
 export interface InhabitRequestPayload {
   slug: string;
+  /** Seeds the wallet roll and the deal. Client-generated, per run, survives reload. */
+  runId: string;
   /** Skip the model and return a shuffled catalog deal immediately. */
   fallback?: boolean;
   locale?: SupportedLocale;
@@ -267,6 +269,7 @@ export interface DialogueResult {
 
 export interface ExamineRequestPayload {
   slug: string;
+  runId: string;
   cycleNumber: number;
   roomId: string | null;
   interestId: string | null;
@@ -332,6 +335,7 @@ export interface CycleExitResult {
 
 export interface FinaleRequestPayload {
   slug: string;
+  runId: string;
   words: string[];
   locale?: SupportedLocale;
 }
@@ -339,8 +343,8 @@ export interface FinaleRequestPayload {
 export interface FinaleResult {
   /**
    * Whether there was anything in it. Only ever set on a match, and decided when the
-   * dream was made — never rolled at the finale, or the loss reads as the game cheating
-   * rather than as the risk it was.
+   * sanitar lay down (`shared/wallet.ts`) — never rolled at the finale, or the loss reads
+   * as the game cheating rather than as the risk it was.
    */
   wallet?: "full" | "dry";
   /** Layer 2: the phrase is right and the lock has not opened yet. */

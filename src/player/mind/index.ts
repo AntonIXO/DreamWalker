@@ -21,7 +21,7 @@ export function createMind(
   context: RemoteMindContext,
   memory = new MindMemory(world.artifact.slug),
 ): DreamMind {
-  const scripted = new ScriptedMind(world);
+  const scripted = new ScriptedMind(world, memory);
   return new RemoteMind(world, memory, context, scripted);
 }
 

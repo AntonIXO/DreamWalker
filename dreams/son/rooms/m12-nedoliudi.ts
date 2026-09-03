@@ -1,4 +1,4 @@
-import { boxRoom, look, prop } from "./box";
+import { boxRoom, look, prop, rift } from "./box";
 
 export const M12 = boxRoom({
   id: "m12-nedoliudi",
@@ -28,6 +28,22 @@ export const M12 = boxRoom({
       x: 14,
       y: 7,
       prompt: "счёт, на котором валюта смазана",
+    }),
+  ],
+  doors: [
+    // `rooms-meta.md` М12: the deck nobody opened goes back to the hackathon, and the
+    // invoice with the smudged currency goes to the shop where money is argued over.
+    rift({
+      id: "m12-nedoliudi--to-hackathon",
+      x: 1,
+      toRoomId: "09-hakaton-tretii-po-schetu",
+      prompt: "питч-дек",
+    }),
+    rift({
+      id: "m12-nedoliudi--to-shop",
+      x: 5,
+      toRoomId: "05-shesterochka",
+      prompt: "счёт",
     }),
   ],
   backdropImage: "assets/rooms/23-nigeriia-konferenciia.png",

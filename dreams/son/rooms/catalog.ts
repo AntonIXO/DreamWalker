@@ -22,10 +22,12 @@ function patchExisting(rooms: DreamRoom[]): DreamRoom[] {
   return rooms;
 }
 
-export function allRooms(): DreamRoom[] {
+/** The hand-drawn catalogue, before streets fill the gaps. */
+export function authoredRooms(): DreamRoom[] {
   const existing = EXISTING_ROOMS.map(cloneRoom);
-  return applyStreetMap([
-    ...patchExisting(existing),
-    ...NEW_ROOMS.map(cloneRoom),
-  ]);
+  return [...patchExisting(existing), ...NEW_ROOMS.map(cloneRoom)];
+}
+
+export function allRooms(): DreamRoom[] {
+  return applyStreetMap(authoredRooms());
 }

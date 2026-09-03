@@ -53,6 +53,7 @@ export function look(input: {
   reach?: number;
   once?: boolean;
   refusal?: string | null;
+  clueId?: string | null;
 }): RoomHotspot {
   return {
     id: input.id,
@@ -62,7 +63,7 @@ export function look(input: {
     reach: input.reach ?? 1.4,
     prompt: input.prompt,
     refusal: input.refusal ?? null,
-    clueId: null,
+    clueId: input.clueId ?? null,
     action: null,
     once: input.once ?? false,
     dwellMs: null,

@@ -15,6 +15,8 @@ export const en: TranslationSchema = {
     esc_close: "Esc — close",
     thinking_deal: "Populating dream with characters and details",
     thinking_mnemonic: "Checking seed phrase",
+    thinking_next_cycle: "Rebuilding the next cycle of the dream",
+    whisper_cycle_restart: "The dream starts over. You remember.",
     whisper_remembering: "The dream is remembering who lives here…",
     whisper_fallback_mind: "The dream responds on its own, without a model.",
     whisper_failed_population:
@@ -127,6 +129,7 @@ export const en: TranslationSchema = {
     met_in: "{activity}. Met in: {room}.",
     noticed_words: "Noticed an intruder by the words “{quoted}”.",
     understood_silent: "Understood and stays silent.",
+    burned_memory: 'You burned the memory "{memoryText}" to hold the dream.',
     left_part_of_self: "You left a part of yourself in this dream.",
     said_too_much: "Someone let something slip about them.",
     shut_forever: "Fell silent for good.",
@@ -179,6 +182,12 @@ export const en: TranslationSchema = {
     failed_heading: "He woke up.\n\n{column}",
     void_ending:
       "Your hand is clenched around emptiness. Your fingers will not open.",
+    miss: "The phrase did not open the wallet. The dream will not say where the error is.",
+    locked:
+      "The phrase fell into place. The cell does not open. The timer counts up.",
+    dry: "The phrase fell into place. The wallet is empty. It was always empty.",
+    full: "The phrase fell into place. The apparatus takes the key out of the dream.",
+    dream_silent: "The dream does not answer. The apparatus got no verdict.",
   },
   connect: {
     title: "Dream Mind",
@@ -230,7 +239,7 @@ export const en: TranslationSchema = {
     entry_ready_body:
       "Model connection is stable. Full-depth incursion: live layout, dialogue, and weather.",
     entry_blocked_body:
-      "Model is not connected. Training run available: all mechanics work locally, but figures are predictable.",
+      "Model is not connected. Dive-in is unavailable: without a live mind, dialogue stays silent. Training run is available — figures are predictable.",
     entry_start: "Dive in",
     entry_train: "Training run",
   },

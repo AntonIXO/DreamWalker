@@ -6,7 +6,8 @@ import { t } from "../../shared/i18n";
 import type { Texture } from "pixi.js";
 
 import { Action, Input, keyFor } from "../game/input";
-import type { MindSettings } from "../mind/settings";
+import { type MindSettings } from "../mind/settings";
+import { liveEntryBody } from "./entry";
 import { WalkerSprite, type AuthoredWalk } from "../render/walkerView";
 
 import type { AtlasTextures } from "../render/atlasTextures";
@@ -230,9 +231,7 @@ export class LobbySession {
       this.inspect.open({
         title: t("lobby.entry_title"),
         category: t("lobby.entry_category"),
-        body: this.mindReady
-          ? t("lobby.entry_ready_body")
-          : t("lobby.entry_blocked_body"),
+        body: liveEntryBody(this.mindReady, this.settings),
         actions,
       });
     }

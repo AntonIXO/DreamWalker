@@ -23,4 +23,21 @@ export const m6Script: DreamScript = {
     host.setFlag("m6.unlocked", true);
     host.openDoor("m6-krugi-vokrug-pruda--exit");
   },
+  /**
+   * `resetWorld` restores the authored doors, so the way back is sealed again every
+   * cycle. The flag saying it was already opened has to go with it, or the second cycle
+   * finds `m6.unlocked` set, never calls `openDoor`, and the pond keeps the sanitar for
+   * good. `m6.fails` deliberately stays: the two circles were already walked.
+   */
+  onCycleReset(host) {
+    host.setFlag("m6.unlocked", false);
+  },
+  /**
+   * A figure can be seated on the shore slot. Talking would skip the two failed
+   * approaches; refusing talk makes E fall through to the hotspot, and clears the
+   * leftover sentence so «Ну ладно.» is not sitting next to a typed question.
+   */
+  onApproach() {
+    return false;
+  },
 };

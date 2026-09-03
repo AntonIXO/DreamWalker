@@ -214,12 +214,7 @@ export async function initCommand(
     figures: [],
     content: fallbackContent({ figures: [], secretHash: null }),
     cycle: { ...DEFAULT_CYCLE },
-    heartbeat: {
-      ...DEFAULT_HEARTBEAT,
-      intervalMs: flags.heartbeat
-        ? Number(flags.heartbeat)
-        : DEFAULT_HEARTBEAT.intervalMs,
-    },
+    heartbeat: { ...DEFAULT_HEARTBEAT },
     atlas: "atlas.json",
     authoredAt: new Date().toISOString(),
     provenance: {
@@ -235,9 +230,7 @@ export async function initCommand(
 
   console.log();
   ok(`dreams/${slug}/draft.json written`);
-  note(
-    `heartbeat every ${Math.round(draft.heartbeat.intervalMs / 1000)}s, cycle ${Math.round(draft.cycle.durationMs / 60000)} min`,
-  );
+  note(`cycle ${Math.round(draft.cycle.durationMs / 60000)} min`);
   console.log();
   note(`Next: bun run lord secret ${slug}`);
 }

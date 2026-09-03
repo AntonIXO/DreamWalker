@@ -70,6 +70,7 @@ import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
 import { inhabitDream } from "./mind/remote";
 import { fallbackPopulation } from "../shared/population";
+import { rollWallet } from "../shared/wallet";
 import { clueIdForShard } from "../shared/yield";
 import { MindMemory } from "./mind/memory";
 import { loadMindSettings } from "./mind/settings";
@@ -341,6 +342,7 @@ async function boot(): Promise<void> {
       whisper: (text) => hud.whisper(text, 4),
       cycleNumber: () => cycle.number,
       knownClueIds: () => wordNotebook.observedIds,
+      observeClue: (clueId) => wordNotebook.observe(clueId),
     },
     transition,
     sonPack.scripts,
@@ -448,15 +450,8 @@ async function boot(): Promise<void> {
       },
       onShard: noteShard,
       onMemorySpent: () => {
-        addExhaustion(world, MEMORY_EXHAUSTION);
-        mindMemory.setExhaustion(world.exhaustion);
-        session.noteMemorySpent();
         journal.add(cycle.number, t("journal.left_part_of_self"));
-        // «Пустота» — nothing left to spend, so the sanitar stays. Not dead; stuck.
-        if (mindMemory.availableMemories().length === 0) {
-          input.setCaptured(true);
-          finale.openVoid();
-        }
+        spendMemory();
       },
       onJournal: (figure, text) => {
         journal.addPerson(cycle.number, figure.id, figure.name, text);
@@ -574,6 +569,24 @@ async function boot(): Promise<void> {
     input.setCaptured(false),
   );
 
+  /**
+   * One memory leaves the sanitar, wherever it was spent.
+   *
+   * Both doors out of the memory wallet — buying two minutes and handing one to a figure
+   * — cost exhaustion and can be the last one. «Пустота» used to hang off only the
+   * dialogue door, so a player could empty themselves in the panel and keep walking.
+   */
+  const spendMemory = (): void => {
+    addExhaustion(world, MEMORY_EXHAUSTION);
+    mindMemory.setExhaustion(world.exhaustion);
+    session.noteMemorySpent();
+    // Nothing left to spend, so the sanitar stays. Not dead; stuck.
+    if (mindMemory.availableMemories().length === 0) {
+      input.setCaptured(true);
+      finale.openVoid();
+    }
+  };
+
   const finale = new FinalePanel(
     uiLayer,
     mind,
@@ -689,10 +702,19 @@ async function boot(): Promise<void> {
     input.setCaptured(true);
     soundtrack.setBed("game");
     try {
+      // Training deals locally and rolls its own wallet off the same run id, so a
+      // training run sees the same three outcomes a live one can.
+      const runId = mindMemory.runId;
       const deal =
         mode === "live" && !populationInstalled
-          ? inhabitDream(artifact.slug, artifact)
-          : Promise.resolve(fallbackPopulation(artifact, { shuffle: true }));
+          ? inhabitDream(artifact.slug, artifact, runId)
+          : Promise.resolve(
+              fallbackPopulation(artifact, {
+                shuffle: true,
+                seed: runId,
+                dryWallet: rollWallet(artifact.slug, runId).wallet === "dry",
+              }),
+            );
       if (mode === "live" && !populationInstalled) {
         hud.whisper(t("ui.whisper_remembering"), 10);
       }
@@ -814,13 +836,8 @@ async function boot(): Promise<void> {
     },
     onTimeBought: (memoryText) => {
       cycle.extend(120_000);
-      addExhaustion(world, MEMORY_EXHAUSTION);
-      mindMemory.setExhaustion(world.exhaustion);
-      session.noteMemorySpent();
-      journal.add(
-        cycle.number,
-        `Ты сжёг воспоминание «${memoryText}», чтобы удержать сон.`,
-      );
+      journal.add(cycle.number, t("journal.burned_memory", { memoryText }));
+      spendMemory();
     },
   });
 
@@ -860,8 +877,18 @@ async function boot(): Promise<void> {
     if (restarting) return;
     restarting = true;
     try {
+      // `endings.md` sets four cycles before the sanitar is thrown out with whatever
+      // they have. The check comes first: the cycle that just expired is the last one,
+      // and resetting the world under the ending screen both played a fifth cycle and
+      // wiped the dream the player was looking at. The gaps in the phrase persist into
+      // the next run.
+      if (cycle.isFinal) {
+        input.setCaptured(true);
+        finale.openFailed(wordNotebook.words);
+        return;
+      }
       // The outgoing cycle is evidence; its plan belongs to the freshly reset next one.
-      const plan = await thinking.run("Перестраивает следующий цикл сна", () =>
+      const plan = await thinking.run(t("ui.thinking_next_cycle"), () =>
         heartbeat.planCycleExit(),
       );
       resetWorld(world, cycle.number);
@@ -877,17 +904,8 @@ async function boot(): Promise<void> {
       for (const room of world.rooms) rooms.invalidate(room.id);
       session.restart();
       session.noteCycleReset();
-
-      // `endings.md` sets four cycles before the sanitar is thrown out with whatever
-      // they have. The gaps in the phrase persist into the next run.
-      const maxCycles = artifact.cycle.maxCycles;
-      if (maxCycles !== null && cycle.number > maxCycles) {
-        input.setCaptured(true);
-        finale.openFailed(wordNotebook.words);
-        return;
-      }
       cycle.restart();
-      hud.whisper("Сон начинается заново. Ты помнишь.", 5);
+      hud.whisper(t("ui.whisper_cycle_restart"), 5);
     } finally {
       restarting = false;
     }
@@ -1094,7 +1112,8 @@ async function boot(): Promise<void> {
     if (!simulationPaused && input.consume(Action.INTERACT)) {
       if (target?.kind === "figure") {
         if (!session.mayTalk(target.figure.id)) {
-          hud.whisper("Ну ладно.", 2);
+          dialogue.clearDraft();
+          if (!session.useNearbyHotspot()) hud.whisper("Ну ладно.", 2);
         } else {
           dialogue.open(target.figure);
         }

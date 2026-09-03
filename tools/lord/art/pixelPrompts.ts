@@ -1,5 +1,5 @@
 /**
- * `dream-walker-new/prompts-pixelart.md` is the art contract.
+ * `dream-walker-anton/prompts-pixelart.md` is the art contract.
  *
  * Style words, the seam rule, the deadpan tone, and every per-room / per-figure
  * subject live there. The Lord commands compose from this file rather than
@@ -8,16 +8,12 @@
  * Must stay free of Retro Diffusion I/O — it only reads markdown.
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { REPO_ROOT } from "../project";
+import { BIBLE_DIR } from "../project";
 
-export const PIXEL_PROMPTS_PATH = existsSync(
-  join(REPO_ROOT, "dream-walker-new", "prompts-pixelart.md"),
-)
-  ? join(REPO_ROOT, "dream-walker-new", "prompts-pixelart.md")
-  : join(REPO_ROOT, "dream-walker-anton", "prompts-pixelart.md");
+export const PIXEL_PROMPTS_PATH = join(BIBLE_DIR, "prompts-pixelart.md");
 
 export interface PixelPromptBook {
   style: string;

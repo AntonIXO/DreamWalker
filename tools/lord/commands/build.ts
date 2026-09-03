@@ -28,7 +28,13 @@ import {
   validateDreamArtifact,
   type DreamArtifact,
 } from "../../../src/shared/dream";
-import { PUBLIC_DREAM_DIR, dreamDir, loadDraft, statusOf } from "../project";
+import {
+  PUBLIC_DREAM_DIR,
+  dreamDir,
+  loadDraft,
+  saveDraft,
+  statusOf,
+} from "../project";
 import {
   loadContentFiles,
   loadRoomFiles,
@@ -64,15 +70,26 @@ export async function buildCommand(
   const manifest = validateAtlasManifest(
     JSON.parse(await readFile(join(dir, "atlas.json"), "utf8")),
   );
-  draft.rooms = await loadRoomFiles(slug);
+  let publishedRooms = draft.rooms;
   if (slug === "son") {
-    const { applyStreetMap } = await import("../../../dreams/son/rooms/map");
-    draft.rooms = applyStreetMap(draft.rooms);
+    const { sonArtifact } = await import("../../../dreams/son/pack");
+    const { authoredRooms } = await import("../../../dreams/son/rooms/catalog");
+    const pack = sonArtifact();
+    // Draft keeps the hand-drawn rooms; the artifact is the street-mapped pack.
+    draft.rooms = authoredRooms();
+    draft.figures = pack.figures;
+    draft.content = pack.content;
+    draft.heartbeat = pack.heartbeat;
+    draft.cycle = pack.cycle;
+    publishedRooms = pack.rooms;
+  } else {
+    draft.rooms = await loadRoomFiles(slug);
+    const settings = await loadRoomSettings(slug);
+    draft.spawn = settings.spawn ?? draft.spawn;
+    draft.finaleRoomId = settings.finaleRoomId ?? draft.finaleRoomId;
+    draft.content = await loadContentFiles(draft);
+    publishedRooms = draft.rooms;
   }
-  const settings = await loadRoomSettings(slug);
-  draft.spawn = settings.spawn ?? draft.spawn;
-  draft.finaleRoomId = settings.finaleRoomId ?? draft.finaleRoomId;
-  draft.content = await loadContentFiles(draft);
 
   const missingRoles: string[] = [];
   for (const figure of draft.figures) {
@@ -110,7 +127,7 @@ export async function buildCommand(
       }
     }
   }
-  for (const room of draft.rooms) {
+  for (const room of publishedRooms) {
     for (const role of [
       room.graphics.floorRole,
       room.graphics.wallRole,
@@ -138,7 +155,7 @@ export async function buildCommand(
       }
     }
   }
-  const artless = draft.rooms.filter(
+  const artless = publishedRooms.filter(
     (room) => room.kind === "meta" && !room.graphics.backdropImage,
   );
   for (const room of artless) {
@@ -164,7 +181,7 @@ export async function buildCommand(
     shards: draft.shards,
     palette: draft.palette,
     style: draft.style,
-    rooms: draft.rooms,
+    rooms: publishedRooms,
     spawn: draft.spawn,
     finaleRoomId: draft.finaleRoomId,
     figures: draft.figures,
@@ -187,6 +204,7 @@ export async function buildCommand(
   }
 
   await writeFile(join(dir, "dream.json"), `${serialised}\n`, "utf8");
+  await saveDraft(draft);
 
   // Derived output only. Recreate it so obsolete RD candidates or renamed assets cannot
   // remain publicly reachable after an author changes a card.
@@ -206,7 +224,7 @@ export async function buildCommand(
   }
   // Object art lives beside backdrops under content/assets, so the wholesale copy below
   // carries it. Validate the paths here so a typo fails the build rather than the game.
-  for (const room of draft.rooms) {
+  for (const room of publishedRooms) {
     for (const prop of room.props) {
       const image = prop.image;
       if (!image) continue;
@@ -241,13 +259,10 @@ export async function buildCommand(
   ok(`dreams/${slug}/dream.json (${sizeKb} KB)`);
   ok("public/dream/ updated — the dev server will pick it up");
   note(
-    `${draft.rooms.length} rooms · ${draft.rooms.reduce((n, r) => n + r.doors.length, 0)} doors · ` +
+    `${draft.rooms.length} authored · ${publishedRooms.length} published · ` +
       `${draft.figures.length} figures · ${draft.shards.length} hooks`,
   );
-  note(
-    `heartbeat every ${Math.round(draft.heartbeat.intervalMs / 1000)}s, ` +
-      `cycle ${Math.round(draft.cycle.durationMs / 60000)} min`,
-  );
+  note(`cycle ${Math.round(draft.cycle.durationMs / 60000)} min`);
 
   const holders = draft.figures.filter((f) => f.holdsShardId).length;
   if (holders < draft.shards.length) {

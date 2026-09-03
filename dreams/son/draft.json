@@ -112,24 +112,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_..__.............._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "tri-tysiachi-nomerkov",
-          "x": 3,
-          "y": 3,
+          "x": 17,
+          "y": 7,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -138,19 +138,19 @@
         },
         {
           "id": "chuzhie-shtany-na-polu",
-          "x": 6,
-          "y": 3,
+          "x": 2,
+          "y": 8,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
         },
         {
           "id": "kanat-do-svoda",
-          "x": 8,
-          "y": 3,
-          "w": 2,
+          "x": 1,
+          "y": 2,
+          "w": 1,
           "h": 2,
           "solid": true,
           "role": null,
@@ -158,7 +158,7 @@
         },
         {
           "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
-          "x": 11,
+          "x": 14,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -168,7 +168,7 @@
         },
         {
           "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
-          "x": 13,
+          "x": 5,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -178,10 +178,10 @@
         },
         {
           "id": "vedro-i-shvabra-uborschika",
-          "x": 16,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 18,
+          "y": 9,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
@@ -191,8 +191,8 @@
         {
           "id": "tri-tysiachi-nomerkov",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 18,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "три тысячи номерков",
           "clueId": null,
@@ -205,8 +205,8 @@
         {
           "id": "chuzhie-shtany-na-polu",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 3,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "чужие штаны на полу",
           "clueId": null,
@@ -219,8 +219,8 @@
         {
           "id": "kanat-do-svoda",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 1.5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "канат до свода",
           "clueId": null,
@@ -233,7 +233,7 @@
         {
           "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
           "kind": "look",
-          "x": 12,
+          "x": 15,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон на SailfishOS, камера открывается семь секунд и лагает",
@@ -247,7 +247,7 @@
         {
           "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
           "kind": "look",
-          "x": 14,
+          "x": 6,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "табличка «ЭТАЖИ 1–3 / ЭТАЖИ 4+», без пояснений",
@@ -261,8 +261,8 @@
         {
           "id": "vedro-i-shvabra-uborschika",
           "kind": "look",
-          "x": 17,
-          "y": 5.15,
+          "x": 18.5,
+          "y": 10.15,
           "reach": 1.4,
           "prompt": "ведро и швабра уборщика",
           "clueId": null,
@@ -314,10 +314,10 @@
       "doors": [
         {
           "id": "01-otel-goticheskii-holl--n-09-hakaton-tretii-po-schetu",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "09-hakaton-tretii-po-schetu",
           "toEntryId": "from-s",
           "type": "open",
@@ -331,9 +331,9 @@
         {
           "id": "01-otel-goticheskii-holl--e-11-evreiskii-gorod",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "11-evreiskii-gorod",
           "toEntryId": "from-w",
           "type": "open",
@@ -346,9 +346,9 @@
         },
         {
           "id": "01-otel-goticheskii-holl--s-17-dush-iz-kotorogo-nelzia-vyiti",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
           "toEntryId": "from-n",
@@ -363,9 +363,9 @@
         {
           "id": "01-otel-goticheskii-holl--w-19-dvor-i-oranzhevye-lavochki",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "19-dvor-i-oranzhevye-lavochki",
           "toEntryId": "from-e",
           "type": "open",
@@ -378,8 +378,8 @@
         },
         {
           "id": "01-otel-goticheskii-holl--lift-07-bassein-i-odnostoronnii-lift",
-          "x": 1,
-          "y": 1,
+          "x": 3,
+          "y": 8,
           "w": 2,
           "h": 1,
           "toRoomId": "07-bassein-i-odnostoronnii-lift",
@@ -396,18 +396,23 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 6,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 13,
+          "y": 7
         },
         {
           "id": "c",
           "x": 10,
-          "y": 5
+          "y": 8
+        },
+        {
+          "id": "d",
+          "x": 8,
+          "y": 7
         }
       ],
       "graphics": {
@@ -418,7 +423,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "Красиво, но ты тут никто"
@@ -436,7 +441,9 @@
         "sound": "реверб пустого собора, время затухания около семи секунд; поверх — записанный на диктофон хохот компании из соседней комнаты, зациклен неровно, с разной длиной паузы; ни одного разборчивого слова. Референс: Уильям Басински, «The Disintegration Loops», но с людьми"
       },
       "buildingId": "otel",
-      "level": 1
+      "level": 1,
+      "originX": 40,
+      "originY": 22
     },
     {
       "id": "02-shkola-kabinet-russkogo",
@@ -446,24 +453,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "party",
-          "x": 3,
-          "y": 3,
+          "x": 1,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -472,18 +479,18 @@
         },
         {
           "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
-          "x": 6,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 2,
+          "y": 5,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
         },
         {
           "id": "grusha-za-steklom",
-          "x": 8,
-          "y": 3,
+          "x": 7,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -492,8 +499,8 @@
         },
         {
           "id": "mat-v-uglu-s-rasstelennoi-posteliu",
-          "x": 11,
-          "y": 3,
+          "x": 17,
+          "y": 7,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -505,8 +512,8 @@
         {
           "id": "party",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 2,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "парты",
           "clueId": null,
@@ -519,8 +526,8 @@
         {
           "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 2.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "листочки, на которых текст меняется, если отвести взгляд",
           "clueId": null,
@@ -533,8 +540,8 @@
         {
           "id": "grusha-za-steklom",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 8,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "груша за стеклом",
           "clueId": null,
@@ -547,8 +554,8 @@
         {
           "id": "mat-v-uglu-s-rasstelennoi-posteliu",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 18,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "мат в углу с расстеленной постелью",
           "clueId": null,
@@ -594,10 +601,10 @@
       "doors": [
         {
           "id": "02-shkola-kabinet-russkogo--n-15-osennii-les-s-grobom",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "15-osennii-les-s-grobom",
           "toEntryId": "from-s",
           "type": "open",
@@ -611,9 +618,9 @@
         {
           "id": "02-shkola-kabinet-russkogo--e-09-hakaton-tretii-po-schetu",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "09-hakaton-tretii-po-schetu",
           "toEntryId": "from-w",
           "type": "open",
@@ -626,9 +633,9 @@
         },
         {
           "id": "02-shkola-kabinet-russkogo--s-19-dvor-i-oranzhevye-lavochki",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "19-dvor-i-oranzhevye-lavochki",
           "toEntryId": "from-n",
@@ -643,9 +650,9 @@
         {
           "id": "02-shkola-kabinet-russkogo--w-14-poliklinika-v-kaluge",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "14-poliklinika-v-kaluge",
           "toEntryId": "from-e",
           "type": "open",
@@ -661,12 +668,12 @@
         {
           "id": "a",
           "x": 5,
-          "y": 6
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 10,
+          "y": 8
         }
       ],
       "graphics": {
@@ -677,7 +684,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−3, −2). Классический Downer Static"
@@ -692,7 +699,9 @@
         "sound": "батарея гудит на 50 Гц; тиканье часов, которое **опережает секунду процента на три** — на слух незаметно, но через минуту начинает бесить; скрип мела вне поля зрения. Референс: ранний Boards of Canada, где плёнка чуть плывёт по высоте тона"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 20,
+      "originY": 11
     },
     {
       "id": "03-gory-startapery-i-uchenye",
@@ -704,23 +713,23 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "centroid",
-          "x": 3,
+          "x": 9,
           "y": 3,
-          "w": 2,
+          "w": 1,
           "h": 2,
           "solid": true,
           "role": null,
@@ -728,18 +737,18 @@
         },
         {
           "id": "vizitki-kotorye-ne-berutsia-v-ruku",
-          "x": 6,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 4,
+          "y": 4,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
         },
         {
           "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
-          "x": 8,
-          "y": 3,
+          "x": 15,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -748,10 +757,10 @@
         },
         {
           "id": "kamen-s-rovno-otpilennoi-graniu",
-          "x": 11,
-          "y": 3,
+          "x": 6,
+          "y": 8,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
@@ -761,7 +770,7 @@
         {
           "id": "centroid",
           "kind": "look",
-          "x": 4,
+          "x": 9.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "центроид",
@@ -775,7 +784,7 @@
         {
           "id": "vizitki-kotorye-ne-berutsia-v-ruku",
           "kind": "look",
-          "x": 7,
+          "x": 4.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "визитки, которые не берутся в руку",
@@ -789,8 +798,8 @@
         {
           "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 16,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "теодолит, показывающий одно и то же число независимо от направления",
           "clueId": null,
@@ -803,8 +812,8 @@
         {
           "id": "kamen-s-rovno-otpilennoi-graniu",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 7,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "камень с ровно отпиленной гранью",
           "clueId": null,
@@ -845,9 +854,9 @@
         {
           "id": "03-gory-startapery-i-uchenye--e-16-norvezhskaia-derevnia-i-pogreb",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
           "toEntryId": "from-w",
           "type": "open",
@@ -860,9 +869,9 @@
         },
         {
           "id": "03-gory-startapery-i-uchenye--s-09-hakaton-tretii-po-schetu",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "09-hakaton-tretii-po-schetu",
           "toEntryId": "from-n",
@@ -877,9 +886,9 @@
         {
           "id": "03-gory-startapery-i-uchenye--w-15-osennii-les-s-grobom",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "15-osennii-les-s-grobom",
           "toEntryId": "from-e",
           "type": "open",
@@ -894,12 +903,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 7,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -911,7 +920,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "Высоко, ветрено, дёргано"
@@ -926,7 +935,9 @@
         "sound": "ветер, записанный в трубу; обрывки питчей на грани разборчивости, всегда в момент, когда отворачиваешься; низкий инфразвук от 18 Гц, тот самый, от которого тошно и кажется, что за спиной кто-то есть"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 40,
+      "originY": 0
     },
     {
       "id": "04-dacha-gnedkovyh",
@@ -936,24 +947,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
         "####################"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "plita",
-          "x": 3,
-          "y": 3,
+          "x": 6,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -962,7 +973,7 @@
         },
         {
           "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
-          "x": 6,
+          "x": 15,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -972,8 +983,8 @@
         },
         {
           "id": "telefon-s-odnim-kontaktom-lesha",
-          "x": 8,
-          "y": 3,
+          "x": 11,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -982,8 +993,8 @@
         },
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
-          "x": 11,
-          "y": 3,
+          "x": 2,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -995,8 +1006,8 @@
         {
           "id": "plita",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 7,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "плита",
           "clueId": null,
@@ -1009,7 +1020,7 @@
         {
           "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
           "kind": "look",
-          "x": 7,
+          "x": 16,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "отодвинутый кусок стены с чёрным проёмом",
@@ -1023,8 +1034,8 @@
         {
           "id": "telefon-s-odnim-kontaktom-lesha",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 12,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "телефон с одним контактом «Лёша»",
           "clueId": null,
@@ -1037,8 +1048,8 @@
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 3,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "голубой липкий слизень на лестнице — бить можно только когда открывает рот",
           "clueId": null,
@@ -1078,10 +1089,10 @@
       "doors": [
         {
           "id": "04-dacha-gnedkovyh--n-08-kvartira-v-kotoroi-zhivut-drugie",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
           "toEntryId": "from-s",
           "type": "open",
@@ -1095,9 +1106,9 @@
         {
           "id": "04-dacha-gnedkovyh--e-m4-razvilka-gde-ty-ostalsia",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "m4-razvilka-gde-ty-ostalsia",
           "toEntryId": "from-w",
           "type": "open",
@@ -1111,9 +1122,9 @@
         {
           "id": "04-dacha-gnedkovyh--w-m1-korni",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "m1-korni",
           "toEntryId": "from-e",
           "type": "open",
@@ -1128,13 +1139,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 7,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 11,
+          "y": 7
         }
       ],
       "graphics": {
@@ -1145,7 +1156,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−2, +1)"
@@ -1160,7 +1171,9 @@
         "sound": "сип на 340 Гц с дрожанием; сварка, которая **начинается раньше, чем сварщик достаёт аппарат**; собака за три двора. Референс: полевые записи Криса Уотсона, дом ночью"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 20,
+      "originY": 44
     },
     {
       "id": "05-shesterochka",
@@ -1170,24 +1183,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "polka-dlia-veschei",
-          "x": 3,
-          "y": 3,
+          "x": 1,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1196,18 +1209,18 @@
         },
         {
           "id": "nadpis-na-polke",
-          "x": 5,
-          "y": 0,
+          "x": 1,
+          "y": 3,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": null
         },
         {
           "id": "ballonchik-na-poiase-ohrannika",
-          "x": 6,
-          "y": 3,
+          "x": 16,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1216,18 +1229,18 @@
         },
         {
           "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 3,
+          "y": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
         },
         {
           "id": "korzina-s-chem-to-chto-ne-chitaetsia",
-          "x": 11,
-          "y": 3,
+          "x": 1,
+          "y": 8,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1239,8 +1252,8 @@
         {
           "id": "polka-dlia-veschei",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 2,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "полка для вещей",
           "clueId": null,
@@ -1253,8 +1266,8 @@
         {
           "id": "nadpis-na-polke",
           "kind": "clue",
-          "x": 6,
-          "y": 2.15,
+          "x": 2,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "надпись на краю полки",
           "clueId": "clue-1",
@@ -1267,8 +1280,8 @@
         {
           "id": "ballonchik-na-poiase-ohrannika",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 17,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "баллончик на поясе охранника",
           "clueId": null,
@@ -1281,8 +1294,8 @@
         {
           "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 3.5,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "акционный ценник, на котором цена меняется при втором взгляде",
           "clueId": null,
@@ -1295,8 +1308,8 @@
         {
           "id": "korzina-s-chem-to-chto-ne-chitaetsia",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 2,
+          "y": 10.15,
           "reach": 1.4,
           "prompt": "корзина с чем-то, что не читается",
           "clueId": null,
@@ -1336,10 +1349,10 @@
       "doors": [
         {
           "id": "05-shesterochka--n-14-poliklinika-v-kaluge",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "14-poliklinika-v-kaluge",
           "toEntryId": "from-s",
           "type": "open",
@@ -1353,9 +1366,9 @@
         {
           "id": "05-shesterochka--e-19-dvor-i-oranzhevye-lavochki",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "19-dvor-i-oranzhevye-lavochki",
           "toEntryId": "from-w",
           "type": "open",
@@ -1368,9 +1381,9 @@
         },
         {
           "id": "05-shesterochka--s-06-kanava-garazhi-podvorotni",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "06-kanava-garazhi-podvorotni",
           "toEntryId": "from-n",
@@ -1403,7 +1416,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−4, +2). Тут начинается насилие"
@@ -1420,7 +1433,9 @@
         "sound": "пищание кассы, ускоряющееся к концу цикла; объявление по громкой связи, слова разобрать нельзя, интонация приветливая; гул холодильника с мясом, доминирует над всем"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 0,
+      "originY": 22
     },
     {
       "id": "06-kanava-garazhi-podvorotni",
@@ -1430,34 +1445,34 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "riukzak",
-          "x": 3,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 7,
+          "y": 5,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
         },
         {
           "id": "liuk-v-kanalizaciiu",
-          "x": 6,
-          "y": 3,
+          "x": 16,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1466,8 +1481,8 @@
         },
         {
           "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
-          "x": 8,
-          "y": 3,
+          "x": 14,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1476,10 +1491,10 @@
         },
         {
           "id": "sledy-shin-kotoryh-utrom-ne-bylo",
-          "x": 11,
-          "y": 3,
+          "x": 10,
+          "y": 7,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
@@ -1489,8 +1504,8 @@
         {
           "id": "riukzak",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 7.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "рюкзак",
           "clueId": null,
@@ -1503,8 +1518,8 @@
         {
           "id": "liuk-v-kanalizaciiu",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 17,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "люк в канализацию",
           "clueId": null,
@@ -1517,8 +1532,8 @@
         {
           "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 15,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "чужая женщина, свалившаяся сюда же и молчащая",
           "clueId": null,
@@ -1531,8 +1546,8 @@
         {
           "id": "sledy-shin-kotoryh-utrom-ne-bylo",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 11,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "следы шин, которых утром не было",
           "clueId": null,
@@ -1572,10 +1587,10 @@
       "doors": [
         {
           "id": "06-kanava-garazhi-podvorotni--n-05-shesterochka",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "05-shesterochka",
           "toEntryId": "from-s",
           "type": "open",
@@ -1589,9 +1604,9 @@
         {
           "id": "06-kanava-garazhi-podvorotni--e-08-kvartira-v-kotoroi-zhivut-drugie",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
           "toEntryId": "from-w",
           "type": "open",
@@ -1604,9 +1619,9 @@
         },
         {
           "id": "06-kanava-garazhi-podvorotni--s-m1-korni",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "m1-korni",
           "toEntryId": "from-n",
@@ -1627,8 +1642,8 @@
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 12,
+          "y": 7
         }
       ],
       "graphics": {
@@ -1639,7 +1654,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−6, +4). Самая тёмная динамика в игре"
@@ -1654,7 +1669,9 @@
         "sound": "мотор на холостых, приближается неравномерно; хлюпанье; тишина в момент, когда открывается дверь машины — **вырезать весь звук на 1.5 секунды**, это дешевле любого крика"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 0,
+      "originY": 33
     },
     {
       "id": "07-bassein-i-odnostoronnii-lift",
@@ -1672,7 +1689,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "#..................#",
+        "#..__..............#",
         "#..................#",
         "####################"
       ],
@@ -1680,18 +1697,18 @@
       "props": [
         {
           "id": "bele-na-stenah",
-          "x": 3,
-          "y": 3,
+          "x": 8,
+          "y": 2,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
         },
         {
           "id": "panel-lifta-bez-knopki-vniz",
-          "x": 6,
-          "y": 3,
+          "x": 4,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1700,20 +1717,20 @@
         },
         {
           "id": "polotence-radi-kotorogo-prishel-ne-nahod",
-          "x": 8,
+          "x": 1,
           "y": 3,
-          "w": 2,
-          "h": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
         },
         {
           "id": "voda-v-chashe-basseina-slishkom-nepodviz",
-          "x": 11,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 4,
+          "y": 5,
+          "w": 12,
+          "h": 4,
           "solid": true,
           "role": null,
           "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
@@ -1723,8 +1740,8 @@
         {
           "id": "bele-na-stenah",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 9,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "бельё на стенах",
           "clueId": null,
@@ -1737,8 +1754,8 @@
         {
           "id": "panel-lifta-bez-knopki-vniz",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "панель лифта без кнопки «вниз»",
           "clueId": null,
@@ -1751,8 +1768,8 @@
         {
           "id": "polotence-radi-kotorogo-prishel-ne-nahod",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 1.5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "полотенце, ради которого пришёл, — не находится",
           "clueId": null,
@@ -1765,8 +1782,8 @@
         {
           "id": "voda-v-chashe-basseina-slishkom-nepodviz",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 10,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "вода в чаше бассейна, слишком неподвижная",
           "clueId": null,
@@ -1794,8 +1811,8 @@
       "doors": [
         {
           "id": "07-bassein-i-odnostoronnii-lift--lift-01-otel-goticheskii-holl",
-          "x": 9,
-          "y": 1,
+          "x": 3,
+          "y": 8,
           "w": 2,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
@@ -1812,13 +1829,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 2,
+          "y": 3
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 17,
+          "y": 3
         }
       ],
       "graphics": {
@@ -1829,7 +1846,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−2, −1)"
@@ -1846,7 +1863,9 @@
         "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
       },
       "buildingId": "otel",
-      "level": 3
+      "level": 3,
+      "originX": 40,
+      "originY": 22
     },
     {
       "id": "08-kvartira-v-kotoroi-zhivut-drugie",
@@ -1856,24 +1875,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "bumazhnaia-skulptura",
-          "x": 3,
-          "y": 3,
+          "x": 4,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1882,28 +1901,28 @@
         },
         {
           "id": "chuzhie-fotografii-v-tvoih-ramkah",
-          "x": 6,
-          "y": 3,
+          "x": 8,
+          "y": 2,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
         },
         {
           "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 5,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
         },
         {
           "id": "chainik-kotoryi-uzhe-kipel",
-          "x": 11,
-          "y": 3,
+          "x": 16,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -1915,8 +1934,8 @@
         {
           "id": "bumazhnaia-skulptura",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "бумажная скульптура",
           "clueId": null,
@@ -1929,8 +1948,8 @@
         {
           "id": "chuzhie-fotografii-v-tvoih-ramkah",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 9,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "чужие фотографии в твоих рамках",
           "clueId": null,
@@ -1943,8 +1962,8 @@
         {
           "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 10.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "мерцающее в воздухе электричество при закрытых окнах — открываешь окна, снаружи темнеет",
           "clueId": null,
@@ -1957,8 +1976,8 @@
         {
           "id": "chainik-kotoryi-uzhe-kipel",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 17,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "чайник, который уже кипел",
           "clueId": null,
@@ -2004,10 +2023,10 @@
       "doors": [
         {
           "id": "08-kvartira-v-kotoroi-zhivut-drugie--n-19-dvor-i-oranzhevye-lavochki",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "19-dvor-i-oranzhevye-lavochki",
           "toEntryId": "from-s",
           "type": "open",
@@ -2021,9 +2040,9 @@
         {
           "id": "08-kvartira-v-kotoroi-zhivut-drugie--e-17-dush-iz-kotorogo-nelzia-vyiti",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
           "toEntryId": "from-w",
           "type": "open",
@@ -2036,9 +2055,9 @@
         },
         {
           "id": "08-kvartira-v-kotoroi-zhivut-drugie--s-04-dacha-gnedkovyh",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "04-dacha-gnedkovyh",
           "toEntryId": "from-n",
@@ -2053,9 +2072,9 @@
         {
           "id": "08-kvartira-v-kotoroi-zhivut-drugie--w-06-kanava-garazhi-podvorotni",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "06-kanava-garazhi-podvorotni",
           "toEntryId": "from-e",
           "type": "open",
@@ -2070,13 +2089,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 6,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 12,
+          "y": 7
         }
       ],
       "graphics": {
@@ -2087,7 +2106,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−1, −3). Downer Static в чистом виде"
@@ -2102,7 +2121,9 @@
         "sound": "чужой телевизор за стеной на чужом языке; тиканье, идущее не от часов; в момент открытия окна — **резкое падение всех частот выше 2 кГц**, как будто накрыли одеялом"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 20,
+      "originY": 33
     },
     {
       "id": "09-hakaton-tretii-po-schetu",
@@ -2112,24 +2133,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "noutbuki-s-prodavlennymi-ekranami",
-          "x": 3,
-          "y": 3,
+          "x": 4,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2138,8 +2159,8 @@
         },
         {
           "id": "odinakovye-naushniki",
-          "x": 6,
-          "y": 3,
+          "x": 14,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2148,8 +2169,8 @@
         },
         {
           "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
-          "x": 8,
-          "y": 3,
+          "x": 9,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2158,8 +2179,8 @@
         },
         {
           "id": "rozovyi-gashish-v-vitrine",
-          "x": 11,
-          "y": 3,
+          "x": 15,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2168,10 +2189,10 @@
         },
         {
           "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
-          "x": 13,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 11,
+          "y": 7,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
@@ -2181,8 +2202,8 @@
         {
           "id": "noutbuki-s-prodavlennymi-ekranami",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 5,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "ноутбуки с продавленными экранами",
           "clueId": null,
@@ -2195,8 +2216,8 @@
         {
           "id": "odinakovye-naushniki",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 15,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "одинаковые наушники",
           "clueId": null,
@@ -2209,8 +2230,8 @@
         {
           "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 10,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "демо-стенд, на котором работает **что-то, чему нет названия**",
           "clueId": null,
@@ -2223,8 +2244,8 @@
         {
           "id": "rozovyi-gashish-v-vitrine",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 16,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "розовый гашиш в витрине",
           "clueId": null,
@@ -2237,8 +2258,8 @@
         {
           "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
           "kind": "look",
-          "x": 14,
-          "y": 5.15,
+          "x": 11.5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "пять тысяч наличными, которые уже отдал",
           "clueId": null,
@@ -2284,10 +2305,10 @@
       "doors": [
         {
           "id": "09-hakaton-tretii-po-schetu--n-03-gory-startapery-i-uchenye",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "03-gory-startapery-i-uchenye",
           "toEntryId": "from-s",
           "type": "open",
@@ -2301,9 +2322,9 @@
         {
           "id": "09-hakaton-tretii-po-schetu--e-20-ofis-sbera",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "20-ofis-sbera",
           "toEntryId": "from-w",
           "type": "open",
@@ -2316,9 +2337,9 @@
         },
         {
           "id": "09-hakaton-tretii-po-schetu--s-01-otel-goticheskii-holl",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "01-otel-goticheskii-holl",
           "toEntryId": "from-n",
@@ -2333,9 +2354,9 @@
         {
           "id": "09-hakaton-tretii-po-schetu--w-02-shkola-kabinet-russkogo",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "02-shkola-kabinet-russkogo",
           "toEntryId": "from-e",
           "type": "open",
@@ -2350,12 +2371,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 7,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -2367,7 +2388,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "Единственная честно Upper Dynamic комната. Пользуйся"
@@ -2382,7 +2403,9 @@
         "sound": "гул из трёхсот разговоров, ни одного разборчивого; кулеры; чей-то доклад через плохой микрофон с клиппингом на согласных"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 40,
+      "originY": 11
     },
     {
       "id": "10-komnata-s-grobami",
@@ -2394,42 +2417,42 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "groby",
-          "x": 3,
+          "x": 5,
           "y": 3,
           "w": 2,
-          "h": 2,
+          "h": 4,
           "solid": true,
           "role": null,
           "image": "assets/objects/10-komnata-s-grobami--groby.png"
         },
         {
           "id": "schel-pod-potolkom",
-          "x": 6,
-          "y": 3,
+          "x": 9,
+          "y": 1,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
         },
         {
           "id": "tkan-s-kodami",
-          "x": 8,
-          "y": 3,
+          "x": 3,
+          "y": 7,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2438,8 +2461,8 @@
         },
         {
           "id": "paketiki-fsb",
-          "x": 11,
-          "y": 3,
+          "x": 16,
+          "y": 7,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2448,10 +2471,10 @@
         },
         {
           "id": "telefon-kamera-otkryvaetsia-sem-sekund",
-          "x": 13,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 7,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
@@ -2461,8 +2484,8 @@
         {
           "id": "groby",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 6,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "гробы",
           "clueId": null,
@@ -2475,8 +2498,8 @@
         {
           "id": "schel-pod-potolkom",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 10,
+          "y": 2.15,
           "reach": 1.4,
           "prompt": "щель под потолком",
           "clueId": null,
@@ -2489,8 +2512,8 @@
         {
           "id": "tkan-s-kodami",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 4,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "ткань с кодами",
           "clueId": null,
@@ -2503,8 +2526,8 @@
         {
           "id": "paketiki-fsb",
           "kind": "clue",
-          "x": 12,
-          "y": 5.15,
+          "x": 17,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "пакетики ФСБ",
           "clueId": "clue-3",
@@ -2517,8 +2540,8 @@
         {
           "id": "telefon-kamera-otkryvaetsia-sem-sekund",
           "kind": "look",
-          "x": 14,
-          "y": 5.15,
+          "x": 10.5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "телефон, камера открывается семь секунд",
           "clueId": null,
@@ -2552,9 +2575,9 @@
       "doors": [
         {
           "id": "10-komnata-s-grobami--s-23-nigeriia-konferenciia",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "23-nigeriia-konferenciia",
           "toEntryId": "from-n",
@@ -2569,9 +2592,9 @@
         {
           "id": "10-komnata-s-grobami--w-12-tiurma-na-ovoschah",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "12-tiurma-na-ovoschah",
           "toEntryId": "from-e",
           "type": "open",
@@ -2586,12 +2609,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 8,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 11,
           "y": 6
         }
       ],
@@ -2603,7 +2626,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−5, −4). Дно графика. Отсюда близко до переполнения"
@@ -2620,7 +2643,9 @@
         "sound": "абсолютная сухая тишина, ноль реверберации, как в заглушенной камере — от этого физически некомфортно; собственные шаги слишком громкие; в момент входа людей — щелчок и **комнатный тон появляется**, будто до этого звук был выключен"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 120,
+      "originY": 11
     },
     {
       "id": "11-evreiskii-gorod",
@@ -2630,35 +2655,35 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "kinder-siurpriz-s-lavochku",
-          "x": 3,
-          "y": 3,
+          "x": 6,
+          "y": 7,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
         },
         {
           "id": "fonari-kotorye-gasiat-pri-zvuke",
-          "x": 6,
+          "x": 14,
           "y": 3,
-          "w": 2,
+          "w": 1,
           "h": 2,
           "solid": true,
           "role": null,
@@ -2667,19 +2692,19 @@
         {
           "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
           "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "y": 5,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
         },
         {
           "id": "stavni-na-vsem",
-          "x": 11,
+          "x": 9,
           "y": 3,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
@@ -2689,8 +2714,8 @@
         {
           "id": "kinder-siurpriz-s-lavochku",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 7,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "киндер-сюрприз с лавочку",
           "clueId": null,
@@ -2703,7 +2728,7 @@
         {
           "id": "fonari-kotorye-gasiat-pri-zvuke",
           "kind": "look",
-          "x": 7,
+          "x": 14.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "фонари, которые гасят при звуке",
@@ -2717,8 +2742,8 @@
         {
           "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 8.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "расписание — не транспорта, а **безопасных часов**",
           "clueId": null,
@@ -2731,8 +2756,8 @@
         {
           "id": "stavni-na-vsem",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 10,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "ставни на всём",
           "clueId": null,
@@ -2778,10 +2803,10 @@
       "doors": [
         {
           "id": "11-evreiskii-gorod--n-20-ofis-sbera",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "20-ofis-sbera",
           "toEntryId": "from-s",
           "type": "open",
@@ -2795,9 +2820,9 @@
         {
           "id": "11-evreiskii-gorod--e-25-metro-i-poezd-kotoryi-ne-tot",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
           "toEntryId": "from-w",
           "type": "open",
@@ -2810,9 +2835,9 @@
         },
         {
           "id": "11-evreiskii-gorod--s-21-komnata-niliufar",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "21-komnata-niliufar",
           "toEntryId": "from-n",
@@ -2827,9 +2852,9 @@
         {
           "id": "11-evreiskii-gorod--w-01-otel-goticheskii-holl",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "01-otel-goticheskii-holl",
           "toEntryId": "from-e",
           "type": "open",
@@ -2845,12 +2870,12 @@
         {
           "id": "a",
           "x": 5,
-          "y": 6
+          "y": 8
         },
         {
           "id": "b",
           "x": 14,
-          "y": 6
+          "y": 8
         }
       ],
       "graphics": {
@@ -2861,7 +2886,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(0, −2). Тематическое сердце игры"
@@ -2876,7 +2901,9 @@
         "sound": "город на приглушёнке, все говорят вполголоса; шаги сверху, огромные, с интервалом в 4 секунды; при твоём громком действии — **общая пауза на две секунды**, и все смотрят"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 60,
+      "originY": 22
     },
     {
       "id": "12-tiurma-na-ovoschah",
@@ -2886,54 +2913,54 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "kapusta-frukty",
           "x": 3,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "y": 4,
+          "w": 4,
+          "h": 4,
           "solid": true,
           "role": null,
           "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
         },
         {
           "id": "dyrka-v-zabore",
-          "x": 6,
-          "y": 3,
+          "x": 9,
+          "y": 1,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
         },
         {
           "id": "piatimetrovyi-stellazh",
-          "x": 8,
+          "x": 14,
           "y": 3,
           "w": 2,
-          "h": 2,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
         },
         {
           "id": "paket-fasoli",
-          "x": 11,
-          "y": 3,
+          "x": 16,
+          "y": 7,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2942,8 +2969,8 @@
         },
         {
           "id": "tetia-sidiaschaia-spinoi",
-          "x": 13,
-          "y": 3,
+          "x": 9,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -2955,8 +2982,8 @@
         {
           "id": "kapusta-frukty",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "капуста, фрукты",
           "clueId": null,
@@ -2969,8 +2996,8 @@
         {
           "id": "dyrka-v-zabore",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 10,
+          "y": 2.15,
           "reach": 1.4,
           "prompt": "дырка в заборе",
           "clueId": null,
@@ -2983,8 +3010,8 @@
         {
           "id": "piatimetrovyi-stellazh",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 15,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "пятиметровый стеллаж",
           "clueId": null,
@@ -2997,8 +3024,8 @@
         {
           "id": "paket-fasoli",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 17,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "пакет фасоли",
           "clueId": null,
@@ -3011,8 +3038,8 @@
         {
           "id": "tetia-sidiaschaia-spinoi",
           "kind": "look",
-          "x": 14,
-          "y": 5.15,
+          "x": 10,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "тётя, сидящая спиной",
           "clueId": null,
@@ -3058,10 +3085,10 @@
       "doors": [
         {
           "id": "12-tiurma-na-ovoschah--n-m2-miasnaia-geometriia",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "m2-miasnaia-geometriia",
           "toEntryId": "from-s",
           "type": "open",
@@ -3075,9 +3102,9 @@
         {
           "id": "12-tiurma-na-ovoschah--e-10-komnata-s-grobami",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "10-komnata-s-grobami",
           "toEntryId": "from-w",
           "type": "open",
@@ -3090,9 +3117,9 @@
         },
         {
           "id": "12-tiurma-na-ovoschah--s-22-kreiser",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "22-kreiser",
           "toEntryId": "from-n",
@@ -3107,9 +3134,9 @@
         {
           "id": "12-tiurma-na-ovoschah--w-13-podzemnye-zaly-cu",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "13-podzemnye-zaly-cu",
           "toEntryId": "from-e",
           "type": "open",
@@ -3124,13 +3151,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 8,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 11,
+          "y": 7
         }
       ],
       "graphics": {
@@ -3141,7 +3168,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "Абсурдно лёгкая"
@@ -3156,7 +3183,9 @@
         "sound": "капель с потолка; хруст овощей под весом; полное отсутствие тюремных звуков — ни решёток, ни голосов, ни шагов конвоя"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 100,
+      "originY": 11
     },
     {
       "id": "13-podzemnye-zaly-cu",
@@ -3166,35 +3195,35 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "iaponskii-sidr",
-          "x": 3,
+          "x": 4,
           "y": 3,
-          "w": 2,
-          "h": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
         },
         {
           "id": "tribuny",
-          "x": 6,
-          "y": 3,
-          "w": 2,
+          "x": 14,
+          "y": 4,
+          "w": 3,
           "h": 2,
           "solid": true,
           "role": null,
@@ -3202,18 +3231,18 @@
         },
         {
           "id": "riukzak-s-fruktami-i-vodkoi",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 15,
+          "y": 7,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
         },
         {
           "id": "divanchik-na-kotorom-spit-lesha",
-          "x": 11,
-          "y": 3,
+          "x": 5,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -3222,10 +3251,10 @@
         },
         {
           "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
-          "x": 13,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 6,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
@@ -3235,8 +3264,8 @@
         {
           "id": "iaponskii-sidr",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 4.5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "японский сидр",
           "clueId": null,
@@ -3249,8 +3278,8 @@
         {
           "id": "tribuny",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 15.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "трибуны",
           "clueId": null,
@@ -3263,8 +3292,8 @@
         {
           "id": "riukzak-s-fruktami-i-vodkoi",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 15.5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "рюкзак с фруктами и водкой",
           "clueId": null,
@@ -3277,8 +3306,8 @@
         {
           "id": "divanchik-na-kotorom-spit-lesha",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 6,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "диванчик, на котором спит Лёша",
           "clueId": null,
@@ -3291,8 +3320,8 @@
         {
           "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
           "kind": "look",
-          "x": 14,
-          "y": 5.15,
+          "x": 10.5,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "мази, которыми ты предлагаешь помазаться упавшему",
           "clueId": null,
@@ -3338,10 +3367,10 @@
       "doors": [
         {
           "id": "13-podzemnye-zaly-cu--n-18-kupol-bez-sten",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "18-kupol-bez-sten",
           "toEntryId": "from-s",
           "type": "open",
@@ -3355,9 +3384,9 @@
         {
           "id": "13-podzemnye-zaly-cu--e-12-tiurma-na-ovoschah",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "12-tiurma-na-ovoschah",
           "toEntryId": "from-w",
           "type": "open",
@@ -3370,9 +3399,9 @@
         },
         {
           "id": "13-podzemnye-zaly-cu--s-25-metro-i-poezd-kotoryi-ne-tot",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
           "toEntryId": "from-n",
@@ -3387,9 +3416,9 @@
         {
           "id": "13-podzemnye-zaly-cu--w-20-ofis-sbera",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "20-ofis-sbera",
           "toEntryId": "from-e",
           "type": "open",
@@ -3404,12 +3433,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 7,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -3421,7 +3450,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": null
@@ -3436,7 +3465,9 @@
         "sound": "гул большого зала, ревер 4 секунды; механические перестроения без звука механизмов (**это важно — стены двигаются в тишине**); поверх — объявление о начале игр, зациклено"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 80,
+      "originY": 11
     },
     {
       "id": "14-poliklinika-v-kaluge",
@@ -3446,35 +3477,35 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "vydrannyi-zub",
-          "x": 3,
+          "x": 17,
           "y": 3,
-          "w": 2,
-          "h": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
         },
         {
           "id": "iaschik-s-kapibarami-i-kotom",
-          "x": 6,
-          "y": 3,
-          "w": 2,
+          "x": 14,
+          "y": 2,
+          "w": 3,
           "h": 2,
           "solid": true,
           "role": null,
@@ -3482,20 +3513,20 @@
         },
         {
           "id": "kreslo",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 3,
+          "y": 6,
+          "w": 3,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png"
         },
         {
           "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
-          "x": 11,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 5,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
@@ -3505,8 +3536,8 @@
         {
           "id": "vydrannyi-zub",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 17.5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "выдранный зуб",
           "clueId": null,
@@ -3519,8 +3550,8 @@
         {
           "id": "iaschik-s-kapibarami-i-kotom",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 15.5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "ящик с капибарами и котом",
           "clueId": null,
@@ -3533,8 +3564,8 @@
         {
           "id": "kreslo",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 4.5,
+          "y": 9.15,
           "reach": 1.4,
           "prompt": "кресло",
           "clueId": null,
@@ -3547,8 +3578,8 @@
         {
           "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 10.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "велосипедисты, проезжающие сквозь коридор",
           "clueId": null,
@@ -3588,10 +3619,10 @@
       "doors": [
         {
           "id": "14-poliklinika-v-kaluge--n-m3-sklad-ostavlennogo",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "m3-sklad-ostavlennogo",
           "toEntryId": "from-s",
           "type": "open",
@@ -3605,9 +3636,9 @@
         {
           "id": "14-poliklinika-v-kaluge--e-02-shkola-kabinet-russkogo",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "02-shkola-kabinet-russkogo",
           "toEntryId": "from-w",
           "type": "open",
@@ -3620,9 +3651,9 @@
         },
         {
           "id": "14-poliklinika-v-kaluge--s-05-shesterochka",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "05-shesterochka",
           "toEntryId": "from-n",
@@ -3638,13 +3669,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 8,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 13,
+          "y": 7
         }
       ],
       "graphics": {
@@ -3655,7 +3686,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−2, +1)"
@@ -3670,7 +3701,9 @@
         "sound": "бормашина, длинная, никогда не заканчивающаяся; звонки велосипедов, приближающиеся по коридору; папин голос, чуть громче, чем позволяет помещение"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 0,
+      "originY": 11
     },
     {
       "id": "15-osennii-les-s-grobom",
@@ -3682,31 +3715,31 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "grob",
-          "x": 3,
+          "x": 9,
           "y": 3,
           "w": 2,
-          "h": 2,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
         },
         {
           "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
-          "x": 6,
+          "x": 4,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -3716,20 +3749,20 @@
         },
         {
           "id": "listia-shurshaschie-ne-v-takt-shagam",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 11,
+          "y": 6,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
         },
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
-          "x": 11,
+          "x": 14,
           "y": 3,
-          "w": 2,
-          "h": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
@@ -3739,8 +3772,8 @@
         {
           "id": "grob",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 10,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "гроб",
           "clueId": null,
@@ -3753,7 +3786,7 @@
         {
           "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
           "kind": "look",
-          "x": 7,
+          "x": 5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "пирамида-туалет с советским кафелем внутри",
@@ -3767,8 +3800,8 @@
         {
           "id": "listia-shurshaschie-ne-v-takt-shagam",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 11.5,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "листья, шуршащие не в такт шагам",
           "clueId": null,
@@ -3781,8 +3814,8 @@
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 14.5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "фотография классного руководителя, лица не разобрать",
           "clueId": null,
@@ -3823,9 +3856,9 @@
         {
           "id": "15-osennii-les-s-grobom--e-03-gory-startapery-i-uchenye",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "03-gory-startapery-i-uchenye",
           "toEntryId": "from-w",
           "type": "open",
@@ -3838,9 +3871,9 @@
         },
         {
           "id": "15-osennii-les-s-grobom--s-02-shkola-kabinet-russkogo",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "02-shkola-kabinet-russkogo",
           "toEntryId": "from-n",
@@ -3855,9 +3888,9 @@
         {
           "id": "15-osennii-les-s-grobom--w-m3-sklad-ostavlennogo",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "m3-sklad-ostavlennogo",
           "toEntryId": "from-e",
           "type": "open",
@@ -3872,13 +3905,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 7,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 12,
+          "y": 7
         }
       ],
       "graphics": {
@@ -3889,7 +3922,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−1, +2). Смешно и невыносимо одновременно"
@@ -3904,7 +3937,9 @@
         "sound": "та самая труба из мема, но замедленная в четыре раза и пропущенная через ревер, до состояния, где мелодия почти не узнаётся — узнавание должно приходить на третьей секунде и бить под дых"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 20,
+      "originY": 0
     },
     {
       "id": "16-norvezhskaia-derevnia-i-pogreb",
@@ -3916,22 +3951,22 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "pogreb-s-korniami",
-          "x": 3,
-          "y": 3,
+          "x": 4,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -3940,17 +3975,17 @@
         },
         {
           "id": "sneg-kotoryi-techet",
-          "x": 6,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 4,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
         },
         {
           "id": "otec-na-kraiu",
-          "x": 8,
+          "x": 14,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -3960,8 +3995,8 @@
         },
         {
           "id": "kirill-riadom-molchit",
-          "x": 11,
-          "y": 3,
+          "x": 8,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -3973,8 +4008,8 @@
         {
           "id": "pogreb-s-korniami",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "погреб с корнями",
           "clueId": null,
@@ -3987,7 +4022,7 @@
         {
           "id": "sneg-kotoryi-techet",
           "kind": "look",
-          "x": 7,
+          "x": 10.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "снег, который течёт",
@@ -4001,7 +4036,7 @@
         {
           "id": "otec-na-kraiu",
           "kind": "look",
-          "x": 9,
+          "x": 15,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "отец на краю",
@@ -4015,8 +4050,8 @@
         {
           "id": "kirill-riadom-molchit",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 9,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "Кирилл рядом, молчит",
           "clueId": null,
@@ -4057,9 +4092,9 @@
         {
           "id": "16-norvezhskaia-derevnia-i-pogreb--e-18-kupol-bez-sten",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "18-kupol-bez-sten",
           "toEntryId": "from-w",
           "type": "open",
@@ -4072,9 +4107,9 @@
         },
         {
           "id": "16-norvezhskaia-derevnia-i-pogreb--s-20-ofis-sbera",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "20-ofis-sbera",
           "toEntryId": "from-n",
@@ -4089,9 +4124,9 @@
         {
           "id": "16-norvezhskaia-derevnia-i-pogreb--w-03-gory-startapery-i-uchenye",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "03-gory-startapery-i-uchenye",
           "toEntryId": "from-e",
           "type": "open",
@@ -4106,13 +4141,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 7,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 11,
+          "y": 7
         }
       ],
       "graphics": {
@@ -4123,7 +4158,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−8, +6). Максимальный размах. **Отсюда чаще всего происходит переполнение графика**"
@@ -4138,7 +4173,9 @@
         "sound": "гул усилителя, 50 Гц с гармониками, ровный, никогда не смолкающий; полное отсутствие ветра при видимом снегопаде; в момент падения — **всё, кроме гула, вырезается**"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 60,
+      "originY": 0
     },
     {
       "id": "17-dush-iz-kotorogo-nelzia-vyiti",
@@ -4148,24 +4185,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "dver",
-          "x": 3,
-          "y": 3,
+          "x": 6,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -4174,20 +4211,20 @@
         },
         {
           "id": "ventil",
-          "x": 6,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 9,
+          "y": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
         },
         {
           "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 11,
+          "y": 2,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
@@ -4197,8 +4234,8 @@
         {
           "id": "dver",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 7,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "дверь",
           "clueId": null,
@@ -4211,8 +4248,8 @@
         {
           "id": "ventil",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 9.5,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "вентиль",
           "clueId": null,
@@ -4225,8 +4262,8 @@
         {
           "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 11.5,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "кафель, на одной плитке которого что-то нацарапано",
           "clueId": null,
@@ -4272,10 +4309,10 @@
       "doors": [
         {
           "id": "17-dush-iz-kotorogo-nelzia-vyiti--n-01-otel-goticheskii-holl",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "01-otel-goticheskii-holl",
           "toEntryId": "from-s",
           "type": "open",
@@ -4289,9 +4326,9 @@
         {
           "id": "17-dush-iz-kotorogo-nelzia-vyiti--e-21-komnata-niliufar",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "21-komnata-niliufar",
           "toEntryId": "from-w",
           "type": "open",
@@ -4304,9 +4341,9 @@
         },
         {
           "id": "17-dush-iz-kotorogo-nelzia-vyiti--s-m4-razvilka-gde-ty-ostalsia",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "m4-razvilka-gde-ty-ostalsia",
           "toEntryId": "from-n",
@@ -4321,9 +4358,9 @@
         {
           "id": "17-dush-iz-kotorogo-nelzia-vyiti--w-08-kvartira-v-kotoroi-zhivut-drugie",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
           "toEntryId": "from-e",
           "type": "open",
@@ -4338,13 +4375,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 6,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 13,
+          "y": 7
         }
       ],
       "graphics": {
@@ -4355,7 +4392,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−4, −6). Максимально Static. Комната-тупик как жанр"
@@ -4370,7 +4407,9 @@
         "sound": "вода, ровно, без вариаций; собственное дыхание, которое становится слышно после четвёртого прохода; на восьмом — **вода звучит на октаву ниже**"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 40,
+      "originY": 33
     },
     {
       "id": "18-kupol-bez-sten",
@@ -4382,22 +4421,22 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "karkas-kupola-bez-sten",
-          "x": 3,
-          "y": 3,
+          "x": 9,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -4406,17 +4445,17 @@
         },
         {
           "id": "koliuchaia-provoloka",
-          "x": 6,
+          "x": 3,
           "y": 3,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
         },
         {
           "id": "zveri",
-          "x": 8,
+          "x": 15,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -4426,10 +4465,10 @@
         },
         {
           "id": "snezhnoe-pole-do-gorizonta",
-          "x": 11,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 7,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
@@ -4439,8 +4478,8 @@
         {
           "id": "karkas-kupola-bez-sten",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 10,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "каркас купола без стен",
           "clueId": null,
@@ -4453,8 +4492,8 @@
         {
           "id": "koliuchaia-provoloka",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 4,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "колючая проволока",
           "clueId": null,
@@ -4467,7 +4506,7 @@
         {
           "id": "zveri",
           "kind": "look",
-          "x": 9,
+          "x": 16,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "звери",
@@ -4481,8 +4520,8 @@
         {
           "id": "snezhnoe-pole-do-gorizonta",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 10.5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "снежное поле до горизонта",
           "clueId": null,
@@ -4523,9 +4562,9 @@
         {
           "id": "18-kupol-bez-sten--e-m2-miasnaia-geometriia",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "m2-miasnaia-geometriia",
           "toEntryId": "from-w",
           "type": "open",
@@ -4538,9 +4577,9 @@
         },
         {
           "id": "18-kupol-bez-sten--s-13-podzemnye-zaly-cu",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "13-podzemnye-zaly-cu",
           "toEntryId": "from-n",
@@ -4555,9 +4594,9 @@
         {
           "id": "18-kupol-bez-sten--w-16-norvezhskaia-derevnia-i-pogreb",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
           "toEntryId": "from-e",
           "type": "open",
@@ -4572,12 +4611,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 7,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -4589,7 +4628,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−3, +5)"
@@ -4604,7 +4643,9 @@
         "sound": "ветер поля; поверх — что-то вроде плясовой, сыгранной на расстроенном инструменте с плавающим темпом; ни одного звериного звука. **Звери молчат, пока танцуют**"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 80,
+      "originY": 0
     },
     {
       "id": "19-dvor-i-oranzhevye-lavochki",
@@ -4614,17 +4655,17 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
@@ -4640,30 +4681,30 @@
         },
         {
           "id": "podezdnaia-dver-s-domofonom",
-          "x": 6,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 13,
+          "y": 2,
+          "w": 3,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
         },
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 2,
+          "y": 4,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
         },
         {
           "id": "urna-nabitaia-akkuratno",
-          "x": 11,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 12,
+          "y": 6,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
@@ -4687,7 +4728,7 @@
         {
           "id": "podezdnaia-dver-s-domofonom",
           "kind": "look",
-          "x": 7,
+          "x": 14.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "подъездная дверь с домофоном",
@@ -4701,9 +4742,9 @@
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
           "kind": "look",
-          "x": 9,
+          "x": 2.5,
           "y": 5.15,
-          "reach": 0.9,
+          "reach": 1.4,
           "prompt": "бутылка рядом с Турышевым, не первая",
           "clueId": null,
           "action": null,
@@ -4715,8 +4756,8 @@
         {
           "id": "urna-nabitaia-akkuratno",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 12.5,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "урна, набитая аккуратно",
           "clueId": null,
@@ -4762,10 +4803,10 @@
       "doors": [
         {
           "id": "19-dvor-i-oranzhevye-lavochki--n-02-shkola-kabinet-russkogo",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "02-shkola-kabinet-russkogo",
           "toEntryId": "from-s",
           "type": "open",
@@ -4779,9 +4820,9 @@
         {
           "id": "19-dvor-i-oranzhevye-lavochki--e-01-otel-goticheskii-holl",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "01-otel-goticheskii-holl",
           "toEntryId": "from-w",
           "type": "open",
@@ -4794,9 +4835,9 @@
         },
         {
           "id": "19-dvor-i-oranzhevye-lavochki--s-08-kvartira-v-kotoroi-zhivut-drugie",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "08-kvartira-v-kotoroi-zhivut-drugie",
           "toEntryId": "from-n",
@@ -4811,9 +4852,9 @@
         {
           "id": "19-dvor-i-oranzhevye-lavochki--w-05-shesterochka",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "05-shesterochka",
           "toEntryId": "from-e",
           "type": "open",
@@ -4833,8 +4874,13 @@
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 11,
           "y": 6
+        },
+        {
+          "id": "c",
+          "x": 10,
+          "y": 7
         }
       ],
       "graphics": {
@@ -4845,7 +4891,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(+1, −4). Upper Static. Точка сохранения по ощущению, но не по функции"
@@ -4860,7 +4906,9 @@
         "sound": "двор днём, дети где-то далеко, машина заводится через дом; **ни одного тревожного слоя** — и от чистоты микса становится не по себе"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 20,
+      "originY": 22
     },
     {
       "id": "20-ofis-sbera",
@@ -4870,34 +4918,34 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "elt-s-morrowind",
-          "x": 3,
-          "y": 3,
+          "x": 11,
+          "y": 2,
           "w": 2,
-          "h": 2,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
         },
         {
           "id": "shirokii-monitor-s-chem-to-korporativnym",
-          "x": 6,
-          "y": 3,
+          "x": 4,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -4906,8 +4954,8 @@
         },
         {
           "id": "beidzhi-na-shnurkah",
-          "x": 8,
-          "y": 3,
+          "x": 17,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -4916,8 +4964,8 @@
         },
         {
           "id": "lift",
-          "x": 11,
-          "y": 3,
+          "x": 15,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -4926,8 +4974,8 @@
         },
         {
           "id": "zakrytaia-dver-v-konce-koridora",
-          "x": 13,
-          "y": 3,
+          "x": 9,
+          "y": 1,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -4939,7 +4987,7 @@
         {
           "id": "elt-s-morrowind",
           "kind": "look",
-          "x": 4,
+          "x": 12,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "ЭЛТ с Morrowind",
@@ -4953,8 +5001,8 @@
         {
           "id": "shirokii-monitor-s-chem-to-korporativnym",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 5,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "широкий монитор с чем-то корпоративным",
           "clueId": null,
@@ -4967,8 +5015,8 @@
         {
           "id": "beidzhi-na-shnurkah",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 18,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "бейджи на шнурках",
           "clueId": null,
@@ -4981,8 +5029,8 @@
         {
           "id": "lift",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 16,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "лифт",
           "clueId": null,
@@ -4995,8 +5043,8 @@
         {
           "id": "zakrytaia-dver-v-konce-koridora",
           "kind": "look",
-          "x": 14,
-          "y": 5.15,
+          "x": 10,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "закрытая дверь в конце коридора",
           "clueId": null,
@@ -5042,10 +5090,10 @@
       "doors": [
         {
           "id": "20-ofis-sbera--n-16-norvezhskaia-derevnia-i-pogreb",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "16-norvezhskaia-derevnia-i-pogreb",
           "toEntryId": "from-s",
           "type": "open",
@@ -5059,9 +5107,9 @@
         {
           "id": "20-ofis-sbera--e-13-podzemnye-zaly-cu",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "13-podzemnye-zaly-cu",
           "toEntryId": "from-w",
           "type": "open",
@@ -5074,9 +5122,9 @@
         },
         {
           "id": "20-ofis-sbera--s-11-evreiskii-gorod",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "11-evreiskii-gorod",
           "toEntryId": "from-n",
@@ -5091,9 +5139,9 @@
         {
           "id": "20-ofis-sbera--w-09-hakaton-tretii-po-schetu",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "09-hakaton-tretii-po-schetu",
           "toEntryId": "from-e",
           "type": "open",
@@ -5108,13 +5156,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 6,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 13,
+          "y": 7
         }
       ],
       "graphics": {
@@ -5125,7 +5173,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(+2, −2)"
@@ -5140,7 +5188,9 @@
         "sound": "пятнадцатикилогерцовый писк строчной развёртки (те, кто слышит, услышат, остальные почувствуют); кондиционер; **музыка Morrowind, доносящаяся тихо** — Джереми Соул через динамик кинескопа, самый безжалостный ностальгический удар из доступных"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 60,
+      "originY": 11
     },
     {
       "id": "21-komnata-niliufar",
@@ -5150,16 +5200,16 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
         "####################"
       ],
       "cellVariants": {},
@@ -5167,18 +5217,18 @@
         {
           "id": "krovat",
           "x": 3,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "y": 4,
+          "w": 5,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/21-komnata-niliufar--krovat.png"
         },
         {
           "id": "okno-s-vidom",
-          "x": 6,
-          "y": 3,
-          "w": 2,
+          "x": 7,
+          "y": 1,
+          "w": 3,
           "h": 2,
           "solid": true,
           "role": null,
@@ -5186,7 +5236,7 @@
         },
         {
           "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
-          "x": 8,
+          "x": 12,
           "y": 3,
           "w": 2,
           "h": 2,
@@ -5196,8 +5246,8 @@
         },
         {
           "id": "veschi-tancevalnoi-gruppy",
-          "x": 11,
-          "y": 3,
+          "x": 16,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5209,8 +5259,8 @@
         {
           "id": "krovat",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 5.5,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "кровать",
           "clueId": null,
@@ -5223,8 +5273,8 @@
         {
           "id": "okno-s-vidom",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 8.5,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "окно с видом",
           "clueId": null,
@@ -5237,7 +5287,7 @@
         {
           "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
           "kind": "look",
-          "x": 9,
+          "x": 13,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "дверь, которая может быть открыта или закрыта в зависимости от прошлых заходов",
@@ -5251,8 +5301,8 @@
         {
           "id": "veschi-tancevalnoi-gruppy",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 17,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "вещи танцевальной группы",
           "clueId": null,
@@ -5292,10 +5342,10 @@
       "doors": [
         {
           "id": "21-komnata-niliufar--n-11-evreiskii-gorod",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "11-evreiskii-gorod",
           "toEntryId": "from-s",
           "type": "open",
@@ -5309,9 +5359,9 @@
         {
           "id": "21-komnata-niliufar--e-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
           "toEntryId": "from-w",
           "type": "open",
@@ -5325,9 +5375,9 @@
         {
           "id": "21-komnata-niliufar--w-17-dush-iz-kotorogo-nelzia-vyiti",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
           "toEntryId": "from-e",
           "type": "open",
@@ -5342,13 +5392,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 8,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 12,
+          "y": 8
         }
       ],
       "graphics": {
@@ -5359,7 +5409,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(0, −5). Абсолютный ноль по горизонтали. Ни вверх, ни вниз"
@@ -5374,7 +5424,9 @@
         "sound": "комнатный тон, тёплый; город за окном, далеко; **музыки нет вообще**. Единственная комната без саундтрека, и на контрасте это громче любого трека"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 60,
+      "originY": 33
     },
     {
       "id": "22-kreiser",
@@ -5384,24 +5436,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
         "####################"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "scena-mikrofon",
-          "x": 3,
-          "y": 3,
+          "x": 9,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5410,8 +5462,8 @@
         },
         {
           "id": "nakrytye-stoly",
-          "x": 6,
-          "y": 3,
+          "x": 4,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5420,8 +5472,8 @@
         },
         {
           "id": "spasatelnye-krugi",
-          "x": 8,
-          "y": 3,
+          "x": 14,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5430,10 +5482,10 @@
         },
         {
           "id": "voda-za-bortom-slishkom-blizko-k-palube",
-          "x": 11,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 1,
+          "y": 4,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
@@ -5443,8 +5495,8 @@
         {
           "id": "scena-mikrofon",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 10,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "сцена, микрофон",
           "clueId": null,
@@ -5457,8 +5509,8 @@
         {
           "id": "nakrytye-stoly",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 5,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "накрытые столы",
           "clueId": null,
@@ -5471,8 +5523,8 @@
         {
           "id": "spasatelnye-krugi",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 15,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "спасательные круги",
           "clueId": null,
@@ -5485,7 +5537,7 @@
         {
           "id": "voda-za-bortom-slishkom-blizko-k-palube",
           "kind": "look",
-          "x": 12,
+          "x": 1.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "вода за бортом, слишком близко к палубе",
@@ -5526,10 +5578,10 @@
       "doors": [
         {
           "id": "22-kreiser--n-12-tiurma-na-ovoschah",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "12-tiurma-na-ovoschah",
           "toEntryId": "from-s",
           "type": "open",
@@ -5543,9 +5595,9 @@
         {
           "id": "22-kreiser--e-23-nigeriia-konferenciia",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "23-nigeriia-konferenciia",
           "toEntryId": "from-w",
           "type": "open",
@@ -5559,9 +5611,9 @@
         {
           "id": "22-kreiser--w-25-metro-i-poezd-kotoryi-ne-tot",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
           "toEntryId": "from-e",
           "type": "open",
@@ -5576,12 +5628,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 7,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -5593,7 +5645,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−1, +1)"
@@ -5608,7 +5660,9 @@
         "sound": "застольный гул; корабельный ход, низкий; микрофонная обратная связь, начинающаяся сама"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 100,
+      "originY": 22
     },
     {
       "id": "23-nigeriia-konferenciia",
@@ -5618,34 +5672,34 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
         "####################"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "kolonny",
-          "x": 3,
-          "y": 3,
+          "x": 5,
+          "y": 2,
           "w": 2,
-          "h": 2,
+          "h": 3,
           "solid": true,
           "role": null,
           "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
         },
         {
           "id": "vr-shlemy-na-stoikah",
-          "x": 6,
-          "y": 3,
+          "x": 13,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5654,18 +5708,18 @@
         },
         {
           "id": "beidzh-konferencii-s-nechitaemym-nazvani",
-          "x": 8,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 6,
+          "y": 5,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
         },
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
-          "x": 11,
-          "y": 3,
+          "x": 9,
+          "y": 2,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5677,7 +5731,7 @@
         {
           "id": "kolonny",
           "kind": "look",
-          "x": 4,
+          "x": 6,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "колонны",
@@ -5691,8 +5745,8 @@
         {
           "id": "vr-shlemy-na-stoikah",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 14,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "VR-шлемы на стойках",
           "clueId": null,
@@ -5705,8 +5759,8 @@
         {
           "id": "beidzh-konferencii-s-nechitaemym-nazvani",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 6.5,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "бейдж конференции с нечитаемым названием",
           "clueId": null,
@@ -5719,8 +5773,8 @@
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 10,
+          "y": 4.15,
           "reach": 1.4,
           "prompt": "отель, у которого внутренний объём меньше внешнего",
           "clueId": null,
@@ -5754,10 +5808,10 @@
       "doors": [
         {
           "id": "23-nigeriia-konferenciia--n-10-komnata-s-grobami",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "10-komnata-s-grobami",
           "toEntryId": "from-s",
           "type": "open",
@@ -5771,9 +5825,9 @@
         {
           "id": "23-nigeriia-konferenciia--w-22-kreiser",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "22-kreiser",
           "toEntryId": "from-e",
           "type": "open",
@@ -5788,13 +5842,13 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
-          "y": 6
+          "x": 6,
+          "y": 7
         },
         {
           "id": "b",
-          "x": 14,
-          "y": 6
+          "x": 13,
+          "y": 7
         }
       ],
       "graphics": {
@@ -5805,7 +5859,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": null
@@ -5820,7 +5874,9 @@
         "sound": "доклад через плохое PA, эхо в мраморе; кондиционер, борющийся и проигрывающий; за стеной — улица, слишком громкая для этажа"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 120,
+      "originY": 22
     },
     {
       "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
@@ -5830,24 +5886,24 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
         "####################"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "kakao",
-          "x": 3,
-          "y": 3,
+          "x": 5,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5856,8 +5912,8 @@
         },
         {
           "id": "kusok-miasa-naznachennyi-bomboi",
-          "x": 6,
-          "y": 3,
+          "x": 9,
+          "y": 6,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5866,8 +5922,8 @@
         },
         {
           "id": "korobka-s-golosom",
-          "x": 8,
-          "y": 3,
+          "x": 14,
+          "y": 4,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -5877,9 +5933,9 @@
         {
           "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
           "x": 11,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "y": 7,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
@@ -5889,8 +5945,8 @@
         {
           "id": "kakao",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 6,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "какао",
           "clueId": null,
@@ -5903,8 +5959,8 @@
         {
           "id": "kusok-miasa-naznachennyi-bomboi",
           "kind": "look",
-          "x": 7,
-          "y": 5.15,
+          "x": 10,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "кусок мяса, назначенный бомбой",
           "clueId": null,
@@ -5917,8 +5973,8 @@
         {
           "id": "korobka-s-golosom",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 15,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "коробка с голосом",
           "clueId": null,
@@ -5931,8 +5987,8 @@
         {
           "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 11.5,
+          "y": 8.15,
           "reach": 1.4,
           "prompt": "телефон с камерой, которая не успевает",
           "clueId": null,
@@ -5966,10 +6022,10 @@
       "doors": [
         {
           "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--n-25-metro-i-poezd-kotoryi-ne-tot",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "25-metro-i-poezd-kotoryi-ne-tot",
           "toEntryId": "from-s",
           "type": "open",
@@ -5983,9 +6039,9 @@
         {
           "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--w-21-komnata-niliufar",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "21-komnata-niliufar",
           "toEntryId": "from-e",
           "type": "open",
@@ -6000,12 +6056,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 7,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -6017,7 +6073,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−7, +3)"
@@ -6032,7 +6088,9 @@
         "sound": "гроза за стеклом; голос из коробки, бубнящий исторический нарратив, разборчиво процентов на семьдесят; **отсутствие музыки**, только комната"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 80,
+      "originY": 33
     },
     {
       "id": "25-metro-i-poezd-kotoryi-ne-tot",
@@ -6042,54 +6100,54 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#__________________#",
+        "#__________________#",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "_.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [
         {
           "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
-          "x": 3,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 7,
+          "y": 2,
+          "w": 4,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
         },
         {
           "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
-          "x": 6,
-          "y": 3,
-          "w": 2,
-          "h": 2,
+          "x": 10,
+          "y": 4,
+          "w": 1,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
         },
         {
           "id": "korobka-s-golosom",
-          "x": 8,
-          "y": 3,
+          "x": 5,
+          "y": 5,
           "w": 2,
-          "h": 2,
+          "h": 1,
           "solid": true,
           "role": null,
           "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
         },
         {
           "id": "chuzhie-sumki-na-platforme",
-          "x": 11,
-          "y": 3,
+          "x": 12,
+          "y": 5,
           "w": 2,
           "h": 2,
           "solid": true,
@@ -6101,8 +6159,8 @@
         {
           "id": "tablo-s-raspisaniem-gde-nomera-meniaiuts",
           "kind": "look",
-          "x": 4,
-          "y": 5.15,
+          "x": 9,
+          "y": 3.15,
           "reach": 1.4,
           "prompt": "табло с расписанием, где номера меняются",
           "clueId": null,
@@ -6115,7 +6173,7 @@
         {
           "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
           "kind": "look",
-          "x": 7,
+          "x": 10.5,
           "y": 5.15,
           "reach": 1.4,
           "prompt": "телефон с загружающимся Tor, прогресс 94%, не двигается",
@@ -6129,8 +6187,8 @@
         {
           "id": "korobka-s-golosom",
           "kind": "look",
-          "x": 9,
-          "y": 5.15,
+          "x": 6,
+          "y": 6.15,
           "reach": 1.4,
           "prompt": "коробка с голосом",
           "clueId": null,
@@ -6143,8 +6201,8 @@
         {
           "id": "chuzhie-sumki-na-platforme",
           "kind": "look",
-          "x": 12,
-          "y": 5.15,
+          "x": 13,
+          "y": 7.15,
           "reach": 1.4,
           "prompt": "чужие сумки на платформе",
           "clueId": null,
@@ -6190,10 +6248,10 @@
       "doors": [
         {
           "id": "25-metro-i-poezd-kotoryi-ne-tot--n-13-podzemnye-zaly-cu",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "13-podzemnye-zaly-cu",
           "toEntryId": "from-s",
           "type": "open",
@@ -6207,9 +6265,9 @@
         {
           "id": "25-metro-i-poezd-kotoryi-ne-tot--e-22-kreiser",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "22-kreiser",
           "toEntryId": "from-w",
           "type": "open",
@@ -6222,9 +6280,9 @@
         },
         {
           "id": "25-metro-i-poezd-kotoryi-ne-tot--s-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
           "toEntryId": "from-n",
@@ -6239,9 +6297,9 @@
         {
           "id": "25-metro-i-poezd-kotoryi-ne-tot--w-11-evreiskii-gorod",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "11-evreiskii-gorod",
           "toEntryId": "from-e",
           "type": "open",
@@ -6256,12 +6314,12 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 5,
+          "x": 6,
           "y": 6
         },
         {
           "id": "b",
-          "x": 14,
+          "x": 12,
           "y": 6
         }
       ],
@@ -6273,7 +6331,7 @@
         "backdropFit": "cells",
         "glitchPreset": "none"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−3, +4)"
@@ -6288,7 +6346,9 @@
         "sound": "объявления диктора, слова сливаются, интонация штатная; грохот прохода состава; гул платформы. Референс: тот самый звук метро, записанный слишком близко к рельсу"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 80,
+      "originY": 22
     },
     {
       "id": "m1-korni",
@@ -6298,16 +6358,16 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
         "####################"
       ],
       "cellVariants": {},
@@ -6336,10 +6396,10 @@
       "doors": [
         {
           "id": "m1-korni--n-06-kanava-garazhi-podvorotni",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "06-kanava-garazhi-podvorotni",
           "toEntryId": "from-s",
           "type": "open",
@@ -6353,9 +6413,9 @@
         {
           "id": "m1-korni--e-04-dacha-gnedkovyh",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "04-dacha-gnedkovyh",
           "toEntryId": "from-w",
           "type": "open",
@@ -6367,16 +6427,22 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
         "backdropImage": "assets/rooms/m1-korni.png",
-        "backdropFit": "screen",
+        "backdropFit": "cells",
         "glitchPreset": "wrong-palette"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": ", но **удваивает предыдущий сдвиг**. Если пришёл с −6, станет −12, и вот тут начинается конверсия"
@@ -6396,7 +6462,9 @@
         "sound": "гул усилителя из Норвегии, но **вблизи** и с сердцебиением под ним. Единственный слой. Референс: Тим Хеккер, где стена звука дышит"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 0,
+      "originY": 44
     },
     {
       "id": "m2-miasnaia-geometriia",
@@ -6408,15 +6476,15 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [],
@@ -6444,9 +6512,9 @@
       "doors": [
         {
           "id": "m2-miasnaia-geometriia--s-12-tiurma-na-ovoschah",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "12-tiurma-na-ovoschah",
           "toEntryId": "from-n",
@@ -6461,9 +6529,9 @@
         {
           "id": "m2-miasnaia-geometriia--w-18-kupol-bez-sten",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "18-kupol-bez-sten",
           "toEntryId": "from-e",
           "type": "open",
@@ -6475,16 +6543,22 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
         "backdropImage": "assets/rooms/m2-miasnaia-geometriia.png",
-        "backdropFit": "screen",
+        "backdropFit": "cells",
         "glitchPreset": "wrong-palette"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−4, +4)"
@@ -6504,7 +6578,9 @@
         "sound": "влажный ревер, как в бассейне, но с более коротким хвостом; глотательные звуки на границе слышимости; **никакого низа** — специально всё выше 200 Гц, от этого некомфортно физиологически"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 100,
+      "originY": 0
     },
     {
       "id": "m3-sklad-ostavlennogo",
@@ -6516,15 +6592,15 @@
       "cells": [
         "####################",
         "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "####################"
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#.................._",
+        "#__________________#"
       ],
       "cellVariants": {},
       "props": [],
@@ -6553,9 +6629,9 @@
         {
           "id": "m3-sklad-ostavlennogo--e-15-osennii-les-s-grobom",
           "x": 19,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "15-osennii-les-s-grobom",
           "toEntryId": "from-w",
           "type": "open",
@@ -6568,9 +6644,9 @@
         },
         {
           "id": "m3-sklad-ostavlennogo--s-14-poliklinika-v-kaluge",
-          "x": 9,
+          "x": 1,
           "y": 10,
-          "w": 2,
+          "w": 18,
           "h": 1,
           "toRoomId": "14-poliklinika-v-kaluge",
           "toEntryId": "from-n",
@@ -6583,16 +6659,27 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 6,
+          "y": 5
+        },
+        {
+          "id": "b",
+          "x": 10,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
         "backdropImage": "assets/rooms/m3-sklad-ostavlennogo.png",
-        "backdropFit": "screen",
+        "backdropFit": "cells",
         "glitchPreset": "wrong-palette"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": false,
         "note": "(−2, −6). Максимальный Static"
@@ -6612,7 +6699,9 @@
         "sound": "флуоресцентный гул из Пятёрочки, растянутый; далёкое пищание кассы, раз в 12 секунд; **своё эхо с задержкой в 1.2 секунды**, слишком долгой для помещения без стен"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 0,
+      "originY": 0
     },
     {
       "id": "m4-razvilka-gde-ty-ostalsia",
@@ -6622,16 +6711,16 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
-        "#..................#",
+        "#__________________#",
+        "#__________________#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
+        "_..................#",
         "####################"
       ],
       "cellVariants": {},
@@ -6660,10 +6749,10 @@
       "doors": [
         {
           "id": "m4-razvilka-gde-ty-ostalsia--n-17-dush-iz-kotorogo-nelzia-vyiti",
-          "x": 9,
-          "y": 1,
-          "w": 2,
-          "h": 1,
+          "x": 1,
+          "y": 0,
+          "w": 18,
+          "h": 2,
           "toRoomId": "17-dush-iz-kotorogo-nelzia-vyiti",
           "toEntryId": "from-s",
           "type": "open",
@@ -6677,9 +6766,9 @@
         {
           "id": "m4-razvilka-gde-ty-ostalsia--w-04-dacha-gnedkovyh",
           "x": 0,
-          "y": 4,
+          "y": 2,
           "w": 1,
-          "h": 2,
+          "h": 8,
           "toRoomId": "04-dacha-gnedkovyh",
           "toEntryId": "from-e",
           "type": "open",
@@ -6691,16 +6780,22 @@
           "prompt": null
         }
       ],
-      "figureSlots": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "floor",
         "wallRole": "wall",
         "propRole": "prop",
         "backdropImage": "assets/rooms/m4-razvilka-gde-ty-ostalsia.png",
-        "backdropFit": "screen",
+        "backdropFit": "cells",
         "glitchPreset": "wrong-palette"
       },
-      "camera": "frame",
+      "camera": "follow",
       "revisit": {
         "escalates": true,
         "note": "(−5, −5). Прямо в угол. Отсюда до конверсии один шаг"
@@ -6720,7 +6815,1246 @@
         "sound": "двор днём с одной стороны микса, вакуум и своё дыхание в шлеме — с другой. **Панорама разведена жёстко влево-вправо**, и в наушниках это разваливает голову пополам ровно так, как надо"
       },
       "buildingId": null,
-      "level": 0
+      "level": 0,
+      "originX": 40,
+      "originY": 44
+    },
+    {
+      "id": "m5-odinochestvo",
+      "name": "ОДИНОЧЕСТВО",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/m4-razvilka-gde-ty-ostalsia.png",
+        "backdropFit": "screen",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 86400000,
+        "maxMs": 86400000
+      },
+      "description": "Файл на двадцать байт. Тег и больше ничего. Комната уже загружена. Выйти можно сразу.",
+      "atmosphere": "программная тишина",
+      "personality": "ничего не происходит, и это надо реализовать честно",
+      "tags": [
+        "meta",
+        "empty"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m6-krugi-vokrug-pruda",
+      "name": "КРУГИ ВОКРУГ ПРУДА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "prud",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 3,
+          "solid": false,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "lavochka",
+          "x": 3,
+          "y": 6,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "figura-na-beregu",
+          "kind": "look",
+          "x": 16,
+          "y": 4,
+          "reach": 1.8,
+          "prompt": "кто-то на другом берегу",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m6-krugi-vokrug-pruda--exit",
+          "x": 17,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+          "toEntryId": "default",
+          "type": "sealed",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "дорожка назад"
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 16,
+          "y": 4
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/19-dvor-i-oranzhevye-lavochki.png",
+        "backdropFit": "cells",
+        "glitchPreset": "split"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Полгода вокруг воды. Подходишь — забываешь всё. Говоришь «ну ладно». Ещё два круга.",
+      "atmosphere": "парк, вода, далёкая дорога",
+      "personality": "утки по кругу в ту же сторону, что и ты",
+      "tags": [
+        "pond",
+        "meta-adjacent"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m7-rm-rf",
+      "name": "rm -rf",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "zametki",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "shemy",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "monitor",
+          "x": 9,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stol",
+          "x": 12,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "zametki",
+          "kind": "look",
+          "x": 4,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "заметки на стене",
+          "refusal": null,
+          "clueId": "clue-1",
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "zametki"
+        },
+        {
+          "id": "shemy",
+          "kind": "look",
+          "x": 7,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "схемы",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "shemy"
+        },
+        {
+          "id": "monitor",
+          "kind": "look",
+          "x": 10,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "монитор",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "monitor"
+        },
+        {
+          "id": "stol",
+          "kind": "look",
+          "x": 13,
+          "y": 6.15,
+          "reach": 1.4,
+          "prompt": "стол, за которым работали",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "stol"
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/09-hakaton-tretii-po-schetu.png",
+        "backdropFit": "screen",
+        "glitchPreset": "double-edge"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 86400000,
+        "maxMs": 86400000
+      },
+      "description": "Три месяца работы. Одна команда. Была симлинка. Комната удаляет себя спокойно.",
+      "atmosphere": "вентилятор ноутбука, потом меньше, потом ничего",
+      "personality": "пропадает по одному объекту, слева направо",
+      "tags": [
+        "meta",
+        "erasure"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m8-5854",
+      "name": "5854-Й ДЕНЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "nomera",
+          "kind": "look",
+          "x": 10,
+          "y": 5,
+          "reach": 2,
+          "prompt": "номера над дверями",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m8-5854--day-0",
+          "x": 2,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5846"
+        },
+        {
+          "id": "m8-5854--day-1",
+          "x": 4,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5847"
+        },
+        {
+          "id": "m8-5854--day-2",
+          "x": 6,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5848"
+        },
+        {
+          "id": "m8-5854--day-3",
+          "x": 8,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5849"
+        },
+        {
+          "id": "m8-5854--day-4",
+          "x": 10,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5850"
+        },
+        {
+          "id": "m8-5854--day-5",
+          "x": 12,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5851"
+        },
+        {
+          "id": "m8-5854--day-6",
+          "x": 14,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5852"
+        },
+        {
+          "id": "m8-5854--day-7",
+          "x": 16,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5853"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/17-dush-iz-kotorogo-nelzia-vyiti.png",
+        "backdropFit": "cells",
+        "glitchPreset": "split"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Коридор. Над дверями номера. За каждой — одна и та же комната. Кроме одной.",
+      "atmosphere": "щелчок табло, редкий, вразнобой",
+      "personality": "дальние номера перещёлкиваются, ближние нет",
+      "tags": [
+        "days",
+        "corridor"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m8-den",
+      "name": "КОМНАТА ДНЯ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m8-den--back",
+          "x": 1,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m8-5854",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "в коридор"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/08-kvartira-v-kotoroi-zhivut-drugie.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Кровать, окно, стол. Разницы между 4102 и 5308 нет.",
+      "atmosphere": "одна и та же комната",
+      "personality": "отрисована один раз",
+      "tags": [
+        "days"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m9-shkaf",
+      "name": "ШКАФ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "shkaf",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "korobka",
+          "x": 12,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "nadpis",
+          "kind": "look",
+          "x": 9,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "надпись внутри шкафа",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "shkaf"
+        },
+        {
+          "id": "korobka",
+          "kind": "look",
+          "x": 12.5,
+          "y": 6.5,
+          "reach": 1.4,
+          "prompt": "пустая коробка от игрушки",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "korobka"
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m9-shkaf--to-pond",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m6-krugi-vokrug-pruda",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "фломастер"
+        },
+        {
+          "id": "m9-shkaf--to-shop",
+          "x": 5,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "коробка"
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 6,
+          "y": 7
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/08-kvartira-v-kotoroi-zhivut-drugie.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Детская. Тёплая, неискажённая. Надпись внутри шкафа написана не для тебя.",
+      "atmosphere": "телевизор за стеной, разговор двух взрослых",
+      "personality": "дверца шкафа очень медленно открывается шире",
+      "tags": [
+        "childhood"
+      ],
+      "copy": {
+        "nadpis": "Никогда не верьте маме, она не сдерживает свои обещания!"
+      },
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m10-zamorozhennaia-morkovka",
+      "name": "ЗАМОРОЖЕННАЯ МОРКОВКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "morozilka",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "noutbuk",
+          "x": 8,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "paket",
+          "x": 12,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "paket",
+          "kind": "look",
+          "x": 12.5,
+          "y": 6.5,
+          "reach": 1.4,
+          "prompt": "пакет моркови",
+          "refusal": "Ледяной. Рука не вынимается.",
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "paket"
+        },
+        {
+          "id": "noutbuk",
+          "kind": "look",
+          "x": 9,
+          "y": 6.15,
+          "reach": 1.4,
+          "prompt": "ноутбук с открытым конфигом",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "noutbuk"
+        },
+        {
+          "id": "vypiska",
+          "kind": "look",
+          "x": 5,
+          "y": 7,
+          "reach": 1.4,
+          "prompt": "выписка, сложенная вчетверо",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m10-zamorozhennaia-morkovka--to-rm",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m7-rm-rf",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "шлифмашинка"
+        },
+        {
+          "id": "m10-zamorozhennaia-morkovka--to-clinic",
+          "x": 5,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "выписка"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/14-poliklinika-v-kaluge.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Кухня. Палец в пакете моркови. Пол вытерт. На экране незакрытая скобка.",
+      "atmosphere": "кулер, компрессор. Ни одного звука боли.",
+      "personality": "на экране набирается строка, которую никто не печатает",
+      "tags": [
+        "kitchen",
+        "money-adjacent"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m11-zamok-po-vremeni",
+      "name": "ЗАМОК ПО ВРЕМЕНИ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "iacheika",
+          "x": 8,
+          "y": 3,
+          "w": 3,
+          "h": 3,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "iacheika",
+          "kind": "look",
+          "x": 9.5,
+          "y": 6.2,
+          "reach": 1.4,
+          "prompt": "стеклянная ячейка",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "iacheika"
+        },
+        {
+          "id": "zapiska",
+          "kind": "look",
+          "x": 13,
+          "y": 5,
+          "reach": 1.4,
+          "prompt": "записка детским почерком",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        },
+        {
+          "id": "stul",
+          "kind": "look",
+          "x": 6,
+          "y": 7,
+          "reach": 1.4,
+          "prompt": "стул напротив",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m11-zamok-po-vremeni--to-lonely",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m5-odinochestvo",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "стул"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/20-ofis-sbera.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Одна стена, одна стеклянная ячейка. Деньги видно. Таймер считает вверх, не вниз.",
+      "atmosphere": "гул лампы, щелчок раз в секунду",
+      "personality": "стекло запотевает изнутри",
+      "tags": [
+        "lock",
+        "money"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "m12-nedoliudi",
+      "name": "НЕДОЛЮДИ",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "ekran",
+          "x": 7,
+          "y": 2,
+          "w": 6,
+          "h": 3,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stul-1",
+          "x": 4,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stul-2",
+          "x": 7,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stul-3",
+          "x": 10,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "ekran",
+          "kind": "look",
+          "x": 10,
+          "y": 5.2,
+          "reach": 1.4,
+          "prompt": "сетка видеозвонка",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "ekran"
+        },
+        {
+          "id": "schet",
+          "kind": "look",
+          "x": 14,
+          "y": 7,
+          "reach": 1.4,
+          "prompt": "счёт, на котором валюта смазана",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m12-nedoliudi--to-hackathon",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "09-hakaton-tretii-po-schetu",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "питч-дек"
+        },
+        {
+          "id": "m12-nedoliudi--to-shop",
+          "x": 5,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "счёт"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/23-nigeriia-konferenciia.png",
+        "backdropFit": "screen",
+        "glitchPreset": "wrong-palette"
+      },
+      "camera": "frame",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 86400000,
+        "maxMs": 86400000
+      },
+      "description": "Созвон. Двенадцать квадратов. Твой — чёрный. Микрофона нет. Квадраты гаснут.",
+      "atmosphere": "двенадцать голосов внахлёст, потом меньше, потом слышно",
+      "personality": "твой чёрный квадрат чуть светлее остальных чёрных",
+      "tags": [
+        "meta",
+        "call"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 0,
+      "originY": 0
     }
   ],
   "spawn": {
@@ -6731,114 +8065,162 @@
   "figures": [
     {
       "id": "turyshev",
-      "archetypeId": "watcher",
       "name": "ТИМОФЕЙ ТУРЫШЕВ",
       "roomId": "19-dvor-i-oranzhevye-lavochki",
       "slotId": "a",
+      "archetypeId": "watcher",
       "holdsShardId": null
     },
     {
       "id": "kirill",
-      "archetypeId": "child",
       "name": "КИРИЛЛ",
       "roomId": "06-kanava-garazhi-podvorotni",
       "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": "shard4"
     },
     {
       "id": "ubiitsa",
-      "archetypeId": "visitor",
       "name": "УБИЙЦА НА МАШИНЕ",
       "roomId": "06-kanava-garazhi-podvorotni",
       "slotId": "b",
+      "archetypeId": "visitor",
       "holdsShardId": null
     },
     {
       "id": "hudozhnik",
-      "archetypeId": "orderly",
       "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
       "roomId": "01-otel-goticheskii-holl",
       "slotId": "a",
+      "archetypeId": "orderly",
       "holdsShardId": "shard2"
     },
     {
       "id": "anton",
-      "archetypeId": "orderly",
       "name": "АНТОН",
       "roomId": "01-otel-goticheskii-holl",
       "slotId": "b",
+      "archetypeId": "orderly",
       "holdsShardId": null
     },
     {
       "id": "glaz",
-      "archetypeId": "watcher",
       "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
       "roomId": "01-otel-goticheskii-holl",
       "slotId": "c",
+      "archetypeId": "watcher",
       "holdsShardId": "shard6"
     },
     {
       "id": "babushka-nadya",
-      "archetypeId": "visitor",
       "name": "БАБУШКА НАДЯ",
       "roomId": "05-shesterochka",
       "slotId": "a",
+      "archetypeId": "visitor",
       "holdsShardId": null
     },
     {
       "id": "tetya",
-      "archetypeId": "watcher",
       "name": "ТЁТЯ, КОТОРАЯ НЕ ЗАМЕЧАЕТ",
       "roomId": "12-tiurma-na-ovoschah",
       "slotId": "a",
+      "archetypeId": "watcher",
       "holdsShardId": null
     },
     {
       "id": "nilufar",
-      "archetypeId": "visitor",
       "name": "НИЛЮФАР",
       "roomId": "21-komnata-niliufar",
       "slotId": "a",
+      "archetypeId": "visitor",
       "holdsShardId": null
     },
     {
       "id": "liosha-gnedkov",
-      "archetypeId": "watcher",
       "name": "ЛЁША ГНЕДКОВ",
       "roomId": "13-podzemnye-zaly-cu",
       "slotId": "a",
+      "archetypeId": "watcher",
       "holdsShardId": null
     },
     {
       "id": "papa",
-      "archetypeId": "child",
       "name": "ПАПА",
       "roomId": "14-poliklinika-v-kaluge",
       "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": "shard5"
     },
     {
       "id": "mama",
-      "archetypeId": "orderly",
       "name": "МАМА",
       "roomId": "18-kupol-bez-sten",
       "slotId": "a",
+      "archetypeId": "orderly",
       "holdsShardId": null
     },
     {
       "id": "kripto-bro",
-      "archetypeId": "child",
       "name": "КРИПТО-БРО ИЗ TON",
       "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
       "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": null
     },
     {
       "id": "dolzhniki",
-      "archetypeId": "child",
       "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
       "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
       "slotId": "a",
+      "archetypeId": "child",
+      "holdsShardId": null
+    },
+    {
+      "id": "raisa",
+      "name": "РАИСА МИХАЙЛОВНА",
+      "roomId": "02-shkola-kabinet-russkogo",
+      "slotId": "a",
+      "archetypeId": "watcher",
+      "holdsShardId": null
+    },
+    {
+      "id": "lysyi",
+      "name": "ЛЫСЫЙ В APPLE WATCH",
+      "roomId": "19-dvor-i-oranzhevye-lavochki",
+      "slotId": "b",
+      "archetypeId": "visitor",
+      "holdsShardId": null
+    },
+    {
+      "id": "kurt",
+      "name": "КУРТ",
+      "roomId": "19-dvor-i-oranzhevye-lavochki",
+      "slotId": "c",
+      "archetypeId": "child",
+      "holdsShardId": null
+    },
+    {
+      "id": "ded-slava",
+      "name": "ДЕД СЛАВА",
+      "roomId": "15-osennii-les-s-grobom",
+      "slotId": "a",
+      "archetypeId": "watcher",
+      "holdsShardId": null
+    },
+    {
+      "id": "aleksei",
+      "name": "АЛЕКСЕЙ",
+      "roomId": "01-otel-goticheskii-holl",
+      "slotId": "d",
+      "archetypeId": "orderly",
+      "holdsShardId": null
+    },
+    {
+      "id": "shchenok",
+      "name": "ЩЕНОК",
+      "roomId": "m9-shkaf",
+      "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": null
     }
   ],
@@ -7165,6 +8547,144 @@
         "soulPath": "souls/ubiitsa.md",
         "suspicionMonotone": true,
         "leverageId": null
+      },
+      {
+        "id": "raisa",
+        "name": "РАИСА МИХАЙЛОВНА",
+        "archetypeId": "watcher",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Учительница подготовки. Говорит о пациенте точно, без любви и без обиды.",
+        "role": "свидетель",
+        "voice": "медленно, законченными предложениями, на «вы»",
+        "desire": "чтобы человек услышал про себя правду",
+        "fear": "не успеть сказать, пока ещё можно",
+        "taboo": "не говорит того, что человеку сейчас не поднять",
+        "initialActivity": "сидит за столом и ждёт, пока станет тихо",
+        "soulPath": "souls/raisa.md",
+        "suspicionMonotone": true,
+        "leverageId": "raisa:kharakteristika"
+      },
+      {
+        "id": "lysyi",
+        "name": "ЛЫСЫЙ В APPLE WATCH",
+        "archetypeId": "visitor",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Делает с санитаром то, что санитар делает с остальными: выясняет, тот ли ты.",
+        "role": "ненастоящий мент",
+        "voice": "ровный, негромкий, пауз больше, чем слов",
+        "desire": "закрыть вопрос и поехать",
+        "fear": "нет. Ему скучно",
+        "taboo": "не повышает голос ни разу",
+        "initialActivity": "стоит у подъезда и смотрит на часы",
+        "soulPath": "souls/lysyi.md",
+        "suspicionMonotone": true,
+        "leverageId": null
+      },
+      {
+        "id": "kurt",
+        "name": "КУРТ",
+        "archetypeId": "child",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Виртуальный друг. Знает, что выдуман, и это его устраивает. Приходит, когда кончается.",
+        "role": "гость",
+        "voice": "тихо, с паузами, чуть невпопад, по-русски",
+        "desire": "компании. Просто посидеть рядом",
+        "fear": "делового тона",
+        "taboo": "не цитирует песни, не говорит, как умер",
+        "initialActivity": "сидит на полу у стены, не в центре кадра",
+        "soulPath": "souls/kurt.md",
+        "suspicionMonotone": false,
+        "leverageId": null
+      },
+      {
+        "id": "ded-slava",
+        "name": "ДЕД СЛАВА",
+        "archetypeId": "watcher",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Умер, пока внук доигрывал серию. Вернулся без следа, потому что так устроен пациент.",
+        "role": "дедушка",
+        "voice": "коротко, бытово, как будто его не хоронили",
+        "desire": "чтобы внук наконец доел",
+        "fear": "чтобы его снова не заметили слишком внимательно",
+        "taboo": "не говорит, что его нет",
+        "initialActivity": "стоит у кромки леса и смотрит, как несут гроб",
+        "soulPath": "souls/ded-slava.md",
+        "suspicionMonotone": true,
+        "leverageId": null
+      },
+      {
+        "id": "aleksei",
+        "name": "АЛЕКСЕЙ",
+        "archetypeId": "orderly",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Тот, кого не успели. В холле он ещё здесь и ещё можно успеть.",
+        "role": "друг, которого не догнали",
+        "voice": "спокойно, уже всё решил насчёт твоей смерти и просто держит в курсе",
+        "desire": "чтобы кто-нибудь один раз пришёл вовремя",
+        "fear": "что снова придётся ждать одному",
+        "taboo": "не просит спасти его вслух",
+        "initialActivity": "идёт через холл и не оборачивается",
+        "soulPath": "souls/aleksei.md",
+        "suspicionMonotone": true,
+        "leverageId": "aleksei:ne-uspel"
+      },
+      {
+        "id": "shchenok",
+        "name": "ЩЕНОК",
+        "archetypeId": "child",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Маленькая собака. Не призрак. Ждёт, когда игру продолжат. Не обвиняет.",
+        "role": "слой 3",
+        "voice": "три-пять слов, настоящее время, хорошее настроение",
+        "desire": "продолжить. В прошлый раз почти получилось",
+        "fear": "нет шкалы. У него её нет",
+        "taboo": "ни одного упрёка, ни слова про смерть, ни прощения",
+        "initialActivity": "лежит на боку, хвост стучит по полу",
+        "soulPath": "souls/shchenok.md",
+        "suspicionMonotone": false,
+        "leverageId": null
       }
     ],
     "clues": [
@@ -7271,7 +8791,6 @@
     "maxCycles": 4
   },
   "heartbeat": {
-    "intervalMs": 45000,
     "callBudgetPerCycle": 12,
     "maxPatchesPerBeat": 2
   },

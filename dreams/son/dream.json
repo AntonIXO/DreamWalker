@@ -2415,8 +2415,8 @@
       "width": 20,
       "height": 11,
       "cells": [
-        "####################",
-        "#==================#",
+        "#########__#########",
+        "#========__========#",
         "#..................#",
         "#..................#",
         "#..................#",
@@ -2570,6 +2570,12 @@
           "x": 1.5,
           "y": 6,
           "facing": "e"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
         }
       ],
       "doors": [
@@ -2601,6 +2607,22 @@
           "threshold": "door",
           "levelDelta": 0,
           "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "10-komnata-s-grobami--n-path-6-0-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-6-0-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
           "toFigureId": null,
           "keyId": null,
           "prompt": "на тропу"
@@ -5210,7 +5232,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "####################"
+        "#########__#########"
       ],
       "cellVariants": {},
       "props": [
@@ -5337,6 +5359,12 @@
           "x": 18.5,
           "y": 6,
           "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
         }
       ],
       "doors": [
@@ -5387,6 +5415,22 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "на улицу"
+        },
+        {
+          "id": "21-komnata-niliufar--s-path-3-3-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-3-3-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
         }
       ],
       "figureSlots": [
@@ -5446,7 +5490,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "####################"
+        "########___#########"
       ],
       "cellVariants": {},
       "props": [
@@ -5569,6 +5613,12 @@
           "facing": "w"
         },
         {
+          "id": "from-s",
+          "x": 9.5,
+          "y": 9.7,
+          "facing": "n"
+        },
+        {
           "id": "from-w",
           "x": 1.5,
           "y": 6,
@@ -5607,6 +5657,22 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "на улицу"
+        },
+        {
+          "id": "22-kreiser--s-path-5-2-s",
+          "x": 8,
+          "y": 10,
+          "w": 3,
+          "h": 1,
+          "toRoomId": "path-5-2-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
         },
         {
           "id": "22-kreiser--w-path-4-2-e",
@@ -5682,7 +5748,7 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "####################"
+        "#########__#########"
       ],
       "cellVariants": {},
       "props": [
@@ -5803,6 +5869,12 @@
           "x": 1.5,
           "y": 6,
           "facing": "e"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
         }
       ],
       "doors": [
@@ -5834,6 +5906,22 @@
           "threshold": "door",
           "levelDelta": 0,
           "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "23-nigeriia-konferenciia--s-path-6-2-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-6-2-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
           "toFigureId": null,
           "keyId": null,
           "prompt": "на улицу"
@@ -5891,12 +5979,12 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "_..................#",
-        "_..................#",
+        "_.................._",
+        "_.................._",
         "#..................#",
         "#..................#",
         "#..................#",
-        "####################"
+        "#########__#########"
       ],
       "cellVariants": {},
       "props": [
@@ -6013,6 +6101,18 @@
           "facing": "e"
         },
         {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
+        },
+        {
           "id": "from-n",
           "x": 9.5,
           "y": 2.3,
@@ -6035,6 +6135,38 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "на улицу"
+        },
+        {
+          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--e-path-4-3-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-4-3-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--s-path-4-3-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-4-3-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
         },
         {
           "id": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--n-path-4-2-s",
@@ -6479,8 +6611,8 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "_..................#",
-        "_..................#",
+        "_.................._",
+        "_.................._",
         "#..................#",
         "#..................#",
         "#..................#",
@@ -6503,6 +6635,12 @@
           "facing": "e"
         },
         {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
           "id": "from-s",
           "x": 10,
           "y": 9.7,
@@ -6522,6 +6660,22 @@
           "threshold": "door",
           "levelDelta": 0,
           "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m2-miasnaia-geometriia--e-path-5-0-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-5-0-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
           "toFigureId": null,
           "keyId": null,
           "prompt": "на тропу"
@@ -6716,12 +6870,12 @@
         "#..................#",
         "#..................#",
         "#..................#",
-        "_..................#",
-        "_..................#",
+        "_.................._",
+        "_.................._",
         "#..................#",
         "#..................#",
         "#..................#",
-        "####################"
+        "#########__#########"
       ],
       "cellVariants": {},
       "props": [],
@@ -6744,6 +6898,18 @@
           "x": 10,
           "y": 2.3,
           "facing": "s"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
         }
       ],
       "doors": [
@@ -6775,6 +6941,38 @@
           "threshold": "door",
           "levelDelta": 0,
           "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m4-razvilka-gde-ty-ostalsia--e-path-2-4-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-2-4-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m4-razvilka-gde-ty-ostalsia--s-path-2-4-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-2-4-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
           "toFigureId": null,
           "keyId": null,
           "prompt": "на тропу"
@@ -6818,6 +7016,1735 @@
       "level": 0,
       "originX": 68,
       "originY": 84
+    },
+    {
+      "id": "m5-odinochestvo",
+      "name": "ОДИНОЧЕСТВО",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_.................._",
+        "_.................._",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m5-odinochestvo--n-path-3-3-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-3-3-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m5-odinochestvo--w-path-2-4-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-2-4-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m5-odinochestvo--e-path-3-4-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-3-4-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/m4-razvilka-gde-ty-ostalsia.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 86400000,
+        "maxMs": 86400000
+      },
+      "description": "Файл на двадцать байт. Тег и больше ничего. Комната уже загружена. Выйти можно сразу.",
+      "atmosphere": "программная тишина",
+      "personality": "ничего не происходит, и это надо реализовать честно",
+      "tags": [
+        "meta",
+        "empty"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 102,
+      "originY": 84
+    },
+    {
+      "id": "m6-krugi-vokrug-pruda",
+      "name": "КРУГИ ВОКРУГ ПРУДА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_.................._",
+        "_.................._",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "prud",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 3,
+          "solid": false,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "lavochka",
+          "x": 3,
+          "y": 6,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "figura-na-beregu",
+          "kind": "look",
+          "x": 16,
+          "y": 4,
+          "reach": 1.8,
+          "prompt": "кто-то на другом берегу",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m6-krugi-vokrug-pruda--n-path-4-3-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-4-3-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m6-krugi-vokrug-pruda--w-path-3-4-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-3-4-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m6-krugi-vokrug-pruda--e-path-4-4-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-4-4-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m6-krugi-vokrug-pruda--exit",
+          "x": 17,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "19-dvor-i-oranzhevye-lavochki",
+          "toEntryId": "default",
+          "type": "sealed",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "дорожка назад"
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 16,
+          "y": 4
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/19-dvor-i-oranzhevye-lavochki.png",
+        "backdropFit": "cells",
+        "glitchPreset": "split"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Полгода вокруг воды. Подходишь — забываешь всё. Говоришь «ну ладно». Ещё два круга.",
+      "atmosphere": "парк, вода, далёкая дорога",
+      "personality": "утки по кругу в ту же сторону, что и ты",
+      "tags": [
+        "pond",
+        "meta-adjacent"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 136,
+      "originY": 84
+    },
+    {
+      "id": "m7-rm-rf",
+      "name": "rm -rf",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_.................._",
+        "_.................._",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "zametki",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "shemy",
+          "x": 6,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "monitor",
+          "x": 9,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stol",
+          "x": 12,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "zametki",
+          "kind": "look",
+          "x": 4,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "заметки на стене",
+          "refusal": null,
+          "clueId": "clue-1",
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "zametki"
+        },
+        {
+          "id": "shemy",
+          "kind": "look",
+          "x": 7,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "схемы",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "shemy"
+        },
+        {
+          "id": "monitor",
+          "kind": "look",
+          "x": 10,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "монитор",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "monitor"
+        },
+        {
+          "id": "stol",
+          "kind": "look",
+          "x": 13,
+          "y": 6.15,
+          "reach": 1.4,
+          "prompt": "стол, за которым работали",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "stol"
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m7-rm-rf--w-path-4-4-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-4-4-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m7-rm-rf--e-path-5-4-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-5-4-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "m7-rm-rf--n-path-5-3-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-5-3-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/09-hakaton-tretii-po-schetu.png",
+        "backdropFit": "cells",
+        "glitchPreset": "double-edge"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 86400000,
+        "maxMs": 86400000
+      },
+      "description": "Три месяца работы. Одна команда. Была симлинка. Комната удаляет себя спокойно.",
+      "atmosphere": "вентилятор ноутбука, потом меньше, потом ничего",
+      "personality": "пропадает по одному объекту, слева направо",
+      "tags": [
+        "meta",
+        "erasure"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 170,
+      "originY": 84
+    },
+    {
+      "id": "m8-5854",
+      "name": "5854-Й ДЕНЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_..................#",
+        "_..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#########__#########"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [
+        {
+          "id": "nomera",
+          "kind": "look",
+          "x": 10,
+          "y": 5,
+          "reach": 2,
+          "prompt": "номера над дверями",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m8-5854--w-path-5-4-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-5-4-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "m8-5854--s-path-6-4-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-6-4-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "m8-5854--n-path-6-3-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-6-3-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "m8-5854--day-0",
+          "x": 2,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5846"
+        },
+        {
+          "id": "m8-5854--day-1",
+          "x": 4,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5847"
+        },
+        {
+          "id": "m8-5854--day-2",
+          "x": 6,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5848"
+        },
+        {
+          "id": "m8-5854--day-3",
+          "x": 8,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5849"
+        },
+        {
+          "id": "m8-5854--day-4",
+          "x": 1,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5850"
+        },
+        {
+          "id": "m8-5854--day-5",
+          "x": 12,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5851"
+        },
+        {
+          "id": "m8-5854--day-6",
+          "x": 14,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5852"
+        },
+        {
+          "id": "m8-5854--day-7",
+          "x": 16,
+          "y": 1,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "5853"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/17-dush-iz-kotorogo-nelzia-vyiti.png",
+        "backdropFit": "cells",
+        "glitchPreset": "split"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Коридор. Над дверями номера. За каждой — одна и та же комната. Кроме одной.",
+      "atmosphere": "щелчок табло, редкий, вразнобой",
+      "personality": "дальние номера перещёлкиваются, ближние нет",
+      "tags": [
+        "days",
+        "corridor"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 204,
+      "originY": 84
+    },
+    {
+      "id": "m8-den",
+      "name": "КОМНАТА ДНЯ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m8-den--n-path-6-4-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-6-4-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/08-kvartira-v-kotoroi-zhivut-drugie.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Кровать, окно, стол. Разницы между 4102 и 5308 нет.",
+      "atmosphere": "одна и та же комната",
+      "personality": "отрисована один раз",
+      "tags": [
+        "days"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 204,
+      "originY": 105
+    },
+    {
+      "id": "m9-shkaf",
+      "name": "ШКАФ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "####################"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "shkaf",
+          "x": 8,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "korobka",
+          "x": 12,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "nadpis",
+          "kind": "look",
+          "x": 9,
+          "y": 5.15,
+          "reach": 1.4,
+          "prompt": "надпись внутри шкафа",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "shkaf"
+        },
+        {
+          "id": "korobka",
+          "kind": "look",
+          "x": 12.5,
+          "y": 6.5,
+          "reach": 1.4,
+          "prompt": "пустая коробка от игрушки",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "korobka"
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m9-shkaf--n-path-2-4-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-2-4-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m9-shkaf--to-pond",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m6-krugi-vokrug-pruda",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "фломастер"
+        },
+        {
+          "id": "m9-shkaf--to-shop",
+          "x": 5,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "коробка"
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 6,
+          "y": 7
+        }
+      ],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/08-kvartira-v-kotoroi-zhivut-drugie.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Детская. Тёплая, неискажённая. Надпись внутри шкафа написана не для тебя.",
+      "atmosphere": "телевизор за стеной, разговор двух взрослых",
+      "personality": "дверца шкафа очень медленно открывается шире",
+      "tags": [
+        "childhood"
+      ],
+      "copy": {
+        "nadpis": "Никогда не верьте маме, она не сдерживает свои обещания!"
+      },
+      "buildingId": null,
+      "level": 0,
+      "originX": 68,
+      "originY": 105
+    },
+    {
+      "id": "m10-zamorozhennaia-morkovka",
+      "name": "ЗАМОРОЖЕННАЯ МОРКОВКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_.................._",
+        "_.................._",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#########__#########"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "morozilka",
+          "x": 3,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "noutbuk",
+          "x": 8,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "paket",
+          "x": 12,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "paket",
+          "kind": "look",
+          "x": 12.5,
+          "y": 6.5,
+          "reach": 1.4,
+          "prompt": "пакет моркови",
+          "refusal": "Ледяной. Рука не вынимается.",
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "paket"
+        },
+        {
+          "id": "noutbuk",
+          "kind": "look",
+          "x": 9,
+          "y": 6.15,
+          "reach": 1.4,
+          "prompt": "ноутбук с открытым конфигом",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "noutbuk"
+        },
+        {
+          "id": "vypiska",
+          "kind": "look",
+          "x": 5,
+          "y": 7,
+          "reach": 1.4,
+          "prompt": "выписка, сложенная вчетверо",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m10-zamorozhennaia-morkovka--n-path-5-2-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-5-2-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m10-zamorozhennaia-morkovka--w-path-4-3-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-4-3-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m10-zamorozhennaia-morkovka--e-path-5-3-e",
+          "x": 19,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-5-3-e",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m10-zamorozhennaia-morkovka--s-path-5-3-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-5-3-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m10-zamorozhennaia-morkovka--to-rm",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m7-rm-rf",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "шлифмашинка"
+        },
+        {
+          "id": "m10-zamorozhennaia-morkovka--to-clinic",
+          "x": 5,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "выписка"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/14-poliklinika-v-kaluge.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Кухня. Палец в пакете моркови. Пол вытерт. На экране незакрытая скобка.",
+      "atmosphere": "кулер, компрессор. Ни одного звука боли.",
+      "personality": "на экране набирается строка, которую никто не печатает",
+      "tags": [
+        "kitchen",
+        "money-adjacent"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 170,
+      "originY": 63
+    },
+    {
+      "id": "m11-zamok-po-vremeni",
+      "name": "ЗАМОК ПО ВРЕМЕНИ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "####################",
+        "#==================#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_..................#",
+        "_..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#########__#########"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "iacheika",
+          "x": 8,
+          "y": 3,
+          "w": 3,
+          "h": 3,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "iacheika",
+          "kind": "look",
+          "x": 9.5,
+          "y": 6.2,
+          "reach": 1.4,
+          "prompt": "стеклянная ячейка",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "iacheika"
+        },
+        {
+          "id": "zapiska",
+          "kind": "look",
+          "x": 13,
+          "y": 5,
+          "reach": 1.4,
+          "prompt": "записка детским почерком",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        },
+        {
+          "id": "stul",
+          "kind": "look",
+          "x": 6,
+          "y": 7,
+          "reach": 1.4,
+          "prompt": "стул напротив",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m11-zamok-po-vremeni--w-path-5-0-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-5-0-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m11-zamok-po-vremeni--s-path-6-0-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-6-0-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m11-zamok-po-vremeni--to-lonely",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m5-odinochestvo",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "стул"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/20-ofis-sbera.png",
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Одна стена, одна стеклянная ячейка. Деньги видно. Таймер считает вверх, не вниз.",
+      "atmosphere": "гул лампы, щелчок раз в секунду",
+      "personality": "стекло запотевает изнутри",
+      "tags": [
+        "lock",
+        "money"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 204,
+      "originY": 0
+    },
+    {
+      "id": "m12-nedoliudi",
+      "name": "НЕДОЛЮДИ",
+      "kind": "meta",
+      "tileSize": 16,
+      "width": 20,
+      "height": 11,
+      "cells": [
+        "#########__#########",
+        "#========__========#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "_..................#",
+        "_..................#",
+        "#..................#",
+        "#..................#",
+        "#..................#",
+        "#########__#########"
+      ],
+      "cellVariants": {},
+      "props": [
+        {
+          "id": "ekran",
+          "x": 7,
+          "y": 2,
+          "w": 6,
+          "h": 3,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stul-1",
+          "x": 4,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stul-2",
+          "x": 7,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        },
+        {
+          "id": "stul-3",
+          "x": 10,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "role": "prop",
+          "image": null
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "ekran",
+          "kind": "look",
+          "x": 10,
+          "y": 5.2,
+          "reach": 1.4,
+          "prompt": "сетка видеозвонка",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "ekran"
+        },
+        {
+          "id": "schet",
+          "kind": "look",
+          "x": 14,
+          "y": 7,
+          "reach": 1.4,
+          "prompt": "счёт, на котором валюта смазана",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": null
+        }
+      ],
+      "entries": [
+        {
+          "id": "default",
+          "x": 10,
+          "y": 9,
+          "facing": "n"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 2.3,
+          "facing": "s"
+        },
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.7,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "m12-nedoliudi--n-path-6-2-s",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "toRoomId": "path-6-2-s",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "m12-nedoliudi--w-path-5-3-e",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "path-5-3-e",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на тропу"
+        },
+        {
+          "id": "m12-nedoliudi--s-path-6-3-s",
+          "x": 9,
+          "y": 10,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "path-6-3-s",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "на улицу"
+        },
+        {
+          "id": "m12-nedoliudi--to-hackathon",
+          "x": 1,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "09-hakaton-tretii-po-schetu",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "питч-дек"
+        },
+        {
+          "id": "m12-nedoliudi--to-shop",
+          "x": 5,
+          "y": 1,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "05-shesterochka",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "счёт"
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "floor",
+        "wallRole": "wall",
+        "propRole": "prop",
+        "backdropImage": "assets/rooms/23-nigeriia-konferenciia.png",
+        "backdropFit": "cells",
+        "glitchPreset": "wrong-palette"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": {
+        "minMs": 86400000,
+        "maxMs": 86400000
+      },
+      "description": "Созвон. Двенадцать квадратов. Твой — чёрный. Микрофона нет. Квадраты гаснут.",
+      "atmosphere": "двенадцать голосов внахлёст, потом меньше, потом слышно",
+      "personality": "твой чёрный квадрат чуть светлее остальных чёрных",
+      "tags": [
+        "meta",
+        "call"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0,
+      "originX": 204,
+      "originY": 63
     },
     {
       "id": "path-2-2-e",
@@ -10482,6 +12409,109 @@
       "level": 0
     },
     {
+      "id": "path-3-3-s",
+      "name": "КОРЯВАЯ ЩЕЛЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 102,
+      "originY": 74,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "ttttttttgppgtttttttt",
+        "tttttttthpphtttttttt",
+        "ttttttttgppgttpgtttt",
+        "tttttttthppgtthttttt",
+        "tttttttthpphtttttttt",
+        "tttttttthpphtttttttt",
+        "ttttttttgppgtttttttt",
+        "ttttttttgppgtttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-3-3-s--n-21-komnata-niliufar",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "21-komnata-niliufar",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-3-3-s--s-m5-odinochestvo",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m5-odinochestvo",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 13,
+          "y": 2
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
       "id": "path-5-2-e",
       "name": "УЗКИЙ ПРОХОД",
       "kind": "place",
@@ -10549,6 +12579,407 @@
           "threshold": "door",
           "levelDelta": 0,
           "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-5-2-s",
+      "name": "ВЫТОПТАННАЯ ЩЕЛЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 170,
+      "originY": 53,
+      "cells": [
+        "tttttttt___ttttttttt",
+        "tttttttgpphttttttttt",
+        "ttttttthppgtttpgtttt",
+        "tttttttgpphttthttttt",
+        "tttttttgppgttttttttt",
+        "ttttttttgpphtttttttt",
+        "ttttttttgppgtttttttt",
+        "ttttttttgppgtttttttt",
+        "tttttttthppgtttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 9.5,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-5-2-s--n-22-kreiser",
+          "x": 8,
+          "y": 0,
+          "w": 3,
+          "h": 1,
+          "toRoomId": "22-kreiser",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-5-2-s--s-m10-zamorozhennaia-morkovka",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m10-zamorozhennaia-morkovka",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 12,
+          "y": 5
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-6-2-s",
+      "name": "ГЛУХОЙ ПЕРЕУЛОК",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 204,
+      "originY": 53,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttthpphtttttttt",
+        "tttttttthpphtttttttt",
+        "tttttttthppgtttttttt",
+        "tttttttthppgtttttttt",
+        "ttttttttgpphttpgtttt",
+        "tttttttthppgtthttttt",
+        "ttttttttgppgtttttttt",
+        "ttttttttgpphtttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-6-2-s--n-23-nigeriia-konferenciia",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "23-nigeriia-konferenciia",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-6-2-s--s-m12-nedoliudi",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m12-nedoliudi",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-4-3-e",
+      "name": "ВЕРХНЯЯ ПРОСЕКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 156,
+      "originY": 63,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttthttttttttt",
+        "_pppppppppppp_",
+        "_pppppppppppp_",
+        "tttpgttttttttt",
+        "ttthtttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-4-3-e--w-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-4-3-e--e-m10-zamorozhennaia-morkovka",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m10-zamorozhennaia-morkovka",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 6
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-4-3-s",
+      "name": "ЧУЖАЯ ТРОПА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 136,
+      "originY": 74,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttthppgttttpgtt",
+        "ttttttttgpphtttthttt",
+        "ttttttttgppgtttttttt",
+        "ttttttttgppgtttttttt",
+        "ttttttttgpphtttttttt",
+        "ttttttttgpphtttttttt",
+        "tttttttttppttttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-4-3-s--n-24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-4-3-s--s-m6-krugi-vokrug-pruda",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m6-krugi-vokrug-pruda",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
           "toFigureId": null,
           "keyId": null,
           "prompt": null
@@ -10873,6 +13304,110 @@
       "level": 0
     },
     {
+      "id": "path-5-0-e",
+      "name": "КОРЯВАЯ ГРЯДА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 190,
+      "originY": 0,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tggggghggggggt",
+        "_pppppppppppp_",
+        "_pppppgpppppp_",
+        "tgggghgggggggt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-5-0-e--w-m2-miasnaia-geometriia",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m2-miasnaia-geometriia",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-5-0-e--e-m11-zamok-po-vremeni",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m11-zamok-po-vremeni",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 9,
+          "y": 4
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
       "id": "path-5-0-s",
       "name": "КОРОТКАЯ ОБХОД",
       "kind": "place",
@@ -11129,6 +13664,999 @@
           "w": 2,
           "h": 1,
           "toRoomId": "14-poliklinika-v-kaluge",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-2-4-e",
+      "name": "ВЕРХНЯЯ ТРОПА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 88,
+      "originY": 84,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttpgttttttttt",
+        "_pphppppppppp_",
+        "_pppppppppppp_",
+        "ttthtttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-2-4-e--w-m4-razvilka-gde-ty-ostalsia",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m4-razvilka-gde-ty-ostalsia",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-2-4-e--e-m5-odinochestvo",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m5-odinochestvo",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-2-4-s",
+      "name": "ЗАБЫТАЯ ТРОПА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 68,
+      "originY": 95,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttthpphtttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttpptttttpgtt",
+        "tttttttttppttttthttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-2-4-s--n-m4-razvilka-gde-ty-ostalsia",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m4-razvilka-gde-ty-ostalsia",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-2-4-s--s-m9-shkaf",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m9-shkaf",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-3-4-e",
+      "name": "СЫРАЯ КРОМКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 122,
+      "originY": 84,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttghhhpghgttt",
+        "_pppppphppppp_",
+        "_pppppppppppp_",
+        "ttthghhhhhgttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-3-4-e--w-m5-odinochestvo",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m5-odinochestvo",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-3-4-e--e-m6-krugi-vokrug-pruda",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m6-krugi-vokrug-pruda",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 11,
+          "y": 5
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-4-4-e",
+      "name": "КОРОТКАЯ ТРОПА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 156,
+      "originY": 84,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "ttpgtttttttttt",
+        "tghggggggggggt",
+        "_pppppppppppp_",
+        "_pppppppppppp_",
+        "tggggggggggggt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-4-4-e--w-m6-krugi-vokrug-pruda",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m6-krugi-vokrug-pruda",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-4-4-e--e-m7-rm-rf",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m7-rm-rf",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 11,
+          "y": 4
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-5-4-e",
+      "name": "ПУСТОЙ КАРМАН",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 190,
+      "originY": 84,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tggggggggggggt",
+        "_pppppppppppp_",
+        "_pppppppppppp_",
+        "tggggggggpgggt",
+        "ttttttttthtttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-5-4-e--w-m7-rm-rf",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m7-rm-rf",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-5-4-e--e-m8-5854",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m8-5854",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-6-4-s",
+      "name": "НОЧНОЙ КАРМАН",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 204,
+      "originY": 95,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttpptttttpgtt",
+        "tttttttthpphtttthttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-6-4-s--n-m8-5854",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m8-5854",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-6-4-s--s-m8-den",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m8-den",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-5-3-e",
+      "name": "ТИХАЯ КРОМКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 190,
+      "originY": 63,
+      "cells": [
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tgghggghgggggt",
+        "_pppppgpppppp_",
+        "_pppphppppppp_",
+        "tghgghhggghhgt",
+        "tttttttttttttt",
+        "tttttttttttttt",
+        "tttttttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-5-3-e--w-m10-zamorozhennaia-morkovka",
+          "x": 0,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m10-zamorozhennaia-morkovka",
+          "toEntryId": "from-e",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "e",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-5-3-e--e-m12-nedoliudi",
+          "x": 13,
+          "y": 5,
+          "w": 1,
+          "h": 2,
+          "toRoomId": "m12-nedoliudi",
+          "toEntryId": "from-w",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "w",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-5-3-s",
+      "name": "СЫРАЯ ГРЯДА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 170,
+      "originY": 74,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttpgtthpphtttttttt",
+        "tttthttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-5-3-s--n-m10-zamorozhennaia-morkovka",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m10-zamorozhennaia-morkovka",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-5-3-s--s-m7-rm-rf",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m7-rm-rf",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 12,
+          "y": 3
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-6-0-s",
+      "name": "ВЕРХНЯЯ ОБХОД",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 204,
+      "originY": 11,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttpgtthpphtttttttt",
+        "tttthttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-6-0-s--n-m11-zamok-po-vremeni",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m11-zamok-po-vremeni",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-6-0-s--s-10-komnata-s-grobami",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "10-komnata-s-grobami",
+          "toEntryId": "from-n",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "n",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        }
+      ],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "path-6-3-s",
+      "name": "ГЛУХОЙ СЪЕЗД",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 204,
+      "originY": 74,
+      "cells": [
+        "ttttttttt__ttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttthpphtttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "tttttttttpptttpgtttt",
+        "tttttttttppttthttttt",
+        "tttttttttppttttttttt",
+        "tttttttttppttttttttt",
+        "ttttttttt__ttttttttt"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [
+        {
+          "id": "path-6-3-s--n-m12-nedoliudi",
+          "x": 9,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m12-nedoliudi",
+          "toEntryId": "from-s",
+          "type": "open",
+          "threshold": "door",
+          "levelDelta": 0,
+          "facing": "s",
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": null
+        },
+        {
+          "id": "path-6-3-s--s-m8-5854",
+          "x": 9,
+          "y": 9,
+          "w": 2,
+          "h": 1,
+          "toRoomId": "m8-5854",
           "toEntryId": "from-n",
           "type": "open",
           "threshold": "door",
@@ -11557,89 +15085,6 @@
       "level": 0
     },
     {
-      "id": "gap-5-0-e",
-      "name": "ДАЛЬНЯЯ ЗАРОСЛЬ",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 14,
-      "height": 11,
-      "originX": 190,
-      "originY": 0,
-      "cells": [
-        "gggggggppggggg",
-        "gggthggpptthtg",
-        "gghhghgpptghhg",
-        "ggpggtgppghtgg",
-        "gghggggppggggg",
-        "pppppppppppppp",
-        "pppppppppppppp",
-        "ghgthggpptttgg",
-        "ggggghgppggghg",
-        "gggtghgppthttg",
-        "gggggggppggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 12.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 9.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 10,
-          "y": 8
-        }
-      ],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
       "id": "gap-5-0-se",
       "name": "РЕДКАЯ ОПУШКА",
       "kind": "place",
@@ -11722,36 +15167,26 @@
       "level": 0
     },
     {
-      "id": "woods-6-0",
-      "name": "ВНУТРЕННЯЯ ПОЛЯНА",
+      "id": "gap-6-0-e",
+      "name": "СУХАЯ ПОСАДКА",
       "kind": "place",
       "tileSize": 16,
-      "width": 34,
-      "height": 21,
-      "originX": 204,
+      "width": 14,
+      "height": 11,
+      "originX": 224,
       "originY": 0,
       "cells": [
-        "gggggggggggggggggppggggggggggggggg",
-        "ghtgghhgthhhghhtgppgtgggghggthgggg",
-        "gthgtghgggtgghhtgpphgtghghtghhghgg",
-        "ghgthhthhtghhggtgpphgghgghggggtgtg",
-        "gghtthhggghggtthgppggttgtttghhhtgg",
-        "ghgtggggghggththgppggthgththgggggg",
-        "gtththhgghhggthggppgggggttthhhthgg",
-        "gghghgtgggthghhtgppggthggtgtgthggg",
-        "gttgtthgttghgtgggppghggtgghhthgthg",
-        "gggggggggggggggggppggggggggggggggg",
-        "pppppppppppppppppppppppppppppppppp",
-        "pppppppppppppppppppppppppppppppppp",
-        "ggghgggthththhhtgppghhghhgghhghgtg",
-        "gghgghthhhhggtghgpptghghhgtttthhtg",
-        "ggghghggtggghtgggppgthgpggghgthggg",
-        "gghggthgghgggtghgpphghhhgtghgthgtg",
-        "ggtthghhggthtthtgpphhtgtggghtghhgg",
-        "gghghhthgtgtgtgtgpptthgghhgtghghhg",
-        "gghhhggggtghhhthgpphghggtghgttggtg",
-        "ggghhhhghhtgthghgppthggghtgthtthgg",
-        "gggggggggggggggggppggggggggggggggg"
+        "gggggggppggggg",
+        "gghghtgppttthg",
+        "ghthghgppggggg",
+        "gggthggppggthg",
+        "ggggggpgpggggg",
+        "pppppphppppppp",
+        "pppppppppppppp",
+        "gtgggtgpphghgg",
+        "gtgttggppgtthg",
+        "ghgghhgppggttg",
+        "gggggggppggggg"
       ],
       "cellVariants": {},
       "props": [],
@@ -11765,7 +15200,7 @@
         },
         {
           "id": "from-e",
-          "x": 32.5,
+          "x": 12.5,
           "y": 6,
           "facing": "w"
         },
@@ -11778,12 +15213,94 @@
         {
           "id": "from-s",
           "x": 10,
-          "y": 19.5,
+          "y": 9.5,
           "facing": "n"
         }
       ],
       "doors": [],
       "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-6-0-se",
+      "name": "КРИВАЯ ПОЛЯНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 224,
+      "originY": 11,
+      "cells": [
+        "gggggggppggggg",
+        "gthgtggppghttg",
+        "ghhggggppgghhg",
+        "ghggghgpphghgg",
+        "gggggggppggggg",
+        "pppppppppppppp",
+        "ppppppppgppppp",
+        "gttgggghpggggg",
+        "gttgttgppghhgg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 11,
+          "y": 6
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -12114,7 +15631,7 @@
     },
     {
       "id": "gap-4-1-se",
-      "name": "СУХАЯ ПОСАДКА",
+      "name": "БЛИЖНЯЯ ЧАЩА",
       "kind": "place",
       "tileSize": 16,
       "width": 14,
@@ -12810,88 +16327,6 @@
       "level": 0
     },
     {
-      "id": "gap-5-2-s",
-      "name": "СУХАЯ ЗАРОСЛЬ",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 20,
-      "height": 10,
-      "originX": 170,
-      "originY": 53,
-      "cells": [
-        "ggggggggggppgggggggg",
-        "gggghghgggppttthhgtg",
-        "gthggtgttgppgthhhghg",
-        "ggggghhpggppghthghgg",
-        "ggggggghggppgggggggg",
-        "pppppppppppppppppppp",
-        "pppppppppppppppppppp",
-        "gggtgghgggppthhhhttg",
-        "gghghghtggpphthtghgg",
-        "ggggggggggppgggggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 18.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 8.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 16,
-          "y": 4
-        }
-      ],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
       "id": "gap-5-2-se",
       "name": "ЧУЖАЯ ЧАЩА",
       "kind": "place",
@@ -13026,88 +16461,6 @@
       ],
       "doors": [],
       "figureSlots": [],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
-      "id": "gap-6-2-s",
-      "name": "ЧУЖАЯ КУРТИНА",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 20,
-      "height": 10,
-      "originX": 204,
-      "originY": 53,
-      "cells": [
-        "ggggggggggppgggggggg",
-        "ghgtggghggpphttgtghg",
-        "gttgtgttggppgtghghgg",
-        "gghghhhhggpppgtttghg",
-        "ggggggggggpphggggggg",
-        "pppppppppppppppppppp",
-        "pppppppppppppppppppp",
-        "gghhgtghtgppgggggtgg",
-        "ghhghggghgpphgggthgg",
-        "ggggggggggppgggggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 18.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 8.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 13,
-          "y": 4
-        }
-      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -13443,82 +16796,6 @@
       "level": 0
     },
     {
-      "id": "gap-3-3-s",
-      "name": "БЛИЖНЯЯ ПОСАДКА",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 20,
-      "height": 10,
-      "originX": 102,
-      "originY": 74,
-      "cells": [
-        "ggggggggggppgggggggg",
-        "gghhhhhttgppghhgttgg",
-        "gghghhtgggpphthtghtg",
-        "gtgghtghhgppggtthtgg",
-        "gggggpggggppgggggggg",
-        "ppppphpppppppppppppp",
-        "pppppppppppppppppppp",
-        "gthgghgttgppghhghggg",
-        "ggggghghtgppghggghhg",
-        "ggggggggggppgggggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 18.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 8.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
       "id": "gap-3-3-se",
       "name": "ДАЛЬНЯЯ ЧАЩА",
       "kind": "place",
@@ -13552,159 +16829,6 @@
         {
           "id": "from-e",
           "x": 12.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 8.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
-      "id": "gap-4-3-e",
-      "name": "СУХАЯ ПОЛЯНА",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 14,
-      "height": 11,
-      "originX": 156,
-      "originY": 63,
-      "cells": [
-        "gggggggppggggg",
-        "ggtgttgppthhhg",
-        "gtghgtgpptttgg",
-        "ggghtggppggtgg",
-        "gggggggppggggg",
-        "pppppppppppppp",
-        "pppppppppppppp",
-        "gggtttgppgpggg",
-        "ghtgtggppghghg",
-        "gthtghgpphghgg",
-        "gggggggppggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 12.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 9.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
-      "id": "gap-4-3-s",
-      "name": "МОКРАЯ ПОЛЯНА",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 20,
-      "height": 10,
-      "originX": 136,
-      "originY": 74,
-      "cells": [
-        "ggggggggggppgggggggg",
-        "ggttghggtgpptthghtgg",
-        "ghhtthgthgppgghhgttg",
-        "gthhghgtggpphhggghgg",
-        "ggggggggggpppggggggg",
-        "pppppppppppphppppppp",
-        "pppppppppppppppppppp",
-        "gthghgghggpptgghthhg",
-        "ghhtttgttgpphhhggggg",
-        "ggggggggggppgggggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 18.5,
           "y": 6,
           "facing": "w"
         },
@@ -13824,36 +16948,25 @@
       "level": 0
     },
     {
-      "id": "woods-5-3",
-      "name": "СУХАЯ ОПУШКА",
+      "id": "gap-5-3-se",
+      "name": "ДАЛЬНЯЯ ПОСАДКА",
       "kind": "place",
       "tileSize": 16,
-      "width": 34,
-      "height": 21,
-      "originX": 170,
-      "originY": 63,
+      "width": 14,
+      "height": 10,
+      "originX": 190,
+      "originY": 74,
       "cells": [
-        "gggggggggggggggggppggggggggggggggg",
-        "gggggggghhgttthtgpptggthtgghtgghhg",
-        "gthggtthhhghgthhgppgghhggggggghgtg",
-        "gtgtttggggghtgttgppttghhhpggthgggg",
-        "ggghghhhggghghgggpphgtgtthggtgtgtg",
-        "gttgthhghgttghhggppgtgtthhgtgtghgg",
-        "ghghggtgtggthghggppghthghgthgghggg",
-        "gthhhghthghghggggppttthhthhggtgggg",
-        "ghghggggttghhhhtgppghtghhgghtghhgg",
-        "gggggggggggggggggppggggggggggggggg",
-        "pppppppppppppppppppppppppppppppppp",
-        "pppppppppppppppppppppppppppppppppp",
-        "ggghghtgtttgggthgppgghhttghgthghhg",
-        "gtggthtggghthgtggpphtthgtgghggghgg",
-        "ggghthhghghgghgggppgtghhthgghhhghg",
-        "ggggttggthghtghggppthtgghtttthhhgg",
-        "ghghthgghhtggtghgppgggggghgghthggg",
-        "ggggghghghttgghtgppghhththhttggthg",
-        "gtghgghghggghhgtgppggthhghtthtgghg",
-        "ggghggtggtgthggggppgghggthtghhhghg",
-        "gggggggggggggggggppggggggggggggggg"
+        "gggggggppggggg",
+        "ghgghhgpptgghg",
+        "ghghghgppgggtg",
+        "ggtgtggppttggg",
+        "ggpggggppggggg",
+        "pphppppppppppp",
+        "pppppppppppppp",
+        "gtghgggppgghtg",
+        "ggghhhgpptgghg",
+        "gggggggppggggg"
       ],
       "cellVariants": {},
       "props": [],
@@ -13867,7 +16980,7 @@
         },
         {
           "id": "from-e",
-          "x": 32.5,
+          "x": 12.5,
           "y": 6,
           "facing": "w"
         },
@@ -13880,7 +16993,7 @@
         {
           "id": "from-s",
           "x": 10,
-          "y": 19.5,
+          "y": 8.5,
           "facing": "n"
         }
       ],
@@ -13888,8 +17001,8 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 20,
-          "y": 4
+          "x": 10,
+          "y": 7
         }
       ],
       "graphics": {
@@ -13917,36 +17030,26 @@
       "level": 0
     },
     {
-      "id": "woods-6-3",
-      "name": "ВНУТРЕННЯЯ ПОСАДКА",
+      "id": "gap-6-3-e",
+      "name": "МАЛАЯ КУРТИНА",
       "kind": "place",
       "tileSize": 16,
-      "width": 34,
-      "height": 21,
-      "originX": 204,
+      "width": 14,
+      "height": 11,
+      "originX": 224,
       "originY": 63,
       "cells": [
-        "gggggggggggggggggppggggggggggggggg",
-        "gghhthhghthhhtgtgppgtggggththhgghg",
-        "gghggtgggtththghgpphgggtgtghgtgggg",
-        "ghthhtghthghhtgggpphghghghgghggthg",
-        "gtgggttghgttttgtgpptgghhtgggghgtgg",
-        "gtggtghtttgthghggppggtthhtggthtghg",
-        "ghghghgtgtghhtgtgpptttgthttghgghgg",
-        "gghgghgthgggggttgpphhghhttghtgghgg",
-        "gtthhgggttgggghtgppghggtttgthgthtg",
-        "gggggggggggggggggppggggggggggggggg",
-        "pppppppppppppppppppppppppppppppppp",
-        "pppppppppppppppppppppppppppppppppp",
-        "gghgggtggghhhgpggppghtgggthghhggtg",
-        "gthgghggtggghghggppgtghhttgtggthgg",
-        "ghgggggghhhhthgtgpphhgghhgggthgggg",
-        "gghhtgggttghghghgpphggggthtggghghg",
-        "ggthtghhggghgthtgpphtggttghghhgttg",
-        "ghtgttggthgggttggppgthgghhttgtttgg",
-        "ghgghhhthtggtghhgppgtgggthhhhtgghg",
-        "ggghtgtgghghhghhgppgtthgtgthtgtttg",
-        "gggggggggggggggggppggggggggggggggg"
+        "gggggggppggggg",
+        "gghhhhgppgghhg",
+        "ghtgthgpptgggg",
+        "ghttghgpphthgg",
+        "gggggggppggggg",
+        "pppppppppppppp",
+        "ppppppppppgppp",
+        "gggtttgpphgttg",
+        "gthhgtgppgtghg",
+        "ghhhhhgpphhghg",
+        "gggggggppggggg"
       ],
       "cellVariants": {},
       "props": [],
@@ -13960,7 +17063,7 @@
         },
         {
           "id": "from-e",
-          "x": 32.5,
+          "x": 12.5,
           "y": 6,
           "facing": "w"
         },
@@ -13973,7 +17076,7 @@
         {
           "id": "from-s",
           "x": 10,
-          "y": 19.5,
+          "y": 9.5,
           "facing": "n"
         }
       ],
@@ -13981,10 +17084,86 @@
       "figureSlots": [
         {
           "id": "a",
-          "x": 14,
-          "y": 11
+          "x": 7,
+          "y": 3
         }
       ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-6-3-se",
+      "name": "КРИВАЯ ПУСТОШЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 224,
+      "originY": 74,
+      "cells": [
+        "gggggggppggggg",
+        "gghggggppghhtg",
+        "gtttgtgppghghg",
+        "gtgtgtgppghtgg",
+        "gggggggppggggg",
+        "ppppppgppppppp",
+        "ppppphpppppppp",
+        "ggtggtgppghggg",
+        "ghtthtgpphgthg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -14326,165 +17505,6 @@
       "level": 0
     },
     {
-      "id": "gap-2-4-e",
-      "name": "КРИВАЯ ПУСТОШЬ",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 14,
-      "height": 11,
-      "originX": 88,
-      "originY": 84,
-      "cells": [
-        "gggggggppggggg",
-        "gthgghgpphthgg",
-        "gthghhgppghthg",
-        "ghtghhgppggggg",
-        "gggggggppggggg",
-        "pppppppphppppp",
-        "pppppppppppppp",
-        "ghggtggpptthgg",
-        "gttggggpphhhhg",
-        "ggghthgppgghgg",
-        "gggggggppggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 12.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 9.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [
-        {
-          "id": "a",
-          "x": 6,
-          "y": 8
-        }
-      ],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
-      "id": "gap-2-4-s",
-      "name": "РЕДКАЯ ПУСТОШЬ",
-      "kind": "place",
-      "tileSize": 16,
-      "width": 20,
-      "height": 10,
-      "originX": 68,
-      "originY": 95,
-      "cells": [
-        "ggggggggggppgggggggg",
-        "gththgtgtgpphhhtghhg",
-        "gghggghgggppghtghhtg",
-        "gttggggtggphttgggtgg",
-        "ggggggggggppgggggggg",
-        "pppppppppppppppppppp",
-        "pppppppppppppppppppp",
-        "gggtgggthgpphhhtthgg",
-        "ghggthhhggppggghghhg",
-        "ggggggggggppgggggggg"
-      ],
-      "cellVariants": {},
-      "props": [],
-      "hotspots": [],
-      "entries": [
-        {
-          "id": "from-w",
-          "x": 1.5,
-          "y": 6,
-          "facing": "e"
-        },
-        {
-          "id": "from-e",
-          "x": 18.5,
-          "y": 6,
-          "facing": "w"
-        },
-        {
-          "id": "from-n",
-          "x": 10,
-          "y": 1.5,
-          "facing": "s"
-        },
-        {
-          "id": "from-s",
-          "x": 10,
-          "y": 8.5,
-          "facing": "n"
-        }
-      ],
-      "doors": [],
-      "figureSlots": [],
-      "graphics": {
-        "floorRole": "path",
-        "wallRole": "tree",
-        "propRole": "prop",
-        "backdropImage": null,
-        "backdropFit": "cells",
-        "glitchPreset": "none"
-      },
-      "camera": "follow",
-      "revisit": {
-        "escalates": false,
-        "note": null
-      },
-      "meta": null,
-      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
-      "atmosphere": "",
-      "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
-      "copy": {},
-      "buildingId": null,
-      "level": 0
-    },
-    {
       "id": "gap-2-4-se",
       "name": "ДАЛЬНЯЯ КУРТИНА",
       "kind": "place",
@@ -14561,35 +17581,1089 @@
       "level": 0
     },
     {
-      "id": "woods-3-4",
+      "id": "gap-3-4-s",
+      "name": "БЛИЖНЯЯ ПОСАДКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 102,
+      "originY": 95,
+      "cells": [
+        "ggggggggggppgggggggg",
+        "gghhhghhtgppgthghtgg",
+        "gthtggtgggppgghggtgg",
+        "ggtghtggtgpptgtggthg",
+        "gggggggpggppgggggggg",
+        "ppppppphpppppppppppp",
+        "pppppppppppppppppppp",
+        "gggthgtghgppghgggthg",
+        "ghtttggghgppggttgthg",
+        "ggggggggggppgggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 17,
+          "y": 3
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-3-4-se",
+      "name": "СУХАЯ КУРТИНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 122,
+      "originY": 95,
+      "cells": [
+        "gggggggppggggg",
+        "ggghghgppghgtg",
+        "gghhgtgppghthg",
+        "gthhthgppthghg",
+        "gggggggppggggg",
+        "ppppppppgppppp",
+        "ppppppphpppppp",
+        "ghgghhgpphtgtg",
+        "gtghhtgppttgtg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 4,
+          "y": 3
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-4-4-s",
+      "name": "СУХАЯ РОЩА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 136,
+      "originY": 95,
+      "cells": [
+        "ggggggggggppgggggggg",
+        "ggttgtghtgpptgghgthg",
+        "gggghhthtgppttthghgg",
+        "ghghghhgtgpphhttthtg",
+        "ggggggggggpggggggggg",
+        "pppppppppphppppppppp",
+        "pppppppppppppppppppp",
+        "ghghghghhgppthghggtg",
+        "ggttggggggppthhhghgg",
+        "ggggggggggppgggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 10,
+          "y": 7
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-4-4-se",
+      "name": "МАЛАЯ ПУСТОШЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 156,
+      "originY": 95,
+      "cells": [
+        "gggggggppggggg",
+        "ghggghgpphtghg",
+        "ggthgggppthghg",
+        "ggggghgppgthgg",
+        "gggggggppggggg",
+        "ppppppppppgppp",
+        "ppppppppphpppp",
+        "gghghhgpphgthg",
+        "gghgtggpptgghg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 11,
+          "y": 3
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-5-4-s",
+      "name": "МОКРАЯ ПОЛЯНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 170,
+      "originY": 95,
+      "cells": [
+        "ggggggggggppgggggggg",
+        "ghgghhthtgppghhggggg",
+        "ghhhhgghhgppghhtggtg",
+        "ghgghpgthgpphhgggtgg",
+        "ggggghggggppgggggggg",
+        "pppppppppppppppppppp",
+        "pppppppppppppppppppp",
+        "gtthgtggggppthggtthg",
+        "ghtgthggtgppggghthhg",
+        "ggggggggggppgggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-5-4-se",
+      "name": "ГУСТАЯ ОПУШКА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 190,
+      "originY": 95,
+      "cells": [
+        "gggggggppggggg",
+        "gtggghgppgghhg",
+        "gttgghgppgtggg",
+        "ghhtgtpgptggtg",
+        "gggggghppggggg",
+        "pppppppppppppp",
+        "pppppppppppppp",
+        "ghghgtgppggghg",
+        "ghghgggppggggg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 5,
+          "y": 5
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-6-4-e",
+      "name": "РЕДКАЯ ЗАРОСЛЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 224,
+      "originY": 84,
+      "cells": [
+        "gggggggppggggg",
+        "gtggttgppgttgg",
+        "gggggtgpptpgtg",
+        "gttgtggppghhtg",
+        "gggggggppggggg",
+        "pppppppppppppp",
+        "pppppppppppppp",
+        "gttggtgppggggg",
+        "ghhhttgpphgggg",
+        "ghgghggpphthgg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 10,
+          "y": 3
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-6-4-se",
+      "name": "РЕДКАЯ ПОЛЯНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 224,
+      "originY": 95,
+      "cells": [
+        "gggggggppggggg",
+        "ghgtthgpphghtg",
+        "gthggggpphtggg",
+        "ghhhthgpptghtg",
+        "gggggggppggggg",
+        "pppppppppppppp",
+        "pppgpppppppppp",
+        "ghhghtgppghthg",
+        "gtththgppgghgg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "woods-0-5",
+      "name": "ЧУЖАЯ КУРТИНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 34,
+      "height": 21,
+      "originX": 0,
+      "originY": 105,
+      "cells": [
+        "gggggggggggggggggppggggggggggggggg",
+        "gghhhtgttttgtghggpptgtgggtthgtggtg",
+        "ggghhhhttttghghhgpptghhtghggggthgg",
+        "ghthghghghgggthggppgghtgghtghgtthg",
+        "gtttthgghggtggtggppggghhttttggthgg",
+        "gthgghghtttggggtgpptgtthhtggtgthtg",
+        "ghhgggthgghghggggppggghhtggghggggg",
+        "ghttttgtgghgthttgpphhgtgggthttgghg",
+        "ghhhggghggggthghgpphhhgghtgththgtg",
+        "gggggggggggggggggppggggggggggggggg",
+        "pppppppppppppppppppppppppppppppppp",
+        "pppppppppppppppppppppppppppppppppp",
+        "gthgggtghhttthhhgpphggtggtghgttggg",
+        "ghhgghhggghghtgtgpphgpghtgttgtgggg",
+        "gtgtgghthghghhgggppgghgtghggtthggg",
+        "ggtghghggttgghthgpptghggggtthhhtgg",
+        "gtththgthgttghtggpptggtttgtgghhggg",
+        "ggghgghtgthhtgghgpptthhgtthgtggtgg",
+        "ghthghtggghtgggtgpphgtggghgtghgghg",
+        "gtthhgtggggttthhgppgggghtgghthghgg",
+        "gggggggggggggggggppggggggggggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 32.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 19.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 8,
+          "y": 16
+        }
+      ],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "woods-1-5",
+      "name": "ДАЛЬНЯЯ РОЩА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 34,
+      "height": 21,
+      "originX": 34,
+      "originY": 105,
+      "cells": [
+        "gggggggggggggggggppggggggggggggggg",
+        "ggggtggthgtgththgppgggtthhghgthhgg",
+        "ggtghhgghghggggggpphgtghhggghhttgg",
+        "gtghtgghggghthgggpptghtggtggtghghg",
+        "ghthtgttggtttgttgppggttthhtgtggthg",
+        "ghghtggghghtthgtgpphhgthggggthghhg",
+        "gghttggghhhggtgggpphghgththgtgthgg",
+        "gghggghgghttthhtgpphtthhtggttthghg",
+        "ggggghghgghhhggggpphhgghgghgghttgg",
+        "gggggggggggggggggppggggggggggggggg",
+        "pppppppppppppppppppppppppppppppppp",
+        "pppppppppppppppppppppppppppppppppp",
+        "gthtgggghhgttggtgppgghtthhhhhtthgg",
+        "ghgttghhgthtgghhgppgthhttgtggghhgg",
+        "ghggtghghghthggggppghhgghtgggttghg",
+        "ggttthgtgggthtgggpphhgtghgtgghghtg",
+        "ggghggggtgththgggpphgghtghgtthgghg",
+        "ghghhhgthtgpggttgppggtggghtgghgtgg",
+        "ghttggghtgghththgppgghthhgthhtgthg",
+        "ggtggttttgghttttgppggghgggghhhhgtg",
+        "gggggggggggggggggppggggggggggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 32.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 19.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-2-5-e",
       "name": "КРИВАЯ ЗАРОСЛЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 11,
+      "originX": 88,
+      "originY": 105,
+      "cells": [
+        "gggggggppggggg",
+        "gghtghgpphgggg",
+        "ggtghtgpphhggg",
+        "ghhgtggpgtgthg",
+        "ggggggghpggggg",
+        "pppppppppppppp",
+        "pppppppppppppp",
+        "ghgthggppgtggg",
+        "gghgttgppghggg",
+        "ghghthgpphggtg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 9.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-2-5-s",
+      "name": "СУХАЯ ПОЛЯНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 68,
+      "originY": 116,
+      "cells": [
+        "ggggggggggppgggggggg",
+        "ggtgggtgtgppghggggtg",
+        "ghhtghhthgpphhhhgghg",
+        "gggtgghtggpphhhgtthg",
+        "ggggggggggppgggggggg",
+        "ppppppppppppppgppppp",
+        "ppppppppppppphpppppp",
+        "ghggghggggpphhhtgtgg",
+        "ghhhgtgtggppghghghgg",
+        "ggggggggggppgggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-2-5-se",
+      "name": "БЛИЖНЯЯ РОЩА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 88,
+      "originY": 116,
+      "cells": [
+        "gggggggppggggg",
+        "gthgttgppggtgg",
+        "gggggtgpptgtgg",
+        "ghhtgtgpphhggg",
+        "gggggggppggggg",
+        "pppppppppppppp",
+        "pppppppppppgpp",
+        "ghghhhgppthghg",
+        "ghhtgggpphhhhg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "woods-3-5",
+      "name": "ВНУТРЕННЯЯ ПУСТОШЬ",
       "kind": "place",
       "tileSize": 16,
       "width": 34,
       "height": 21,
       "originX": 102,
-      "originY": 84,
+      "originY": 105,
       "cells": [
         "gggggggggggggggggppggggggggggggggg",
-        "gthggghgghttghtggppgtghhgghghhgthg",
-        "ggggghthtgggghgtgppghttghtgghthghg",
-        "ghhtgttgtgghggttgpptgthhtthghttghg",
-        "gggggtttggghgghhgpphtgttgghggghhgg",
-        "gggttgtghtgghggtgppgghghhtghtgtggg",
-        "ghgggghghtgghtgtgppthgttggggghtghg",
-        "ggthgghpgthhgtthgppgtgtgttgtttgghg",
-        "gttthhghhghhthttgpphgtgthhgthghggg",
+        "ghgthgggtttththggppgtghhthtgggghtg",
+        "ghgggghtthghghgggppghggghggtgggtgg",
+        "ggggggggghghtggggpptgggghgggthgtgg",
+        "ggtthgggthgttggtgppggtgtghgthhghgg",
+        "ggggtggthggtggthgppgghhtggpghtgggg",
+        "gggggtgthtthttgggppgttghgghhgtgggg",
+        "ggthhhgtggghhgghgpphgthggtgggghhtg",
+        "gtthggtghghtttgtgpphgghhgghghtghgg",
         "gggggggggggggggggppggggggggggggggg",
         "pppppppppppppppppppppppppppppppppp",
         "pppppppppppppppppppppppppppppppppp",
-        "gtthghghthhtggttgppthghttgghhgggtg",
-        "ghgghhghthhhgggtgppthggghhgghhggtg",
-        "ggghtgtggthghgghgppgttghtthggttgtg",
-        "ghgggtgthhttggghgppghthghthtthgggg",
-        "ghgggttgghtggghtgpphtghhtghghtgthg",
-        "ghgtgttghghtgghggppgtgtgthtghghggg",
-        "ghtgthhhthhghhhggppggtgggthgttthhg",
-        "ghhghhhhghhgtggggpphttgggggghgtghg",
+        "ghgggttththhgghhgppthhhhtthhghghtg",
+        "ghggthggggghhhghgppgggtgtghghttghg",
+        "gttgthtgtggtgtgggpptggghhtghthhttg",
+        "ggghtgtggtggghghgppghgggghgghtgtgg",
+        "ghgthttghggghgttgpptghhhgggtggtggg",
+        "ghhhggghgthgggghgppgggggthggggghtg",
+        "gthghtggghghtggggpphgtgggghhthhhgg",
+        "gthgthgghhhhhthhgppgghtgghgttthggg",
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
@@ -14648,35 +18722,35 @@
       "level": 0
     },
     {
-      "id": "woods-4-4",
-      "name": "МОКРАЯ ЧАЩА",
+      "id": "woods-4-5",
+      "name": "ГУСТАЯ ПОСАДКА",
       "kind": "place",
       "tileSize": 16,
       "width": 34,
       "height": 21,
       "originX": 136,
-      "originY": 84,
+      "originY": 105,
       "cells": [
         "gggggggggggggggggppggggggggggggggg",
-        "gthggggghhhhthghgppgghgghghgtttthg",
-        "ghthghthpgghgthggppghgtgtghhggthgg",
-        "ghtgthtghtgthgthgppgtgtggghhgghhhg",
-        "gtthtghgghthghgtgpphthttghgtgghgtg",
-        "gttgghhtthhtghgggppthhhhghttggthtg",
-        "ggghgttggtggtggggppghhggthhghtgghg",
-        "gttgghtthgtghggggpphhgtghhgttgtggg",
-        "ghtgtgtgggthgggtgppghhggtthtttggtg",
+        "gghthggggghhhghtgppgghghtgghggttgg",
+        "ggthggghggtgghttgppghhhttggghghggg",
+        "ghghhggtgggthhhggppgggghhgtghgggtg",
+        "gggghtghthtghhthgppghgghgggghtgggg",
+        "ghtthhgggghthtghgphthhgghhhghtghgg",
+        "gtgtgtthhtthhhghgppggttgghhhhhtgtg",
+        "ghthtggggggghhtggppgghgtgggggghhgg",
+        "ghtggtghgggggghggppgtgghggghtggthg",
         "gggggggggggggggggppggggggggggggggg",
         "pppppppppppppppppppppppppppppppppp",
         "pppppppppppppppppppppppppppppppppp",
-        "ghtgghhttghhhggggppggttghghhghghtg",
-        "ghgghhhtggtthtgggppthgghthhgthhgtg",
-        "ggtggghhtgthgthtgpphhgtgghthggghhg",
-        "ggggtgttgthggttggpptgtghggtgggggtg",
-        "gggtgghghhhhgghtgppgghghhhhgtgggtg",
-        "ghghttgttgggttghgppgtththtgttgtghg",
-        "ghgthgtthgtthggggpphthgghhhgggghgg",
-        "ggghgghgtgghhthhgppgghghghgghghgtg",
+        "gthggggggththhhhgppgghththghggggtg",
+        "ghtgghggtgghggghgpphthhhhgggtggggg",
+        "ghthghhtgghthghggppggthggggthgghhg",
+        "ghgtgtghhhhtgghggpptghtgthghgtghgg",
+        "gtggtghghhghtgghgppttgghghghgthtgg",
+        "ggtthgtgghtttttggppttttththhtgttgg",
+        "ghgtttggggtgghhggppggttghghtghghgg",
+        "gtgghhggggggggghgppggthtggtggthggg",
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
@@ -14735,35 +18809,35 @@
       "level": 0
     },
     {
-      "id": "woods-5-4",
-      "name": "ЧУЖАЯ ПОЛЯНА",
+      "id": "woods-5-5",
+      "name": "ВНУТРЕННЯЯ ЧАЩА",
       "kind": "place",
       "tileSize": 16,
       "width": 34,
       "height": 21,
       "originX": 170,
-      "originY": 84,
+      "originY": 105,
       "cells": [
         "gggggggggggggggggppggggggggggggggg",
-        "ggghtgghtghhhghhgppgtgghgggghtgghg",
-        "ghgghghtgggggthggpphggtghgtghgtghg",
-        "ghghgtgggtgghhgggppghtgghhgggghthg",
-        "ggtghgggthgtgggggpphghhtgthggghggg",
-        "ggtggtgghghthgghgpptgggtghgtthghhg",
-        "ghgghthgghgtghhhgppgtghghghggttghg",
-        "ghtggghhhgttgggggppgthgggggttttttg",
-        "gtgtthhggggtgggggppgghttgthhhhtghg",
-        "gggggpgggggggggggppggggggggggggggg",
-        "ppppphpppppppppppppppppppppppppppp",
+        "gttgggghhhhhttghgppgtgtggghthhggtg",
+        "ghggthhggtghttghgpptghggggghghgthg",
+        "gghgggtghhgghghtgppghghhghthhtthhg",
+        "gthttgghgthgttgggppghggtgggghhggtg",
+        "ggttgthggthtgtgggpptgghtthhghghhgg",
+        "ggggtthgghhghhgggpptghgtpghhgggggg",
+        "gttgthghtgghgthggpptgtghhhggggggtg",
+        "gtghhtgtggtggghggppggtttghgthghhtg",
+        "gggggggggggggggggppggggggggggggggg",
         "pppppppppppppppppppppppppppppppppp",
-        "ggtthtghtgghghgggpphhttgggggghhggg",
-        "ggghgggtgggthtthgpptthgghhghtttghg",
-        "gggggghtghghggghgpphththgtghgggggg",
-        "gtgthgtghggttghtgppthhhthhgthtghgg",
-        "ghhhthggggggghhggpphhghtgtgggghttg",
-        "gtgggghttgghgggggppttgghththhthggg",
-        "ghggthghhghggthhgpptggggghtgthgggg",
-        "gthgghgthghtghtggpphttthgtthgghgtg",
+        "pppppppppppppppppppppppppppppppppp",
+        "gtghhgtghgghggttgpphhgtgghtggthhgg",
+        "gtghhggthgtgtgtggppgtghhgtthtggggg",
+        "gtghghhhgthghggtgppgggthggtggggggg",
+        "ghggghhgghggtthtgppthgggggtghgtggg",
+        "gthggggghtggthtggppttghthtttgtgggg",
+        "gghthhhghggtggthgppgtghhhhghhgghtg",
+        "gtgghttgtghghhghgpphhggggttgtggggg",
+        "ggtgthhhgghghtghgppgghghgghghhgggg",
         "gggggggggggggggggppggggggggggggggg"
       ],
       "cellVariants": {},
@@ -14822,36 +18896,26 @@
       "level": 0
     },
     {
-      "id": "woods-6-4",
-      "name": "ЧУЖАЯ РОЩА",
+      "id": "gap-6-5-e",
+      "name": "МАЛАЯ ПОЛЯНА",
       "kind": "place",
       "tileSize": 16,
-      "width": 34,
-      "height": 21,
-      "originX": 204,
-      "originY": 84,
+      "width": 14,
+      "height": 11,
+      "originX": 224,
+      "originY": 105,
       "cells": [
-        "gggggggggggggggggppggggggggggggggg",
-        "ghtghhhthtthhtthgppthghhhgggtghghg",
-        "ghggtghhtgthhghggpptgttgtghgtghtgg",
-        "gghghggggggggtgggpptgghggthggggggg",
-        "ggtghthghhgghhgtgpphhthggthhggtthg",
-        "ghhthhgggggghgtggppghggggggghggghg",
-        "gghtgggggggthpgtgppggthhggghggtthg",
-        "ghthhtgththhhhgggppgtghhgggghgggtg",
-        "gtththghtghhgtghgppggggggghhhgtggg",
-        "gggggggggggggggggppggggggggggggggg",
-        "pppppppppppppppppppppppppppppppppp",
-        "pppppppppppppppppppppppppppppppppp",
-        "gthgggtthtghgtgggppgghghtttthhghtg",
-        "gggggtggttggtggggppgghgttgtgggthgg",
-        "ghghhhgghthtttgggppgghghhgggghgggg",
-        "ggghhhhtgthhgghggpphggghhttttggggg",
-        "gtgtggghghtgghtggppthgthhgthtgghhg",
-        "gggghtggggghgthggppggggghhgggththg",
-        "gttggggggttggghtgpptgghhtghgghggtg",
-        "gghggtgghggtghthgpphtggttthtgghggg",
-        "gggggggggggggggggppggggggggggggggg"
+        "gggggggppggggg",
+        "ghgggggppthtgg",
+        "ghhgtggpphhggg",
+        "ghpgghgpphgthg",
+        "gghggggppggggg",
+        "pppppppppppppp",
+        "pppppppppppppp",
+        "gghggggpptgtgg",
+        "gggggggppggtgg",
+        "gggthggppggttg",
+        "gggggggppggggg"
       ],
       "cellVariants": {},
       "props": [],
@@ -14865,7 +18929,7 @@
         },
         {
           "id": "from-e",
-          "x": 32.5,
+          "x": 12.5,
           "y": 6,
           "facing": "w"
         },
@@ -14878,12 +18942,170 @@
         {
           "id": "from-s",
           "x": 10,
-          "y": 19.5,
+          "y": 9.5,
           "facing": "n"
         }
       ],
       "doors": [],
       "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-6-5-s",
+      "name": "ВНУТРЕННЯЯ КУРТИНА",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 20,
+      "height": 10,
+      "originX": 204,
+      "originY": 116,
+      "cells": [
+        "ggggggggggppgggggggg",
+        "gtgtgtggggpphgtthggg",
+        "ggghgtggtgpptgthgttg",
+        "ggtghhtgggppttpggttg",
+        "ggggggggggppgghggggg",
+        "pppppppppppppppppppp",
+        "pppppppppppppppppppp",
+        "ggggthhthgppggtghhhg",
+        "gggtghggggppgggthtgg",
+        "ggggggggggppgggggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 18.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [],
+      "graphics": {
+        "floorRole": "path",
+        "wallRole": "tree",
+        "propRole": "prop",
+        "backdropImage": null,
+        "backdropFit": "cells",
+        "glitchPreset": "none"
+      },
+      "camera": "follow",
+      "revisit": {
+        "escalates": false,
+        "note": null
+      },
+      "meta": null,
+      "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
+      "atmosphere": "",
+      "personality": "ветер в траве, шаг слышно отдельно от города",
+      "tags": [
+        "route"
+      ],
+      "copy": {},
+      "buildingId": null,
+      "level": 0
+    },
+    {
+      "id": "gap-6-5-se",
+      "name": "ЧУЖАЯ ЗАРОСЛЬ",
+      "kind": "place",
+      "tileSize": 16,
+      "width": 14,
+      "height": 10,
+      "originX": 224,
+      "originY": 116,
+      "cells": [
+        "gggggggppggggg",
+        "gghtgggppgghgg",
+        "gttgttgppggtgg",
+        "gttgghpgphtgtg",
+        "gggggghppggggg",
+        "pppppppppppppp",
+        "pppppppppppppp",
+        "gghgghgppthghg",
+        "ghthhhgppgghgg",
+        "gggggggppggggg"
+      ],
+      "cellVariants": {},
+      "props": [],
+      "hotspots": [],
+      "entries": [
+        {
+          "id": "from-w",
+          "x": 1.5,
+          "y": 6,
+          "facing": "e"
+        },
+        {
+          "id": "from-e",
+          "x": 12.5,
+          "y": 6,
+          "facing": "w"
+        },
+        {
+          "id": "from-n",
+          "x": 10,
+          "y": 1.5,
+          "facing": "s"
+        },
+        {
+          "id": "from-s",
+          "x": 10,
+          "y": 8.5,
+          "facing": "n"
+        }
+      ],
+      "doors": [],
+      "figureSlots": [
+        {
+          "id": "a",
+          "x": 11,
+          "y": 5
+        }
+      ],
       "graphics": {
         "floorRole": "path",
         "wallRole": "tree",
@@ -14917,114 +19139,162 @@
   "figures": [
     {
       "id": "turyshev",
-      "archetypeId": "watcher",
       "name": "ТИМОФЕЙ ТУРЫШЕВ",
       "roomId": "19-dvor-i-oranzhevye-lavochki",
       "slotId": "a",
+      "archetypeId": "watcher",
       "holdsShardId": null
     },
     {
       "id": "kirill",
-      "archetypeId": "child",
       "name": "КИРИЛЛ",
       "roomId": "06-kanava-garazhi-podvorotni",
       "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": "shard4"
     },
     {
       "id": "ubiitsa",
-      "archetypeId": "visitor",
       "name": "УБИЙЦА НА МАШИНЕ",
       "roomId": "06-kanava-garazhi-podvorotni",
       "slotId": "b",
+      "archetypeId": "visitor",
       "holdsShardId": null
     },
     {
       "id": "hudozhnik",
-      "archetypeId": "orderly",
       "name": "ХУДОЖНИК, КОТОРОГО НЕ СЛЫШНО",
       "roomId": "01-otel-goticheskii-holl",
       "slotId": "a",
+      "archetypeId": "orderly",
       "holdsShardId": "shard2"
     },
     {
       "id": "anton",
-      "archetypeId": "orderly",
       "name": "АНТОН",
       "roomId": "01-otel-goticheskii-holl",
       "slotId": "b",
+      "archetypeId": "orderly",
       "holdsShardId": null
     },
     {
       "id": "glaz",
-      "archetypeId": "watcher",
       "name": "ГЛАЗ, СМОТРЯЩИЙ ВНИЗ",
       "roomId": "01-otel-goticheskii-holl",
       "slotId": "c",
+      "archetypeId": "watcher",
       "holdsShardId": "shard6"
     },
     {
       "id": "babushka-nadya",
-      "archetypeId": "visitor",
       "name": "БАБУШКА НАДЯ",
       "roomId": "05-shesterochka",
       "slotId": "a",
+      "archetypeId": "visitor",
       "holdsShardId": null
     },
     {
       "id": "tetya",
-      "archetypeId": "watcher",
       "name": "ТЁТЯ, КОТОРАЯ НЕ ЗАМЕЧАЕТ",
       "roomId": "12-tiurma-na-ovoschah",
       "slotId": "a",
+      "archetypeId": "watcher",
       "holdsShardId": null
     },
     {
       "id": "nilufar",
-      "archetypeId": "visitor",
       "name": "НИЛЮФАР",
       "roomId": "21-komnata-niliufar",
       "slotId": "a",
+      "archetypeId": "visitor",
       "holdsShardId": null
     },
     {
       "id": "liosha-gnedkov",
-      "archetypeId": "watcher",
       "name": "ЛЁША ГНЕДКОВ",
       "roomId": "13-podzemnye-zaly-cu",
       "slotId": "a",
+      "archetypeId": "watcher",
       "holdsShardId": null
     },
     {
       "id": "papa",
-      "archetypeId": "child",
       "name": "ПАПА",
       "roomId": "14-poliklinika-v-kaluge",
       "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": "shard5"
     },
     {
       "id": "mama",
-      "archetypeId": "orderly",
       "name": "МАМА",
       "roomId": "18-kupol-bez-sten",
       "slotId": "a",
+      "archetypeId": "orderly",
       "holdsShardId": null
     },
     {
       "id": "kripto-bro",
-      "archetypeId": "child",
       "name": "КРИПТО-БРО ИЗ TON",
       "roomId": "25-metro-i-poezd-kotoryi-ne-tot",
       "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": null
     },
     {
       "id": "dolzhniki",
-      "archetypeId": "child",
       "name": "ТЕ, КОМУ ТЫ ДОЛЖЕН",
       "roomId": "24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen",
       "slotId": "a",
+      "archetypeId": "child",
+      "holdsShardId": null
+    },
+    {
+      "id": "raisa",
+      "name": "РАИСА МИХАЙЛОВНА",
+      "roomId": "02-shkola-kabinet-russkogo",
+      "slotId": "a",
+      "archetypeId": "watcher",
+      "holdsShardId": null
+    },
+    {
+      "id": "lysyi",
+      "name": "ЛЫСЫЙ В APPLE WATCH",
+      "roomId": "19-dvor-i-oranzhevye-lavochki",
+      "slotId": "b",
+      "archetypeId": "visitor",
+      "holdsShardId": null
+    },
+    {
+      "id": "kurt",
+      "name": "КУРТ",
+      "roomId": "19-dvor-i-oranzhevye-lavochki",
+      "slotId": "c",
+      "archetypeId": "child",
+      "holdsShardId": null
+    },
+    {
+      "id": "ded-slava",
+      "name": "ДЕД СЛАВА",
+      "roomId": "15-osennii-les-s-grobom",
+      "slotId": "a",
+      "archetypeId": "watcher",
+      "holdsShardId": null
+    },
+    {
+      "id": "aleksei",
+      "name": "АЛЕКСЕЙ",
+      "roomId": "01-otel-goticheskii-holl",
+      "slotId": "d",
+      "archetypeId": "orderly",
+      "holdsShardId": null
+    },
+    {
+      "id": "shchenok",
+      "name": "ЩЕНОК",
+      "roomId": "m9-shkaf",
+      "slotId": "a",
+      "archetypeId": "child",
       "holdsShardId": null
     }
   ],
@@ -15351,6 +19621,144 @@
         "soulPath": "souls/ubiitsa.md",
         "suspicionMonotone": true,
         "leverageId": null
+      },
+      {
+        "id": "raisa",
+        "name": "РАИСА МИХАЙЛОВНА",
+        "archetypeId": "watcher",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Учительница подготовки. Говорит о пациенте точно, без любви и без обиды.",
+        "role": "свидетель",
+        "voice": "медленно, законченными предложениями, на «вы»",
+        "desire": "чтобы человек услышал про себя правду",
+        "fear": "не успеть сказать, пока ещё можно",
+        "taboo": "не говорит того, что человеку сейчас не поднять",
+        "initialActivity": "сидит за столом и ждёт, пока станет тихо",
+        "soulPath": "souls/raisa.md",
+        "suspicionMonotone": true,
+        "leverageId": "raisa:kharakteristika"
+      },
+      {
+        "id": "lysyi",
+        "name": "ЛЫСЫЙ В APPLE WATCH",
+        "archetypeId": "visitor",
+        "portraits": {
+          "neutral": "figure_visitor_s_0",
+          "interested": "figure_visitor_s_0",
+          "wary": "figure_visitor_s_0",
+          "knows": "figure_visitor_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Делает с санитаром то, что санитар делает с остальными: выясняет, тот ли ты.",
+        "role": "ненастоящий мент",
+        "voice": "ровный, негромкий, пауз больше, чем слов",
+        "desire": "закрыть вопрос и поехать",
+        "fear": "нет. Ему скучно",
+        "taboo": "не повышает голос ни разу",
+        "initialActivity": "стоит у подъезда и смотрит на часы",
+        "soulPath": "souls/lysyi.md",
+        "suspicionMonotone": true,
+        "leverageId": null
+      },
+      {
+        "id": "kurt",
+        "name": "КУРТ",
+        "archetypeId": "child",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Виртуальный друг. Знает, что выдуман, и это его устраивает. Приходит, когда кончается.",
+        "role": "гость",
+        "voice": "тихо, с паузами, чуть невпопад, по-русски",
+        "desire": "компании. Просто посидеть рядом",
+        "fear": "делового тона",
+        "taboo": "не цитирует песни, не говорит, как умер",
+        "initialActivity": "сидит на полу у стены, не в центре кадра",
+        "soulPath": "souls/kurt.md",
+        "suspicionMonotone": false,
+        "leverageId": null
+      },
+      {
+        "id": "ded-slava",
+        "name": "ДЕД СЛАВА",
+        "archetypeId": "watcher",
+        "portraits": {
+          "neutral": "figure_watcher_s_0",
+          "interested": "figure_watcher_s_0",
+          "wary": "figure_watcher_s_0",
+          "knows": "figure_watcher_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Умер, пока внук доигрывал серию. Вернулся без следа, потому что так устроен пациент.",
+        "role": "дедушка",
+        "voice": "коротко, бытово, как будто его не хоронили",
+        "desire": "чтобы внук наконец доел",
+        "fear": "чтобы его снова не заметили слишком внимательно",
+        "taboo": "не говорит, что его нет",
+        "initialActivity": "стоит у кромки леса и смотрит, как несут гроб",
+        "soulPath": "souls/ded-slava.md",
+        "suspicionMonotone": true,
+        "leverageId": null
+      },
+      {
+        "id": "aleksei",
+        "name": "АЛЕКСЕЙ",
+        "archetypeId": "orderly",
+        "portraits": {
+          "neutral": "figure_orderly_s_0",
+          "interested": "figure_orderly_s_0",
+          "wary": "figure_orderly_s_0",
+          "knows": "figure_orderly_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Тот, кого не успели. В холле он ещё здесь и ещё можно успеть.",
+        "role": "друг, которого не догнали",
+        "voice": "спокойно, уже всё решил насчёт твоей смерти и просто держит в курсе",
+        "desire": "чтобы кто-нибудь один раз пришёл вовремя",
+        "fear": "что снова придётся ждать одному",
+        "taboo": "не просит спасти его вслух",
+        "initialActivity": "идёт через холл и не оборачивается",
+        "soulPath": "souls/aleksei.md",
+        "suspicionMonotone": true,
+        "leverageId": "aleksei:ne-uspel"
+      },
+      {
+        "id": "shchenok",
+        "name": "ЩЕНОК",
+        "archetypeId": "child",
+        "portraits": {
+          "neutral": "figure_child_s_0",
+          "interested": "figure_child_s_0",
+          "wary": "figure_child_s_0",
+          "knows": "figure_child_s_0"
+        },
+        "portraitImages": null,
+        "spriteSheet": null,
+        "personality": "Маленькая собака. Не призрак. Ждёт, когда игру продолжат. Не обвиняет.",
+        "role": "слой 3",
+        "voice": "три-пять слов, настоящее время, хорошее настроение",
+        "desire": "продолжить. В прошлый раз почти получилось",
+        "fear": "нет шкалы. У него её нет",
+        "taboo": "ни одного упрёка, ни слова про смерть, ни прощения",
+        "initialActivity": "лежит на боку, хвост стучит по полу",
+        "soulPath": "souls/shchenok.md",
+        "suspicionMonotone": false,
+        "leverageId": null
       }
     ],
     "clues": [
@@ -15457,7 +19865,6 @@
     "maxCycles": 4
   },
   "heartbeat": {
-    "intervalMs": 45000,
     "callBudgetPerCycle": 12,
     "maxPatchesPerBeat": 2
   },

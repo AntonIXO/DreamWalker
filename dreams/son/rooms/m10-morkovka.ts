@@ -21,6 +21,7 @@ export const M10 = boxRoom({
       y: 6.5,
       prompt: "пакет моркови",
       propId: "paket",
+      refusal: "Ледяной. Рука не вынимается.",
     }),
     look({
       id: "noutbuk",

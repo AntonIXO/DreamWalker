@@ -26,6 +26,8 @@ import { m5Script } from "./scripts/m5";
 import { m6Script } from "./scripts/m6";
 import { m7Script } from "./scripts/m7";
 import { m8Script } from "./scripts/m8";
+import { m9Script } from "./scripts/m9";
+import { m10Script } from "./scripts/m10";
 import { m11Script } from "./scripts/m11";
 import { m12Script } from "./scripts/m12";
 import { raisaScript } from "./scripts/raisa";
@@ -42,6 +44,8 @@ const SCRIPTS: DreamScript[] = [
   m6Script,
   m7Script,
   m8Script,
+  m9Script,
+  m10Script,
   m11Script,
   m12Script,
 ];

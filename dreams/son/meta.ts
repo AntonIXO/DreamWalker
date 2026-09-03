@@ -124,7 +124,6 @@ export const CYCLE: CycleConfig = {
 };
 
 export const HEARTBEAT: HeartbeatConfig = {
-  intervalMs: 45_000,
   callBudgetPerCycle: 12,
   maxPatchesPerBeat: 2,
 };

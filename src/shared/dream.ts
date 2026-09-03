@@ -12,7 +12,7 @@
  *
  * Format 3 carried one flat tile grid for the whole dream, plus a mission graph that
  * proved the *generated* space was crossable. Both existed to serve generation. The
- * rooms are authored by hand now (`dream-walker-new/rooms.md`), so the grid became a
+ * rooms are authored by hand now (`dream-walker-anton/rooms.md`), so the grid became a
  * list of rooms and the graph became the author's problem — an authored dream states its
  * own edges, and `lord rooms --check` walks them from the spawn to prove nothing is
  * stranded. What used to be a chamber "dealt onto" a room slot is now simply the room.
@@ -72,8 +72,6 @@ export interface CycleConfig {
 }
 
 export interface HeartbeatConfig {
-  /** How often the sleeper wakes enough to rearrange things around you. */
-  intervalMs: number;
   /** Ceiling on model calls per cycle once a real mind is wired in (§10, cost). */
   callBudgetPerCycle: number;
   /** How much the dream may change in one beat. Low numbers read as unease, high as chaos. */
@@ -1080,12 +1078,6 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     }
   }
   const heartbeat = obj(root.heartbeat, "dream.heartbeat");
-  if (num(heartbeat.intervalMs, "dream.heartbeat.intervalMs") < 1000) {
-    fail(
-      "dream.heartbeat.intervalMs",
-      "a beat faster than a second is not a dream, it is a strobe",
-    );
-  }
   num(heartbeat.callBudgetPerCycle, "dream.heartbeat.callBudgetPerCycle");
   num(heartbeat.maxPatchesPerBeat, "dream.heartbeat.maxPatchesPerBeat");
 

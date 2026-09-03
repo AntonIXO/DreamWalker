@@ -25,10 +25,11 @@ export const M6 = boxRoom({
   ],
   doors: [
     {
+      // On the wall face, not on the floor: the path back is a створ you press into,
+      // and while it is sealed pressing into it is the room refusing to let go.
       ...rift({
         id: "m6-krugi-vokrug-pruda--exit",
-        x: 1,
-        y: 9,
+        x: 17,
         toRoomId: "19-dvor-i-oranzhevye-lavochki",
         prompt: "дорожка назад",
       }),
