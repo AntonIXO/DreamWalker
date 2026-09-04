@@ -182,12 +182,12 @@ state directory with `DREAMWALKER_CODEX_PATH` and `DREAMWALKER_CODEX_HOME`.
 ### Anthropic Messages-compatible provider
 
 Set the proxy URL and token to bypass Codex OAuth. The model defaults to
-`gemini-3.6-flash-high` and remains overridable:
+`gemini-3.8-flash-high` and remains overridable:
 
 ```bash
-ANTHROPIC_BASE_URL=http://proxy.example/anthropic \
-ANTHROPIC_AUTH_TOKEN=... \
-ANTHROPIC_MODEL=gemini-3.6-flash-high \
+ANTHROPIC_BASE_URL=http://localhost:8091 \
+ANTHROPIC_AUTH_TOKEN=anything \
+ANTHROPIC_MODEL=gemini-3.8-flash-high \
 bun run start
 ```
 

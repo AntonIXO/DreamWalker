@@ -13,7 +13,7 @@ export function normaliseOpenAIBaseURL(value: string): string {
 export type AiProviderMode = "codex" | "anthropic" | "openai";
 
 /** Default model on the Anthropic-compatible Antigravity proxy. */
-export const DEFAULT_ANTHROPIC_MODEL = "gemini-3.7-flash-high";
+export const DEFAULT_ANTHROPIC_MODEL = "gemini-3.8-flash-high";
 
 /** CloseRouter's public OpenAI-compatible root. */
 export const DEFAULT_OPENAI_BASE_URL = "https://api.closerouter.dev/v1";

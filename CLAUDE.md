@@ -133,7 +133,7 @@ references to them.
 falls back per request to deterministic `scripted.ts`. `src/server/agent-runtime.ts`
 contains schema-validated inhabit, dialogue, examine, cycle-exit, and finale agents.
 `ANTHROPIC_*` selects an Anthropic-compatible proxy (default model
-`gemini-3.6-flash-high`). Without those variables the server uses Codex device OAuth
+`gemini-3.8-flash-high`). Without those variables the server uses Codex device OAuth
 (`gpt-5.6-luna` at `xhigh`). Live inhabit may take a few seconds; on timeout or any
 error the client installs `fallbackPopulation` and play continues. Training never
 calls the model. The finale agent alone sees the plaintext secret.
