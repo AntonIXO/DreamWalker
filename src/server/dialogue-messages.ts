@@ -30,3 +30,24 @@ export function dialogueTurnMessages(
   });
   return messages;
 }
+
+/**
+ * Physical claims require a successful world tool. `action` is mime only.
+ * Appended to dialogueInstructionsFor in both RU and EN.
+ */
+export const DIALOGUE_WORLD_RULES_RU = `У тебя есть тело в этом мире, и тело действует только через инструменты.
+Инструменты — это тело: move_to, take, drop, give, put, open, close, activate, use, traverse.
+Never claim a physical action unless the matching tool returned ok.
+Не утверждай физическое действие, если инструмент не вернул ok.
+Не говори, что дверь открылась, если open отказал.
+Поле action — только мимика лица и рук, не физика. Tools are the body; action is mime only.`;
+
+export const DIALOGUE_WORLD_RULES_EN = `You have a body in this world, and the body acts only through tools.
+Tools are the body: move_to, take, drop, give, put, open, close, activate, use, traverse.
+Never claim a physical action unless the matching tool returned ok.
+Do not say the door opened if open refused.
+The action field is face and hands only, not physics. Tools are the body; action is mime only.`;
+
+export function dialogueWorldRules(locale: "ru" | "en" = "ru"): string {
+  return locale === "en" ? DIALOGUE_WORLD_RULES_EN : DIALOGUE_WORLD_RULES_RU;
+}

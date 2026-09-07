@@ -266,6 +266,7 @@ export class ScriptedMind implements DreamMind {
         portraitState: "neutral",
         leverageLearned: null,
         pressed: null,
+        worldActions: [],
       };
     }
 
@@ -289,7 +290,7 @@ export class ScriptedMind implements DreamMind {
             : " There was someone else here. Don't know where they went.";
           authored.reply = `${authored.reply}${extra}`;
         }
-        return authored;
+        return { ...authored, worldActions: [] };
       }
     }
 
@@ -401,6 +402,7 @@ export class ScriptedMind implements DreamMind {
                   : "neutral",
               figure.portraitState,
             ),
+      worldActions: [],
     };
   }
 

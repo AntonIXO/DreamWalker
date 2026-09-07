@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { dialogueTurnMessages } from "./dialogue-messages";
+import { dialogueTurnMessages, dialogueWorldRules } from "./dialogue-messages";
 
 describe("dialogueTurnMessages", () => {
   test("turns the cycle transcript into an AI SDK chat, current line last", () => {
@@ -31,5 +31,21 @@ describe("dialogueTurnMessages", () => {
     expect(messages).toHaveLength(1);
     expect(messages[0]?.role).toBe("user");
     expect(messages[0]?.content).toContain("Здорово.");
+  });
+});
+
+describe("dialogue world rules", () => {
+  test("RU and EN both forbid claiming a physical action unless the tool returned ok", () => {
+    const ru = dialogueWorldRules("ru");
+    const en = dialogueWorldRules("en");
+    expect(ru).toContain(
+      "Never claim a physical action unless the matching tool returned ok",
+    );
+    expect(en).toContain(
+      "Never claim a physical action unless the matching tool returned ok",
+    );
+    expect(ru).toContain("Tools are the body; action is mime only");
+    expect(en).toContain("Tools are the body; action is mime only");
+    expect(en).toContain("Do not say the door opened if open refused");
   });
 });

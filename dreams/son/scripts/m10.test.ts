@@ -36,6 +36,13 @@ function fakeHost(): ScriptHost & {
       host.whispers.push(text);
     },
     observeClue: () => undefined,
+    dispatch: () => ({
+      ok: true,
+      refusal: null,
+      affectedRooms: [] as string[],
+      affectedObjects: [] as string[],
+      events: [],
+    }),
     whispers: [] as string[],
     flags,
   };

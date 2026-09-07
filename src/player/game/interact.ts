@@ -1,19 +1,29 @@
 /**
  * What the sanitar can reach, and what pressing E on it means.
  *
- * One resolver for figures, authored objects and the things the sleeper put there. The
- * ordering rule matters and is the thing format 3 got wrong: it returned the nearest
- * *figure* unconditionally before it looked at anything else, so an object standing next
- * to somebody was unreachable. Now whichever is actually closer wins — which is what the
- * player expects, and what §06's ditch needs, where Кирилл is sitting on the manhole.
+ * One resolver for figures, authored objects, live WorldObjectState, and the things
+ * the sleeper put there. The ordering rule matters and is the thing format 3 got
+ * wrong: it returned the nearest *figure* unconditionally before it looked at
+ * anything else, so an object standing next to somebody was unreachable. Now
+ * whichever is actually closer wins — which is what the player expects, and what
+ * §06's ditch needs, where Кирилл is sitting on the manhole.
  */
 
 import { findHotspot } from "../../shared/roomGrid";
 import { toLocalPixels } from "../../shared/street";
 import type { RoomHotspot } from "../../shared/room";
-import { availableVerbs, type VerbOption } from "../../shared/verbs";
-import { t, type SupportedLocale } from "../../shared/i18n";
+import { availableVerbs, type Verb, type VerbOption } from "../../shared/verbs";
+import {
+  t,
+  type SupportedLocale,
+  type TranslationKey,
+} from "../../shared/i18n";
+import type { ActionOption, WorldAction } from "../../shared/world-action";
+import { availableActions } from "../../shared/world-action-engine";
+import type { ActorRef, WorldObjectState } from "../../shared/world-object";
+import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { fateOf, leverageOn, whoIsLed } from "./fates";
+import { liveObjects } from "./object-collision";
 import type { PlayerState } from "./player";
 import {
   doorRefusal,
@@ -27,6 +37,37 @@ import {
 /** How close the sanitar must be to speak to somebody, in pixels. */
 export const FIGURE_REACH = 20;
 
+export type ActionTarget =
+  | { kind: "object"; id: string }
+  | { kind: "figure"; id: string }
+  | { kind: "door"; id: string }
+  | { kind: "ground"; roomId: string; x: number; y: number };
+
+export type ListActions = (
+  world: WorldState,
+  actor: ActorRef,
+  target: ActionTarget,
+) => ActionOption[];
+
+export function defaultListActions(
+  world: WorldState,
+  actor: ActorRef,
+  target: ActionTarget,
+): ActionOption[] {
+  return availableActions(
+    bindWorldMutator(
+      world,
+      staticPlayerPose({
+        roomId: world.currentRoomId,
+        x: 0,
+        y: 0,
+      }),
+    ),
+    actor,
+    target,
+  );
+}
+
 export type InteractTarget =
   | {
       kind: "figure";
@@ -34,9 +75,24 @@ export type InteractTarget =
       prompt: string;
       /** All four, with the impossible ones carrying their reason. */
       verbs: VerbOption[];
+      actions: ActionOption[];
+    }
+  | {
+      kind: "object";
+      object: WorldObjectState;
+      prompt: string;
+      actions: ActionOption[];
     }
   | { kind: "hotspot"; hotspot: RoomHotspot; prompt: string }
   | { kind: "door"; doorId: string; prompt: string };
+
+export interface ActionRingRow {
+  label: string;
+  refusal: string | null;
+  confirm: boolean;
+  payload:
+    { kind: "verb"; verb: Verb } | { kind: "world"; action: WorldAction };
+}
 
 function nearestFigure(
   world: WorldState,
@@ -70,6 +126,31 @@ function hotspotDistance(
     hotspot.x * room.tileSize - local.x,
     hotspot.y * room.tileSize - local.y,
   );
+}
+
+function objectDistance(
+  object: WorldObjectState,
+  player: PlayerState,
+  room: RoomState,
+): number | null {
+  if (object.location.kind !== "room" || object.location.roomId !== room.id) {
+    return null;
+  }
+  const local = toLocalPixels(room, player.x, player.y);
+  const loc = object.location;
+  const rx = loc.x * room.tileSize;
+  const ry = loc.y * room.tileSize;
+  if (!object.body) {
+    return Math.hypot(rx - local.x, ry - local.y);
+  }
+  const rw = object.body.w * room.tileSize;
+  const rh = object.body.h * room.tileSize;
+  const inside =
+    local.x >= rx && local.x < rx + rw && local.y >= ry && local.y < ry + rh;
+  if (inside) return 0;
+  const dx = Math.max(rx - local.x, 0, local.x - (rx + rw));
+  const dy = Math.max(ry - local.y, 0, local.y - (ry + rh));
+  return Math.hypot(dx, dy);
 }
 
 /** Every hotspot in the room right now: authored ones plus whatever the sleeper added. */
@@ -110,11 +191,38 @@ function verbsFor(
   );
 }
 
+function floorObjects(world: WorldState, roomId: string): WorldObjectState[] {
+  return liveObjects(world).filter(
+    (object) =>
+      object.location.kind === "room" && object.location.roomId === roomId,
+  );
+}
+
+function nearestObject(
+  world: WorldState,
+  player: PlayerState,
+  room: RoomState,
+): { object: WorldObjectState; distance: number } | null {
+  let best: WorldObjectState | null = null;
+  let bestDistance = Infinity;
+  for (const object of floorObjects(world, room.id)) {
+    const distance = objectDistance(object, player, room);
+    if (distance === null) continue;
+    const reach = (object.interaction?.reach ?? 1.4) * room.tileSize;
+    if (distance <= reach && distance < bestDistance) {
+      best = object;
+      bestDistance = distance;
+    }
+  }
+  return best ? { object: best, distance: bestDistance } : null;
+}
+
 export function findTarget(
   world: WorldState,
   room: RoomState,
   player: PlayerState,
   locale?: SupportedLocale,
+  listActions: ListActions = defaultListActions,
 ): InteractTarget | null {
   // A door that just turned us away outranks everything: the player pressed into it on
   // purpose, and saying why is more useful than offering to look at a nearby chair.
@@ -130,9 +238,15 @@ export function findTarget(
   }
 
   const figure = nearestFigure(world, player, room);
+  const object = nearestObject(world, player, room);
+  const objectIds = new Set(
+    floorObjects(world, room.id).map((entry) => entry.id),
+  );
   const local = toLocalPixels(room, player.x, player.y);
   const hotspot = findHotspot(
-    reachableHotspots(world, room),
+    reachableHotspots(world, room).filter(
+      (entry) => !objectIds.has(entry.id) && !objectIds.has(entry.propId ?? ""),
+    ),
     local.x,
     local.y,
     room.tileSize,
@@ -140,12 +254,17 @@ export function findTarget(
 
   const asFigure = (state: FigureState): InteractTarget => {
     const verbs = verbsFor(world, room, state, locale);
-    // One extra word on the prompt when there is anything else to do, rather than a
-    // second HUD element. The key label is not spelled out here — `ui/controls.ts`
-    // derives it from the binding, so rebinding does not lie.
-    const more = verbs.some(
-      (option) => option.verb !== "talk" && !option.refusal,
+    const actions = listActions(
+      world,
+      { kind: "player" },
+      {
+        kind: "figure",
+        id: state.id,
+      },
     );
+    const more =
+      verbs.some((option) => option.verb !== "talk" && !option.refusal) ||
+      actions.some((option) => !option.refusal);
     const talkPrompt = t("interact.talk_to", { name: state.name }, locale);
     const moreActions = more
       ? t("interact.more_actions", undefined, locale)
@@ -155,17 +274,102 @@ export function findTarget(
       figure: state,
       prompt: `${talkPrompt}${moreActions}`,
       verbs,
+      actions,
     };
   };
 
-  if (figure && hotspot) {
-    const hotspotAway = hotspotDistance(hotspot, player, room);
-    if (hotspotAway < figure.distance) {
-      return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
-    }
-    return asFigure(figure.figure);
+  const asObject = (state: WorldObjectState): InteractTarget => {
+    const actions = listActions(
+      world,
+      { kind: "player" },
+      {
+        kind: "object",
+        id: state.id,
+      },
+    );
+    return {
+      kind: "object",
+      object: state,
+      prompt: state.interaction?.prompt ?? state.name,
+      actions,
+    };
+  };
+
+  type Ranked = { distance: number; target: InteractTarget };
+  const ranked: Ranked[] = [];
+  if (figure)
+    ranked.push({ distance: figure.distance, target: asFigure(figure.figure) });
+  if (object)
+    ranked.push({ distance: object.distance, target: asObject(object.object) });
+  if (hotspot) {
+    ranked.push({
+      distance: hotspotDistance(hotspot, player, room),
+      target: { kind: "hotspot", hotspot, prompt: hotspot.prompt },
+    });
   }
-  if (figure) return asFigure(figure.figure);
-  if (hotspot) return { kind: "hotspot", hotspot, prompt: hotspot.prompt };
-  return null;
+  ranked.sort((a, b) => a.distance - b.distance);
+  return ranked[0]?.target ?? null;
+}
+
+/** E on a carryable: take if the engine allows it, otherwise examine. */
+export function primaryObjectAction(
+  actions: readonly ActionOption[],
+): ActionOption | null {
+  const take = actions.find(
+    (option) => option.action.type === "take" && !option.refusal,
+  );
+  if (take) return take;
+  const examine = actions.find(
+    (option) => option.affordance === "examine" && !option.refusal,
+  );
+  if (examine) return examine;
+  return actions.find((option) => !option.refusal) ?? null;
+}
+
+function labelForAction(option: ActionOption): string {
+  if (option.label) return option.label;
+  const key =
+    option.affordance === "move"
+      ? "actions.traverse"
+      : (`actions.${option.affordance}` as TranslationKey);
+  return t(key);
+}
+
+/**
+ * Figure ring: talk/press/lead/kill always, then object-facing rows from the engine
+ * (give when the sanitar holds something). Object ring: engine rows only.
+ * Refused rows stay, struck through by the ring.
+ */
+export function actionRingRowsFor(input: {
+  kind: "figure" | "object";
+  verbs: readonly VerbOption[];
+  actions: readonly ActionOption[];
+}): ActionRingRow[] {
+  const rows: ActionRingRow[] = [];
+  if (input.kind === "figure") {
+    for (const option of input.verbs) {
+      rows.push({
+        label: option.label,
+        refusal: option.refusal,
+        confirm: option.verb === "kill",
+        payload: { kind: "verb", verb: option.verb },
+      });
+    }
+  }
+  for (const option of input.actions) {
+    if (
+      input.kind === "figure" &&
+      option.action.type !== "give" &&
+      option.affordance !== "give"
+    ) {
+      continue;
+    }
+    rows.push({
+      label: labelForAction(option),
+      refusal: option.refusal,
+      confirm: false,
+      payload: { kind: "world", action: option.action },
+    });
+  }
+  return rows;
 }

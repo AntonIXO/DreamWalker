@@ -10,7 +10,9 @@ import type {
   FigureTranscriptLine,
   FigureMemory,
   WorldSnapshot,
+  WorldSnapshotObject,
 } from "../../shared/ai";
+import type { ActorPose, WorldObjectState } from "../../shared/world-object";
 import type { DreamArtifact } from "../../shared/dream";
 import { fallbackPopulation } from "../../shared/population";
 import { isMoneyHotspot, rollWallet } from "../../shared/wallet";
@@ -34,6 +36,7 @@ const TRANSCRIPT_LINES = 80;
 export interface RemoteMindContext {
   cycleNumber(): number;
   journal(): string[];
+  playerPose?(): ActorPose | null;
 }
 
 class RemoteMindError extends Error {
@@ -55,11 +58,38 @@ class RemoteMindError extends Error {
  * because this is the strongest tell in the game and a sentence of instruction is not a
  * защита. The Eye is the exception, and cycle-exit gets the unfiltered list: the sleeper
  * is allowed to know.
+ *
+ * Player x/y lives on PlayerState, not WorldState. Callers that have the pose
+ * should pass it; otherwise we fall back to the current room at (0, 0). UX/main
+ * should pass the real pose into snapshot extras.
  */
-function snapshot(
+export interface SnapshotExtras {
+  playerPose?: ActorPose | null;
+  objects?: WorldSnapshotObject[];
+  worldRevision?: number;
+}
+
+function snapshotObjectOf(object: WorldObjectState): WorldSnapshotObject {
+  return {
+    id: object.id,
+    name: object.name,
+    location: { ...object.location },
+    mobility: object.mobility,
+    affordances: [...object.affordances],
+    state: { ...object.state },
+    keyId: object.keyId,
+    body: object.body ? { ...object.body } : null,
+    clueId: object.clueId,
+    holdsShardId: object.holdsShardId,
+    tags: [...object.tags],
+  };
+}
+
+export function snapshot(
   world: WorldState,
   mood: WorldSnapshot["mood"] = "upper-dynamic",
   forFigureId: string | null = null,
+  extras?: SnapshotExtras,
 ): WorldSnapshot {
   const hidden = (figureId: string): boolean =>
     forFigureId !== null &&
@@ -75,6 +105,8 @@ function snapshot(
       id,
       name: world.baseFigures.find((figure) => figure.id === id)?.name ?? id,
       roomId: record.roomId,
+      x: 0,
+      y: 0,
       holdsShardId: null,
       role: "часть этого сна",
       personality: "",
@@ -96,12 +128,18 @@ function snapshot(
       type: door.type,
       fromRoomId: world.roomIdByDoorId.get(id) ?? "",
       toRoomId: door.toRoomId,
+      x: door.x,
+      y: door.y,
+      keyId: door.keyId,
+      threshold: door.threshold,
     })),
     figures: [
       ...world.figures.map((figure) => ({
         id: figure.id,
         name: figure.name,
         roomId: figure.roomId,
+        x: figure.x,
+        y: figure.y,
         holdsShardId: figure.holdsShardId,
         role: figure.role,
         personality: figure.personality,
@@ -137,6 +175,13 @@ function snapshot(
         cycle: record.cycle,
         roomId: record.roomId,
       })),
+    objects: extras?.objects ?? world.objects.map(snapshotObjectOf),
+    player: extras?.playerPose ?? {
+      roomId: world.currentRoomId,
+      x: 0,
+      y: 0,
+    },
+    worldRevision: extras?.worldRevision ?? world.revision,
     mood,
   };
 }
@@ -282,7 +327,9 @@ export class RemoteMind implements DreamMind {
       figureMemory,
       knownShardIds: [...this.memory.knownShardIds],
       sleeper: this.memory.sleeper,
-      world: snapshot(this.world, "upper-dynamic", request.figureId),
+      world: snapshot(this.world, "upper-dynamic", request.figureId, {
+        playerPose: this.context.playerPose?.() ?? null,
+      }),
       exhaustion: this.world.exhaustion,
       locale: getLocale(),
     };

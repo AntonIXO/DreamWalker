@@ -21,6 +21,7 @@
 import type { StyleProfile } from "./art/style";
 import type { DreamContent } from "./content";
 import type { SupportedLocale } from "./i18n";
+import { assertMuralObjectArt } from "./object-art";
 import { THRESHOLD_KINDS, type DreamRoom, type DreamSpawn } from "./room";
 import { DOOR_TYPES, type DoorTypeName } from "./tilecodes";
 
@@ -780,6 +781,16 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
     return room;
   });
   const roomIds = new Set(index.entryIds.keys());
+
+  const maybeObjects = (root as { objects?: unknown }).objects;
+  if (Array.isArray(maybeObjects) && maybeObjects.length > 0) {
+    for (const message of assertMuralObjectArt(
+      shaped as { id: string; graphics: DreamRoom["graphics"] }[],
+      maybeObjects as Parameters<typeof assertMuralObjectArt>[1],
+    )) {
+      fail("dream.objects", message);
+    }
+  }
 
   // --- shards and figures. Figures are needed before links, since a link may aim at one.
   const shardIds = new Set<string>();

@@ -275,11 +275,10 @@ describe("son is playable", () => {
     player.x = at.x;
     player.y = at.y;
     const target = findTarget(world, room, player);
-    expect(target?.kind).toBe("hotspot");
-    if (target?.kind === "hotspot") {
-      expect(target.hotspot.id).toBe("podezdnaia-dver-s-domofonom");
-      // Pressing E on it examines it. It is not a way out any more.
-      expect(target.hotspot.refusal).toBeNull();
+    expect(target?.kind).toBe("object");
+    if (target?.kind === "object") {
+      expect(target.object.id).toBe(body.id);
+      expect(target.object.interaction?.refusal ?? null).toBeNull();
     }
   });
 

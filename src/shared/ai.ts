@@ -2,6 +2,12 @@ import type { MapPatch } from "./map-patch";
 import type { PortraitState } from "./content";
 import type { FigureFate, Verb } from "./verbs";
 import type { SupportedLocale } from "./i18n";
+import type { WorldActionEnvelope } from "./world-action";
+import type {
+  ObjectAffordance,
+  ObjectLocation,
+  ObjectMobility,
+} from "./world-object";
 
 /** The one Codex configuration this game is designed and tuned against. */
 export const DREAM_MODEL = "gpt-5.6-luna";
@@ -145,6 +151,26 @@ export interface FigureMemory {
   lines: FigureTranscriptLine[];
 }
 
+/** A physical object as the sleeper/NPC sees it. Ownership is `location`. */
+export interface WorldSnapshotObject {
+  id: string;
+  name: string;
+  location: ObjectLocation;
+  mobility: ObjectMobility;
+  affordances: ObjectAffordance[];
+  state: {
+    open?: boolean;
+    active?: boolean;
+    broken?: boolean;
+    locked?: boolean;
+  };
+  keyId: string | null;
+  body: { w: number; h: number; solid: boolean } | null;
+  clueId: string | null;
+  holdsShardId: string | null;
+  tags: string[];
+}
+
 export interface WorldSnapshot {
   rooms: Array<{
     id: string;
@@ -164,11 +190,17 @@ export interface WorldSnapshot {
     type: string;
     fromRoomId: string;
     toRoomId: string;
+    x: number;
+    y: number;
+    keyId: string | null;
+    threshold: string;
   }>;
   figures: Array<{
     id: string;
     name: string;
     roomId: string;
+    x: number;
+    y: number;
     holdsShardId: string | null;
     role: string;
     personality: string;
@@ -208,6 +240,11 @@ export interface WorldSnapshot {
     cycle: number;
     roomId: string;
   }>;
+  /** Carryable / movable / fixed objects. Location encodes held/inside/room. */
+  objects: WorldSnapshotObject[];
+  /** Sanitar pose. Lives on PlayerState, not WorldState — filled by the snapshot caller. */
+  player: { roomId: string; x: number; y: number };
+  worldRevision: number;
   /** Which corner of the chart the sanitar is currently in. Sets the register, not the plot. */
   mood: "upper-dynamic" | "upper-static" | "downer-dynamic" | "downer-static";
 }
@@ -265,6 +302,11 @@ export interface DialogueResult {
    * в обиду и замолкает», and never speaks again. Null when nothing was pressed.
    */
   pressed: "leveraged" | "broken" | null;
+  /**
+   * Successful world-tool envelopes from this turn, in order. Refusals are not listed;
+   * they already came back as tool results. The browser replays this log.
+   */
+  worldActions: WorldActionEnvelope[];
 }
 
 export interface ExamineRequestPayload {

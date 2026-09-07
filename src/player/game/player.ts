@@ -14,12 +14,13 @@ import {
   walkFrame as sharedWalkFrame,
   type Walker,
 } from "../../shared/roomWalk";
-import type { Direction } from "../../shared/roomGrid";
+import type { Box, Direction } from "../../shared/roomGrid";
 import {
   BODY_HEIGHT,
   BODY_WIDTH,
   cellAt,
   isSolidCell,
+  rectBlocks,
 } from "../../shared/roomGrid";
 import {
   blockedInWorld,
@@ -27,8 +28,10 @@ import {
   isStreetWorld,
   originX,
   originY,
+  pickRoomAtTile,
   toWorldPixels,
 } from "../../shared/street";
+import { liveObjectRectsFor, solidRectsFor } from "./object-collision";
 import {
   doorAtTile,
   canPassDoor,
@@ -95,8 +98,8 @@ export function updatePlayer(
   if (isStreetWorld(world.rooms)) {
     walkStreet(player, room, world, axis, deltaSeconds);
   } else {
-    const solidProps = room.props.filter((prop) => prop.solid);
-    updateWalker(player, room, solidProps, room.tileSize, axis, deltaSeconds);
+    const solids = solidRectsFor(world, room.id);
+    updateWalker(player, room, solids, room.tileSize, axis, deltaSeconds);
   }
 
   player.enteredDoorId = null;
@@ -143,7 +146,13 @@ function walkStreet(
   let y = player.y;
   if (
     dx !== 0 &&
-    !blockedInWorld(world.rooms, room.id, { ...box, x: x + dx }, room.tileSize)
+    !blockedInWorld(
+      world.rooms,
+      room.id,
+      { ...box, x: x + dx },
+      room.tileSize,
+    ) &&
+    !blockedByLiveObjects(world, room.id, { ...box, x: x + dx }, room.tileSize)
   ) {
     x += dx;
   }
@@ -151,6 +160,12 @@ function walkStreet(
     dy !== 0 &&
     !blockedInWorld(
       world.rooms,
+      room.id,
+      { ...box, x, y: y + dy },
+      room.tileSize,
+    ) &&
+    !blockedByLiveObjects(
+      world,
       room.id,
       { ...box, x, y: y + dy },
       room.tileSize,
@@ -164,6 +179,30 @@ function walkStreet(
   player.facing = facingFor(axis.x, axis.y, player.facing);
   player.travelled += moved;
   player.moving = moved > 0.01;
+}
+
+function blockedByLiveObjects(
+  world: WorldState,
+  currentId: string,
+  box: Box,
+  tileSize: number,
+): boolean {
+  const halfX = box.width / 2;
+  const halfY = box.height / 2;
+  const minX = Math.floor((box.x - halfX) / tileSize);
+  const maxX = Math.floor((box.x + halfX - 0.001) / tileSize);
+  const minY = Math.floor((box.y - halfY) / tileSize);
+  const maxY = Math.floor((box.y + halfY - 0.001) / tileSize);
+  for (let ty = minY; ty <= maxY; ty++) {
+    for (let tx = minX; tx <= maxX; tx++) {
+      const placed = pickRoomAtTile(world.rooms, tx, ty, currentId);
+      if (!placed) continue;
+      const lx = tx - originX(placed);
+      const ly = ty - originY(placed);
+      if (rectBlocks(liveObjectRectsFor(world, placed.id), lx, ly)) return true;
+    }
+  }
+  return false;
 }
 
 function doorAhead(

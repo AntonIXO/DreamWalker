@@ -44,6 +44,7 @@ import { Shiver } from "./render/shiver";
 import { FinaleFrenzy } from "./render/finaleFrenzy";
 import {
   ActorLayer,
+  liveObjectPlacements,
   WalkerSprite,
   type AuthoredWalk,
 } from "./render/walkerView";
@@ -65,6 +66,13 @@ import { forecastFor, type Forecast } from "./game/forecast";
 import { MEMORY_EXHAUSTION } from "./game/exhaustion";
 import { addExhaustion } from "./game/world";
 import { learnLeverage, leverageOn } from "./game/fates";
+import { liveObjects } from "./game/object-collision";
+import { NpcActionQueue, replayWorldActions } from "./game/npc-action-queue";
+import { actionRingRowsFor, primaryObjectAction } from "./game/interact";
+import { executeWorldAction } from "../shared/world-action-engine";
+import type { WorldAction } from "../shared/world-action";
+import type { ActorRef } from "../shared/world-object";
+import { bindWorldMutator } from "./game/world-mutator";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
@@ -87,7 +95,7 @@ import { ModelThinkingIndicator } from "./ui/modelThinking";
 
 import { WordNotebookPanel } from "./ui/wordNotebook";
 import { ClueInspectPanel } from "./ui/clueInspect";
-import { VerbRing } from "./ui/verbRing";
+import { ActionRing } from "./ui/verbRing";
 import { Soundtrack } from "./soundtrack";
 
 type AppPhase = "lobby" | "enteringDream" | "dream";
@@ -269,7 +277,12 @@ async function boot(): Promise<void> {
   // A meta-space's picture has no edges and must not move with the camera.
   app.stage.addChild(rooms.overlay);
 
-  const actors = new ActorLayer(atlas, clueTextures, figureTextures);
+  const actors = new ActorLayer(
+    atlas,
+    clueTextures,
+    figureTextures,
+    objectTextures,
+  );
   worldRoot.addChild(actors.root);
 
   const sanitarWalk = await loadSanitarWalk();
@@ -360,6 +373,35 @@ async function boot(): Promise<void> {
         interest.roomId === world.currentRoomId,
     );
 
+  const syncLiveLayer = (): void => {
+    const room = currentRoom(world);
+    const objects = liveObjects(world);
+    rooms.hideDynamicProps(
+      objects
+        .filter((object) => object.mobility !== "fixed")
+        .map((object) => object.id),
+    );
+    const holders = new Map<string, { roomId: string; x: number; y: number }>();
+    const tile = playerTile(session.player, room);
+    holders.set("player", {
+      roomId: world.currentRoomId,
+      x: tile.x,
+      y: tile.y,
+    });
+    for (const figure of world.figures) {
+      holders.set(`figure:${figure.id}`, {
+        roomId: figure.roomId,
+        x: figure.x,
+        y: figure.y,
+      });
+    }
+    actors.syncLiveObjects(
+      liveObjectPlacements(objects, holders),
+      room.tileSize,
+      world,
+    );
+  };
+
   const thinking = new ModelThinkingIndicator(uiLayer);
   const mindSettings = await loadMindSettings();
   const mind = createMind(
@@ -367,6 +409,10 @@ async function boot(): Promise<void> {
     {
       cycleNumber: () => cycle.number,
       journal: () => journal.all().map((entry) => entry.text),
+      playerPose: () => {
+        const tile = playerTile(session.player, currentRoom(world));
+        return { roomId: world.currentRoomId, x: tile.x, y: tile.y };
+      },
     },
     mindMemory,
   );
@@ -401,6 +447,25 @@ async function boot(): Promise<void> {
       wordNotebook.observe(clueId);
     }
   };
+
+  const npcQueue = new NpcActionQueue();
+  const asMutator = () =>
+    bindWorldMutator(world, {
+      get: () => {
+        const tile = playerTile(session.player, currentRoom(world));
+        return { roomId: world.currentRoomId, x: tile.x, y: tile.y };
+      },
+      set: () => undefined,
+    });
+  const runWorldAction = (
+    action: WorldAction,
+    actor: ActorRef = { kind: "player" },
+  ) =>
+    executeWorldAction(asMutator(), {
+      actor,
+      source: actor.kind === "player" ? "player" : "npc",
+      action,
+    });
 
   const dialogue = new DialoguePanel(
     uiLayer,
@@ -497,13 +562,30 @@ async function boot(): Promise<void> {
         finale.openResonance(declaration);
       },
       exhaustion: () => world.exhaustion,
+      onWorldActions: (figure, actions) => {
+        replayWorldActions(
+          (envelope) => executeWorldAction(asMutator(), envelope),
+          { kind: "figure", id: figure.id },
+          "npc",
+          actions,
+        );
+        return { close: figure.roomId !== world.currentRoomId };
+      },
     },
     figurePortraitUrls,
   );
 
-  const verbRing = new VerbRing(uiLayer, {
+  const verbRing = new ActionRing(uiLayer, {
     onClose: () => input.setCaptured(false),
-    onPick: (figure, verb) => {
+    onPick: (subject, row) => {
+      if (row.payload.kind === "world") {
+        const result = runWorldAction(row.payload.action);
+        if (!result.ok && result.refusal) hud.whisper(result.refusal, 4);
+        return;
+      }
+      if (subject.kind !== "figure") return;
+      const figure = subject.figure;
+      const verb = row.payload.verb;
       if (verb === "talk" || verb === "press") {
         dialogue.open(figure, verb === "press");
         return;
@@ -733,6 +815,7 @@ async function boot(): Promise<void> {
         session.noteCycleReset();
         actors.syncFigures(figuresHere(), tileSize, world);
         actors.syncInterests(interestsHere(), tileSize, world);
+        syncLiveLayer();
         populationInstalled = true;
       }
       controls.close();
@@ -1031,6 +1114,9 @@ async function boot(): Promise<void> {
           y: session.player.y / room.tileSize,
         },
       );
+      npcQueue.tick(world, (envelope) =>
+        executeWorldAction(asMutator(), envelope),
+      );
     }
 
     // A street map is one country: follow the walker. A single-room dream still
@@ -1100,13 +1186,31 @@ async function boot(): Promise<void> {
     const atFinale = room.id === artifact.finaleRoomId;
     prompt = target?.prompt ?? (atFinale ? "сердце сна — назвать тайну" : null);
 
-    if (
-      !simulationPaused &&
-      input.consume(Action.VERBS) &&
-      target?.kind === "figure"
-    ) {
-      input.setCaptured(true);
-      verbRing.open(target.figure, target.verbs);
+    if (!simulationPaused && input.consume(Action.VERBS) && target) {
+      if (target.kind === "figure") {
+        input.setCaptured(true);
+        verbRing.open(
+          { kind: "figure", figure: target.figure },
+          actionRingRowsFor({
+            kind: "figure",
+            verbs: target.verbs,
+            actions: target.actions,
+          }),
+        );
+      } else if (target.kind === "object") {
+        const rows = actionRingRowsFor({
+          kind: "object",
+          verbs: [],
+          actions: target.actions,
+        });
+        if (rows.length > 0) {
+          input.setCaptured(true);
+          verbRing.open(
+            { kind: "object", id: target.object.id, name: target.object.name },
+            rows,
+          );
+        }
+      }
     }
 
     if (!simulationPaused && input.consume(Action.INTERACT)) {
@@ -1116,6 +1220,48 @@ async function boot(): Promise<void> {
           if (!session.useNearbyHotspot()) hud.whisper("Ну ладно.", 2);
         } else {
           dialogue.open(target.figure);
+        }
+      } else if (target?.kind === "object") {
+        const pick = primaryObjectAction(target.actions);
+        if (pick) {
+          const result = runWorldAction(pick.action);
+          if (!result.ok && result.refusal) hud.whisper(result.refusal, 4);
+        } else if (target.object.interaction?.refusal) {
+          hud.whisper(target.object.interaction.refusal, 4);
+        } else {
+          const loc =
+            target.object.location.kind === "room"
+              ? target.object.location
+              : null;
+          void thinking
+            .run("Рассматривает деталь мира", () =>
+              mind.examine({
+                x: loc?.x ?? 0,
+                y: loc?.y ?? 0,
+                roomId: room.id,
+                interestId: null,
+                hotspotId: target.object.id,
+              }),
+            )
+            .then((result) => {
+              if (result.clueObservedId) {
+                const clue = artifact.content.clues.find(
+                  (candidate) => candidate.id === result.clueObservedId,
+                );
+                if (clue) {
+                  wordNotebook.observe(clue.id);
+                  journal.add(
+                    cycle.number,
+                    `УЛИКА — осмотрен предмет-ребус ${wordNotebook.observedCount}/6.`,
+                  );
+                  input.setCaptured(true);
+                  clueInspect.open(clue, result.reply);
+                }
+              } else {
+                hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
+              }
+              if (result.yieldedShardId) noteShard(result.yieldedShardId);
+            });
         }
       } else if (target?.kind === "hotspot") {
         const hotspot = target.hotspot;
@@ -1191,6 +1337,7 @@ async function boot(): Promise<void> {
     );
     actors.syncFigures(figuresHere(), room.tileSize, world);
     actors.syncInterests(interestsHere(), room.tileSize, world);
+    syncLiveLayer();
 
     if (room.id === "m11-zamok-po-vremeni") {
       const elapsed = Math.max(0, Date.now() - Date.parse(LOCK_STARTED_AT));

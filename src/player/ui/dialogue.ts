@@ -20,6 +20,7 @@ import { clampPortraitByExhaustion } from "../game/exhaustion";
 import { bandAt, coverForPortrait, weatherFor } from "../game/forecast";
 import type { FigureState } from "../game/world";
 import type { DreamMind, TurnResponse } from "../mind/types";
+import type { WorldAction } from "../../shared/world-action";
 import type { DreamArtifact } from "../../shared/dream";
 import type { AtlasTextures } from "../render/atlasTextures";
 import { setMarkdown } from "./markdown";
@@ -49,6 +50,16 @@ export interface DialogueCallbacks {
   onPressed(figure: FigureState, outcome: "leveraged" | "broken"): void;
   onResonance(declaration: string): void;
   exhaustion(): number;
+  /**
+   * Confirmed physical actions from this turn. `action` on the result is gesture
+   * only. Return whether the speaker left the player's room.
+   */
+  onWorldActions?(
+    figure: FigureState,
+    actions: readonly WorldAction[],
+  ): {
+    close: boolean;
+  };
 }
 
 export class DialoguePanel {
@@ -537,6 +548,11 @@ export class DialoguePanel {
     }
     if (response.pressed) this.callbacks.onPressed(figure, response.pressed);
 
+    const worldActions = worldActionsOf(response);
+    const leftRoom =
+      worldActions.length > 0 &&
+      !!this.callbacks.onWorldActions?.(figure, worldActions)?.close;
+
     if (response.journalEntry)
       this.callbacks.onJournal(figure, response.journalEntry);
     if (
@@ -553,6 +569,7 @@ export class DialoguePanel {
     }
 
     this.finishTurn();
+    if (leftRoom) this.close();
   }
 
   destroy(): void {
@@ -593,4 +610,9 @@ function voiceHint(
 /** The key is opaque on purpose; the readable half lives in the soul, server-side. */
 function labelFor(leverageId: string): string {
   return leverageId.split(":")[1]?.replace(/-/g, " ") ?? leverageId;
+}
+
+function worldActionsOf(response: TurnResponse): WorldAction[] {
+  const extra = response as TurnResponse & { worldActions?: WorldAction[] };
+  return Array.isArray(extra.worldActions) ? extra.worldActions : [];
 }

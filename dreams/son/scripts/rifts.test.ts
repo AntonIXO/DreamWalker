@@ -39,6 +39,13 @@ function fakeHost(overrides: Partial<ScriptHost> = {}): ScriptHost & {
     figureInWorld: () => false,
     whisper: () => undefined,
     observeClue: () => undefined,
+    dispatch: () => ({
+      ok: true,
+      refusal: null,
+      affectedRooms: [] as string[],
+      affectedObjects: [] as string[],
+      events: [],
+    }),
     retargets,
     flags,
     ...overrides,

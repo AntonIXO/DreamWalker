@@ -14,6 +14,11 @@ import { validateDreamArtifact, type DreamArtifact } from "../../shared/dream";
 import type { DreamPopulation } from "../../shared/ai";
 import { MindMemory } from "../mind/memory";
 import { ScriptedMind } from "../mind/scripted";
+import type {
+  WorldActionEnvelope,
+  WorldActionResult,
+} from "../../shared/world-action";
+import type { WorldMutator } from "../../shared/world-object";
 import { applyPatch, installPopulation, patchTouches } from "./patch";
 import { createWorld, noteVisit, resetWorld, type WorldState } from "./world";
 
@@ -338,5 +343,88 @@ describe("ScriptedMind.judge", () => {
     await expect(mind.judge(Array(12).fill("qwerty"))).resolves.toMatchObject({
       verdict: "miss",
     });
+  });
+});
+
+function recordingExecute(envelopes: WorldActionEnvelope[]) {
+  return (
+    _world: WorldMutator,
+    envelope: WorldActionEnvelope,
+  ): WorldActionResult => {
+    envelopes.push(envelope);
+    return {
+      ok: true,
+      refusal: null,
+      affectedRooms: ["a"],
+      affectedObjects: [],
+      events: [],
+    };
+  };
+}
+
+describe("MapPatch embodied wrappers", () => {
+  test("openDoor calls executeWorldAction as source sleeper", () => {
+    const world = makeWorld();
+    applyPatch(world, { kind: "sealDoor", doorId: "a-to-b", reason: "test" });
+    const envelopes: WorldActionEnvelope[] = [];
+    const result = applyPatch(
+      world,
+      { kind: "openDoor", doorId: "a-to-b", reason: "test" },
+      1,
+      { execute: recordingExecute(envelopes), source: "sleeper" },
+    );
+    expect(result.ok).toBe(true);
+    expect(envelopes).toEqual([
+      {
+        actor: { kind: "sleeper" },
+        source: "sleeper",
+        action: { type: "open", targetId: "a-to-b" },
+      },
+    ]);
+  });
+
+  test("closeHotspot calls executeWorldAction as object close", () => {
+    const world = makeWorld();
+    const envelopes: WorldActionEnvelope[] = [];
+    const result = applyPatch(
+      world,
+      {
+        kind: "closeHotspot",
+        roomId: "a",
+        hotspotId: "rope",
+        reason: "test",
+      },
+      1,
+      { execute: recordingExecute(envelopes), source: "sleeper" },
+    );
+    expect(result.ok).toBe(true);
+    expect(envelopes[0]?.action).toEqual({ type: "close", targetId: "rope" });
+    expect(envelopes[0]?.source).toBe("sleeper");
+  });
+
+  test("shiftWalls does not go through the embodied executor", () => {
+    const world = makeWorld();
+    const envelopes: WorldActionEnvelope[] = [];
+    const result = applyPatch(
+      world,
+      { kind: "shiftWalls", roomId: "b", variantId: "shifted", reason: "test" },
+      1,
+      { execute: recordingExecute(envelopes), source: "sleeper" },
+    );
+    expect(result.ok).toBe(true);
+    expect(envelopes).toEqual([]);
+    expect(world.roomById.get("b")!.activeVariant).toBe("shifted");
+  });
+
+  test("without an injected executor, openDoor still uses the sleeper writer", () => {
+    const world = makeWorld();
+    applyPatch(world, { kind: "sealDoor", doorId: "a-to-b", reason: "test" });
+    const reopened = applyPatch(world, {
+      kind: "openDoor",
+      doorId: "a-to-b",
+      reason: "test",
+    });
+    expect(reopened.ok).toBe(true);
+    expect(world.doorById.get("a-to-b")!.type).toBe("keyLock");
   });
 });
