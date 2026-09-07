@@ -79,6 +79,11 @@ export const ru: TranslationSchema = {
     hint: "1–4 — выбрать · Esc — отойти",
     confirm: "точно?",
   },
+  actionRing: {
+    title: "ЗАПИСЬ",
+    hint: "1–9 — выбрать · Esc — отойти",
+    confirm: "точно?",
+  },
   verbs: {
     label: {
       talk: "заговорить",
@@ -97,6 +102,18 @@ export const ru: TranslationSchema = {
       unkillable: "Не этого.",
       no_lethal_means: "Здесь нечем.",
     },
+  },
+  actions: {
+    examine: "осмотреть",
+    take: "взять",
+    drop: "положить",
+    give: "отдать",
+    put: "убрать внутрь",
+    open: "открыть",
+    close: "закрыть",
+    activate: "нажать",
+    use: "использовать",
+    traverse: "пройти",
   },
   weather: {
     overcast: "пасмурно",
@@ -247,5 +264,6 @@ export const ru: TranslationSchema = {
   interact: {
     talk_to: "заговорить с {name}",
     more_actions: " · F — иначе",
+    look_at: "осмотреть: {name}",
   },
 };

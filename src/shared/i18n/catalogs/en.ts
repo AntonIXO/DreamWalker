@@ -80,6 +80,11 @@ export const en: TranslationSchema = {
     hint: "1–4 — choose · Esc — step back",
     confirm: "sure?",
   },
+  actionRing: {
+    title: "RECORD",
+    hint: "1–9 — choose · Esc — step back",
+    confirm: "sure?",
+  },
   verbs: {
     label: {
       talk: "talk",
@@ -98,6 +103,18 @@ export const en: TranslationSchema = {
       unkillable: "Not this one.",
       no_lethal_means: "Nothing to do it with here.",
     },
+  },
+  actions: {
+    examine: "examine",
+    take: "take",
+    drop: "drop",
+    give: "give",
+    put: "put inside",
+    open: "open",
+    close: "close",
+    activate: "activate",
+    use: "use",
+    traverse: "go through",
   },
   weather: {
     overcast: "overcast",
@@ -249,5 +266,6 @@ export const en: TranslationSchema = {
   interact: {
     talk_to: "talk to {name}",
     more_actions: " · F — actions",
+    look_at: "look at {name}",
   },
 };

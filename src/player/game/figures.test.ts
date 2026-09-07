@@ -5,7 +5,9 @@ import { validateDreamArtifact, type DreamArtifact } from "../../shared/dream";
 import { originX, originY } from "../../shared/street";
 import { escortFigure, updateFigures } from "./figures";
 import { applyPatch } from "./patch";
+import { setLiveObjects } from "./object-collision";
 import { createWorld } from "./world";
+import type { WorldObjectState } from "../../shared/world-object";
 
 const artifact = validateDreamArtifact(sonArtifact()) as DreamArtifact;
 
@@ -54,5 +56,43 @@ describe("a led figure", () => {
       updateFigures(world, 0, 1 / 30, null, YARD, toward);
     }
     expect(figure.roomId).toBe(STREET);
+  });
+});
+
+describe("figure collision with live objects", () => {
+  test("ambient steps never enter a solid live object", () => {
+    const world = createWorld(artifact);
+    const figure = world.figures.find((entry) => entry.id === "kirill")!;
+    figure.roomId = YARD;
+    figure.x = 10;
+    figure.y = 6;
+    const object: WorldObjectState = {
+      id: "bottle",
+      name: "бутылка",
+      location: { kind: "room", roomId: YARD, x: 11, y: 6 },
+      mobility: "carryable",
+      affordances: ["take"],
+      body: { w: 1, h: 1, solid: true },
+      visual: { role: null, image: "bottle.png" },
+      interaction: null,
+      state: {},
+      tags: [],
+      clueId: null,
+      holdsShardId: null,
+      sensorySeed: null,
+      once: false,
+      dwellMs: null,
+      keyId: null,
+      hotspotKind: null,
+      uiAction: null,
+    };
+    setLiveObjects(world, [object]);
+    for (let i = 0; i < 120; i++) {
+      updateFigures(world, 0, 1 / 30, null, YARD, null);
+      expect(Math.round(figure.x)).not.toBe(11);
+      expect(Math.round(figure.y) === 6 && Math.round(figure.x) === 11).toBe(
+        false,
+      );
+    }
   });
 });
