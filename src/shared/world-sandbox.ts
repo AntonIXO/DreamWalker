@@ -94,7 +94,9 @@ function objectFromSnapshot(raw: WorldSnapshotObject): WorldObjectState {
   };
 }
 
-function snapshotObjectFromState(object: WorldObjectState): WorldSnapshotObject {
+function snapshotObjectFromState(
+  object: WorldObjectState,
+): WorldSnapshotObject {
   return {
     id: object.id,
     name: object.name,
@@ -135,9 +137,9 @@ export class SnapshotSandbox implements WorldMutator {
   objects: WorldObjectState[];
   objectById: Map<string, WorldObjectState>;
   keysHeld: Set<string>;
+  figurePoses: Map<string, ActorPose>;
+  doorById: Map<string, WorldDoorView>;
   private player: ActorPose | null;
-  private figures: Map<string, ActorPose>;
-  private doors: Map<string, WorldDoorView>;
 
   constructor(init: {
     revision: number;
@@ -149,10 +151,12 @@ export class SnapshotSandbox implements WorldMutator {
   }) {
     this.revision = init.revision;
     this.objects = init.objects;
-    this.objectById = new Map(init.objects.map((object) => [object.id, object]));
+    this.objectById = new Map(
+      init.objects.map((object) => [object.id, object]),
+    );
     this.player = init.player;
-    this.figures = init.figures;
-    this.doors = init.doors;
+    this.figurePoses = init.figures;
+    this.doorById = init.doors;
     this.keysHeld = init.keysHeld ?? keysFromObjects(init.objects);
   }
 
@@ -175,8 +179,12 @@ export class SnapshotSandbox implements WorldMutator {
         toRoomId: door.toRoomId,
         x: door.x ?? 0,
         y: door.y ?? 0,
+        w: 1,
+        h: 1,
         keyId: door.keyId ?? null,
         threshold: door.threshold ?? "door",
+        toX: 1,
+        toY: 1,
       });
     }
     const player = snapshot.player
@@ -198,9 +206,9 @@ export class SnapshotSandbox implements WorldMutator {
   clone(): SnapshotSandbox {
     const objects = this.objects.map(cloneObject);
     const figures = new Map<string, ActorPose>();
-    for (const [id, pose] of this.figures) figures.set(id, clonePose(pose));
+    for (const [id, pose] of this.figurePoses) figures.set(id, clonePose(pose));
     const doors = new Map<string, WorldDoorView>();
-    for (const [id, door] of this.doors) doors.set(id, cloneDoor(door));
+    for (const [id, door] of this.doorById) doors.set(id, cloneDoor(door));
     return new SnapshotSandbox({
       revision: this.revision,
       objects,
@@ -239,40 +247,45 @@ export class SnapshotSandbox implements WorldMutator {
   }
 
   getFigurePose(figureId: string): ActorPose | null {
-    const pose = this.figures.get(figureId);
+    const pose = this.figurePoses.get(figureId);
     return pose ? clonePose(pose) : null;
   }
 
   setFigurePose(figureId: string, pose: ActorPose): void {
-    this.figures.set(figureId, clonePose(pose));
+    this.figurePoses.set(figureId, clonePose(pose));
   }
 
   getDoor(doorId: string): WorldDoorView | null {
-    const door = this.doors.get(doorId);
+    const door = this.doorById.get(doorId);
     return door ? cloneDoor(door) : null;
   }
 
   setDoorType(doorId: string, type: string): void {
-    const door = this.doors.get(doorId);
+    const door = this.doorById.get(doorId);
     if (door) door.type = type;
   }
 
-  canWalk(
-    _roomId: string,
-    _x: number,
-    _y: number,
-    _ignoreObjectId?: string,
-  ): boolean {
+  isWalkableTile(): boolean {
+    return true;
+  }
+
+  canPassDoor(doorId: string): boolean {
+    const door = this.doorById.get(doorId);
+    if (!door) return false;
+    if (door.type === "open" || door.type === "ledge") return true;
+    if (door.type === "sealed") return false;
+    if (door.type === "keyLock") {
+      return door.keyId !== null && this.keysHeld.has(door.keyId);
+    }
+    return false;
+  }
+
+  canWalk(): boolean {
     // Physics lives in the engine. The sandbox only has to be a writable clone.
     return true;
   }
 
-  hasPath(
-    _roomId: string,
-    _from: { x: number; y: number },
-    _to: { x: number; y: number },
-    _ignoreObjectId?: string,
-  ): boolean {
+  hasPath(): boolean {
     return true;
   }
 
@@ -288,12 +301,16 @@ export function sandboxFromSnapshot(snapshot: WorldSnapshot): SnapshotSandbox {
 export function cloneSandbox(world: WorldMutator): WorldMutator {
   if (world instanceof SnapshotSandbox) return world.clone();
   const objects = world.objects.map(cloneObject);
+  const figures = new Map<string, ActorPose>();
+  for (const [id, pose] of world.figurePoses) figures.set(id, clonePose(pose));
+  const doors = new Map<string, WorldDoorView>();
+  for (const [id, door] of world.doorById) doors.set(id, cloneDoor(door));
   return new SnapshotSandbox({
     revision: world.revision,
     objects,
     player: world.getPlayerPose(),
-    figures: new Map(),
-    doors: new Map(),
+    figures,
+    doors,
     keysHeld: new Set(world.keysHeld),
   });
 }
@@ -499,15 +516,15 @@ export function createNpcWorldSession(
     successful,
     runTool(name: string, input: unknown): NpcToolResult {
       if (successful.length >= MAX_WORLD_ACTIONS_PER_TURN) {
-        return toolResult(
-          refused("turn action cap reached"),
-          world.revision,
-        );
+        return toolResult(refused("turn action cap reached"), world.revision);
       }
       const cleaned = stripHallucinatedActor(input);
       const action = worldActionFromTool(name, cleaned);
       if (!action) {
-        return toolResult(refused("unknown or disallowed action"), world.revision);
+        return toolResult(
+          refused("unknown or disallowed action"),
+          world.revision,
+        );
       }
       const envelope: WorldActionEnvelope = {
         actor: { kind: "figure", id: figureId },

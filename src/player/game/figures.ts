@@ -68,11 +68,7 @@ function stepCandidates(world: WorldState, figure: FigureState) {
     const room = world.roomById.get(figure.roomId);
     if (!room) return false;
     if (isSolidCell(cellAt(room, candidate.x, candidate.y))) return false;
-    return !rectBlocks(
-      solidRectsFor(world, room.id),
-      candidate.x,
-      candidate.y,
-    );
+    return !rectBlocks(solidRectsFor(world, room.id), candidate.x, candidate.y);
   });
 }
 

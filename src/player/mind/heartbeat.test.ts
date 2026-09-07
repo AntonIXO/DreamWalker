@@ -58,9 +58,7 @@ describe("Heartbeat viewport guard", () => {
     applyPatch(world, { kind: "sealDoor", doorId: "a-to-b", reason: "setup" });
     const heartbeat = new Heartbeat(
       world,
-      fakeMind([
-        { kind: "openDoor", doorId: "a-to-b", reason: "beat" },
-      ]),
+      fakeMind([{ kind: "openDoor", doorId: "a-to-b", reason: "beat" }]),
       new ObservationLog(),
       CONFIG,
       () => ({ roomId: "a", rect: { x: 4, y: 0, w: 6, h: 4 } }),
@@ -77,9 +75,7 @@ describe("Heartbeat viewport guard", () => {
     applyPatch(world, { kind: "sealDoor", doorId: "a-to-b", reason: "setup" });
     const heartbeat = new Heartbeat(
       world,
-      fakeMind([
-        { kind: "openDoor", doorId: "a-to-b", reason: "beat" },
-      ]),
+      fakeMind([{ kind: "openDoor", doorId: "a-to-b", reason: "beat" }]),
       new ObservationLog(),
       CONFIG,
       () => ({ roomId: "a", rect: { x: 0, y: 6, w: 2, h: 2 } }),
@@ -131,9 +127,7 @@ describe("Heartbeat viewport guard", () => {
     };
     const heartbeat = new Heartbeat(
       world,
-      fakeMind([
-        { kind: "openDoor", doorId: "a-to-b", reason: "beat" },
-      ]),
+      fakeMind([{ kind: "openDoor", doorId: "a-to-b", reason: "beat" }]),
       new ObservationLog(),
       CONFIG,
       () => ({ roomId: "a", rect: { x: 0, y: 6, w: 2, h: 2 } }),

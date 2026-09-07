@@ -146,7 +146,12 @@ function walkStreet(
   let y = player.y;
   if (
     dx !== 0 &&
-    !blockedInWorld(world.rooms, room.id, { ...box, x: x + dx }, room.tileSize) &&
+    !blockedInWorld(
+      world.rooms,
+      room.id,
+      { ...box, x: x + dx },
+      room.tileSize,
+    ) &&
     !blockedByLiveObjects(world, room.id, { ...box, x: x + dx }, room.tileSize)
   ) {
     x += dx;

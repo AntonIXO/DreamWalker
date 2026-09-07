@@ -282,7 +282,11 @@ export function availableActions(
   if (!held) return [];
   return [
     {
-      action: { type: "give", objectId: held.id, to: { kind: "figure", id: target.id } },
+      action: {
+        type: "give",
+        objectId: held.id,
+        to: { kind: "figure", id: target.id },
+      },
       affordance: "give",
       label: held.name,
       refusal: null,
@@ -379,7 +383,8 @@ function execTake(
       }
     }
   } else if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId) return refused("different room");
+    if (object.location.roomId !== pose.roomId)
+      return refused("different room");
     if (!inReachOfObject(pose, object)) return refused("out of reach");
     if (!world.hasPath(pose.roomId, pose, tileOf(object.location), object.id)) {
       return refused("no path");
@@ -538,7 +543,8 @@ function execOpen(
   const blocked = requireAffordance(object, "open");
   if (blocked) return blocked;
   if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId) return refused("different room");
+    if (object.location.roomId !== pose.roomId)
+      return refused("different room");
     if (!inReachOfObject(pose, object)) return refused("out of reach");
     if (!world.hasPath(pose.roomId, pose, tileOf(object.location), object.id)) {
       return refused("no path");
@@ -571,7 +577,8 @@ function execClose(
   const blocked = requireAffordance(object, "close");
   if (blocked) return blocked;
   if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId) return refused("different room");
+    if (object.location.roomId !== pose.roomId)
+      return refused("different room");
     if (!inReachOfObject(pose, object)) return refused("out of reach");
   }
   object.state.open = false;
@@ -618,7 +625,7 @@ function execCloseDoor(
 ): WorldActionResult {
   if (door.fromRoomId !== pose.roomId) return refused("different room");
   if (!inReachOfDoor(pose, door)) return refused("out of reach");
-  world.setDoorType(door.id, "keyLock");
+  world.setDoorType(door.id, door.keyId ? "keyLock" : "sealed");
   return succeed(world, {
     rooms: compact([door.fromRoomId, door.toRoomId]),
     objects: [],
@@ -637,7 +644,8 @@ function execActivate(
   const blocked = requireAffordance(object, "activate");
   if (blocked) return blocked;
   if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId) return refused("different room");
+    if (object.location.roomId !== pose.roomId)
+      return refused("different room");
     if (!inReachOfObject(pose, object)) return refused("out of reach");
   }
   object.state.active = true;
@@ -664,7 +672,8 @@ function execUse(
     return refused("not held");
   }
   if (!held && object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId) return refused("different room");
+    if (object.location.roomId !== pose.roomId)
+      return refused("different room");
     if (!inReachOfObject(pose, object)) return refused("out of reach");
   }
 
@@ -798,12 +807,7 @@ function distanceToRect(
 ): number {
   const dx = Math.max(rx - px, 0, px - (rx + rw));
   const dy = Math.max(ry - py, 0, py - (ry + rh));
-  if (
-    px >= rx &&
-    px < rx + rw &&
-    py >= ry &&
-    py < ry + rh
-  ) {
+  if (px >= rx && px < rx + rw && py >= ry && py < ry + rh) {
     return 0;
   }
   return Math.hypot(dx, dy);

@@ -126,7 +126,12 @@ export interface WorldMutator {
    */
   canPassDoor(doorId: string): boolean;
   /** Authored walk mask + live solid objects (not including the acting body). */
-  canWalk(roomId: string, x: number, y: number, ignoreObjectId?: string): boolean;
+  canWalk(
+    roomId: string,
+    x: number,
+    y: number,
+    ignoreObjectId?: string,
+  ): boolean;
   /** Chebyshev / grid path exists between two tiles in the same room. */
   hasPath(
     roomId: string,

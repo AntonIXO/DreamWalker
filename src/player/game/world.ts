@@ -30,10 +30,7 @@ import type { PortraitState } from "../../shared/content";
 import { applyFateLedger, type FateRecord } from "./fates";
 import { clampExhaustion } from "./exhaustion";
 import type { ScriptFlag } from "../../shared/pack";
-import {
-  cloneObject,
-  type WorldObjectState,
-} from "../../shared/world-object";
+import { cloneObject, type WorldObjectState } from "../../shared/world-object";
 import { migrateWorldObjects } from "./object-migration";
 
 export interface FigureState extends FigurePlacement {

@@ -323,7 +323,7 @@ describe("world snapshot", () => {
       x: 0,
       y: 0,
     });
-    expect(snapped.objects).toEqual([]);
+    expect(snapped.objects.length).toBeGreaterThan(0);
   });
 });
 
@@ -340,4 +340,3 @@ describe("scripted dialogue", () => {
     expect(result.worldActions).toEqual([]);
   });
 });
-

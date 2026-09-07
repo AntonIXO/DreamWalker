@@ -54,7 +54,9 @@ export function migrateWorldObjects(
 
     for (const hotspot of room.hotspots) {
       if (hotspot.kind === "figure") continue;
-      const prop = hotspot.propId ? (propById.get(hotspot.propId) ?? null) : null;
+      const prop = hotspot.propId
+        ? (propById.get(hotspot.propId) ?? null)
+        : null;
       if (prop) {
         if (paired.has(prop.id)) continue;
         paired.add(prop.id);
@@ -77,10 +79,7 @@ export function migrateWorldObjects(
   return objects;
 }
 
-function takeId(
-  seen: Set<string>,
-  object: WorldObjectState,
-): WorldObjectState {
+function takeId(seen: Set<string>, object: WorldObjectState): WorldObjectState {
   let id = object.id;
   if (seen.has(id)) {
     id = `${object.location.kind === "room" ? object.location.roomId : "obj"}:${object.id}`;
@@ -116,7 +115,10 @@ function fromHotspotAndProp(
   });
 }
 
-function fromFreeHotspot(roomId: string, hotspot: RoomHotspot): WorldObjectState {
+function fromFreeHotspot(
+  roomId: string,
+  hotspot: RoomHotspot,
+): WorldObjectState {
   const ui = hotspot.kind === "ui";
   const carryable = hotspot.kind === "clue" && !hotspot.refusal;
   return finish({

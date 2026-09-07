@@ -44,6 +44,7 @@ function bottle(overrides: Partial<WorldObjectState> = {}): WorldObjectState {
 describe("solidRectsFor", () => {
   test("authored solid props still block when no objects exist", () => {
     const world = createWorld(artifact());
+    setLiveObjects(world, []);
     expect(liveObjects(world)).toEqual([]);
     expect(tileBlockedBySolids(world, "a", 3, 4)).toBe(true);
     expect(tileBlockedBySolids(world, "a", 5, 3)).toBe(false);

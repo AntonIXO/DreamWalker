@@ -86,9 +86,7 @@ function snap(objects: WorldSnapshotObject[] = []): WorldSnapshot {
   };
 }
 
-function okResult(
-  extras: Partial<WorldActionResult> = {},
-): WorldActionResult {
+function okResult(extras: Partial<WorldActionResult> = {}): WorldActionResult {
   return {
     ok: true,
     refusal: null,
@@ -276,9 +274,9 @@ describe("assertReplayMatches", () => {
   });
 
   test("throws when live ok disagrees", () => {
-    expect(() =>
-      assertReplayMatches(okResult(), refused("no")),
-    ).toThrow(/replay mismatch: ok/);
+    expect(() => assertReplayMatches(okResult(), refused("no"))).toThrow(
+      /replay mismatch: ok/,
+    );
   });
 
   test("compares final object locations on the mutators when given", () => {

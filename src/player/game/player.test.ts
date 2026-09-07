@@ -54,7 +54,9 @@ function bottle(overrides: Partial<WorldObjectState> = {}): WorldObjectState {
 describe("updatePlayer live objects", () => {
   test("a solid object on the floor stops the walker", () => {
     const world = createWorld(
-      validateDreamArtifact(JSON.parse(JSON.stringify(fixture))) as DreamArtifact,
+      validateDreamArtifact(
+        JSON.parse(JSON.stringify(fixture)),
+      ) as DreamArtifact,
     );
     const room = world.roomById.get("a")!;
     const player = createPlayer(room, "default");
@@ -71,7 +73,9 @@ describe("updatePlayer live objects", () => {
 
   test("a taken object no longer blocks that cell", () => {
     const world = createWorld(
-      validateDreamArtifact(JSON.parse(JSON.stringify(fixture))) as DreamArtifact,
+      validateDreamArtifact(
+        JSON.parse(JSON.stringify(fixture)),
+      ) as DreamArtifact,
     );
     const room = world.roomById.get("a")!;
     const player = createPlayer(room, "default");

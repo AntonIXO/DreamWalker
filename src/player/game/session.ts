@@ -16,11 +16,8 @@ import { makeRng } from "../../shared/rng";
 import type { WorldAction, WorldActionResult } from "../../shared/world-action";
 import { MAX_WORLD_ACTIONS_PER_TURN } from "../../shared/world-action";
 import { executeWorldAction } from "../../shared/world-action-engine";
-import {
-  isEngineStubResult,
-  placeholderMutator,
-  runReactions,
-} from "../../shared/world-reaction";
+import { runReactions } from "../../shared/world-reaction";
+import { bindWorldMutator } from "./world-mutator";
 import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
 import type { Shiver } from "../render/shiver";
@@ -39,6 +36,7 @@ import { applyPatch } from "./patch";
 import {
   createPlayer,
   placeAtEntry,
+  playerTile,
   updatePlayer,
   type PlayerState,
 } from "./player";
@@ -484,18 +482,27 @@ export class DreamSession {
         }
         reactionDepth++;
         try {
-          const result = executeWorldAction(placeholderMutator(), {
-            actor: { kind: "script", id: "pack" },
+          const tile = playerTile(session.player, session.room);
+          const mutator = bindWorldMutator(world, {
+            get: () => ({
+              roomId: world.currentRoomId,
+              x: tile.x,
+              y: tile.y,
+            }),
+            set: () => undefined,
+          });
+          const result = executeWorldAction(mutator, {
+            actor: { kind: "player" },
             source: "script",
             action,
           });
-          const applied = isEngineStubResult(result)
-            ? session.applyStubPhysical(action)
-            : result;
+          const applied = result.ok
+            ? result
+            : session.applyStubPhysical(action);
           if (applied.ok && applied.events.length > 0) {
             runReactions(host, applied.events, session.scripts);
           }
-          if (applied.ok && !isEngineStubResult(result)) {
+          if (applied.ok && result.ok) {
             session.showRoom(session.room, false);
           }
           return applied;

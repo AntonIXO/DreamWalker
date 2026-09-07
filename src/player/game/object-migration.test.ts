@@ -126,19 +126,22 @@ describe("migrateWorldObjects", () => {
   });
 
   test("free interests become carryable and keep shard/clue/seed", () => {
-    const objects = migrateWorldObjects([], [
-      {
-        id: "glint",
-        roomId: "a",
-        name: "блеск",
-        x: 4.2,
-        y: 5.1,
-        solid: true,
-        clueId: "clue-2",
-        holdsShardId: "shard1",
-        sensorySeed: "metal",
-      },
-    ]);
+    const objects = migrateWorldObjects(
+      [],
+      [
+        {
+          id: "glint",
+          roomId: "a",
+          name: "блеск",
+          x: 4.2,
+          y: 5.1,
+          solid: true,
+          clueId: "clue-2",
+          holdsShardId: "shard1",
+          sensorySeed: "metal",
+        },
+      ],
+    );
     expect(objects[0]?.id).toBe("glint");
     expect(objects[0]?.mobility).toBe("carryable");
     expect(objects[0]?.body).toEqual({ w: 1, h: 1, solid: true });
@@ -180,7 +183,9 @@ describe("migrateWorldObjects", () => {
     expect(ids).toContain("a-crate");
     expect(ids).toContain("rope");
     expect(ids).toContain("shelf");
-    expect(objects.find((entry) => entry.id === "shelf")?.clueId).toBe("clue-1");
+    expect(objects.find((entry) => entry.id === "shelf")?.clueId).toBe(
+      "clue-1",
+    );
     expect(objects.find((entry) => entry.id === "shelf")?.mobility).toBe(
       "carryable",
     );

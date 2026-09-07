@@ -73,7 +73,8 @@ export function physicalGestures(
   return {
     openDoor: (doorId) => dispatch({ type: "open", targetId: doorId }),
     removeProp: (propId) => dispatch({ type: "take", objectId: propId }),
-    closeHotspot: (hotspotId) => dispatch({ type: "close", targetId: hotspotId }),
+    closeHotspot: (hotspotId) =>
+      dispatch({ type: "close", targetId: hotspotId }),
   };
 }
 
@@ -94,12 +95,16 @@ export function placeholderMutator(): WorldMutator {
     objects: [],
     objectById: new Map(),
     keysHeld: new Set(),
+    figurePoses: new Map(),
+    doorById: new Map(),
     getPlayerPose: () => null,
     setPlayerPose: () => undefined,
     getFigurePose: () => null,
     setFigurePose: () => undefined,
     getDoor: () => null,
     setDoorType: () => undefined,
+    isWalkableTile: () => false,
+    canPassDoor: () => false,
     canWalk: () => false,
     hasPath: () => false,
     bumpRevision: () => undefined,

@@ -40,17 +40,21 @@ function openFloor(_roomId: string, x: number, y: number): boolean {
   return x >= 0 && y >= 0 && x < 12 && y < 12;
 }
 
-function object(partial: Partial<WorldObjectState> & Pick<WorldObjectState, "id">): WorldObjectState {
+function object(
+  partial: Partial<WorldObjectState> & Pick<WorldObjectState, "id">,
+): WorldObjectState {
   return {
     name: partial.name ?? partial.id,
     location: partial.location ?? { kind: "room", roomId: "a", x: 5, y: 5 },
     mobility: partial.mobility ?? "carryable",
     affordances: partial.affordances ?? [...CARRY],
-    body: partial.body === undefined ? { w: 1, h: 1, solid: true } : partial.body,
+    body:
+      partial.body === undefined ? { w: 1, h: 1, solid: true } : partial.body,
     visual: partial.visual ?? { role: null, image: null },
-    interaction: partial.interaction === undefined
-      ? { reach: 1.5, prompt: partial.name ?? partial.id, refusal: null }
-      : partial.interaction,
+    interaction:
+      partial.interaction === undefined
+        ? { reach: 1.5, prompt: partial.name ?? partial.id, refusal: null }
+        : partial.interaction,
     state: partial.state ?? {},
     tags: partial.tags ?? [],
     clueId: partial.clueId ?? null,
@@ -66,7 +70,9 @@ function object(partial: Partial<WorldObjectState> & Pick<WorldObjectState, "id"
   };
 }
 
-function door(partial: Partial<WorldDoorView> & Pick<WorldDoorView, "id">): WorldDoorView {
+function door(
+  partial: Partial<WorldDoorView> & Pick<WorldDoorView, "id">,
+): WorldDoorView {
   return {
     type: "keyLock",
     fromRoomId: "a",
@@ -92,13 +98,14 @@ function worldOf(input: {
 }): WorldMutator {
   return createWorldMutator({
     objects: input.objects ?? [],
-    playerPose: input.player === undefined
-      ? { roomId: "a", x: 4, y: 5 }
-      : input.player,
-    figurePoses: Object.entries(input.figures ?? {
-      "npc-a": { roomId: "a", x: 4, y: 5 },
-      "npc-b": { roomId: "b", x: 3, y: 3 },
-    }),
+    playerPose:
+      input.player === undefined ? { roomId: "a", x: 4, y: 5 } : input.player,
+    figurePoses: Object.entries(
+      input.figures ?? {
+        "npc-a": { roomId: "a", x: 4, y: 5 },
+        "npc-b": { roomId: "b", x: 3, y: 3 },
+      },
+    ),
     doors: input.doors ?? [],
     keysHeld: input.keysHeld ?? [],
     isWalkableTile: openFloor,
@@ -107,7 +114,10 @@ function worldOf(input: {
 
 describe("executeWorldAction", () => {
   test("NPC walks to a bottle, take: held, cell walkable", () => {
-    const bottle = object({ id: "bottle", location: { kind: "room", roomId: "a", x: 5, y: 5 } });
+    const bottle = object({
+      id: "bottle",
+      location: { kind: "room", roomId: "a", x: 5, y: 5 },
+    });
     const world = worldOf({
       objects: [bottle],
       figures: { "npc-a": { roomId: "a", x: 2, y: 5 } },
@@ -130,11 +140,16 @@ describe("executeWorldAction", () => {
     expect(taken.ok).toBe(true);
     expect(bottle.location).toEqual({ kind: "held", actor: NPC });
     expect(world.canWalk("a", 5, 5)).toBe(true);
-    expect(taken.events.some((event) => event.type === "object.taken")).toBe(true);
+    expect(taken.events.some((event) => event.type === "object.taken")).toBe(
+      true,
+    );
   });
 
   test("NPC give bottle to player; player drop in another room; second NPC takes it", () => {
-    const bottle = object({ id: "bottle", location: { kind: "room", roomId: "a", x: 5, y: 5 } });
+    const bottle = object({
+      id: "bottle",
+      location: { kind: "room", roomId: "a", x: 5, y: 5 },
+    });
     const world = worldOf({
       objects: [bottle],
       player: { roomId: "a", x: 4, y: 6 },
@@ -144,11 +159,13 @@ describe("executeWorldAction", () => {
       },
     });
 
-    expect(executeWorldAction(world, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "take", objectId: "bottle" },
-    }).ok).toBe(true);
+    expect(
+      executeWorldAction(world, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "take", objectId: "bottle" },
+      }).ok,
+    ).toBe(true);
 
     const given = executeWorldAction(world, {
       actor: NPC,
@@ -212,11 +229,13 @@ describe("executeWorldAction", () => {
     expect(taken.ok).toBe(true);
     expect(bottle.location).toEqual({ kind: "held", actor: NPC });
 
-    expect(executeWorldAction(world, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "put", objectId: "bottle", intoObjectId: "box" },
-    }).ok).toBe(true);
+    expect(
+      executeWorldAction(world, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "put", objectId: "bottle", intoObjectId: "box" },
+      }).ok,
+    ).toBe(true);
 
     box.state.open = false;
     const refusedClosed = executeWorldAction(world, {
@@ -227,11 +246,13 @@ describe("executeWorldAction", () => {
     expect(refusedClosed.ok).toBe(false);
     expect(bottle.location.kind).toBe("inside");
 
-    expect(executeWorldAction(world, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "take", objectId: "bottle" },
-    }).ok).toBe(false);
+    expect(
+      executeWorldAction(world, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "take", objectId: "bottle" },
+      }).ok,
+    ).toBe(false);
 
     const held = object({
       id: "held-bottle",
@@ -249,7 +270,11 @@ describe("executeWorldAction", () => {
     const putClosed = executeWorldAction(world2, {
       actor: NPC,
       source: "npc",
-      action: { type: "put", objectId: "held-bottle", intoObjectId: "closed-box" },
+      action: {
+        type: "put",
+        objectId: "held-bottle",
+        intoObjectId: "closed-box",
+      },
     });
     expect(putClosed.ok).toBe(false);
     expect(held.location.kind).toBe("held");
@@ -276,7 +301,9 @@ describe("executeWorldAction", () => {
     });
     expect(opened.ok).toBe(true);
     expect(world.getDoor("a-to-b")?.type).toBe("open");
-    expect(opened.events.some((event) => event.type === "door.opened")).toBe(true);
+    expect(opened.events.some((event) => event.type === "door.opened")).toBe(
+      true,
+    );
 
     const lockedAgain = door({ id: "a-to-b", type: "keyLock", keyId: "key1" });
     const noKey = worldOf({
@@ -349,7 +376,9 @@ describe("executeWorldAction", () => {
       action: { type: "moveTo", x: 5, y: 5 },
     });
     expect(result.ok).toBe(false);
-    expect(result.refusal).toBe("npc actor must be a figure; server wraps figureId");
+    expect(result.refusal).toBe(
+      "npc actor must be a figure; server wraps figureId",
+    );
   });
 
   test("take then drop preserves clueId and holdsShardId", () => {
@@ -360,36 +389,50 @@ describe("executeWorldAction", () => {
       location: { kind: "room", roomId: "a", x: 5, y: 5 },
     });
     const world = worldOf({ objects: [shard] });
-    expect(executeWorldAction(world, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "take", objectId: "note" },
-    }).ok).toBe(true);
-    expect(executeWorldAction(world, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "drop", objectId: "note" },
-    }).ok).toBe(true);
+    expect(
+      executeWorldAction(world, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "take", objectId: "note" },
+      }).ok,
+    ).toBe(true);
+    expect(
+      executeWorldAction(world, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "drop", objectId: "note" },
+      }).ok,
+    ).toBe(true);
     expect(shard.clueId).toBe("clue-1");
     expect(shard.holdsShardId).toBe("shard1");
   });
 
   test("same take function works for actor player and actor figure", () => {
-    const forNpc = object({ id: "apple", location: { kind: "room", roomId: "a", x: 5, y: 5 } });
+    const forNpc = object({
+      id: "apple",
+      location: { kind: "room", roomId: "a", x: 5, y: 5 },
+    });
     const npcWorld = worldOf({ objects: [forNpc] });
-    expect(executeWorldAction(npcWorld, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "take", objectId: "apple" },
-    }).ok).toBe(true);
+    expect(
+      executeWorldAction(npcWorld, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "take", objectId: "apple" },
+      }).ok,
+    ).toBe(true);
 
-    const forPlayer = object({ id: "pear", location: { kind: "room", roomId: "a", x: 5, y: 5 } });
+    const forPlayer = object({
+      id: "pear",
+      location: { kind: "room", roomId: "a", x: 5, y: 5 },
+    });
     const playerWorld = worldOf({ objects: [forPlayer] });
-    expect(executeWorldAction(playerWorld, {
-      actor: PLAYER,
-      source: "player",
-      action: { type: "take", objectId: "pear" },
-    }).ok).toBe(true);
+    expect(
+      executeWorldAction(playerWorld, {
+        actor: PLAYER,
+        source: "player",
+        action: { type: "take", objectId: "pear" },
+      }).ok,
+    ).toBe(true);
     expect(forPlayer.location).toEqual({ kind: "held", actor: PLAYER });
   });
 
@@ -442,11 +485,13 @@ describe("cloneWorldMutator", () => {
       keysHeld: ["spare"],
     });
     const clone = cloneWorldMutator(live);
-    expect(executeWorldAction(clone, {
-      actor: NPC,
-      source: "npc",
-      action: { type: "take", objectId: "bottle" },
-    }).ok).toBe(true);
+    expect(
+      executeWorldAction(clone, {
+        actor: NPC,
+        source: "npc",
+        action: { type: "take", objectId: "bottle" },
+      }).ok,
+    ).toBe(true);
 
     expect(bottle.location.kind).toBe("room");
     expect(clone.objectById.get("bottle")?.location.kind).toBe("held");
@@ -467,7 +512,9 @@ describe("createWorld integration", () => {
     const artifact = sonArtifact();
     const world = createWorld(artifact);
     expect(world.objects.length).toBeGreaterThan(0);
-    const bottle = world.objectById.get("butylka-riadom-s-turyshevym-ne-pervaia");
+    const bottle = world.objectById.get(
+      "butylka-riadom-s-turyshevym-ne-pervaia",
+    );
     expect(bottle).toBeTruthy();
     expect(bottle?.location).toEqual({
       kind: "room",
@@ -484,6 +531,8 @@ describe("createWorld integration", () => {
       }),
     );
     expect(mutator.objects.length).toBe(world.objects.length);
-    expect(mutator.getDoor([...world.doorById.keys()][0]!)?.fromRoomId).toBeTruthy();
+    expect(
+      mutator.getDoor([...world.doorById.keys()][0]!)?.fromRoomId,
+    ).toBeTruthy();
   });
 });

@@ -11,7 +11,10 @@ import type {
   WorldDoorView,
   WorldMutator,
 } from "../../shared/world-object";
-import { findChebyshevPath, solidObjectCovers } from "../../shared/world-object";
+import {
+  findChebyshevPath,
+  solidObjectCovers,
+} from "../../shared/world-object";
 import { canPassDoor, doorDestination, type WorldState } from "./world";
 
 export interface PlayerPoseBinding {

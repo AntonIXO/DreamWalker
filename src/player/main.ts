@@ -68,13 +68,11 @@ import { addExhaustion } from "./game/world";
 import { learnLeverage, leverageOn } from "./game/fates";
 import { liveObjects } from "./game/object-collision";
 import { NpcActionQueue, replayWorldActions } from "./game/npc-action-queue";
-import {
-  actionRingRowsFor,
-  primaryObjectAction,
-} from "./game/interact";
+import { actionRingRowsFor, primaryObjectAction } from "./game/interact";
 import { executeWorldAction } from "../shared/world-action-engine";
 import type { WorldAction } from "../shared/world-action";
-import type { ActorRef, WorldMutator } from "../shared/world-object";
+import type { ActorRef } from "../shared/world-object";
+import { bindWorldMutator } from "./game/world-mutator";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
@@ -383,10 +381,7 @@ async function boot(): Promise<void> {
         .filter((object) => object.mobility !== "fixed")
         .map((object) => object.id),
     );
-    const holders = new Map<
-      string,
-      { roomId: string; x: number; y: number }
-    >();
+    const holders = new Map<string, { roomId: string; x: number; y: number }>();
     const tile = playerTile(session.player, room);
     holders.set("player", {
       roomId: world.currentRoomId,
@@ -414,6 +409,10 @@ async function boot(): Promise<void> {
     {
       cycleNumber: () => cycle.number,
       journal: () => journal.all().map((entry) => entry.text),
+      playerPose: () => {
+        const tile = playerTile(session.player, currentRoom(world));
+        return { roomId: world.currentRoomId, x: tile.x, y: tile.y };
+      },
     },
     mindMemory,
   );
@@ -450,7 +449,14 @@ async function boot(): Promise<void> {
   };
 
   const npcQueue = new NpcActionQueue();
-  const asMutator = (): WorldMutator => world as unknown as WorldMutator;
+  const asMutator = () =>
+    bindWorldMutator(world, {
+      get: () => {
+        const tile = playerTile(session.player, currentRoom(world));
+        return { roomId: world.currentRoomId, x: tile.x, y: tile.y };
+      },
+      set: () => undefined,
+    });
   const runWorldAction = (
     action: WorldAction,
     actor: ActorRef = { kind: "player" },

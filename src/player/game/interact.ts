@@ -13,10 +13,15 @@ import { findHotspot } from "../../shared/roomGrid";
 import { toLocalPixels } from "../../shared/street";
 import type { RoomHotspot } from "../../shared/room";
 import { availableVerbs, type Verb, type VerbOption } from "../../shared/verbs";
-import { t, type SupportedLocale, type TranslationKey } from "../../shared/i18n";
+import {
+  t,
+  type SupportedLocale,
+  type TranslationKey,
+} from "../../shared/i18n";
 import type { ActionOption, WorldAction } from "../../shared/world-action";
 import { availableActions } from "../../shared/world-action-engine";
-import type { ActorRef, WorldMutator, WorldObjectState } from "../../shared/world-object";
+import type { ActorRef, WorldObjectState } from "../../shared/world-object";
+import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { fateOf, leverageOn, whoIsLed } from "./fates";
 import { liveObjects } from "./object-collision";
 import type { PlayerState } from "./player";
@@ -50,7 +55,14 @@ export function defaultListActions(
   target: ActionTarget,
 ): ActionOption[] {
   return availableActions(
-    world as unknown as WorldMutator,
+    bindWorldMutator(
+      world,
+      staticPlayerPose({
+        roomId: world.currentRoomId,
+        x: 0,
+        y: 0,
+      }),
+    ),
     actor,
     target,
   );
@@ -79,8 +91,7 @@ export interface ActionRingRow {
   refusal: string | null;
   confirm: boolean;
   payload:
-    | { kind: "verb"; verb: Verb }
-    | { kind: "world"; action: WorldAction };
+    { kind: "verb"; verb: Verb } | { kind: "world"; action: WorldAction };
 }
 
 function nearestFigure(
@@ -126,10 +137,20 @@ function objectDistance(
     return null;
   }
   const local = toLocalPixels(room, player.x, player.y);
-  return Math.hypot(
-    object.location.x * room.tileSize - local.x,
-    object.location.y * room.tileSize - local.y,
-  );
+  const loc = object.location;
+  const rx = loc.x * room.tileSize;
+  const ry = loc.y * room.tileSize;
+  if (!object.body) {
+    return Math.hypot(rx - local.x, ry - local.y);
+  }
+  const rw = object.body.w * room.tileSize;
+  const rh = object.body.h * room.tileSize;
+  const inside =
+    local.x >= rx && local.x < rx + rw && local.y >= ry && local.y < ry + rh;
+  if (inside) return 0;
+  const dx = Math.max(rx - local.x, 0, local.x - (rx + rw));
+  const dy = Math.max(ry - local.y, 0, local.y - (ry + rh));
+  return Math.hypot(dx, dy);
 }
 
 /** Every hotspot in the room right now: authored ones plus whatever the sleeper added. */
@@ -218,7 +239,9 @@ export function findTarget(
 
   const figure = nearestFigure(world, player, room);
   const object = nearestObject(world, player, room);
-  const objectIds = new Set(floorObjects(world, room.id).map((entry) => entry.id));
+  const objectIds = new Set(
+    floorObjects(world, room.id).map((entry) => entry.id),
+  );
   const local = toLocalPixels(room, player.x, player.y);
   const hotspot = findHotspot(
     reachableHotspots(world, room).filter(
@@ -231,10 +254,14 @@ export function findTarget(
 
   const asFigure = (state: FigureState): InteractTarget => {
     const verbs = verbsFor(world, room, state, locale);
-    const actions = listActions(world, { kind: "player" }, {
-      kind: "figure",
-      id: state.id,
-    });
+    const actions = listActions(
+      world,
+      { kind: "player" },
+      {
+        kind: "figure",
+        id: state.id,
+      },
+    );
     const more =
       verbs.some((option) => option.verb !== "talk" && !option.refusal) ||
       actions.some((option) => !option.refusal);
@@ -252,10 +279,14 @@ export function findTarget(
   };
 
   const asObject = (state: WorldObjectState): InteractTarget => {
-    const actions = listActions(world, { kind: "player" }, {
-      kind: "object",
-      id: state.id,
-    });
+    const actions = listActions(
+      world,
+      { kind: "player" },
+      {
+        kind: "object",
+        id: state.id,
+      },
+    );
     return {
       kind: "object",
       object: state,
@@ -266,8 +297,10 @@ export function findTarget(
 
   type Ranked = { distance: number; target: InteractTarget };
   const ranked: Ranked[] = [];
-  if (figure) ranked.push({ distance: figure.distance, target: asFigure(figure.figure) });
-  if (object) ranked.push({ distance: object.distance, target: asObject(object.object) });
+  if (figure)
+    ranked.push({ distance: figure.distance, target: asFigure(figure.figure) });
+  if (object)
+    ranked.push({ distance: object.distance, target: asObject(object.object) });
   if (hotspot) {
     ranked.push({
       distance: hotspotDistance(hotspot, player, room),

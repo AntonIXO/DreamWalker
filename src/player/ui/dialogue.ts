@@ -54,7 +54,10 @@ export interface DialogueCallbacks {
    * Confirmed physical actions from this turn. `action` on the result is gesture
    * only. Return whether the speaker left the player's room.
    */
-  onWorldActions?(figure: FigureState, actions: readonly WorldAction[]): {
+  onWorldActions?(
+    figure: FigureState,
+    actions: readonly WorldAction[],
+  ): {
     close: boolean;
   };
 }

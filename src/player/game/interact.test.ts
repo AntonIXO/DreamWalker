@@ -45,8 +45,7 @@ function bottle(overrides: Partial<WorldObjectState> = {}): WorldObjectState {
 }
 
 function option(
-  partial: Pick<ActionOption, "action" | "affordance"> &
-    Partial<ActionOption>,
+  partial: Pick<ActionOption, "action" | "affordance"> & Partial<ActionOption>,
 ): ActionOption {
   return {
     label: partial.label ?? partial.affordance,
@@ -83,7 +82,10 @@ describe("findTarget objects", () => {
     expect(target?.kind).toBe("object");
     if (target?.kind !== "object") return;
     expect(target.object.id).toBe("bottle");
-    expect(target.actions.map((row) => row.affordance)).toEqual(["take", "use"]);
+    expect(target.actions.map((row) => row.affordance)).toEqual([
+      "take",
+      "use",
+    ]);
     expect(target.actions[1]?.refusal).toBe("не к чему");
   });
 
@@ -97,6 +99,7 @@ describe("findTarget objects", () => {
     figure.y = 6;
     player.x = 6 * room.tileSize + 8;
     player.y = 6 * room.tileSize + 8;
+    setLiveObjects(world, []);
     const target = findTarget(world, room, player);
     expect(target?.kind).toBe("figure");
     if (target?.kind !== "figure") return;
@@ -146,7 +149,11 @@ describe("actionRingRowsFor", () => {
     const figure = world.figures[0]!;
     const extras: ActionOption[] = [
       option({
-        action: { type: "give", objectId: "bottle", to: { kind: "figure", id: figure.id } },
+        action: {
+          type: "give",
+          objectId: "bottle",
+          to: { kind: "figure", id: figure.id },
+        },
         affordance: "give",
         label: "отдать",
       }),
@@ -168,13 +175,14 @@ describe("actionRingRowsFor", () => {
       "убить",
       "отдать",
     ]);
-    expect(rows.filter((row) => row.refusal).map((row) => row.refusal)).toEqual([
-      "Надавить нечем.",
-      "Здесь нечем.",
-    ]);
-    expect(rows.find((row) => row.payload.kind === "verb" && row.payload.verb === "kill")?.confirm).toBe(
-      true,
+    expect(rows.filter((row) => row.refusal).map((row) => row.refusal)).toEqual(
+      ["Надавить нечем.", "Здесь нечем."],
     );
+    expect(
+      rows.find(
+        (row) => row.payload.kind === "verb" && row.payload.verb === "kill",
+      )?.confirm,
+    ).toBe(true);
   });
 
   test("object ring shows engine rows including refused take/put", () => {

@@ -594,7 +594,10 @@ export class RoomScene {
       if (this.dynamicPropIds.has(prop.id)) continue;
       const objectTexture = this.objects.get(`${room.id}:${prop.id}`);
       if (!objectTexture) continue;
-      const node = new Container({ eventMode: "none", label: `prop:${prop.id}` });
+      const node = new Container({
+        eventMode: "none",
+        label: `prop:${prop.id}`,
+      });
       // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
       // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
       // with square art reads as a square thing on a wide footprint, not a stretched

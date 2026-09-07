@@ -23,17 +23,17 @@ import {
 import { clueIdForShard } from "../../shared/yield";
 import type { WorldAction, WorldActionSource } from "../../shared/world-action";
 import { executeWorldAction } from "../../shared/world-action-engine";
-import {
-  isEngineStubResult,
-  placeholderMutator,
-  type ExecuteWorldAction,
-} from "../../shared/world-reaction";
+import { type ExecuteWorldAction } from "../../shared/world-reaction";
+import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { fateOf, setFate } from "./fates";
 import { makeRng } from "../../shared/rng";
 import type { DoorTypeName } from "../../shared/tilecodes";
+import { cloneObject } from "../../shared/world-object";
+import { migrateWorldObjects } from "./object-migration";
 import {
   buildDoorIndexes,
   cloneFigureState,
+  rebuildObjectIndex,
   type FigureState,
   type InterestState,
   type RoomState,
@@ -233,6 +233,9 @@ export function installPopulation(
   };
   world.baseFigures = figures.map(cloneFigureState);
   world.baseInterests = interests.map((interest) => ({ ...interest }));
+  world.objects = migrateWorldObjects(world.rooms, world.interests);
+  rebuildObjectIndex(world);
+  world.baseObjects = world.objects.map(cloneObject);
   const affected = applyPopulationRetargets(world, population);
   for (const roomId of applyPopulationAssignments(world, population)) {
     affected.add(roomId);
@@ -689,19 +692,20 @@ function embodiedWorldAction(patch: MapPatch): WorldAction | null {
 }
 
 function tryEmbodied(
-  _world: WorldState,
+  world: WorldState,
   patch: MapPatch,
   options?: ApplyPatchOptions,
 ): PatchResult | null {
   const action = embodiedWorldAction(patch);
   if (!action) return null;
   const execute = options?.execute ?? executeWorldAction;
-  const result = execute(placeholderMutator(), {
+  const result = execute(bindWorldMutator(world, staticPlayerPose(null)), {
     actor: { kind: "sleeper" },
     source: options?.source ?? "sleeper",
     action,
   });
-  if (isEngineStubResult(result)) return null;
+  // Sleeper has no body; the engine refuses. Fall through to MapPatch writers.
+  if (!result.ok) return null;
   return {
     ok: result.ok,
     refusal: result.refusal ?? undefined,

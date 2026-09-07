@@ -230,7 +230,13 @@ export class NpcActionQueue {
     figure.x = next.x;
     figure.y = next.y;
     figure.facing =
-      next.x > here.x ? "e" : next.x < here.x ? "w" : next.y > here.y ? "s" : "n";
+      next.x > here.x
+        ? "e"
+        : next.x < here.x
+          ? "w"
+          : next.y > here.y
+            ? "s"
+            : "n";
     figure.walking = true;
     figure.revision++;
     return next.x === goal.x && next.y === goal.y;

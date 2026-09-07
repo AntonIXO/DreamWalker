@@ -157,9 +157,9 @@ describe("runReactions", () => {
   test("dispatch of embodied actions cannot express shiftWalls", () => {
     const host = fakeHost();
     host.dispatch({ type: "open", targetId: "a-to-b" });
-    expect(
-      host.dispatched.every((action) => !("variantId" in action)),
-    ).toBe(true);
+    expect(host.dispatched.every((action) => !("variantId" in action))).toBe(
+      true,
+    );
   });
 });
 

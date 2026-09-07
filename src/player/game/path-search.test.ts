@@ -95,6 +95,8 @@ describe("findGridPath", () => {
       JSON.parse(JSON.stringify(fixture)),
     ) as DreamArtifact;
     const world = createWorld(artifact);
-    expect(findGridPath(world, "a", { x: 6, y: 6 }, { x: 6, y: 6 })).toEqual([]);
+    expect(findGridPath(world, "a", { x: 6, y: 6 }, { x: 6, y: 6 })).toEqual(
+      [],
+    );
   });
 });
