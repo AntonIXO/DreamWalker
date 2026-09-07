@@ -15,6 +15,7 @@ import {
 import { applyPatch } from "./patch";
 import { WALK_SPEED } from "../../shared/roomWalk";
 import { whoIsLed } from "./fates";
+import { solidRectsFor } from "./object-collision";
 import type { FigureState, RoomState, WorldState } from "./world";
 
 function phaseAt(progress: number): FigureState["agendaPhase"] {
@@ -67,12 +68,10 @@ function stepCandidates(world: WorldState, figure: FigureState) {
     const room = world.roomById.get(figure.roomId);
     if (!room) return false;
     if (isSolidCell(cellAt(room, candidate.x, candidate.y))) return false;
-    if (rectBlocks(room.props, candidate.x, candidate.y)) return false;
-    return !world.interests.some(
-      (interest) =>
-        interest.roomId === room.id &&
-        Math.round(interest.x) === candidate.x &&
-        Math.round(interest.y) === candidate.y,
+    return !rectBlocks(
+      solidRectsFor(world, room.id),
+      candidate.x,
+      candidate.y,
     );
   });
 }
@@ -186,17 +185,7 @@ function worldStepOpen(
   ) {
     return null;
   }
-  if (rectBlocks(room.props, lx, ly)) return null;
-  if (
-    world.interests.some(
-      (interest) =>
-        interest.roomId === room.id &&
-        Math.round(interest.x) === lx &&
-        Math.round(interest.y) === ly,
-    )
-  ) {
-    return null;
-  }
+  if (rectBlocks(solidRectsFor(world, room.id), lx, ly)) return null;
   return room;
 }
 
@@ -257,6 +246,7 @@ function beginFollowStepWorld(
 }
 
 function standIn(
+  world: WorldState,
   room: RoomState,
   prefer: { x: number; y: number },
 ): { x: number; y: number } | null {
@@ -265,7 +255,7 @@ function standIn(
     const ty = Math.round(y);
     if (tx < 0 || ty < 0 || tx >= room.width || ty >= room.height) return false;
     if (!isWalkableCell(cellAt(room, tx, ty))) return false;
-    if (rectBlocks(room.props, tx, ty)) return false;
+    if (rectBlocks(solidRectsFor(world, room.id), tx, ty)) return false;
     return true;
   };
   if (ok(prefer.x, prefer.y)) return prefer;
@@ -300,7 +290,7 @@ export function escortFigure(
   const room = world.roomById.get(toRoomId);
   if (!figure || !room) return false;
   if (figure.roomId === toRoomId) return true;
-  const stand = standIn(room, at);
+  const stand = standIn(world, room, at);
   if (!stand) return false;
   seatFigure(world, figure, room, stand.x, stand.y);
   figure.targetX = null;

@@ -93,6 +93,11 @@ export interface TranslationSchema {
     hint: string;
     confirm: string;
   };
+  actionRing: {
+    title: string;
+    hint: string;
+    confirm: string;
+  };
   verbs: {
     label: {
       talk: string;
@@ -111,6 +116,18 @@ export interface TranslationSchema {
       unkillable: string;
       no_lethal_means: string;
     };
+  };
+  actions: {
+    examine: string;
+    take: string;
+    drop: string;
+    give: string;
+    put: string;
+    open: string;
+    close: string;
+    activate: string;
+    use: string;
+    traverse: string;
   };
   weather: {
     overcast: string;
@@ -248,6 +265,7 @@ export interface TranslationSchema {
   interact: {
     talk_to: string;
     more_actions: string;
+    look_at: string;
   };
 }
 

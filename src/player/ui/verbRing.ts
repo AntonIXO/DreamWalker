@@ -1,46 +1,50 @@
 /**
- * What else can be done with a person.
+ * What else can be done with a person — or a thing.
  *
  * `E` is not touched: a figure still opens the conversation, and a returning player
- * relearns nothing. This is a second key, and it shows **all four rows always** — the
+ * relearns nothing. This is a second key, and it shows **every row always** — the
  * ones that cannot be done carry their reason, struck through. Hiding them would make
  * blackmail a secret instead of a cost, and §8's flat register carries a struck line
  * far better than it carries an absent feature.
  *
- * The digits belong to the panel rather than to `Input`, the way `DialoguePanel`'s form
- * does: it captures input while open and reads its own `keydown`. So `Action` grows by
- * exactly one member instead of five.
+ * Object rows come from `availableActions`. talk/press/lead/kill stay on figures.
  *
  * `kill` is deliberately two decisions, not one. §0 of the bible is about a dream where
  * «действие даётся тяжело», and the one irreversible thing in the game should not be a
  * single keypress next to «заговорить».
  */
 
-import type { VerbOption, Verb } from "../../shared/verbs";
 import { t } from "../../shared/i18n";
+import type { ActionRingRow } from "../game/interact";
 import type { FigureState } from "../game/world";
 
-export interface VerbRingCallbacks {
-  onPick(figure: FigureState, verb: Verb): void;
+export type { ActionRingRow };
+
+export type ActionRingSubject =
+  | { kind: "figure"; figure: FigureState }
+  | { kind: "object"; id: string; name: string };
+
+export interface ActionRingCallbacks {
+  onPick(subject: ActionRingSubject, row: ActionRingRow): void;
   onClose(): void;
 }
 
-export class VerbRing {
+export class ActionRing {
   private readonly root: HTMLElement;
   private readonly nameEl: HTMLElement;
   private readonly listEl: HTMLElement;
   private readonly labelEl: HTMLElement;
   private readonly hintEl: HTMLElement;
-  private figure: FigureState | null = null;
-  private options: VerbOption[] = [];
-  private confirming: Verb | null = null;
+  private subject: ActionRingSubject | null = null;
+  private options: ActionRingRow[] = [];
+  private confirming: number | null = null;
 
   constructor(
     parent: HTMLElement,
-    private readonly callbacks: VerbRingCallbacks,
+    private readonly callbacks: ActionRingCallbacks,
   ) {
     this.root = document.createElement("div");
-    this.root.className = "panel verb-ring";
+    this.root.className = "panel verb-ring action-ring";
     this.root.hidden = true;
     this.root.innerHTML = `
       <span class="system-label verb-system-label"></span>
@@ -60,14 +64,15 @@ export class VerbRing {
     return !this.root.hidden;
   }
 
-  open(figure: FigureState, options: VerbOption[]): void {
+  open(subject: ActionRingSubject, options: ActionRingRow[]): void {
     if (options.length === 0) return;
-    this.figure = figure;
+    this.subject = subject;
     this.options = options;
     this.confirming = null;
-    this.nameEl.textContent = figure.name;
-    this.labelEl.textContent = t("verbRing.title");
-    this.hintEl.textContent = t("verbRing.hint");
+    this.nameEl.textContent =
+      subject.kind === "figure" ? subject.figure.name : subject.name;
+    this.labelEl.textContent = t("actionRing.title");
+    this.hintEl.textContent = t("actionRing.hint");
     this.render();
     this.root.hidden = false;
     this.root.tabIndex = -1;
@@ -77,7 +82,7 @@ export class VerbRing {
   close(): void {
     if (this.root.hidden) return;
     this.root.hidden = true;
-    this.figure = null;
+    this.subject = null;
     this.confirming = null;
     this.callbacks.onClose();
   }
@@ -88,7 +93,7 @@ export class VerbRing {
       const row = document.createElement("li");
       row.className = option.refusal ? "verb refused" : "verb";
       const label =
-        this.confirming === option.verb ? t("verbRing.confirm") : option.label;
+        this.confirming === index ? t("actionRing.confirm") : option.label;
       row.textContent = `${index + 1} — ${label}`;
       if (option.refusal) {
         const why = document.createElement("span");
@@ -112,17 +117,19 @@ export class VerbRing {
     }
     event.preventDefault();
     const option = this.options[index]!;
-    const figure = this.figure;
-    if (!figure || option.refusal) return;
+    const subject = this.subject;
+    if (!subject || option.refusal) return;
 
-    // Everything but a kill goes straight through. A kill asks once, in the same flat
-    // register, and the second press is the commitment — there is no undo after it.
-    if (option.verb === "kill" && this.confirming !== "kill") {
-      this.confirming = "kill";
+    if (option.confirm && this.confirming !== index) {
+      this.confirming = index;
       this.render();
       return;
     }
     this.close();
-    this.callbacks.onPick(figure, option.verb);
+    this.callbacks.onPick(subject, option);
   }
 }
+
+/** @deprecated name kept so older imports compile; use ActionRing. */
+export { ActionRing as VerbRing };
+export type VerbRingCallbacks = ActionRingCallbacks;

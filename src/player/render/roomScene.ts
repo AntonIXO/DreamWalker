@@ -111,6 +111,7 @@ function treeTouchesWalkable(
 interface BuiltRoom {
   container: Container;
   actors: Container;
+  props: Container;
   /** The mask this was built from, so a `shiftWalls` patch can be detected. */
   cells: string[];
 }
@@ -136,6 +137,8 @@ export class RoomScene {
   private current: BuiltRoom | null = null;
   private currentRoomId: string | null = null;
   private overlaySprite: Sprite | null = null;
+  /** Carryable/movable ids drawn on the live actor layer, not the baked prop mesh. */
+  private dynamicPropIds = new Set<string>();
 
   constructor(
     artifact: DreamArtifact,
@@ -254,6 +257,20 @@ export class RoomScene {
     }
   }
 
+  /**
+   * Hide baked prop sprites that now live on the actor layer. Does not rebuild the room.
+   */
+  hideDynamicProps(ids: Iterable<string>): void {
+    this.dynamicPropIds = new Set(ids);
+    for (const entry of this.built.values()) {
+      for (const child of entry.props.children) {
+        const label = child.label ?? "";
+        if (!label.startsWith("prop:")) continue;
+        child.visible = !this.dynamicPropIds.has(label.slice("prop:".length));
+      }
+    }
+  }
+
   destroy(): void {
     for (const id of [...this.built.keys()]) this.destroyRoom(id);
     this.overlaySprite?.destroy();
@@ -348,7 +365,7 @@ export class RoomScene {
     actors.zIndex = 3;
     container.addChild(actors);
 
-    return { container, actors, cells: [...room.cells] };
+    return { container, actors, props, cells: [...room.cells] };
   }
 
   /**
@@ -574,9 +591,10 @@ export class RoomScene {
     if (hidePropSprites(room)) return layer;
 
     for (const prop of room.props) {
+      if (this.dynamicPropIds.has(prop.id)) continue;
       const objectTexture = this.objects.get(`${room.id}:${prop.id}`);
       if (!objectTexture) continue;
-      const node = new Container({ eventMode: "none" });
+      const node = new Container({ eventMode: "none", label: `prop:${prop.id}` });
       // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
       // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
       // with square art reads as a square thing on a wide footprint, not a stretched

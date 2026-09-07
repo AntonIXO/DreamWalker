@@ -12,6 +12,7 @@ import type { Direction } from "../../shared/roomGrid";
 import { WALK_STRIDE } from "../../shared/roomWalk";
 import type { AtlasTextures } from "./atlasTextures";
 import { originX, originY } from "../../shared/street";
+import { actorKey, type WorldObjectState } from "../../shared/world-object";
 import type { FigureState, InterestState, WorldState } from "../game/world";
 
 export type { Direction };
@@ -162,6 +163,61 @@ export class WalkerSprite {
 const FIGURE_ART_HEIGHT = 48;
 const FIGURE_ART_WIDTH = 64;
 
+export interface HolderPose {
+  roomId: string;
+  x: number;
+  y: number;
+}
+
+export interface LiveObjectPlacement {
+  id: string;
+  roomId: string;
+  x: number;
+  y: number;
+  held: boolean;
+  image: string | null;
+  role: string | null;
+}
+
+/**
+ * Carryable/movable objects on the live layer. Fixed furniture stays on the baked
+ * prop layer. Held things follow the holder — drawn at their feet, not hidden.
+ */
+export function liveObjectPlacements(
+  objects: readonly WorldObjectState[],
+  holders: ReadonlyMap<string, HolderPose>,
+): LiveObjectPlacement[] {
+  const out: LiveObjectPlacement[] = [];
+  for (const object of objects) {
+    if (object.mobility === "fixed") continue;
+    if (object.location.kind === "room") {
+      out.push({
+        id: object.id,
+        roomId: object.location.roomId,
+        x: object.location.x,
+        y: object.location.y,
+        held: false,
+        image: object.visual.image,
+        role: object.visual.role,
+      });
+      continue;
+    }
+    if (object.location.kind !== "held") continue;
+    const pose = holders.get(actorKey(object.location.actor));
+    if (!pose) continue;
+    out.push({
+      id: object.id,
+      roomId: pose.roomId,
+      x: pose.x,
+      y: pose.y,
+      held: true,
+      image: object.visual.image,
+      role: object.visual.role,
+    });
+  }
+  return out;
+}
+
 export class ActorLayer {
   readonly root = new Container({
     label: "actors",
@@ -173,11 +229,13 @@ export class ActorLayer {
   private readonly figures = new Map<string, WalkerSprite>();
   private readonly paintings = new Map<string, Sprite>();
   private readonly clues = new Map<string, Sprite>();
+  private readonly objects = new Map<string, Sprite>();
 
   constructor(
     private readonly atlas: AtlasTextures,
     private readonly clueTextures: ReadonlyMap<string, Texture> = new Map(),
     private readonly figureTextures: ReadonlyMap<string, Texture> = new Map(),
+    private readonly objectTextures: ReadonlyMap<string, Texture> = new Map(),
   ) {}
 
   add(walker: WalkerSprite): void {
@@ -291,6 +349,51 @@ export class ActorLayer {
     }
   }
 
+  /**
+   * Carryable/movable sprites. Does not rebuild the room mesh — take/drop only
+   * moves these nodes.
+   */
+  syncLiveObjects(
+    placements: readonly LiveObjectPlacement[],
+    tileSize: number,
+    world?: WorldState,
+  ): void {
+    const seen = new Set<string>();
+    for (const placement of placements) {
+      const room = world?.roomById.get(placement.roomId);
+      const texture =
+        this.objectTextures.get(`${placement.roomId}:${placement.id}`) ??
+        this.objectTextures.get(placement.id);
+      if (!texture) continue;
+      seen.add(placement.id);
+      let sprite = this.objects.get(placement.id);
+      if (!sprite) {
+        sprite = new Sprite({
+          texture,
+          anchor: { x: 0.5, y: 0.9 },
+          roundPixels: true,
+          eventMode: "none",
+          label: `live-object:${placement.id}`,
+        });
+        const box = tileSize;
+        sprite.setSize(box, box);
+        this.objects.set(placement.id, sprite);
+        this.root.addChild(sprite);
+      }
+      const ox = room ? originX(room) : 0;
+      const oy = room ? originY(room) : 0;
+      const heldNudge = placement.held ? tileSize * 0.15 : 0;
+      sprite.x = (ox + placement.x) * tileSize + tileSize / 2 + heldNudge;
+      sprite.y = (oy + placement.y) * tileSize + tileSize;
+      sprite.zIndex = Math.round(sprite.y);
+    }
+    for (const [id, sprite] of this.objects) {
+      if (seen.has(id)) continue;
+      sprite.destroy();
+      this.objects.delete(id);
+    }
+  }
+
   destroy(): void {
     for (const walker of this.figures.values()) walker.destroy();
     this.figures.clear();
@@ -298,6 +401,8 @@ export class ActorLayer {
     this.paintings.clear();
     for (const sprite of this.clues.values()) sprite.destroy();
     this.clues.clear();
+    for (const sprite of this.objects.values()) sprite.destroy();
+    this.objects.clear();
     this.root.destroy({ children: true });
   }
 }
