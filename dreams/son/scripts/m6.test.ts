@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import type { RoomHotspot } from "../../../src/shared/room";
 import type { ScriptHost } from "../../../src/shared/pack";
+import type { WorldAction } from "../../../src/shared/world-action";
 import { m6Script } from "./m6";
 
 const hotspot = { id: "figura-na-beregu" } as RoomHotspot;
@@ -44,6 +45,19 @@ function fakeHost(): ScriptHost & {
     figureInWorld: () => false,
     whisper: () => undefined,
     observeClue: () => undefined,
+    dispatch: (action: WorldAction) => {
+      if (action.type === "open") {
+        host.opened = true;
+        host.opens += 1;
+      }
+      return {
+        ok: true,
+        refusal: null,
+        affectedRooms: [] as string[],
+        affectedObjects: [] as string[],
+        events: [],
+      };
+    },
     placed: 0,
     opened: false,
     opens: 0,
@@ -81,5 +95,19 @@ describe("m6 pond", () => {
     m6Script.onCycleReset?.(host);
     m6Script.onUpdate?.(host, 0);
     expect(host.opens).toBe(2);
+  });
+
+  test("object.used after the third approach opens the exit", () => {
+    const host = fakeHost();
+    m6Script.onUse?.(host, hotspot);
+    m6Script.onUse?.(host, hotspot);
+    m6Script.onUse?.(host, hotspot);
+    m6Script.onWorldEvent?.(host, {
+      type: "object.used",
+      objectId: "figura-na-beregu",
+      targetId: null,
+      actor: { kind: "player" },
+    });
+    expect(host.opened).toBe(true);
   });
 });

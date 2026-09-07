@@ -45,6 +45,13 @@ function fakeHost(overrides: Partial<ScriptHost> = {}): ScriptHost & {
       host.whispers.push(text);
     },
     observeClue: () => undefined,
+    dispatch: () => ({
+      ok: true,
+      refusal: null,
+      affectedRooms: [] as string[],
+      affectedObjects: [] as string[],
+      events: [],
+    }),
     exhaustionAdded: 0,
     entered: null as string | null,
     retargets: [] as Array<{ doorId: string; toRoomId: string }>,

@@ -1,5 +1,15 @@
 import type { DreamScript } from "../../../src/shared/pack";
+import type { WorldReactionHost } from "../../../src/shared/world-reaction";
 import { POND_FAIL_COST } from "../../../src/player/game/exhaustion";
+
+const EXIT = "m6-krugi-vokrug-pruda--exit";
+
+function unlockPond(host: WorldReactionHost): void {
+  if (host.getFlag("m6.open") !== true) return;
+  if (host.getFlag("m6.unlocked") === true) return;
+  host.setFlag("m6.unlocked", true);
+  host.dispatch({ type: "open", targetId: EXIT });
+}
 
 export const m6Script: DreamScript = {
   id: "m6-pond",
@@ -18,10 +28,11 @@ export const m6Script: DreamScript = {
     return false;
   },
   onUpdate(host) {
-    if (host.getFlag("m6.open") !== true) return;
-    if (host.getFlag("m6.unlocked") === true) return;
-    host.setFlag("m6.unlocked", true);
-    host.openDoor("m6-krugi-vokrug-pruda--exit");
+    unlockPond(host);
+  },
+  onWorldEvent(host, event) {
+    if (event.type !== "object.used") return;
+    unlockPond(host);
   },
   /**
    * `resetWorld` restores the authored doors, so the way back is sealed again every

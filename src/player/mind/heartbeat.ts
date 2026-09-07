@@ -8,6 +8,8 @@ import type { CycleExitResult } from "../../shared/ai";
 import type { HeartbeatConfig } from "../../shared/dream";
 import { rectsOverlap, type TileRect } from "../../shared/rect";
 import { isStreetWorld, originX, originY } from "../../shared/street";
+import { executeWorldAction } from "../../shared/world-action-engine";
+import type { ExecuteWorldAction } from "../../shared/world-reaction";
 import {
   applyPatch,
   patchTouches,
@@ -60,6 +62,7 @@ export class Heartbeat {
     private readonly observations: ObservationLog,
     private readonly config: HeartbeatConfig,
     private readonly viewport: ViewportSource,
+    private readonly execute: ExecuteWorldAction = executeWorldAction,
   ) {}
 
   onBeat(listener: BeatListener): void {
@@ -136,6 +139,7 @@ export class Heartbeat {
       const seen = touched.some((scope) =>
         scopeIsOnScreen(scope, view, this.world),
       );
+      // Viewport/patchTouches is a pre-dispatch guard. Do not weaken it.
       if (protectViewport && seen) {
         entries.push({
           at: observation.elapsedSeconds,
@@ -146,7 +150,10 @@ export class Heartbeat {
         continue;
       }
 
-      const result = applyPatch(this.world, patch);
+      const result = applyPatch(this.world, patch, 1, {
+        source: "sleeper",
+        execute: this.execute,
+      });
       entries.push({ at: observation.elapsedSeconds, patch, result });
       if (!result.ok) continue;
       applied++;

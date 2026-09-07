@@ -21,6 +21,13 @@ import {
   type FigureFate,
 } from "../../shared/verbs";
 import { clueIdForShard } from "../../shared/yield";
+import type { WorldAction, WorldActionSource } from "../../shared/world-action";
+import { executeWorldAction } from "../../shared/world-action-engine";
+import {
+  isEngineStubResult,
+  placeholderMutator,
+  type ExecuteWorldAction,
+} from "../../shared/world-reaction";
 import { fateOf, setFate } from "./fates";
 import { makeRng } from "../../shared/rng";
 import type { DoorTypeName } from "../../shared/tilecodes";
@@ -653,12 +660,64 @@ function setHotspotClosed(
   return { ok: true, affectedRooms: [roomId] };
 }
 
+export interface ApplyPatchOptions {
+  execute?: ExecuteWorldAction;
+  source?: WorldActionSource;
+}
+
+/**
+ * Embodied equivalents of MapPatch kinds. The rest stay as sleeper/admin writers:
+ * shiftWalls, retargetDoor, markFigure, reviveFigure, relocateShard, retypeDoor,
+ * sealDoor, moveFigure, placeInterest — no WorldAction for those.
+ *
+ * moveInterest is a room-to-room object move; WorldAction has drop/take but not
+ * "move this interest to another room", so it stays on the MapPatch writer.
+ */
+function embodiedWorldAction(patch: MapPatch): WorldAction | null {
+  switch (patch.kind) {
+    case "openDoor":
+      return { type: "open", targetId: patch.doorId };
+    case "closeHotspot":
+      return { type: "close", targetId: patch.hotspotId };
+    case "openHotspot":
+      return { type: "open", targetId: patch.hotspotId };
+    case "removeInterest":
+      return { type: "take", objectId: patch.interestId };
+    default:
+      return null;
+  }
+}
+
+function tryEmbodied(
+  _world: WorldState,
+  patch: MapPatch,
+  options?: ApplyPatchOptions,
+): PatchResult | null {
+  const action = embodiedWorldAction(patch);
+  if (!action) return null;
+  const execute = options?.execute ?? executeWorldAction;
+  const result = execute(placeholderMutator(), {
+    actor: { kind: "sleeper" },
+    source: options?.source ?? "sleeper",
+    action,
+  });
+  if (isEngineStubResult(result)) return null;
+  return {
+    ok: result.ok,
+    refusal: result.refusal ?? undefined,
+    affectedRooms: result.affectedRooms,
+  };
+}
+
 export function applyPatch(
   world: WorldState,
   patch: MapPatch,
   /** Which cycle this is happening in, for the fate ledger. */
   cycle = 1,
+  options?: ApplyPatchOptions,
 ): PatchResult {
+  const embodied = tryEmbodied(world, patch, options);
+  if (embodied) return embodied;
   switch (patch.kind) {
     case "sealDoor":
       return sealDoor(world, patch.doorId);

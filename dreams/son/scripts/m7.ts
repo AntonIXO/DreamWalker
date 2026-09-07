@@ -1,4 +1,5 @@
 import type { DreamScript } from "../../../src/shared/pack";
+import type { WorldReactionHost } from "../../../src/shared/world-reaction";
 
 const ORDER = ["zametki", "shemy", "monitor", "stol"] as const;
 const INTERVAL_START = 2.4;
@@ -14,6 +15,10 @@ function thresholdFor(index: number): number {
   let total = 0;
   for (let i = 0; i <= index; i++) total += delayFor(i);
   return total;
+}
+
+function erase(host: WorldReactionHost, id: string): void {
+  host.dispatch({ type: "take", objectId: id });
 }
 
 export const m7Script: DreamScript = {
@@ -32,10 +37,21 @@ export const m7Script: DreamScript = {
     host.setFlag("m7.grabbed", true);
     host.setFlag("m7.taken", hotspot.id);
     if (hotspot.clueId) host.observeClue(hotspot.clueId);
-    host.closeHotspot(hotspot.id);
-    host.removeProp(hotspot.id);
+    erase(host, hotspot.id);
     host.whisper("Одно. Больше не успеешь.");
     return true;
+  },
+  onWorldEvent(host, event) {
+    if (event.type !== "object.used") return;
+    const id = event.objectId;
+    if (!ORDER.includes(id as (typeof ORDER)[number])) return;
+    const next = Number(host.getFlag("m7.next") ?? 0);
+    const gone = new Set(ORDER.slice(0, next));
+    if (gone.has(id as (typeof ORDER)[number])) return;
+    if (host.getFlag("m7.grabbed") === true) return;
+    host.setFlag("m7.grabbed", true);
+    host.setFlag("m7.taken", id);
+    erase(host, id);
   },
   onUpdate(host, dt) {
     const t = Number(host.getFlag("m7.t") ?? 0) + dt;
@@ -43,8 +59,7 @@ export const m7Script: DreamScript = {
     let next = Number(host.getFlag("m7.next") ?? 0);
     while (next < ORDER.length && t >= thresholdFor(next)) {
       const id = ORDER[next]!;
-      host.closeHotspot(id);
-      host.removeProp(id);
+      erase(host, id);
       next += 1;
       host.setFlag("m7.next", next);
     }
