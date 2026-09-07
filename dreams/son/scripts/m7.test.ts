@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import type { RoomHotspot } from "../../../src/shared/room";
 import type { ScriptHost } from "../../../src/shared/pack";
+import type { WorldAction } from "../../../src/shared/world-action";
 import { M7 } from "../rooms/m7-rm-rf";
 import { m7Script } from "./m7";
 
@@ -46,6 +47,17 @@ function fakeHost(): ScriptHost & {
     whisper: () => undefined,
     observeClue: (clueId: string) => {
       host.observed.push(clueId);
+    },
+    dispatch: (action: WorldAction) => {
+      if (action.type === "take") host.removed.push(action.objectId);
+      if (action.type === "close") host.closed.push(action.targetId);
+      return {
+        ok: true,
+        refusal: null,
+        affectedRooms: [] as string[],
+        affectedObjects: [] as string[],
+        events: [],
+      };
     },
     closed: [] as string[],
     removed: [] as string[],

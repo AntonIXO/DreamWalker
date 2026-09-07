@@ -13,6 +13,14 @@
 import type { RoomHotspot } from "../../shared/room";
 import type { DreamScript, ScriptHost } from "../../shared/pack";
 import { makeRng } from "../../shared/rng";
+import type { WorldAction, WorldActionResult } from "../../shared/world-action";
+import { MAX_WORLD_ACTIONS_PER_TURN } from "../../shared/world-action";
+import { executeWorldAction } from "../../shared/world-action-engine";
+import {
+  isEngineStubResult,
+  placeholderMutator,
+  runReactions,
+} from "../../shared/world-reaction";
 import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
 import type { RoomScene } from "../render/roomScene";
 import type { Shiver } from "../render/shiver";
@@ -181,9 +189,22 @@ export class DreamSession {
   /** The player pressed E on something. True when a pack script consumed it. */
   use(hotspot: RoomHotspot): boolean {
     const host = this.host();
-    for (const script of this.scriptsFor(this.room.id)) {
+    const scripts = this.scriptsFor(this.room.id);
+    for (const script of scripts) {
       if (script.onUse?.(host, hotspot)) return true;
     }
+    runReactions(
+      host,
+      [
+        {
+          type: "object.used",
+          objectId: hotspot.id,
+          targetId: null,
+          actor: { kind: "player" },
+        },
+      ],
+      scripts,
+    );
     return false;
   }
 
@@ -415,7 +436,8 @@ export class DreamSession {
     // The host object is a bag of getters; they cannot use the class `this`.
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const session = this;
-    return {
+    let reactionDepth = 0;
+    const host: ScriptHost = {
       get currentRoomId() {
         return world.currentRoomId;
       },
@@ -450,14 +472,42 @@ export class DreamSession {
       placePlayer: (entryId) => {
         placeAtEntry(session.player, session.room, entryId);
       },
+      dispatch: (action) => {
+        if (reactionDepth >= MAX_WORLD_ACTIONS_PER_TURN) {
+          return {
+            ok: false,
+            refusal: "reaction cap",
+            affectedRooms: [],
+            affectedObjects: [],
+            events: [],
+          };
+        }
+        reactionDepth++;
+        try {
+          const result = executeWorldAction(placeholderMutator(), {
+            actor: { kind: "script", id: "pack" },
+            source: "script",
+            action,
+          });
+          const applied = isEngineStubResult(result)
+            ? session.applyStubPhysical(action)
+            : result;
+          if (applied.ok && applied.events.length > 0) {
+            runReactions(host, applied.events, session.scripts);
+          }
+          if (applied.ok && !isEngineStubResult(result)) {
+            session.showRoom(session.room, false);
+          }
+          return applied;
+        } finally {
+          reactionDepth--;
+        }
+      },
       closeHotspot: (hotspotId) => {
-        session.room.closedHotspotIds.add(hotspotId);
+        host.dispatch({ type: "close", targetId: hotspotId });
       },
       removeProp: (propId) => {
-        const room = session.room;
-        const index = room.props.findIndex((prop) => prop.id === propId);
-        if (index >= 0) room.props.splice(index, 1);
-        session.scene.show(room);
+        host.dispatch({ type: "take", objectId: propId });
       },
       retargetRift: (doorId, toRoomId) => {
         applyPatch(world, {
@@ -469,13 +519,7 @@ export class DreamSession {
         session.showRoom(session.room, false);
       },
       openDoor: (doorId) => {
-        applyPatch(world, {
-          kind: "retypeDoor",
-          doorId,
-          to: "open",
-          reason: "pack script",
-        });
-        session.showRoom(session.room, false);
+        host.dispatch({ type: "open", targetId: doorId });
       },
       observeClue: (clueId) => {
         session.callbacks.observeClue?.(clueId);
@@ -516,6 +560,80 @@ export class DreamSession {
       figureInWorld: (figureId) =>
         world.figures.some((entry) => entry.id === figureId),
       whisper: (text) => session.callbacks.whisper?.(text),
+    };
+    return host;
+  }
+
+  /**
+   * ENGINE_STUB: keep pack scripts working until the real executor mutates objects.
+   * Physical changes still go through dispatch; this is not a second caller path.
+   */
+  private applyStubPhysical(action: WorldAction): WorldActionResult {
+    if (action.type === "open") {
+      applyPatch(this.world, {
+        kind: "retypeDoor",
+        doorId: action.targetId,
+        to: "open",
+        reason: "pack script",
+      });
+      this.showRoom(this.room, false);
+      return {
+        ok: true,
+        refusal: null,
+        affectedRooms: [this.room.id],
+        affectedObjects: [],
+        events: [
+          {
+            type: "door.opened",
+            doorId: action.targetId,
+            actor: { kind: "script", id: "pack" },
+          },
+        ],
+      };
+    }
+    if (action.type === "close") {
+      this.room.closedHotspotIds.add(action.targetId);
+      return {
+        ok: true,
+        refusal: null,
+        affectedRooms: [this.room.id],
+        affectedObjects: [action.targetId],
+        events: [
+          {
+            type: "object.closed",
+            objectId: action.targetId,
+            actor: { kind: "script", id: "pack" },
+          },
+        ],
+      };
+    }
+    if (action.type === "take") {
+      const room = this.room;
+      const index = room.props.findIndex((prop) => prop.id === action.objectId);
+      if (index >= 0) room.props.splice(index, 1);
+      room.closedHotspotIds.add(action.objectId);
+      this.scene.show(room);
+      return {
+        ok: true,
+        refusal: null,
+        affectedRooms: [room.id],
+        affectedObjects: [action.objectId],
+        events: [
+          {
+            type: "object.taken",
+            objectId: action.objectId,
+            actor: { kind: "player" },
+            fromRoomId: room.id,
+          },
+        ],
+      };
+    }
+    return {
+      ok: false,
+      refusal: "world-action-engine stub: engine agent implements this",
+      affectedRooms: [],
+      affectedObjects: [],
+      events: [],
     };
   }
 

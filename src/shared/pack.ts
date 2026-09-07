@@ -8,24 +8,24 @@ import type { DialogueResult, ExamineResult } from "./ai";
 import type { PortraitState } from "./content";
 import type { DreamArtifact } from "./dream";
 import type { RoomHotspot } from "./room";
+import type { WorldEvent } from "./world-action";
+import type { WorldReactionHost } from "./world-reaction";
 
 export type ScriptFlag = number | boolean | string;
 
 /**
  * What a room script may do. Implemented by the live session, not by the pack —
  * the pack only names the gestures.
+ *
+ * Physical object/door changes go through `dispatch`. `removeProp` / `openDoor` /
+ * `closeHotspot` remain as compatibility wrappers around that.
  */
-export interface ScriptHost {
-  readonly currentRoomId: string;
-  readonly exhaustion: number;
-  readonly cycleNumber: number;
+export interface ScriptHost extends WorldReactionHost {
   readonly playerX: number;
   readonly playerY: number;
   readonly playerMoving: boolean;
   readonly tileSize: number;
   now(): number;
-  getFlag(key: string): ScriptFlag | undefined;
-  setFlag(key: string, value: ScriptFlag): void;
   addExhaustion(delta: number): void;
   knownClueIds(): readonly string[];
   enterRoom(
@@ -54,6 +54,8 @@ export interface DreamScript {
   onUpdate?(host: ScriptHost, dt: number): void;
   /** Return true when the script handled the use and the session should stop. */
   onUse?(host: ScriptHost, hotspot: RoomHotspot): boolean;
+  /** React to a WorldEvent by dispatching more actions. Read + dispatch only. */
+  onWorldEvent?(host: WorldReactionHost, event: WorldEvent): void;
   /** Return false to refuse talk. */
   onApproach?(host: ScriptHost, figureId: string): boolean | void;
   onMemorySpent?(host: ScriptHost): void;
