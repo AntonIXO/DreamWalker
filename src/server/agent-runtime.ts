@@ -14,7 +14,9 @@ import { createOpenAI } from "@ai-sdk/openai";
 import {
   generateText,
   Output,
+  stepCountIs,
   streamText,
+  tool,
   type LanguageModel,
   type ModelMessage,
 } from "ai";
@@ -58,7 +60,13 @@ import { isWellFormedPhrase, normalisePhraseWords } from "../shared/mnemonic";
 import { figureHookPrompt, mayYieldShard, shardPrice } from "../shared/yield";
 import type { CodexAccountProcess } from "./codex-account";
 import type { AiProviderMode, AnthropicBackend, OpenAIBackend } from "./config";
-import { dialogueTurnMessages } from "./dialogue-messages";
+import { dialogueTurnMessages, dialogueWorldRules } from "./dialogue-messages";
+import { MAX_WORLD_ACTIONS_PER_TURN } from "../shared/world-action";
+import {
+  NPC_WORLD_TOOL_NAMES,
+  createNpcWorldSession,
+  type NpcWorldSession,
+} from "../shared/world-sandbox";
 
 const MAX_PATCHES = 8;
 
@@ -76,8 +84,62 @@ export class AgentRuntimeError extends Error {
 
 const tellSchema = z.object({ quoted: z.string().min(1).max(120) });
 
-const dialogueSchema = z.object({
+const actorRefSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("player") }),
+  z.object({ kind: z.literal("figure"), id: z.string().max(120) }),
+]);
+
+const anyActorSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("player") }),
+  z.object({ kind: z.literal("figure"), id: z.string().max(120) }),
+  z.object({ kind: z.literal("sleeper") }),
+  z.object({ kind: z.literal("script"), id: z.string().max(120) }),
+]);
+
+const worldActionSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("moveTo"),
+    x: z.number(),
+    y: z.number(),
+    roomId: z.string().max(120).optional(),
+  }),
+  z.object({ type: z.literal("take"), objectId: z.string().max(120) }),
+  z.object({
+    type: z.literal("drop"),
+    objectId: z.string().max(120),
+    x: z.number().optional(),
+    y: z.number().optional(),
+  }),
+  z.object({
+    type: z.literal("give"),
+    objectId: z.string().max(120),
+    to: actorRefSchema,
+  }),
+  z.object({
+    type: z.literal("put"),
+    objectId: z.string().max(120),
+    intoObjectId: z.string().max(120),
+  }),
+  z.object({ type: z.literal("open"), targetId: z.string().max(120) }),
+  z.object({ type: z.literal("close"), targetId: z.string().max(120) }),
+  z.object({ type: z.literal("activate"), objectId: z.string().max(120) }),
+  z.object({
+    type: z.literal("use"),
+    objectId: z.string().max(120),
+    targetId: z.string().max(120).optional(),
+  }),
+  z.object({ type: z.literal("traverseDoor"), doorId: z.string().max(120) }),
+]);
+
+const worldActionEnvelopeSchema = z.object({
+  actor: anyActorSchema,
+  source: z.enum(["player", "npc", "script", "sleeper"]),
+  action: worldActionSchema,
+});
+
+export const dialogueSchema = z.object({
   reply: z.string().min(1).max(900),
+  action: z.string().max(180).nullable().optional(),
   tell: tellSchema.nullable(),
   yieldedShardId: z.string().max(120).nullable(),
   residueDelta: z.array(z.string().min(1).max(300)).max(3),
@@ -98,6 +160,10 @@ const dialogueSchema = z.object({
     })
     .nullable(),
   pressed: z.enum(["leveraged", "broken"]).nullable(),
+  worldActions: z
+    .array(worldActionEnvelopeSchema)
+    .max(MAX_WORLD_ACTIONS_PER_TURN)
+    .default([]),
 });
 
 const examineSchema = z.object({
@@ -587,6 +653,80 @@ function assertSlug(artifact: DreamArtifact, slug: string): void {
   }
 }
 
+export { NPC_WORLD_TOOL_NAMES };
+
+/** AI SDK tools for one NPC turn. Actor id is bound in the session, not the schema. */
+export function npcDialogueTools(session: NpcWorldSession) {
+  const run =
+    (name: (typeof NPC_WORLD_TOOL_NAMES)[number]) =>
+    (input: Record<string, unknown>) =>
+      session.runTool(name, input);
+
+  return {
+    move_to: tool({
+      description:
+        "Walk to a tile in the current room. Not a teleport; there must be a path.",
+      inputSchema: z.object({ x: z.number(), y: z.number() }),
+      execute: run("move_to"),
+    }),
+    take: tool({
+      description: "Pick up a carryable object you can reach.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("take"),
+    }),
+    drop: tool({
+      description: "Drop a held object. Optional tile; otherwise at your feet.",
+      inputSchema: z.object({
+        objectId: z.string(),
+        x: z.number().optional(),
+        y: z.number().optional(),
+      }),
+      execute: run("drop"),
+    }),
+    give: tool({
+      description: 'Give a held object. `to` is "player" or another figure id.',
+      inputSchema: z.object({ objectId: z.string(), to: z.string() }),
+      execute: run("give"),
+    }),
+    put: tool({
+      description: "Put an object into a container.",
+      inputSchema: z.object({
+        objectId: z.string(),
+        intoObjectId: z.string(),
+      }),
+      execute: run("put"),
+    }),
+    open: tool({
+      description: "Open a door or container.",
+      inputSchema: z.object({ targetId: z.string() }),
+      execute: run("open"),
+    }),
+    close: tool({
+      description: "Close a door or container.",
+      inputSchema: z.object({ targetId: z.string() }),
+      execute: run("close"),
+    }),
+    activate: tool({
+      description: "Activate a switch, lever, or device.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("activate"),
+    }),
+    use: tool({
+      description: "Use an object, optionally on a target.",
+      inputSchema: z.object({
+        objectId: z.string(),
+        targetId: z.string().optional(),
+      }),
+      execute: run("use"),
+    }),
+    traverse: tool({
+      description: "Walk through a door that is open to you.",
+      inputSchema: z.object({ doorId: z.string() }),
+      execute: run("traverse"),
+    }),
+  };
+}
+
 export interface AgentRuntimeOptions {
   artifactPath?: string;
   secretPath?: string;
@@ -727,7 +867,7 @@ export class AgentRuntime {
         : null;
     const header = locale === "en" ? "WHO YOU ARE" : "КТО ТЫ";
     const hookHeader = locale === "en" ? "HOOK" : "ЗАЦЕПКА";
-    const parts = [base];
+    const parts = [base, dialogueWorldRules(locale === "en" ? "en" : "ru")];
     if (hook) parts.push(`--- ${hookHeader} ---\n${hook}`);
     if (soul) parts.push(`--- ${header} ---\n${soul}`);
     return parts.join("\n\n");
@@ -1112,12 +1252,29 @@ export class AgentRuntime {
         request.locale,
       );
 
+      const session = createNpcWorldSession(request.world, request.figureId);
+      const tools = npcDialogueTools(session);
+      const toolRun = await generateText({
+        model: this.ensureModel(),
+        system: dialogueInstructions,
+        messages,
+        tools,
+        stopWhen: stepCountIs(5),
+        maxRetries: 1,
+        abortSignal: signal,
+        maxOutputTokens: 4096,
+      });
+      const dialogueMessages: ModelMessage[] = [
+        ...messages,
+        ...toolRun.response.messages,
+      ];
+
       let output: DialogueResult;
       if (this.usesJsonInText) {
         const stream = streamText({
           model: this.ensureModel(),
           system: structuredInstructions(dialogueInstructions, dialogueSchema),
-          messages,
+          messages: dialogueMessages,
           maxOutputTokens: 4096,
           abortSignal: signal,
         });
@@ -1139,7 +1296,7 @@ export class AgentRuntime {
             dialogueSchema,
             dialogueInstructions,
             [
-              ...messages,
+              ...dialogueMessages,
               {
                 role: "user",
                 content:
@@ -1155,7 +1312,7 @@ export class AgentRuntime {
         const stream = streamText({
           model: this.ensureModel(),
           system: dialogueInstructions,
-          messages,
+          messages: dialogueMessages,
           output: Output.object({ schema: dialogueSchema }),
           abortSignal: signal,
         });
@@ -1181,7 +1338,7 @@ export class AgentRuntime {
           dialogueSchema,
           dialogueInstructions,
           [
-            ...messages,
+            ...dialogueMessages,
             {
               role: "user",
               content:
@@ -1220,6 +1377,8 @@ export class AgentRuntime {
       if (output.resonance && !request.leverageOffered && !output.tell) {
         output.resonance = null;
       }
+      // The model does not author physics. Successful tool envelopes only.
+      output.worldActions = [...session.successful];
       return output;
     } catch (error) {
       throw classify(error);

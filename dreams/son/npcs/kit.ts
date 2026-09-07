@@ -50,6 +50,7 @@ export function say(
     portraitState: extra.portraitState ?? "neutral",
     leverageLearned: extra.leverageLearned ?? null,
     pressed: extra.pressed ?? null,
+    worldActions: extra.worldActions ?? [],
   };
 }
 

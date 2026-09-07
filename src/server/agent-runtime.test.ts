@@ -12,8 +12,22 @@ import { join } from "node:path";
 import { describe, expect, test } from "bun:test";
 
 import { rollWallet, type WalletKind } from "../shared/wallet";
-import { AgentRuntime } from "./agent-runtime";
+import {
+  AgentRuntime,
+  dialogueSchema,
+  NPC_WORLD_TOOL_NAMES,
+  npcDialogueTools,
+} from "./agent-runtime";
 import type { CodexAccountProcess } from "./codex-account";
+import { createNpcWorldSession } from "../shared/world-sandbox";
+import type { WorldSnapshot } from "../shared/ai";
+import { snapshot } from "../player/mind/remote";
+import { createWorld } from "../player/game/world";
+import { validateDreamArtifact, type DreamArtifact } from "../shared/dream";
+import fixture from "../shared/__fixtures__/tiny-dream.json";
+import { ScriptedMind } from "../player/mind/scripted";
+import { MindMemory } from "../player/mind/memory";
+import { sonArtifact } from "../../dreams/son/pack";
 
 const SECRET_PATH = join(process.cwd(), "dreams", "son", "secret.local.txt");
 const HAS_SECRET = existsSync(SECRET_PATH);
@@ -198,3 +212,132 @@ describe("judge", () => {
     ).rejects.toThrow();
   });
 });
+
+const MINIMAL_DIALOGUE = {
+  reply: "Садись.",
+  tell: null,
+  yieldedShardId: null,
+  residueDelta: [],
+  memoryEffect: null,
+  resonance: null,
+  figureMemorySummary: "",
+  journalEntry: null,
+  portraitState: "neutral" as const,
+  leverageLearned: null,
+  pressed: null,
+};
+
+function emptySnap(): WorldSnapshot {
+  return {
+    rooms: [],
+    doors: [],
+    figures: [],
+    interests: [],
+    fateHistory: [],
+    objects: [],
+    player: { roomId: "a", x: 0, y: 0 },
+    worldRevision: 0,
+    mood: "upper-dynamic",
+  };
+}
+
+describe("dialogue worldActions schema", () => {
+  test("worldActions defaults to an empty array", () => {
+    const parsed = dialogueSchema.parse(MINIMAL_DIALOGUE);
+    expect(parsed.worldActions).toEqual([]);
+  });
+});
+
+describe("npc dialogue tools", () => {
+  test("shiftWalls is not a tool", () => {
+    const tools = npcDialogueTools(
+      createNpcWorldSession(emptySnap(), "npc-1", () => ({
+        ok: true,
+        refusal: null,
+        affectedRooms: [],
+        affectedObjects: [],
+        events: [],
+      })),
+    );
+    expect(Object.keys(tools).sort()).toEqual([...NPC_WORLD_TOOL_NAMES].sort());
+    expect("shiftWalls" in tools).toBe(false);
+    expect(NPC_WORLD_TOOL_NAMES).not.toContain("shiftWalls");
+  });
+});
+
+describe("world snapshot", () => {
+  test("includes object locations and figure x,y when provided", () => {
+    const artifact = validateDreamArtifact(
+      JSON.parse(JSON.stringify(fixture)),
+    ) as DreamArtifact;
+    const world = createWorld(artifact);
+    const figure = world.figures[0];
+    const snapped = snapshot(world, "upper-dynamic", null, {
+      playerPose: { roomId: world.currentRoomId, x: 4, y: 7 },
+      objects: [
+        {
+          id: "cup",
+          name: "cup",
+          location: { kind: "room", roomId: world.currentRoomId, x: 2, y: 3 },
+          mobility: "carryable",
+          affordances: ["take"],
+          state: {},
+          keyId: null,
+          body: null,
+          clueId: null,
+          holdsShardId: null,
+          tags: [],
+        },
+      ],
+      worldRevision: 9,
+    });
+    expect(snapped.player).toEqual({
+      roomId: world.currentRoomId,
+      x: 4,
+      y: 7,
+    });
+    expect(snapped.objects[0]?.location).toEqual({
+      kind: "room",
+      roomId: world.currentRoomId,
+      x: 2,
+      y: 3,
+    });
+    expect(snapped.worldRevision).toBe(9);
+    if (figure) {
+      const listed = snapped.figures.find((entry) => entry.id === figure.id);
+      expect(listed?.x).toBe(figure.x);
+      expect(listed?.y).toBe(figure.y);
+    }
+    expect(snapped.doors[0]?.threshold).toBeDefined();
+    expect(typeof snapped.doors[0]?.x).toBe("number");
+  });
+
+  test("falls back to currentRoomId at (0, 0) when no player pose is passed", () => {
+    const artifact = validateDreamArtifact(
+      JSON.parse(JSON.stringify(fixture)),
+    ) as DreamArtifact;
+    const world = createWorld(artifact);
+    const snapped = snapshot(world);
+    expect(snapped.player).toEqual({
+      roomId: world.currentRoomId,
+      x: 0,
+      y: 0,
+    });
+    expect(snapped.objects).toEqual([]);
+  });
+});
+
+describe("scripted dialogue", () => {
+  test("does not invent worldActions", async () => {
+    const world = createWorld(
+      validateDreamArtifact(sonArtifact()) as DreamArtifact,
+    );
+    const mind = new ScriptedMind(world, new MindMemory(world.artifact.slug));
+    const result = await mind.turn({
+      figureId: "turyshev",
+      utterance: "Куда мне идти?",
+    });
+    expect(result.worldActions).toEqual([]);
+  });
+});
+
