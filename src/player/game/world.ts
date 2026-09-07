@@ -30,6 +30,11 @@ import type { PortraitState } from "../../shared/content";
 import { applyFateLedger, type FateRecord } from "./fates";
 import { clampExhaustion } from "./exhaustion";
 import type { ScriptFlag } from "../../shared/pack";
+import {
+  cloneObject,
+  type WorldObjectState,
+} from "../../shared/world-object";
+import { migrateWorldObjects } from "./object-migration";
 
 export interface FigureState extends FigurePlacement {
   facing: Direction;
@@ -99,6 +104,17 @@ export interface WorldState {
   population: DreamPopulation | null;
   baseFigures: FigureState[];
   baseInterests: InterestState[];
+
+  /**
+   * Live physical catalog, migrated from props/hotspots/interests at inhabit.
+   * Authored RoomProp / RoomHotspot stay on the rooms; this is what take/drop
+   * mutate. `baseObjects` is the cycle-reset snapshot.
+   */
+  objects: WorldObjectState[];
+  objectById: Map<string, WorldObjectState>;
+  baseObjects: WorldObjectState[];
+  /** Bumped on every successful world action. */
+  revision: number;
 
   /** What the sanitar has got hold of. Doors consult these. */
   keysHeld: Set<string>;
@@ -198,6 +214,7 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     makeFigureState(figure, roomById.get(figure.roomId)),
   );
   const { doorById, roomIdByDoorId } = buildDoorIndexes(rooms);
+  const objects = migrateWorldObjects(rooms, []);
 
   return {
     artifact,
@@ -211,6 +228,10 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     population: null,
     baseFigures: figures.map(cloneFigureState),
     baseInterests: [],
+    objects,
+    objectById: indexObjects(objects),
+    baseObjects: objects.map(cloneObject),
+    revision: 0,
     keysHeld: new Set(),
     leversPulled: new Set(),
     puzzlesSolved: new Set(),
@@ -297,6 +318,10 @@ export function resetWorld(world: WorldState, cycle = 1): void {
   world.interests.push(
     ...world.baseInterests.map((interest) => ({ ...interest })),
   );
+  world.objects.length = 0;
+  world.objects.push(...world.baseObjects.map(cloneObject));
+  world.objectById = indexObjects(world.objects);
+  world.revision = 0;
   // The rebuild above resurrects everybody. This puts back what was done to them.
   applyFateLedger(world, cycle);
 
@@ -398,6 +423,16 @@ export function interestById(
 
 export function doorById(world: WorldState, id: string): RoomDoor | null {
   return world.doorById.get(id) ?? null;
+}
+
+export function rebuildObjectIndex(world: WorldState): void {
+  world.objectById = indexObjects(world.objects);
+}
+
+function indexObjects(
+  objects: readonly WorldObjectState[],
+): Map<string, WorldObjectState> {
+  return new Map(objects.map((object) => [object.id, object]));
 }
 
 /**
