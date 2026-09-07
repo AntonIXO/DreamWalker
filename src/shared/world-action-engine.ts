@@ -172,9 +172,6 @@ export function executeWorldAction(
 ): WorldActionResult {
   const { actor, source, action } = envelope;
 
-  const pose = poseOf(world, actor);
-  if (!pose) return refused("actor does not exist");
-
   if (source === "npc") {
     if (actor.kind !== "figure") {
       return refused("npc actor must be a figure; server wraps figureId");
@@ -184,7 +181,18 @@ export function executeWorldAction(
     }
   }
 
-  if (!isActorRef(actor)) return refused("actor does not exist");
+  let pose = poseOf(world, actor);
+  if (!pose && (source === "script" || source === "sleeper")) {
+    pose = poseAtAction(world, action);
+  }
+  if (!pose) return refused("actor does not exist");
+
+  if (!isActorRef(actor)) {
+    if (source !== "script" && source !== "sleeper") {
+      return refused("actor does not exist");
+    }
+    return execAsSystem(world, actor, pose, action);
+  }
 
   switch (action.type) {
     case "moveTo":
@@ -532,7 +540,7 @@ function execPut(
 
 function execOpen(
   world: WorldMutator,
-  actor: ActorRef,
+  actor: AnyActor,
   pose: ActorPose,
   targetId: string,
 ): WorldActionResult {
@@ -566,7 +574,7 @@ function execOpen(
 
 function execClose(
   world: WorldMutator,
-  actor: ActorRef,
+  actor: AnyActor,
   pose: ActorPose,
   targetId: string,
 ): WorldActionResult {
@@ -591,7 +599,7 @@ function execClose(
 
 function execOpenDoor(
   world: WorldMutator,
-  actor: ActorRef,
+  actor: AnyActor,
   pose: ActorPose,
   door: WorldDoorView,
 ): WorldActionResult {
@@ -619,7 +627,7 @@ function execOpenDoor(
 
 function execCloseDoor(
   world: WorldMutator,
-  actor: ActorRef,
+  actor: AnyActor,
   pose: ActorPose,
   door: WorldDoorView,
 ): WorldActionResult {
@@ -748,6 +756,84 @@ function execTraverse(
   });
 }
 
+function poseAtAction(
+  world: WorldMutator,
+  action: WorldAction,
+): ActorPose | null {
+  if (action.type === "moveTo") {
+    return {
+      roomId: action.roomId ?? world.getPlayerPose()?.roomId ?? "",
+      x: action.x,
+      y: action.y,
+    };
+  }
+  const id =
+    "targetId" in action
+      ? action.targetId
+      : "objectId" in action
+        ? action.objectId
+        : "doorId" in action
+          ? action.doorId
+          : null;
+  if (!id) return world.getPlayerPose();
+  const door = world.getDoor(id);
+  if (door) return { roomId: door.fromRoomId, x: door.x, y: door.y };
+  const object = world.objectById.get(id);
+  if (object?.location.kind === "room") {
+    return {
+      roomId: object.location.roomId,
+      x: object.location.x,
+      y: object.location.y,
+    };
+  }
+  return world.getPlayerPose();
+}
+
+function execAsSystem(
+  world: WorldMutator,
+  actor: AnyActor,
+  pose: ActorPose,
+  action: WorldAction,
+): WorldActionResult {
+  switch (action.type) {
+    case "open":
+      return execOpen(world, actor, pose, action.targetId);
+    case "close":
+      return execClose(world, actor, pose, action.targetId);
+    case "take":
+      return execSystemTake(world, actor, pose, action.objectId);
+    default:
+      return refused("system actor cannot perform this action");
+  }
+}
+
+function execSystemTake(
+  world: WorldMutator,
+  actor: AnyActor,
+  pose: ActorPose,
+  objectId: string,
+): WorldActionResult {
+  const object = world.objectById.get(objectId);
+  if (!object) return refused("no such object");
+  if (object.location.kind === "removed") return refused("already gone");
+  const fromRoomId =
+    object.location.kind === "room" ? object.location.roomId : pose.roomId;
+  object.location = { kind: "removed" };
+  syncKeyPossession(world, object);
+  return succeed(world, {
+    rooms: compact([fromRoomId, pose.roomId]),
+    objects: [object.id],
+    events: [
+      {
+        type: "object.taken",
+        objectId: object.id,
+        actor,
+        fromRoomId,
+      },
+    ],
+  });
+}
+
 function poseOf(world: WorldMutator, actor: AnyActor): ActorPose | null {
   if (actor.kind === "player") return world.getPlayerPose();
   if (actor.kind === "figure") return world.getFigurePose(actor.id);
@@ -855,9 +941,10 @@ function isContainer(object: WorldObjectState): boolean {
 
 function actorHasKey(
   world: WorldMutator,
-  actor: ActorRef,
+  actor: AnyActor,
   keyId: string,
 ): boolean {
+  if (!isActorRef(actor)) return false;
   if (actor.kind === "player" && world.keysHeld.has(keyId)) return true;
   return world.objects.some(
     (object) => object.keyId === keyId && isHeldBy(object, actor),

@@ -190,4 +190,42 @@ describe("migrateWorldObjects", () => {
       "carryable",
     );
   });
+
+  test("a once look-prop of handheld size is carryable, furniture is not", () => {
+    const objects = migrateWorldObjects([
+      {
+        id: "yard",
+        props: [
+          prop({ id: "bottle", w: 1, h: 1 }),
+          prop({ id: "intercom", w: 1, h: 2 }),
+          prop({ id: "urn", w: 1, h: 1 }),
+        ],
+        hotspots: [
+          hotspot({
+            id: "bottle-look",
+            propId: "bottle",
+            once: true,
+            prompt: "бутылка",
+          }),
+          hotspot({
+            id: "intercom-look",
+            propId: "intercom",
+            prompt: "домофон",
+          }),
+          hotspot({
+            id: "urn-look",
+            propId: "urn",
+            prompt: "урна",
+          }),
+        ],
+      },
+    ]);
+    expect(objects.find((entry) => entry.id === "bottle")?.mobility).toBe(
+      "carryable",
+    );
+    expect(objects.find((entry) => entry.id === "intercom")?.mobility).toBe(
+      "fixed",
+    );
+    expect(objects.find((entry) => entry.id === "urn")?.mobility).toBe("fixed");
+  });
 });

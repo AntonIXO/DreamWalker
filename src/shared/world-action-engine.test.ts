@@ -475,6 +475,48 @@ describe("executeWorldAction", () => {
     expect(result.ok).toBe(false);
     expect(result.refusal).toBe("достать её нельзя, это проверено");
   });
+
+  test("script take removes a fixed object without holding it", () => {
+    const crate = object({
+      id: "crate",
+      mobility: "fixed",
+      affordances: ["examine"],
+      location: { kind: "room", roomId: "a", x: 5, y: 5 },
+    });
+    const world = worldOf({ objects: [crate], player: null });
+    const result = executeWorldAction(world, {
+      actor: { kind: "script", id: "pack" },
+      source: "script",
+      action: { type: "take", objectId: "crate" },
+    });
+    expect(result.ok).toBe(true);
+    expect(crate.location).toEqual({ kind: "removed" });
+  });
+
+  test("sleeper open uses the door tile as pose, not a body", () => {
+    const hatch = door({ id: "hatch", type: "open", keyId: null, x: 8, y: 8 });
+    const world = worldOf({
+      doors: [hatch],
+      player: null,
+      figures: {},
+    });
+    const result = executeWorldAction(world, {
+      actor: { kind: "sleeper" },
+      source: "sleeper",
+      action: { type: "open", targetId: "hatch" },
+    });
+    expect(result.ok).toBe(true);
+    expect(hatch.type).toBe("open");
+  });
+
+  test("Turyshev's courtyard bottle is carryable in the son artifact", () => {
+    const world = createWorld(sonArtifact());
+    const bottle = world.objectById.get(
+      "butylka-riadom-s-turyshevym-ne-pervaia",
+    );
+    expect(bottle?.mobility).toBe("carryable");
+    expect(bottle?.affordances).toContain("take");
+  });
 });
 
 describe("cloneWorldMutator", () => {

@@ -35,7 +35,7 @@ export type WorldEvent =
   | {
       type: "object.taken";
       objectId: string;
-      actor: ActorRef;
+      actor: AnyActor;
       fromRoomId: string | null;
     }
   | {

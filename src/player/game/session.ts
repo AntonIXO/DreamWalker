@@ -13,7 +13,6 @@
 import type { RoomHotspot } from "../../shared/room";
 import type { DreamScript, ScriptHost } from "../../shared/pack";
 import { makeRng } from "../../shared/rng";
-import type { WorldAction, WorldActionResult } from "../../shared/world-action";
 import { MAX_WORLD_ACTIONS_PER_TURN } from "../../shared/world-action";
 import { executeWorldAction } from "../../shared/world-action-engine";
 import { runReactions } from "../../shared/world-reaction";
@@ -492,20 +491,17 @@ export class DreamSession {
             set: () => undefined,
           });
           const result = executeWorldAction(mutator, {
-            actor: { kind: "player" },
+            actor: { kind: "script", id: "pack" },
             source: "script",
             action,
           });
-          const applied = result.ok
-            ? result
-            : session.applyStubPhysical(action);
-          if (applied.ok && applied.events.length > 0) {
-            runReactions(host, applied.events, session.scripts);
+          if (result.ok && result.events.length > 0) {
+            runReactions(host, result.events, session.scripts);
           }
-          if (applied.ok && result.ok) {
+          if (result.ok) {
             session.showRoom(session.room, false);
           }
-          return applied;
+          return result;
         } finally {
           reactionDepth--;
         }
@@ -569,79 +565,6 @@ export class DreamSession {
       whisper: (text) => session.callbacks.whisper?.(text),
     };
     return host;
-  }
-
-  /**
-   * ENGINE_STUB: keep pack scripts working until the real executor mutates objects.
-   * Physical changes still go through dispatch; this is not a second caller path.
-   */
-  private applyStubPhysical(action: WorldAction): WorldActionResult {
-    if (action.type === "open") {
-      applyPatch(this.world, {
-        kind: "retypeDoor",
-        doorId: action.targetId,
-        to: "open",
-        reason: "pack script",
-      });
-      this.showRoom(this.room, false);
-      return {
-        ok: true,
-        refusal: null,
-        affectedRooms: [this.room.id],
-        affectedObjects: [],
-        events: [
-          {
-            type: "door.opened",
-            doorId: action.targetId,
-            actor: { kind: "script", id: "pack" },
-          },
-        ],
-      };
-    }
-    if (action.type === "close") {
-      this.room.closedHotspotIds.add(action.targetId);
-      return {
-        ok: true,
-        refusal: null,
-        affectedRooms: [this.room.id],
-        affectedObjects: [action.targetId],
-        events: [
-          {
-            type: "object.closed",
-            objectId: action.targetId,
-            actor: { kind: "script", id: "pack" },
-          },
-        ],
-      };
-    }
-    if (action.type === "take") {
-      const room = this.room;
-      const index = room.props.findIndex((prop) => prop.id === action.objectId);
-      if (index >= 0) room.props.splice(index, 1);
-      room.closedHotspotIds.add(action.objectId);
-      this.scene.show(room);
-      return {
-        ok: true,
-        refusal: null,
-        affectedRooms: [room.id],
-        affectedObjects: [action.objectId],
-        events: [
-          {
-            type: "object.taken",
-            objectId: action.objectId,
-            actor: { kind: "player" },
-            fromRoomId: room.id,
-          },
-        ],
-      };
-    }
-    return {
-      ok: false,
-      refusal: "world-action-engine stub: engine agent implements this",
-      affectedRooms: [],
-      affectedObjects: [],
-      events: [],
-    };
   }
 
   private escalateRevisit(room: RoomState, visits: number): void {

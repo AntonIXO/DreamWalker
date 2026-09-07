@@ -417,6 +417,8 @@ function removeInterest(world: WorldState, interestId: string): PatchResult {
   const index = world.interests.findIndex((i) => i.id === interestId);
   if (index < 0) return refuse(`no interest ${interestId}`);
   const [removed] = world.interests.splice(index, 1);
+  const object = world.objectById.get(interestId);
+  if (object) object.location = { kind: "removed" };
   return { ok: true, affectedRooms: [removed!.roomId] };
 }
 
@@ -684,8 +686,6 @@ function embodiedWorldAction(patch: MapPatch): WorldAction | null {
       return { type: "close", targetId: patch.hotspotId };
     case "openHotspot":
       return { type: "open", targetId: patch.hotspotId };
-    case "removeInterest":
-      return { type: "take", objectId: patch.interestId };
     default:
       return null;
   }

@@ -88,13 +88,28 @@ function takeId(seen: Set<string>, object: WorldObjectState): WorldObjectState {
   return id === object.id ? object : { ...object, id };
 }
 
+function isCarryableHotspot(
+  hotspot: RoomHotspot,
+  prop: RoomProp | null,
+): boolean {
+  if (hotspot.refusal) return false;
+  if (hotspot.kind === "clue") return true;
+  // Authored "once" look-props of handheld size — Turyshev's bottle.
+  // Intercom/urn/stove stay fixed: they are not once, or they are larger.
+  if (hotspot.kind === "look" && hotspot.once) {
+    if (!prop) return true;
+    return prop.w <= 1 && prop.h <= 1;
+  }
+  return false;
+}
+
 function fromHotspotAndProp(
   roomId: string,
   hotspot: RoomHotspot,
   prop: RoomProp,
 ): WorldObjectState {
   const ui = hotspot.kind === "ui";
-  const carryable = hotspot.kind === "clue" && !hotspot.refusal;
+  const carryable = isCarryableHotspot(hotspot, prop);
   return finish({
     id: prop.id,
     name: hotspot.prompt || prop.id,
@@ -120,7 +135,7 @@ function fromFreeHotspot(
   hotspot: RoomHotspot,
 ): WorldObjectState {
   const ui = hotspot.kind === "ui";
-  const carryable = hotspot.kind === "clue" && !hotspot.refusal;
+  const carryable = isCarryableHotspot(hotspot, null);
   return finish({
     id: hotspot.id,
     name: hotspot.prompt || hotspot.id,

@@ -22,7 +22,7 @@ import type {
   WorldMutator,
   WorldObjectState,
 } from "./world-object";
-import { cloneObject } from "./world-object";
+import { cloneObject, isActorRef } from "./world-object";
 
 export type WorldActionExecutor = (
   world: WorldMutator,
@@ -361,7 +361,9 @@ function locationsFromResult(
       case "object.taken":
         out.push({
           id: event.objectId,
-          location: { kind: "held", actor: event.actor },
+          location: isActorRef(event.actor)
+            ? { kind: "held", actor: event.actor }
+            : { kind: "removed" },
         });
         break;
       case "object.given":
