@@ -71,6 +71,7 @@ export interface TranslationSchema {
     key_verbs: string;
     key_journal: string;
     key_words: string;
+    key_inventory: string;
     key_help: string;
     key_debug: string;
     key_heartbeat: string;

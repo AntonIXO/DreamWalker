@@ -56,6 +56,7 @@ export class FinalePanel {
   private readonly leaveBtn: HTMLButtonElement;
   private readonly closeBtn: HTMLButtonElement;
   private busy = false;
+  private generation = 0;
   private ended = false;
   private kind: EndingKind | null = null;
 
@@ -137,6 +138,10 @@ export class FinalePanel {
   }
 
   open(): void {
+    this.generation++;
+    if (this.busy) this.mind.abort();
+    this.busy = false;
+    this.submit.disabled = false;
     this.systemLabelEl.textContent = t("ui.system_label_heart");
     this.titleEl.textContent = t("finale.title");
     this.instructionsEl.textContent = t("finale.instructions");
@@ -182,7 +187,14 @@ export class FinalePanel {
   }
 
   private async judge(): Promise<void> {
-    if (this.busy || this.inputs.some((input) => !input.value.trim())) return;
+    if (
+      this.busy ||
+      this.ended ||
+      this.root.hidden ||
+      this.inputs.some((input) => !input.value.trim())
+    )
+      return;
+    const generation = ++this.generation;
     this.busy = true;
     this.submit.disabled = true;
     this.inputs.forEach((input) => (input.disabled = true));
@@ -191,6 +203,7 @@ export class FinalePanel {
       const result = await this.thinking.run(t("ui.thinking_mnemonic"), () =>
         this.mind.judge(this.fullPhrase()),
       );
+      if (generation !== this.generation) return;
       if (result.verdict === "match") {
         const paid = this.callbacks.whatWasPaid?.() ?? [];
         const ledger = paid.length > 0 ? `\n\n${paid.join("\n")}` : "";
@@ -207,6 +220,7 @@ export class FinalePanel {
           this.reply.textContent = `${result.reply}\n\n${amount}`;
           this.reply.style.whiteSpace = "pre-line";
           await new Promise((resolve) => setTimeout(resolve, 2400));
+          if (generation !== this.generation) return;
         }
         this.showEnding(
           dry
@@ -218,12 +232,16 @@ export class FinalePanel {
       }
       setMarkdown(this.reply, result.reply);
     } catch (error) {
-      this.reply.textContent =
-        error instanceof Error ? error.message : String(error);
+      if (generation === this.generation) {
+        this.reply.textContent =
+          error instanceof Error ? error.message : String(error);
+      }
     } finally {
-      this.busy = false;
-      this.submit.disabled = false;
-      this.inputs.forEach((input) => (input.disabled = false));
+      if (generation === this.generation) {
+        this.busy = false;
+        this.submit.disabled = false;
+        this.inputs.forEach((input) => (input.disabled = false));
+      }
     }
   }
 
@@ -247,7 +265,21 @@ export class FinalePanel {
     this.showEnding(t("finale.void_ending"), "void");
   }
 
+  snapshotEnding(): { text: string; kind: EndingKind } | null {
+    return this.ended && this.kind
+      ? { text: this.reply.textContent ?? "", kind: this.kind }
+      : null;
+  }
+
+  restoreEnding(state: { text: string; kind: EndingKind }): void {
+    this.open();
+    this.showEnding(state.text, state.kind);
+  }
+
   private showEnding(text: string, kind: EndingKind): void {
+    this.generation++;
+    if (this.busy) this.mind.abort();
+    this.busy = false;
     this.ended = true;
     this.kind = kind;
     setMarkdown(this.reply, text);
@@ -266,7 +298,9 @@ export class FinalePanel {
 
   close(): void {
     if (this.root.hidden || this.ended) return;
+    this.generation++;
     if (this.busy) this.mind.abort();
+    this.busy = false;
     this.root.hidden = true;
     this.callbacks.onClose();
   }

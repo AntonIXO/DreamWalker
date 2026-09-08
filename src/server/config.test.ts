@@ -31,6 +31,19 @@ describe("normaliseOpenAIBaseURL", () => {
 });
 
 describe("resolveAiBackend", () => {
+  test.each(["openai", "anthropic"])(
+    "an explicitly selected %s backend cannot silently become Codex OAuth",
+    (provider) => {
+      expect(() =>
+        resolveAiBackend({ DREAMWALKER_AI_PROVIDER: provider }),
+      ).toThrow(`DREAMWALKER_AI_PROVIDER=${provider} requires`);
+    },
+  );
+
+  test("without a provider or credentials, Codex remains the default", () => {
+    expect(resolveAiBackend({})).toEqual({ mode: "codex" });
+  });
+
   test("an OPENAI_KEY selects CloseRouter without an explicit switch", () => {
     const backend = resolveAiBackend({
       OPENAI_KEY: "closerouter_test",

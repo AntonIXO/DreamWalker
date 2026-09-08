@@ -54,6 +54,7 @@ export const en: TranslationSchema = {
     key_verbs: "what else can be done with a person",
     key_journal: "people journal",
     key_words: "notebook of six words",
+    key_inventory: "inventory and actions in words",
     key_help: "this window",
     key_debug: "map, mission graph, patch log",
     key_heartbeat: "wake the sleeper now",

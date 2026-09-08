@@ -11,6 +11,7 @@ import {
   assertReplayMatches,
   cloneSandbox,
   createNpcWorldSession,
+  createPlayerWorldSession,
   sandboxFromSnapshot,
   worldActionFromTool,
   type WorldActionExecutor,
@@ -289,5 +290,386 @@ describe("assertReplayMatches", () => {
     expect(() =>
       assertReplayMatches(okResult(), okResult(), sandboxWorld, liveWorld),
     ).toThrow(/object locations/);
+  });
+});
+
+describe("NPC deliberation", () => {
+  function planningSnapshot(): WorldSnapshot {
+    const snapshot = snap([
+      objectAt("box", {
+        location: { kind: "room", roomId: "hall", x: 5, y: 5 },
+        mobility: "fixed",
+        affordances: ["open", "close"],
+        tags: ["container"],
+      }),
+      objectAt("cup", {
+        location: { kind: "inside", objectId: "box" },
+        affordances: ["take", "drop", "put"],
+      }),
+    ]);
+    snapshot.geometry = {
+      hall: { width: 8, height: 8, cells: Array(8).fill("........") },
+    };
+    return snapshot;
+  }
+
+  test("records successful, refused, and unknown physical attempts with revisions", () => {
+    const session = createNpcWorldSession(planningSnapshot(), "npc-1");
+    expect(session.runTool("take", { objectId: "cup" }).ok).toBe(false);
+    expect(
+      session.runTool("open", {
+        targetId: "box",
+        actor: { kind: "player" },
+        source: "player",
+      }).ok,
+    ).toBe(true);
+    expect(session.runTool("invent_room", { roomId: "imaginary" }).ok).toBe(
+      false,
+    );
+    expect(session.attempts).toHaveLength(3);
+    expect(session.attempts.map((attempt) => attempt.result.ok)).toEqual([
+      false,
+      true,
+      false,
+    ]);
+    expect(session.attempts.map((attempt) => attempt.revisionBefore)).toEqual([
+      3, 3, 4,
+    ]);
+    expect(
+      session.attempts.map((attempt) => attempt.result.worldRevision),
+    ).toEqual([3, 4, 4]);
+    expect(session.attempts[0]?.action).toEqual({
+      type: "take",
+      objectId: "cup",
+    });
+    expect(session.attempts[1]?.input).toEqual({ targetId: "box" });
+    expect(
+      session.attempts.every(
+        (attempt) =>
+          attempt.actor.kind === "figure" && attempt.actor.id === "npc-1",
+      ),
+    ).toBe(true);
+    expect(session.attempts[2]?.action).toBeNull();
+    expect(session.successful).toHaveLength(1);
+    expect(session.remainingActions).toBe(MAX_WORLD_ACTIONS_PER_TURN - 3);
+  });
+
+  test("reuses an identical refusal until world revision changes", () => {
+    let executions = 0;
+    const session = createNpcWorldSession(
+      planningSnapshot(),
+      "npc-1",
+      (world, envelope) => {
+        executions += 1;
+        if (envelope.action.type === "open") {
+          world.bumpRevision();
+          return okResult();
+        }
+        return refused(`blocked at ${world.revision}`);
+      },
+    );
+    const first = session.runTool("take", { objectId: "cup" });
+    const repeated = session.runTool("take", {
+      explanation: "try harder",
+      objectId: "cup",
+    });
+    expect(repeated).toEqual(first);
+    expect(executions).toBe(1);
+    expect(session.attempts.map((attempt) => attempt.cached)).toEqual([
+      false,
+      true,
+    ]);
+    expect(session.remainingActions).toBe(MAX_WORLD_ACTIONS_PER_TURN - 2);
+    session.runTool("open", { targetId: "box" });
+    const afterChange = session.runTool("take", { objectId: "cup" });
+    expect(afterChange.refusal).toBe("blocked at 4");
+    expect(executions).toBe(3);
+    expect(session.attempts[3]?.cached).toBe(false);
+  });
+
+  test("refused and cached attempts exhaust the bounded physical budget", () => {
+    let executions = 0;
+    const session = createNpcWorldSession(planningSnapshot(), "npc-1", () => {
+      executions += 1;
+      return refused("blocked");
+    });
+    for (let i = 0; i < MAX_WORLD_ACTIONS_PER_TURN; i++)
+      session.runTool("take", { objectId: "cup" });
+    const receipts = [...session.attempts];
+    expect(session.runTool("open", { targetId: "box" }).refusal).toBe(
+      "turn action cap reached",
+    );
+    expect(session.remainingActions).toBe(0);
+    expect(session.attempts).toEqual(receipts);
+    expect(session.attempts).toHaveLength(MAX_WORLD_ACTIONS_PER_TURN);
+    expect(session.successful).toHaveLength(0);
+    expect(executions).toBe(1);
+  });
+
+  test("attempt receipts do not retain mutable caller input or returned result", () => {
+    const session = createNpcWorldSession(planningSnapshot(), "npc-1");
+    const input = { targetId: "box", detail: { reason: "look inside" } };
+    const result = session.runTool("open", input);
+    input.detail.reason = "changed";
+    result.affectedObjects.length = 0;
+    expect(session.attempts[0]?.input).toEqual({
+      targetId: "box",
+      detail: { reason: "look inside" },
+    });
+    expect(session.attempts[0]?.result.affectedObjects).toEqual(["box"]);
+  });
+
+  test("previews sequential real actions without changing world, receipts, or budget", () => {
+    const session = createNpcWorldSession(planningSnapshot(), "npc-1");
+    const preview = session.preview([
+      { type: "open", targetId: "box" },
+      { type: "take", objectId: "cup" },
+    ]);
+    expect(preview.ok).toBe(true);
+    expect(preview.refusal).toBeNull();
+    expect(preview.baseRevision).toBe(3);
+    expect(preview.worldRevision).toBe(5);
+    expect(preview.steps.map((step) => step.result.worldRevision)).toEqual([
+      4, 5,
+    ]);
+    expect(preview.world.objectById.get("cup")?.location).toEqual({
+      kind: "held",
+      actor: { kind: "figure", id: "npc-1" },
+    });
+    expect(preview.actorPose).toEqual({ roomId: "hall", x: 5, y: 6 });
+    expect(session.world.objectById.get("box")?.state.open).toBe(false);
+    expect(session.world.objectById.get("cup")?.location).toEqual({
+      kind: "inside",
+      objectId: "box",
+    });
+    expect(session.world.revision).toBe(3);
+    expect(session.attempts).toHaveLength(0);
+    expect(session.successful).toHaveLength(0);
+    expect(session.remainingActions).toBe(MAX_WORLD_ACTIONS_PER_TURN);
+    expect(session.runTool("take", { objectId: "cup" }).refusal).toBe(
+      "container is closed",
+    );
+  });
+
+  test("the projected world does not share nested held-actor references", () => {
+    const snapshot = planningSnapshot();
+    snapshot.objects![1]!.location = {
+      kind: "held",
+      actor: { kind: "figure", id: "npc-1" },
+    };
+    const session = createNpcWorldSession(snapshot, "npc-1");
+    const preview = session.preview([]);
+    const location = preview.world.objectById.get("cup")!.location;
+    if (location.kind === "held" && location.actor.kind === "figure") {
+      location.actor.id = "another-figure";
+    }
+    expect(session.world.objectById.get("cup")?.location).toEqual({
+      kind: "held",
+      actor: { kind: "figure", id: "npc-1" },
+    });
+    expect(session.attempts).toHaveLength(0);
+  });
+
+  test("previews stop at the first refused action and preserve the successful prefix", () => {
+    const session = createNpcWorldSession(planningSnapshot(), "npc-1");
+    const preview = session.preview([
+      { type: "open", targetId: "box" },
+      { type: "take", objectId: "missing" },
+      { type: "take", objectId: "cup" },
+    ]);
+    expect(preview.ok).toBe(false);
+    expect(preview.refusal).toBe("no such object");
+    expect(preview.steps).toHaveLength(2);
+    expect(preview.worldRevision).toBe(4);
+    expect(preview.world.objectById.get("box")?.state.open).toBe(true);
+    expect(preview.world.objectById.get("cup")?.location.kind).toBe("inside");
+    expect(session.world.objectById.get("box")?.state.open).toBe(false);
+  });
+
+  test("previews honor remaining physical budget and bind every step to the session actor", () => {
+    const calls: WorldActionEnvelope[] = [];
+    const session = createNpcWorldSession(
+      planningSnapshot(),
+      "npc-1",
+      (_world, envelope) => {
+        calls.push(envelope);
+        return okResult();
+      },
+    );
+    for (let i = 0; i < MAX_WORLD_ACTIONS_PER_TURN - 1; i++)
+      session.runTool("open", { targetId: "box" });
+    calls.length = 0;
+    const tooLong = session.preview([
+      { type: "open", targetId: "box" },
+      { type: "take", objectId: "cup" },
+    ]);
+    expect(tooLong.ok).toBe(false);
+    expect(tooLong.refusal).toBe("plan exceeds remaining action budget");
+    expect(tooLong.steps).toHaveLength(0);
+    expect(calls).toHaveLength(0);
+    const preview = session.preview([{ type: "take", objectId: "cup" }]);
+    expect(preview.ok).toBe(true);
+    expect(calls[0]?.actor).toEqual({ kind: "figure", id: "npc-1" });
+    expect(calls[0]?.source).toBe("npc");
+    expect(session.remainingActions).toBe(1);
+    expect(session.attempts).toHaveLength(MAX_WORLD_ACTIONS_PER_TURN - 1);
+  });
+});
+
+describe("NPC physical presence", () => {
+  test("dead and gone snapshot figures cannot act or receive predicted transfers", () => {
+    for (const fate of ["dead", "gone"] as const) {
+      const snapshot = snap([
+        objectAt("cup", {
+          location: { kind: "held", actor: { kind: "figure", id: "npc-1" } },
+          affordances: ["give"],
+        }),
+        objectAt("loose", {
+          location: { kind: "room", roomId: "hall", x: 5, y: 5 },
+          body: null,
+        }),
+      ]);
+      snapshot.geometry = {
+        hall: { width: 8, height: 8, cells: Array(8).fill("........") },
+      };
+      snapshot.figures.push({
+        ...snapshot.figures[0]!,
+        id: "absent",
+        x: 5,
+        y: 5,
+        fate,
+      });
+      const session = createNpcWorldSession(snapshot, "npc-1");
+      expect(session.world.getFigurePose("absent")).toBeNull();
+      expect(session.world.figurePoses.has("absent")).toBe(false);
+      const preview = session.preview([
+        { type: "give", objectId: "cup", to: { kind: "figure", id: "absent" } },
+      ]);
+      expect(preview.ok).toBe(false);
+      expect(preview.refusal).toBe("actor does not exist");
+      expect(session.world.objectById.get("cup")?.location).toEqual({
+        kind: "held",
+        actor: { kind: "figure", id: "npc-1" },
+      });
+      const absent = createNpcWorldSession(snapshot, "absent");
+      expect(absent.runTool("take", { objectId: "loose" }).refusal).toBe(
+        "actor does not exist",
+      );
+      expect(absent.preview([{ type: "moveTo", x: 4, y: 5 }]).refusal).toBe(
+        "actor does not exist",
+      );
+      expect(absent.successful).toHaveLength(0);
+      expect(absent.world.revision).toBe(3);
+    }
+  });
+
+  test("broken, leveraged, and led figures retain their physical bodies", () => {
+    const snapshot = snap();
+    for (const fate of ["broken", "leveraged", "led"] as const) {
+      snapshot.figures.push({ ...snapshot.figures[0]!, id: fate, fate });
+    }
+    const world = sandboxFromSnapshot(snapshot);
+    for (const id of ["npc-1", "broken", "leveraged", "led"]) {
+      expect(world.getFigurePose(id)).toEqual({ roomId: "hall", x: 5, y: 6 });
+    }
+  });
+});
+
+describe("player item command sessions", () => {
+  function itemSnapshot() {
+    const snapshot = snap([
+      objectAt("cup", {
+        location: { kind: "held", actor: { kind: "player" } },
+        affordances: ["take", "drop", "give", "use"],
+      }),
+    ]);
+    snapshot.geometry = {
+      hall: { width: 8, height: 8, cells: Array(8).fill("........") },
+    };
+    return snapshot;
+  }
+
+  test("commands bind player identity and persist alterations only after real execution", () => {
+    const session = createPlayerWorldSession(itemSnapshot());
+    const action = {
+      type: "alter" as const,
+      objectId: "cup",
+      verb: "подписать",
+      changes: { dirty: true, inscription: "Моя чашка" },
+      actor: { kind: "figure", id: "npc-1" },
+      source: "npc",
+    };
+    const preview = session.preview([action]);
+    expect(preview.ok).toBe(true);
+    expect(preview.actorPose).toEqual({ roomId: "hall", x: 1, y: 1 });
+    expect(preview.world.objectById.get("cup")?.state.inscription).toBe(
+      "Моя чашка",
+    );
+    expect(
+      session.world.objectById.get("cup")?.state.inscription,
+    ).toBeUndefined();
+    expect(session.remainingActions).toBe(8);
+    expect(session.runAction(action).ok).toBe(true);
+    expect(session.successful[0]?.actor).toEqual({ kind: "player" });
+    expect(session.successful[0]?.source).toBe("player");
+    expect(session.attempts[0]?.actor).toEqual({ kind: "player" });
+    expect(session.attempts[0]?.input).not.toHaveProperty("actor");
+    expect(session.world.objectById.get("cup")?.state).toEqual({
+      open: false,
+      dirty: true,
+      inscription: "Моя чашка",
+    });
+    const state = cloneSandbox(session.world).objectById.get("cup")!.state;
+    expect(state.inscription).toBe("Моя чашка");
+    state.inscription = "changed projection";
+    expect(session.world.objectById.get("cup")?.state.inscription).toBe(
+      "Моя чашка",
+    );
+  });
+
+  test("item sessions reject movement and admin commands in execution and preview", () => {
+    let executed = 0;
+    const session = createPlayerWorldSession(itemSnapshot(), () => {
+      executed++;
+      return okResult();
+    });
+    const actions = [
+      { type: "moveTo", x: 3, y: 3 },
+      { type: "traverseDoor", doorId: "d1" },
+      { type: "shiftWalls", roomId: "hall" },
+    ] as unknown as Parameters<typeof session.runAction>[0][];
+    for (const action of actions) {
+      expect(session.preview([action]).ok).toBe(false);
+      expect(session.runAction(action).ok).toBe(false);
+    }
+    expect(executed).toBe(0);
+    expect(session.successful).toHaveLength(0);
+    expect(session.attempts).toHaveLength(3);
+    expect(session.world.getPlayerPose()).toEqual({
+      roomId: "hall",
+      x: 1,
+      y: 1,
+    });
+  });
+
+  test("failed player alterations obey the same retry cache and turn budget", () => {
+    let executed = 0;
+    const session = createPlayerWorldSession(itemSnapshot(), () => {
+      executed++;
+      return refused("blocked");
+    });
+    for (let i = 0; i < 9; i++)
+      session.runAction({
+        type: "alter",
+        objectId: "cup",
+        verb: "намочить",
+        changes: { wet: true },
+      });
+    expect(executed).toBe(1);
+    expect(session.remainingActions).toBe(0);
+    expect(session.attempts).toHaveLength(8);
+    expect(session.attempts.slice(1).every((attempt) => attempt.cached)).toBe(
+      true,
+    );
   });
 });

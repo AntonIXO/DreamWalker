@@ -126,6 +126,7 @@ function fromHotspotAndProp(
       ? { w: prop.w, h: prop.h, solid: false }
       : { w: prop.w, h: prop.h, solid: prop.solid },
     visual: { role: prop.role, image: prop.image },
+    container: prop.container,
     hotspot,
   });
 }
@@ -165,6 +166,7 @@ function fromUnpairedProp(roomId: string, prop: RoomProp): WorldObjectState {
     affordances: LOOK_AFFORDANCES,
     body: { w: prop.w, h: prop.h, solid: prop.solid },
     visual: { role: prop.role, image: prop.image },
+    container: prop.container,
     hotspot: null,
   });
 }
@@ -198,11 +200,16 @@ function finish(input: {
   body: WorldObjectState["body"];
   visual: WorldObjectState["visual"];
   hotspot: RoomHotspot | null;
+  container?: RoomProp["container"];
   clueId?: string | null;
   holdsShardId?: string | null;
   sensorySeed?: string | null;
 }): WorldObjectState {
   const hotspot = input.hotspot;
+  const affordances = [...input.affordances];
+  if (input.container) affordances.push("open", "close");
+  const tags = hotspot?.kind === "clue" ? ["clue"] : [];
+  if (input.container) tags.push("container");
   return {
     id: input.id,
     name: input.name,
@@ -213,7 +220,7 @@ function finish(input: {
       y: input.y,
     },
     mobility: input.mobility,
-    affordances: [...input.affordances],
+    affordances: [...new Set(affordances)],
     body: input.body,
     visual: { ...input.visual },
     interaction: hotspot
@@ -223,8 +230,8 @@ function finish(input: {
           refusal: hotspot.refusal,
         }
       : null,
-    state: {},
-    tags: hotspot?.kind === "clue" ? ["clue"] : [],
+    state: input.container ? { open: input.container === "open" } : {},
+    tags,
     clueId: input.clueId ?? hotspot?.clueId ?? null,
     holdsShardId: input.holdsShardId ?? null,
     sensorySeed: input.sensorySeed ?? null,

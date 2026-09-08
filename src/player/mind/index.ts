@@ -20,8 +20,8 @@ export function createMind(
   world: WorldState,
   context: RemoteMindContext,
   memory = new MindMemory(world.artifact.slug),
-): DreamMind {
-  const scripted = new ScriptedMind(world, memory);
+): RemoteMind {
+  const scripted = new ScriptedMind(world, memory, context.playerPose);
   return new RemoteMind(world, memory, context, scripted);
 }
 

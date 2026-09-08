@@ -4,6 +4,10 @@ import fixture from "../../shared/__fixtures__/tiny-dream.json";
 import { validateDreamArtifact, type DreamArtifact } from "../../shared/dream";
 import type { RoomHotspot, RoomProp } from "../../shared/room";
 import { migrateWorldObjects } from "./object-migration";
+import { sonArtifact } from "../../../dreams/son/pack";
+import { createWorld } from "./world";
+import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
+import { executeWorldAction } from "../../shared/world-action-engine";
 
 function prop(partial: Partial<RoomProp> & Pick<RoomProp, "id">): RoomProp {
   return {
@@ -227,5 +231,78 @@ describe("migrateWorldObjects", () => {
       "fixed",
     );
     expect(objects.find((entry) => entry.id === "urn")?.mobility).toBe("fixed");
+  });
+});
+
+describe("authored containers", () => {
+  test("explicit open and closed container metadata reaches paired and standalone props", () => {
+    const objects = migrateWorldObjects([
+      {
+        id: "yard",
+        props: [
+          prop({ id: "urn", container: "open" }),
+          prop({ id: "box", container: "closed" }),
+        ],
+        hotspots: [hotspot({ id: "urn-look", propId: "urn" })],
+      },
+    ]);
+    expect(objects[0]?.tags).toContain("container");
+    expect(objects[0]?.state.open).toBe(true);
+    expect(objects[1]?.tags).toContain("container");
+    expect(objects[1]?.state.open).toBe(false);
+    for (const object of objects) {
+      expect(object.affordances).toContain("open");
+      expect(object.affordances).toContain("close");
+      expect(object.mobility).toBe("fixed");
+      expect(object.affordances).not.toContain("take");
+    }
+  });
+
+  test("invalid container metadata fails artifact validation", () => {
+    const artifact = structuredClone(fixture);
+    Object.assign(artifact.rooms[0]!.props[0]!, { container: "bottomless" });
+    expect(() => validateDreamArtifact(artifact)).toThrow(/container/);
+  });
+
+  test("the actual courtyard urn accepts and returns the carried bottle", () => {
+    const world = createWorld(sonArtifact());
+    const urn = world.objectById.get("urna-nabitaia-akkuratno")!;
+    const bottle = world.objectById.get(
+      "butylka-riadom-s-turyshevym-ne-pervaia",
+    )!;
+    expect(urn.tags).toContain("container");
+    expect(urn.state.open).toBe(true);
+    expect(urn.mobility).toBe("fixed");
+    bottle.location = { kind: "held", actor: { kind: "player" } };
+    const mutator = bindWorldMutator(
+      world,
+      staticPlayerPose({
+        roomId: "19-dvor-i-oranzhevye-lavochki",
+        x: 11,
+        y: 6,
+      }),
+    );
+    expect(
+      executeWorldAction(mutator, {
+        actor: { kind: "player" },
+        source: "player",
+        action: { type: "put", objectId: bottle.id, intoObjectId: urn.id },
+      }).ok,
+    ).toBe(true);
+    expect(world.objectById.get(bottle.id)?.location).toEqual({
+      kind: "inside",
+      objectId: urn.id,
+    });
+    expect(
+      executeWorldAction(mutator, {
+        actor: { kind: "player" },
+        source: "player",
+        action: { type: "take", objectId: bottle.id },
+      }).ok,
+    ).toBe(true);
+    expect(bottle.location).toEqual({
+      kind: "held",
+      actor: { kind: "player" },
+    });
   });
 });

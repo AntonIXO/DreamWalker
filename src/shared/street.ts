@@ -12,6 +12,7 @@ import {
   isWalkableCell,
   rectBlocks,
   type Box,
+  type SolidRect,
 } from "./roomGrid";
 import type { RoomDoor } from "./room";
 
@@ -237,6 +238,10 @@ export function blockedInWorld(
   currentId: string,
   box: Box,
   tileSize: number,
+  collision?: {
+    solidsFor(roomId: string): readonly SolidRect[];
+    canPassDoor(door: RoomDoor): boolean;
+  },
 ): boolean {
   const halfX = box.width / 2;
   const halfY = box.height / 2;
@@ -257,7 +262,18 @@ export function blockedInWorld(
         // walk would otherwise bounce off a painted south doorway.
         if (!isEdgeOpening(rooms, room, lx, ly)) return true;
       }
-      if (rectBlocks(room.props, lx, ly)) return true;
+      if (collision) {
+        const door = room.doors.find(
+          (candidate) =>
+            lx >= candidate.x &&
+            lx < candidate.x + candidate.w &&
+            ly >= candidate.y &&
+            ly < candidate.y + candidate.h,
+        );
+        if (door && !collision.canPassDoor(door)) return true;
+      }
+      if (rectBlocks(collision?.solidsFor(room.id) ?? room.props, lx, ly))
+        return true;
     }
   }
   return false;

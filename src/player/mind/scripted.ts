@@ -31,6 +31,8 @@ import {
   rollWallet,
 } from "../../shared/wallet";
 import type { MindMemory } from "./memory";
+import type { ActorPose } from "../../shared/world-object";
+import { examineWorldObject } from "./object-examine";
 import type {
   CycleExitResult,
   ExamineResult,
@@ -245,6 +247,7 @@ export class ScriptedMind implements DreamMind {
   constructor(
     private readonly world: WorldState,
     private readonly memory: MindMemory,
+    private readonly playerPose?: () => ActorPose | null,
   ) {}
 
   // --- conversation ------------------------------------------------------
@@ -407,6 +410,14 @@ export class ScriptedMind implements DreamMind {
   }
 
   async examine(request: ExamineRequest): Promise<ExamineResult> {
+    if (request.objectId)
+      return examineWorldObject(
+        this.world,
+        request,
+        this.playerPose?.() ?? null,
+        this.memory.knownShardIds,
+        getLocale(),
+      );
     const isRu = getLocale() === "ru";
     const lines = isRu
       ? [

@@ -1,8 +1,17 @@
+import type {
+  WorldObjectPhysicalState,
+  WorldObjectState,
+} from "./world-object";
+import type { WorldMindEvent } from "./world-mind";
 import type { MapPatch } from "./map-patch";
 import type { PortraitState } from "./content";
 import type { FigureFate, Verb } from "./verbs";
 import type { SupportedLocale } from "./i18n";
-import type { WorldActionEnvelope } from "./world-action";
+import type {
+  WorldAction,
+  WorldActionEnvelope,
+  WorldEvent,
+} from "./world-action";
 import type {
   ObjectAffordance,
   ObjectLocation,
@@ -149,21 +158,29 @@ export interface InhabitRequestPayload {
 export interface FigureMemory {
   summary: string;
   lines: FigureTranscriptLine[];
+  /** An outstanding goal or promise; never evidence that it has been fulfilled. */
+  intent?: string | null;
+  /** Actual browser execution, which can differ from a successful model preview. */
+  execution?: NpcExecutionFeedback[];
+}
+
+export interface NpcExecutionFeedback {
+  action: WorldAction;
+  ok: boolean;
+  refusal: string | null;
+  events: WorldEvent[];
+  worldRevision: number;
 }
 
 /** A physical object as the sleeper/NPC sees it. Ownership is `location`. */
 export interface WorldSnapshotObject {
+  interaction?: WorldObjectState["interaction"];
   id: string;
   name: string;
   location: ObjectLocation;
   mobility: ObjectMobility;
   affordances: ObjectAffordance[];
-  state: {
-    open?: boolean;
-    active?: boolean;
-    broken?: boolean;
-    locked?: boolean;
-  };
+  state: WorldObjectPhysicalState;
   keyId: string | null;
   body: { w: number; h: number; solid: boolean } | null;
   clueId: string | null;
@@ -172,6 +189,10 @@ export interface WorldSnapshotObject {
 }
 
 export interface WorldSnapshot {
+  /** Observed facts, already scoped to the recipient; full ledger only for the sleeper. */
+  worldMind?: WorldMindEvent[];
+  geometry?: Record<string, { width: number; height: number; cells: string[] }>;
+  keysHeld?: string[];
   rooms: Array<{
     id: string;
     name: string;
@@ -194,6 +215,12 @@ export interface WorldSnapshot {
     y: number;
     keyId: string | null;
     threshold: string;
+    w?: number;
+    h?: number;
+    toX?: number;
+    toY?: number;
+    closed?: boolean;
+    passable?: boolean;
   }>;
   figures: Array<{
     id: string;
@@ -251,6 +278,8 @@ export interface WorldSnapshot {
 
 export interface DialogueRequestPayload {
   slug: string;
+  /** Selects this run's population; optional for older clients. */
+  runId?: string;
   cycleNumber: number;
   figureId: string;
   utterance: string;
@@ -272,6 +301,8 @@ export interface Tell {
 
 export interface DialogueResult {
   reply: string;
+  /** Keep a concrete unfinished goal; null when completed or abandoned. */
+  intent?: string | null;
   /** Stage direction. Shown smaller than the spoken line. */
   action?: string | null;
   tell: Tell | null;
@@ -311,6 +342,8 @@ export interface DialogueResult {
 
 export interface ExamineRequestPayload {
   slug: string;
+  /** Live inventory/floor identity, independent of its authored room. */
+  objectId?: string | null;
   runId: string;
   cycleNumber: number;
   roomId: string | null;
@@ -338,6 +371,29 @@ export interface ExamineResult {
    * central trade survives a feature that could easily have destroyed it.
    */
   leverageLearned: { aboutFigureId: string; leverageId: string } | null;
+}
+
+export interface PlayerActionLine {
+  speaker: "player" | "world";
+  text: string;
+}
+
+export interface ActionRequestPayload {
+  slug: string;
+  runId?: string;
+  cycleNumber: number;
+  utterance: string;
+  selectedObjectId: string | null;
+  history?: PlayerActionLine[];
+  world: WorldSnapshot;
+  locale?: SupportedLocale;
+}
+
+export interface ActionResult {
+  reply: string;
+  worldActions: WorldActionEnvelope[];
+  receipts: NpcExecutionFeedback[];
+  reactions?: Array<{ figureId: string; reply: string }>;
 }
 
 export interface CycleExitRequestPayload {

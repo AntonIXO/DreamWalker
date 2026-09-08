@@ -413,11 +413,20 @@ function moveFigure(
   };
 }
 
+function addInterest(world: WorldState, interest: InterestState): void {
+  world.interests.push(interest);
+  const object = migrateWorldObjects([], [interest])[0]!;
+  world.objects.push(object);
+  world.objectById.set(object.id, object);
+}
+
 function removeInterest(world: WorldState, interestId: string): PatchResult {
   const index = world.interests.findIndex((i) => i.id === interestId);
   if (index < 0) return refuse(`no interest ${interestId}`);
-  const [removed] = world.interests.splice(index, 1);
   const object = world.objectById.get(interestId);
+  if (object && object.location.kind !== "room")
+    return refuse("interest is not on the floor");
+  const [removed] = world.interests.splice(index, 1);
   if (object) object.location = { kind: "removed" };
   return { ok: true, affectedRooms: [removed!.roomId] };
 }
@@ -429,25 +438,41 @@ function moveInterest(
 ): PatchResult {
   const interest = world.interests.find((i) => i.id === interestId);
   if (!interest) return refuse(`no interest ${interestId}`);
+  const object = world.objectById.get(interestId);
+  if (object && object.location.kind !== "room")
+    return refuse("interest is not on the floor");
   const room = world.roomById.get(toRoomId);
   if (!room) return refuse(`no room ${toRoomId}`);
   if (room.kind === "meta") return refuse("nothing is found in a meta-space");
-  const from = interest.roomId;
+  const from =
+    object?.location.kind === "room" ? object.location.roomId : interest.roomId;
   const placed = placeInterestState(world, { ...interest, roomId: toRoomId });
   if (!placed) return refuse(`nowhere to stand in ${toRoomId}`);
   interest.roomId = placed.roomId;
   interest.x = placed.x;
   interest.y = placed.y;
+  interest.slotId = placed.slotId;
+  if (object) {
+    object.location = {
+      kind: "room",
+      roomId: placed.roomId,
+      x: placed.x,
+      y: placed.y,
+    };
+  }
   return { ok: true, affectedRooms: [from, toRoomId] };
 }
 
 function placeInterest(world: WorldState, seed: InterestSeed): PatchResult {
-  if (world.interests.some((i) => i.id === seed.id)) {
+  if (
+    world.interests.some((i) => i.id === seed.id) ||
+    world.objectById.has(seed.id)
+  ) {
     return refuse(`interest ${seed.id} already exists`);
   }
   const placed = placeInterestState(world, seed);
   if (!placed) return refuse(`nowhere to stand in ${seed.roomId}`);
-  world.interests.push(placed);
+  addInterest(world, placed);
   return { ok: true, affectedRooms: [placed.roomId] };
 }
 
@@ -467,6 +492,9 @@ function relocateShard(
   }
   for (const interest of world.interests) {
     if (interest.holdsShardId === shardId) interest.holdsShardId = null;
+  }
+  for (const object of world.objects) {
+    if (object.holdsShardId === shardId) object.holdsShardId = null;
   }
   target.holdsShardId = shardId;
   return { ok: true, affectedRooms: [target.roomId] };
@@ -506,7 +534,7 @@ function dropRemains(
     holdsShardId: figure.holdsShardId,
     clueId: clueIdForShard(figure.holdsShardId),
   });
-  if (placed) world.interests.push(placed);
+  if (placed) addInterest(world, placed);
   return placed;
 }
 

@@ -54,6 +54,7 @@ export interface TurnRequest {
 export type TurnResponse = DialogueResult;
 
 export interface ExamineRequest {
+  objectId?: string | null;
   x: number;
   y: number;
   roomId: string | null;

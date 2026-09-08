@@ -177,6 +177,7 @@ export interface LiveObjectPlacement {
   held: boolean;
   image: string | null;
   role: string | null;
+  clueId: string | null;
 }
 
 /**
@@ -199,6 +200,7 @@ export function liveObjectPlacements(
         held: false,
         image: object.visual.image,
         role: object.visual.role,
+        clueId: object.clueId,
       });
       continue;
     }
@@ -213,6 +215,7 @@ export function liveObjectPlacements(
       held: true,
       image: object.visual.image,
       role: object.visual.role,
+      clueId: object.clueId,
     });
   }
   return out;
@@ -230,6 +233,7 @@ export class ActorLayer {
   private readonly paintings = new Map<string, Sprite>();
   private readonly clues = new Map<string, Sprite>();
   private readonly objects = new Map<string, Sprite>();
+  private readonly texturesByImage = new Map<string, Texture>();
 
   constructor(
     private readonly atlas: AtlasTextures,
@@ -361,9 +365,7 @@ export class ActorLayer {
     const seen = new Set<string>();
     for (const placement of placements) {
       const room = world?.roomById.get(placement.roomId);
-      const texture =
-        this.objectTextures.get(`${placement.roomId}:${placement.id}`) ??
-        this.objectTextures.get(placement.id);
+      const texture = this.textureForObject(placement, world);
       if (!texture) continue;
       seen.add(placement.id);
       let sprite = this.objects.get(placement.id);
@@ -379,6 +381,9 @@ export class ActorLayer {
         sprite.setSize(box, box);
         this.objects.set(placement.id, sprite);
         this.root.addChild(sprite);
+      } else if (sprite.texture !== texture) {
+        sprite.texture = texture;
+        sprite.setSize(tileSize, tileSize);
       }
       const ox = room ? originX(room) : 0;
       const oy = room ? originY(room) : 0;
@@ -392,6 +397,40 @@ export class ActorLayer {
       sprite.destroy();
       this.objects.delete(id);
     }
+  }
+
+  private textureForObject(
+    placement: LiveObjectPlacement,
+    world?: WorldState,
+  ): Texture | undefined {
+    // Loaded PNGs are keyed by their authored room. Carrying an object elsewhere
+    // changes its pose, never the source of its art.
+    if (placement.image) {
+      const cached = this.texturesByImage.get(placement.image);
+      if (cached) return cached;
+      for (const room of world?.artifact.rooms ?? []) {
+        for (const prop of room.props) {
+          if (prop.image !== placement.image) continue;
+          const texture = this.objectTextures.get(`${room.id}:${prop.id}`);
+          if (!texture) continue;
+          this.texturesByImage.set(placement.image, texture);
+          return texture;
+        }
+      }
+    }
+    const direct =
+      this.objectTextures.get(`${placement.roomId}:${placement.id}`) ??
+      this.objectTextures.get(placement.id);
+    if (direct) return direct;
+
+    const clue = placement.clueId
+      ? this.clueTextures.get(placement.clueId)
+      : undefined;
+    if (clue) return clue;
+    return (
+      this.atlas.roles.get(placement.role ?? "prop")?.[0] ??
+      this.atlas.roles.get("prop")?.[0]
+    );
   }
 
   destroy(): void {

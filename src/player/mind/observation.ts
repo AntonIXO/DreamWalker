@@ -95,6 +95,22 @@ export class ObservationLog {
     this.currentRoomId = null;
   }
 
+  restore(state: Observation): void {
+    this.reset();
+    this.elapsed = state.elapsedSeconds;
+    this.beats = state.beatsThisCycle;
+    this.currentRoomId = state.currentRoomId;
+    for (const [id, value] of Object.entries(state.dwell))
+      this.dwell.set(id, value);
+    for (const [id, value] of Object.entries(state.refusedDoors))
+      this.refusals.set(id, value);
+    for (const [id, value] of Object.entries(state.approachedFigures))
+      this.approaches.set(id, value);
+    for (const [id, value] of Object.entries(state.fatesThisCycle))
+      this.fates.set(id, value);
+    for (const id of state.learnedShardIds) this.learned.add(id);
+  }
+
   get learnedCount(): number {
     return this.learned.size;
   }

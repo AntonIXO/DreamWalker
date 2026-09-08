@@ -38,6 +38,7 @@ function getPlayingRows(): Row[] {
     bound(Action.VERBS, "controls.key_verbs"),
     bound(Action.JOURNAL, "controls.key_journal"),
     bound(Action.WORDS, "controls.key_words"),
+    bound(Action.INVENTORY, "controls.key_inventory"),
     bound(Action.HELP, "controls.key_help"),
   ];
 }

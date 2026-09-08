@@ -53,6 +53,7 @@ const EMPTY_PLAN: CycleExitResult = { patches: [], sleeperSummary: "" };
 export class Heartbeat {
   private callsThisCycle = 0;
   private running = false;
+  private generation = 0;
   readonly log: BeatEntry[] = [];
   private readonly listeners: BeatListener[] = [];
 
@@ -77,12 +78,16 @@ export class Heartbeat {
   async planCycleExit(): Promise<CycleExitResult> {
     if (this.running || this.budgetRemaining <= 0) return EMPTY_PLAN;
     this.running = true;
+    const generation = this.generation;
     this.callsThisCycle++;
     this.observations.noteBeat();
     try {
-      return await this.mind.mutate(this.observations.snapshot(this.world));
+      const plan = await this.mind.mutate(
+        this.observations.snapshot(this.world),
+      );
+      return generation === this.generation ? plan : EMPTY_PLAN;
     } finally {
-      this.running = false;
+      if (generation === this.generation) this.running = false;
     }
   }
 
@@ -97,19 +102,32 @@ export class Heartbeat {
       return { entries: [], affectedRooms: [], notes: [] };
     }
     this.running = true;
+    const generation = this.generation;
     this.callsThisCycle++;
     this.observations.noteBeat();
     try {
       const plan = await this.mind.mutate(
         this.observations.snapshot(this.world),
       );
+      if (generation !== this.generation)
+        return { entries: [], affectedRooms: [], notes: [] };
       return this.apply(plan.patches, true);
     } finally {
-      this.running = false;
+      if (generation === this.generation) this.running = false;
     }
   }
 
+  snapshot(): number {
+    return this.callsThisCycle;
+  }
+
+  restore(calls: number): void {
+    this.callsThisCycle = calls;
+  }
+
   resetCycle(): void {
+    this.generation++;
+    this.running = false;
     this.callsThisCycle = 0;
   }
 

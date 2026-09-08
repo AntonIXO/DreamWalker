@@ -13,8 +13,13 @@
 import type { RoomHotspot } from "../../shared/room";
 import type { DreamScript, ScriptHost } from "../../shared/pack";
 import { makeRng } from "../../shared/rng";
-import { MAX_WORLD_ACTIONS_PER_TURN } from "../../shared/world-action";
+import {
+  type WorldActionEnvelope,
+  type WorldActionResult,
+  MAX_WORLD_ACTIONS_PER_TURN,
+} from "../../shared/world-action";
 import { executeWorldAction } from "../../shared/world-action-engine";
+import { captureWorldAction, recordWorldAction } from "../../shared/world-mind";
 import { runReactions } from "../../shared/world-reaction";
 import { bindWorldMutator } from "./world-mutator";
 import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
@@ -76,6 +81,8 @@ export class DreamSession {
   private meta: MetaVisit | null = null;
   private dwellMs = new Map<string, number>();
   private transitioning = false;
+  private transitionGeneration = 0;
+  private reactionDepth = 0;
 
   constructor(
     private readonly world: WorldState,
@@ -91,6 +98,31 @@ export class DreamSession {
     this.showRoom(room);
     noteVisit(world, room.id);
     this.runScripts("enter");
+  }
+
+  get canSave(): boolean {
+    return !this.transitioning;
+  }
+
+  snapshot() {
+    return structuredClone({
+      player: this.player,
+      meta: this.meta,
+      dwellMs: this.dwellMs,
+    });
+  }
+
+  restore(state: ReturnType<DreamSession["snapshot"]>): void {
+    this.transitionGeneration++;
+    this.transitioning = false;
+    Object.assign(this.player, state.player, {
+      moving: false,
+      enteredDoorId: null,
+      refusedDoorId: null,
+    });
+    this.meta = structuredClone(state.meta);
+    this.dwellMs = new Map(state.dwellMs);
+    this.enterRoomImmediate();
   }
 
   get room(): RoomState {
@@ -265,10 +297,12 @@ export class DreamSession {
     if (!room || this.transitioning) return;
 
     this.transitioning = true;
+    const generation = this.transitionGeneration;
     try {
       if (style === "rift" || style === "meta-exit") {
         await this.transition?.play();
       }
+      if (generation !== this.transitionGeneration) return;
 
       const from = this.world.currentRoomId;
       // A meta-space with no door still dumps you back on a timer. Once it has a
@@ -296,12 +330,14 @@ export class DreamSession {
       this.callbacks.onEnterRoom(room, visits);
       this.runScripts("enter");
     } finally {
-      this.transitioning = false;
+      if (generation === this.transitionGeneration) this.transitioning = false;
     }
   }
 
   /** Put the walker back at the spawn without any of the arrival theatre. */
   restart(): void {
+    this.transitionGeneration++;
+    this.transitioning = false;
     const room = currentRoom(this.world);
     this.meta = null;
     this.dwellMs.clear();
@@ -428,12 +464,51 @@ export class DreamSession {
     }
   }
 
+  /** Every embodied action delivers its events before the next action runs. */
+  dispatchWorldAction(envelope: WorldActionEnvelope): WorldActionResult {
+    if (this.reactionDepth >= MAX_WORLD_ACTIONS_PER_TURN) {
+      return {
+        ok: false,
+        refusal: "reaction cap",
+        affectedRooms: [],
+        affectedObjects: [],
+        events: [],
+      };
+    }
+    this.reactionDepth++;
+    try {
+      const mutator = bindWorldMutator(this.world, {
+        get: () => ({
+          roomId: this.world.currentRoomId,
+          ...playerTile(this.player, this.room),
+        }),
+        set: () => undefined,
+      });
+      const before = captureWorldAction(mutator, envelope);
+      const result = executeWorldAction(mutator, envelope);
+      if (result.ok) {
+        recordWorldAction(
+          this.world.worldMind,
+          mutator,
+          envelope,
+          result,
+          before,
+          this.callbacks.cycleNumber?.() ?? 1,
+        );
+        runReactions(this.host(), result.events, this.scripts);
+        this.showRoom(this.room, false);
+      }
+      return result;
+    } finally {
+      this.reactionDepth--;
+    }
+  }
+
   private host(): ScriptHost {
     const world = this.world;
     // The host object is a bag of getters; they cannot use the class `this`.
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const session = this;
-    let reactionDepth = 0;
     const host: ScriptHost = {
       get currentRoomId() {
         return world.currentRoomId;
@@ -469,43 +544,12 @@ export class DreamSession {
       placePlayer: (entryId) => {
         placeAtEntry(session.player, session.room, entryId);
       },
-      dispatch: (action) => {
-        if (reactionDepth >= MAX_WORLD_ACTIONS_PER_TURN) {
-          return {
-            ok: false,
-            refusal: "reaction cap",
-            affectedRooms: [],
-            affectedObjects: [],
-            events: [],
-          };
-        }
-        reactionDepth++;
-        try {
-          const tile = playerTile(session.player, session.room);
-          const mutator = bindWorldMutator(world, {
-            get: () => ({
-              roomId: world.currentRoomId,
-              x: tile.x,
-              y: tile.y,
-            }),
-            set: () => undefined,
-          });
-          const result = executeWorldAction(mutator, {
-            actor: { kind: "script", id: "pack" },
-            source: "script",
-            action,
-          });
-          if (result.ok && result.events.length > 0) {
-            runReactions(host, result.events, session.scripts);
-          }
-          if (result.ok) {
-            session.showRoom(session.room, false);
-          }
-          return result;
-        } finally {
-          reactionDepth--;
-        }
-      },
+      dispatch: (action) =>
+        session.dispatchWorldAction({
+          actor: { kind: "script", id: "pack" },
+          source: "script",
+          action,
+        }),
       closeHotspot: (hotspotId) => {
         host.dispatch({ type: "close", targetId: hotspotId });
       },

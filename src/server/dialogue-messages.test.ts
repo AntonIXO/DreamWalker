@@ -1,6 +1,43 @@
 import { describe, expect, test } from "bun:test";
 
-import { dialogueTurnMessages, dialogueWorldRules } from "./dialogue-messages";
+import {
+  dialogueTurnMessages,
+  dialogueWorldRules,
+  limitDialogueReply,
+} from "./dialogue-messages";
+
+describe("limitDialogueReply", () => {
+  test("caps the live four-sentence answer at the two witnessed facts", () => {
+    expect(
+      limitDialogueReply(
+        "Бутылки не хватает. Ты её взял — я видел. Вчера ещё урна пропала. Садись пока.",
+      ),
+    ).toBe("Бутылки не хватает. Ты её взял — я видел.");
+  });
+
+  test("quoted punctuation does not cut the quotation or its attribution", () => {
+    expect(
+      limitDialogueReply(
+        "Ты сказал «Куда?», а сам ушёл. Бутылка здесь. Третье.",
+      ),
+    ).toBe("Ты сказал «Куда?», а сам ушёл. Бутылка здесь.");
+    expect(
+      limitDialogueReply(
+        'He said "Stop!" and sat down. The cup is here. Another thing.',
+        "en",
+      ),
+    ).toBe('He said "Stop!" and sat down. The cup is here.');
+  });
+
+  test("wrapping the answer in quotes cannot bypass the sentence limit", () => {
+    expect(limitDialogueReply("«Первое. Второе. Третье. Четвёртое.»")).toBe(
+      "«Первое. Второе.»",
+    );
+    expect(limitDialogueReply("«Первое. Второе. Начало третьего")).toBe(
+      "«Первое. Второе.»",
+    );
+  });
+});
 
 describe("dialogueTurnMessages", () => {
   test("turns the cycle transcript into an AI SDK chat, current line last", () => {

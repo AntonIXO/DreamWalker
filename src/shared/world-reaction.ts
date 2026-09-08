@@ -103,6 +103,7 @@ export function placeholderMutator(): WorldMutator {
     setFigurePose: () => undefined,
     getDoor: () => null,
     setDoorType: () => undefined,
+    setDoorClosed: () => undefined,
     isWalkableTile: () => false,
     canPassDoor: () => false,
     canWalk: () => false,

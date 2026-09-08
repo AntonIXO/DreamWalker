@@ -100,5 +100,15 @@ export function resolveAiBackend(
       },
     };
   }
-  return { mode: mode === "codex" ? "codex" : mode };
+  if (mode === "openai") {
+    throw new Error(
+      "DREAMWALKER_AI_PROVIDER=openai requires OPENAI_KEY, OPENAI_API_KEY, or CLOSEROUTER_API_KEY.",
+    );
+  }
+  if (mode === "anthropic") {
+    throw new Error(
+      "DREAMWALKER_AI_PROVIDER=anthropic requires ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN.",
+    );
+  }
+  return { mode: "codex" };
 }

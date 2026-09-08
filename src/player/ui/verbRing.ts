@@ -27,6 +27,7 @@ export type ActionRingSubject =
 export interface ActionRingCallbacks {
   onPick(subject: ActionRingSubject, row: ActionRingRow): void;
   onClose(): void;
+  onWords?(subject: ActionRingSubject): void;
 }
 
 export class ActionRing {
@@ -35,6 +36,7 @@ export class ActionRing {
   private readonly listEl: HTMLElement;
   private readonly labelEl: HTMLElement;
   private readonly hintEl: HTMLElement;
+  private readonly wordsEl: HTMLButtonElement;
   private subject: ActionRingSubject | null = null;
   private options: ActionRingRow[] = [];
   private confirming: number | null = null;
@@ -51,12 +53,20 @@ export class ActionRing {
       <h2 class="verb-who"></h2>
       <ol class="verb-list"></ol>
       <p class="dim verb-hint"></p>
+      <button class="action-words ghost" type="button" hidden></button>
     `;
     parent.appendChild(this.root);
     this.labelEl = this.root.querySelector(".verb-system-label")!;
     this.nameEl = this.root.querySelector(".verb-who")!;
     this.listEl = this.root.querySelector(".verb-list")!;
     this.hintEl = this.root.querySelector(".verb-hint")!;
+    this.wordsEl = this.root.querySelector(".action-words")!;
+    this.wordsEl.addEventListener("click", () => {
+      const subject = this.subject;
+      if (!subject) return;
+      this.close();
+      this.callbacks.onWords?.(subject);
+    });
     this.root.addEventListener("keydown", (event) => this.onKey(event));
   }
 
@@ -73,6 +83,8 @@ export class ActionRing {
       subject.kind === "figure" ? subject.figure.name : subject.name;
     this.labelEl.textContent = t("actionRing.title");
     this.hintEl.textContent = t("actionRing.hint");
+    this.wordsEl.hidden = !this.callbacks.onWords || subject.kind !== "object";
+    this.wordsEl.textContent = t("controls.key_inventory");
     this.render();
     this.root.hidden = false;
     this.root.tabIndex = -1;

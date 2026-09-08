@@ -7,8 +7,8 @@ const EXIT = "m6-krugi-vokrug-pruda--exit";
 function unlockPond(host: WorldReactionHost): void {
   if (host.getFlag("m6.open") !== true) return;
   if (host.getFlag("m6.unlocked") === true) return;
-  host.setFlag("m6.unlocked", true);
-  host.dispatch({ type: "open", targetId: EXIT });
+  const result = host.dispatch({ type: "open", targetId: EXIT });
+  if (result.ok) host.setFlag("m6.unlocked", true);
 }
 
 export const m6Script: DreamScript = {

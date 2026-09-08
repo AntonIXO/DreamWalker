@@ -13,16 +13,29 @@ import type {
   WorldActionResult,
   WorldEvent,
 } from "./world-action";
-import { MAX_WORLD_ACTIONS_PER_TURN } from "./world-action";
-import { executeWorldAction, refused } from "./world-action-engine";
+import {
+  MAX_WORLD_ACTIONS_PER_TURN,
+  PLAYER_ACTION_TYPES,
+} from "./world-action";
+import {
+  executeWorldAction,
+  refused,
+  cloneWorldMutator,
+} from "./world-action-engine";
 import type {
   ActorPose,
+  ActorRef,
   ObjectLocation,
   WorldDoorView,
   WorldMutator,
   WorldObjectState,
 } from "./world-object";
-import { cloneObject, isActorRef } from "./world-object";
+import {
+  isActorRef,
+  findChebyshevPath,
+  solidObjectCovers,
+} from "./world-object";
+import { cellAt, isWalkableCell } from "./roomGrid";
 
 export type WorldActionExecutor = (
   world: WorldMutator,
@@ -57,10 +70,48 @@ export interface NpcToolResult {
   worldRevision: number;
 }
 
+export interface WorldActionAttempt {
+  toolName: string;
+  /** Actor/source fields are stripped; the receipt records the tool's actual input. */
+  input: Record<string, unknown>;
+  action: WorldAction | null;
+  actor: ActorRef;
+  revisionBefore: number;
+  result: NpcToolResult;
+  cached: boolean;
+}
+
+export type NpcWorldAttempt = WorldActionAttempt;
+
+export interface NpcPlanPreview {
+  ok: boolean;
+  refusal: string | null;
+  baseRevision: number;
+  worldRevision: number;
+  steps: Array<{ action: WorldAction; result: NpcToolResult }>;
+  actorPose: ActorPose | null;
+  /** Projected state for the server to derive observations; omit from tool JSON. */
+  world: WorldMutator;
+}
+
 export interface NpcWorldSession {
   readonly world: WorldMutator;
   readonly successful: WorldActionEnvelope[];
+  /** Every physical attempt within the turn budget, including refusals and retries. */
+  readonly attempts: readonly NpcWorldAttempt[];
+  readonly remainingActions: number;
   runTool(name: string, input: unknown): NpcToolResult;
+  /** Simulate a plan on an isolated copy without spending the physical budget. */
+  preview(actions: readonly WorldAction[]): NpcPlanPreview;
+}
+
+export interface PlayerWorldSession {
+  readonly world: WorldMutator;
+  readonly successful: WorldActionEnvelope[];
+  readonly attempts: readonly WorldActionAttempt[];
+  readonly remainingActions: number;
+  runAction(action: WorldAction): NpcToolResult;
+  preview(actions: readonly WorldAction[]): NpcPlanPreview;
 }
 
 function asNumber(value: unknown, fallback = 0): number {
@@ -80,7 +131,7 @@ function objectFromSnapshot(raw: WorldSnapshotObject): WorldObjectState {
     affordances: [...raw.affordances],
     body: raw.body ? { ...raw.body } : null,
     visual: { role: null, image: null },
-    interaction: null,
+    interaction: raw.interaction ? { ...raw.interaction } : null,
     state: { ...raw.state },
     tags: [...raw.tags],
     clueId: raw.clueId,
@@ -98,6 +149,7 @@ function snapshotObjectFromState(
   object: WorldObjectState,
 ): WorldSnapshotObject {
   return {
+    interaction: object.interaction ? { ...object.interaction } : null,
     id: object.id,
     name: object.name,
     location: { ...object.location } as ObjectLocation,
@@ -140,6 +192,7 @@ export class SnapshotSandbox implements WorldMutator {
   figurePoses: Map<string, ActorPose>;
   doorById: Map<string, WorldDoorView>;
   private player: ActorPose | null;
+  private readonly geometry: NonNullable<WorldSnapshot["geometry"]>;
 
   constructor(init: {
     revision: number;
@@ -148,7 +201,9 @@ export class SnapshotSandbox implements WorldMutator {
     figures: Map<string, ActorPose>;
     doors: Map<string, WorldDoorView>;
     keysHeld?: Set<string>;
+    geometry?: WorldSnapshot["geometry"];
   }) {
+    this.geometry = structuredClone(init.geometry ?? {});
     this.revision = init.revision;
     this.objects = init.objects;
     this.objectById = new Map(
@@ -164,6 +219,9 @@ export class SnapshotSandbox implements WorldMutator {
     const objects = (snapshot.objects ?? []).map(objectFromSnapshot);
     const figures = new Map<string, ActorPose>();
     for (const figure of snapshot.figures) {
+      // Absent figures remain in narrative snapshots, but have no body to
+      // execute tools or receive objects in the projected world.
+      if (figure.fate === "dead" || figure.fate === "gone") continue;
       figures.set(figure.id, {
         roomId: figure.roomId,
         x: figure.x ?? 0,
@@ -179,12 +237,14 @@ export class SnapshotSandbox implements WorldMutator {
         toRoomId: door.toRoomId,
         x: door.x ?? 0,
         y: door.y ?? 0,
-        w: 1,
-        h: 1,
+        w: door.w ?? 1,
+        h: door.h ?? 1,
+        closed: door.closed,
+        passable: door.passable,
         keyId: door.keyId ?? null,
         threshold: door.threshold ?? "door",
-        toX: 1,
-        toY: 1,
+        toX: door.toX ?? 1,
+        toY: door.toY ?? 1,
       });
     }
     const player = snapshot.player
@@ -195,6 +255,8 @@ export class SnapshotSandbox implements WorldMutator {
         }
       : null;
     return new SnapshotSandbox({
+      geometry: snapshot.geometry,
+      keysHeld: new Set(snapshot.keysHeld ?? []),
       revision: snapshot.worldRevision ?? 0,
       objects,
       player,
@@ -204,12 +266,15 @@ export class SnapshotSandbox implements WorldMutator {
   }
 
   clone(): SnapshotSandbox {
-    const objects = this.objects.map(cloneObject);
+    // Held locations contain nested actor references. A projected world must
+    // not share them with the actual turn even when a caller edits the preview.
+    const objects = this.objects.map((object) => structuredClone(object));
     const figures = new Map<string, ActorPose>();
     for (const [id, pose] of this.figurePoses) figures.set(id, clonePose(pose));
     const doors = new Map<string, WorldDoorView>();
     for (const [id, door] of this.doorById) doors.set(id, cloneDoor(door));
     return new SnapshotSandbox({
+      geometry: this.geometry,
       revision: this.revision,
       objects,
       player: this.player ? clonePose(this.player) : null,
@@ -265,8 +330,14 @@ export class SnapshotSandbox implements WorldMutator {
     if (door) door.type = type;
   }
 
-  isWalkableTile(): boolean {
-    return true;
+  setDoorClosed(doorId: string, closed: boolean): void {
+    const door = this.doorById.get(doorId);
+    if (door) door.closed = closed;
+  }
+
+  isWalkableTile(roomId: string, x: number, y: number): boolean {
+    const grid = this.geometry[roomId];
+    return !!grid && isWalkableCell(cellAt(grid, x, y));
   }
 
   canPassDoor(doorId: string): boolean {
@@ -277,16 +348,36 @@ export class SnapshotSandbox implements WorldMutator {
     if (door.type === "keyLock") {
       return door.keyId !== null && this.keysHeld.has(door.keyId);
     }
-    return false;
+    return door.passable ?? false;
   }
 
-  canWalk(): boolean {
-    // Physics lives in the engine. The sandbox only has to be a writable clone.
-    return true;
+  canWalk(
+    roomId: string,
+    x: number,
+    y: number,
+    ignoreObjectId?: string,
+  ): boolean {
+    return (
+      this.isWalkableTile(roomId, x, y) &&
+      !solidObjectCovers(this.objects, roomId, x, y, ignoreObjectId)
+    );
   }
 
-  hasPath(): boolean {
-    return true;
+  hasPath(
+    roomId: string,
+    from: ActorPose | { x: number; y: number },
+    to: { x: number; y: number },
+    ignoreObjectId?: string,
+  ): boolean {
+    return (
+      findChebyshevPath(
+        from,
+        to,
+        (x, y) =>
+          (x === Math.round(from.x) && y === Math.round(from.y)) ||
+          this.canWalk(roomId, x, y, ignoreObjectId),
+      ) !== null
+    );
   }
 
   bumpRevision(): void {
@@ -300,19 +391,7 @@ export function sandboxFromSnapshot(snapshot: WorldSnapshot): SnapshotSandbox {
 
 export function cloneSandbox(world: WorldMutator): WorldMutator {
   if (world instanceof SnapshotSandbox) return world.clone();
-  const objects = world.objects.map(cloneObject);
-  const figures = new Map<string, ActorPose>();
-  for (const [id, pose] of world.figurePoses) figures.set(id, clonePose(pose));
-  const doors = new Map<string, WorldDoorView>();
-  for (const [id, door] of world.doorById) doors.set(id, cloneDoor(door));
-  return new SnapshotSandbox({
-    revision: world.revision,
-    objects,
-    player: world.getPlayerPose(),
-    figures,
-    doors,
-    keysHeld: new Set(world.keysHeld),
-  });
+  return cloneWorldMutator(world);
 }
 
 export function applyActionList(
@@ -510,32 +589,143 @@ export function createNpcWorldSession(
   figureId: string,
   execute: WorldActionExecutor = executeWorldAction,
 ): NpcWorldSession {
+  return createActorWorldSession(
+    snapshot,
+    { kind: "figure", id: figureId },
+    "npc",
+    execute,
+  );
+}
+
+export function createPlayerWorldSession(
+  snapshot: WorldSnapshot,
+  execute: WorldActionExecutor = executeWorldAction,
+): PlayerWorldSession {
+  return createActorWorldSession(
+    snapshot,
+    { kind: "player" },
+    "player",
+    execute,
+  );
+}
+
+function createActorWorldSession(
+  snapshot: WorldSnapshot,
+  actor: ActorRef,
+  source: "npc" | "player",
+  execute: WorldActionExecutor,
+): NpcWorldSession & PlayerWorldSession {
   const world = sandboxFromSnapshot(snapshot);
   const successful: WorldActionEnvelope[] = [];
+  const attempts: WorldActionAttempt[] = [];
+  const refusals = new Map<string, NpcToolResult>();
+  const remainingActions = () => MAX_WORLD_ACTIONS_PER_TURN - attempts.length;
+  const bindAction = (action: WorldAction): WorldActionEnvelope => ({
+    actor: { ...actor },
+    source,
+    action: structuredClone(action),
+  });
+
+  const perform = (target: WorldMutator, envelope: WorldActionEnvelope) =>
+    source === "player" && !PLAYER_ACTION_TYPES.has(envelope.action.type)
+      ? refused("player item commands cannot perform this action")
+      : execute(target, envelope);
+  const runAction = (
+    name: string,
+    input: Record<string, unknown>,
+    action: WorldAction | null,
+  ): NpcToolResult => {
+    if (remainingActions() <= 0)
+      return toolResult(refused("turn action cap reached"), world.revision);
+    const revisionBefore = world.revision;
+    let result: NpcToolResult;
+    let cached = false;
+    if (!action) {
+      result = toolResult(
+        refused("unknown or disallowed action"),
+        world.revision,
+      );
+    } else {
+      const key = `${revisionBefore}:${JSON.stringify(
+        action,
+        (_key, value: unknown) =>
+          value && typeof value === "object" && !Array.isArray(value)
+            ? Object.fromEntries(
+                Object.entries(value).sort(([a], [b]) => a.localeCompare(b)),
+              )
+            : value,
+      )}`;
+      const previous = refusals.get(key);
+      if (previous) {
+        result = structuredClone(previous);
+        cached = true;
+      } else {
+        const envelope = bindAction(action);
+        result = toolResult(perform(world, envelope), world.revision);
+        if (result.ok) successful.push(structuredClone(envelope));
+        else refusals.set(key, structuredClone(result));
+      }
+    }
+    attempts.push({
+      toolName: name,
+      input: structuredClone(input),
+      action: action ? structuredClone(action) : null,
+      actor: { ...actor },
+      revisionBefore,
+      result: structuredClone(result),
+      cached,
+    });
+    return result;
+  };
 
   return {
     world,
     successful,
+    attempts,
+    get remainingActions() {
+      return remainingActions();
+    },
     runTool(name: string, input: unknown): NpcToolResult {
-      if (successful.length >= MAX_WORLD_ACTIONS_PER_TURN) {
-        return toolResult(refused("turn action cap reached"), world.revision);
-      }
       const cleaned = stripHallucinatedActor(input);
-      const action = worldActionFromTool(name, cleaned);
-      if (!action) {
-        return toolResult(
-          refused("unknown or disallowed action"),
-          world.revision,
-        );
+      return runAction(name, cleaned, worldActionFromTool(name, cleaned));
+    },
+    runAction(action: WorldAction): NpcToolResult {
+      const cleaned = stripHallucinatedActor(action);
+      return runAction(action.type, cleaned, cleaned as unknown as WorldAction);
+    },
+    preview(actions: readonly WorldAction[]): NpcPlanPreview {
+      const projected = world.clone();
+      const baseRevision = world.revision;
+      const steps: NpcPlanPreview["steps"] = [];
+      let refusal: string | null = null;
+      if (actions.length > remainingActions()) {
+        refusal = "plan exceeds remaining action budget";
+      } else {
+        for (const action of actions) {
+          const envelope = bindAction(action);
+          const result = toolResult(
+            perform(projected, envelope),
+            projected.revision,
+          );
+          steps.push({ action: structuredClone(action), result });
+          if (!result.ok) {
+            refusal = result.refusal ?? "action refused";
+            break;
+          }
+        }
       }
-      const envelope: WorldActionEnvelope = {
-        actor: { kind: "figure", id: figureId },
-        source: "npc",
-        action,
+      return {
+        ok: refusal === null,
+        refusal,
+        baseRevision,
+        worldRevision: projected.revision,
+        steps,
+        actorPose:
+          actor.kind === "player"
+            ? projected.getPlayerPose()
+            : projected.getFigurePose(actor.id),
+        world: projected,
       };
-      const result = execute(world, envelope);
-      if (result.ok) successful.push(envelope);
-      return toolResult(result, world.revision);
     },
   };
 }

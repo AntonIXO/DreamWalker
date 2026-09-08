@@ -45,9 +45,24 @@ For normal development, run `bun run dev`. It starts Vite on `:8080` and the Bun
 
 ### Playing
 
-`WASD`/arrows to walk, `E` to speak or examine, `J` for the people journal, `N` for the
+`WASD`/arrows to walk, `E` to speak or pick up/examine, `I` for inventory and free-form
+item commands, `J` for the people journal, `N` for the
 six-word notebook, `M` to spend a memory for two minutes, `Esc` to step away, and `H` for controls. `F1`, `B`, and `K`
 are debug controls.
+
+### Autosave
+
+An active dream resumes automatically when the same browser opens the same site again.
+A local checkpoint is written every second, on page hide, and after entering the dream,
+a cycle reset or an ending. It includes the player position, live world and inventory,
+cycle timer, NPC conversations, notebook and memory. Closed-browser time does not count
+against the cycle timer. In-flight model calls and room transitions keep the last complete
+checkpoint until they finish.
+
+This first version has one local slot per dream, with no account or cross-device sync.
+Clearing site data removes it. Changed dream artifacts or save format versions are refused
+with a notice; there is no migration yet. Storage failures leave the previous checkpoint
+intact and show a warning. `window.dreamWalker.saveNow()` writes a checkpoint for debugging.
 
 ## What is where
 
@@ -77,6 +92,48 @@ training does the same shuffle locally so the game starts without a model.
 Every rule application is validated and rolled back if it would make the dream
 unsolvable, so what the Lord is offered is always crossable. There is no solver beyond
 that, on purpose (§2): the person at the keyboard decides whether a map is any good.
+
+## Inventory and actions in words
+
+Press **I** or the **Вещи** button to open the inventory. It lists what the player
+carries and visible objects nearby, including contents of open containers. Selecting
+an item gives commands such as «подними её», «отдай её Турышеву» and «напиши на ней
+не трогать» a concrete subject. The object action menu (**F**) also opens this view.
+Examine and put-down buttons work directly; free-form commands use the configured AI.
+
+Commands can take, drop, give, put, open, close, activate or use existing objects,
+and break, wet, dirty, clean or inscribe them when possible. Changes persist in the
+actual object state. The courtyard urn is an open container. Other gestures can be
+observed without pretending that an unsupported physical transformation happened.
+Distance, ownership, authored refusals and fixed structures still matter.
+
+The engine applies commands as the player, runs the room's reactions, records World
+Mind witnesses, and can show short responses from NPCs who observed the outcome.
+Failed steps stop the remaining plan; closing or cancelling a pending command applies
+nothing from its late response. Inventory and command history survive reloads;
+pre-container saves are upgraded without losing held objects or notebook entries.
+
+## World Mind and NPC decisions
+
+World Mind keeps a bounded ledger of physical actions and their observed results.
+NPCs receive their own actions and events they witnessed nearby, with walls and
+closed containers limiting perception. Arriving later does not reveal past events.
+The sleeper receives the full ledger when planning the next cycle; the Eye retains
+its authored knowledge of deaths.
+
+NPCs can `observe_world` and `preview_actions` before acting. A preview runs on a
+copy, stops at the first refusal, and cannot change the game or spend the physical
+action budget. Actual tools remain bound to the speaking figure. Repeating a refused
+action in an unchanged world does not execute it again.
+Turns are capped at eight physical attempts and twelve model decision steps, with a
+60-second dialogue deadline. A valid final reply from the tool phase is reused to
+avoid a redundant model call.
+
+Each figure retains a short unfinished intent and the browser's execution feedback.
+If replay fails, the next turn sees the failure even when the model predicted success.
+Goals guide the next conversation; they do not schedule hidden background actions.
+The ledger, intents and feedback survive a reload and clear with the cycle, while
+the sleeper's summary survives as before.
 
 ## The heartbeat
 

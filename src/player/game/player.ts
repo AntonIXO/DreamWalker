@@ -14,13 +14,12 @@ import {
   walkFrame as sharedWalkFrame,
   type Walker,
 } from "../../shared/roomWalk";
-import type { Box, Direction } from "../../shared/roomGrid";
+import type { Direction } from "../../shared/roomGrid";
 import {
   BODY_HEIGHT,
   BODY_WIDTH,
   cellAt,
   isSolidCell,
-  rectBlocks,
 } from "../../shared/roomGrid";
 import {
   blockedInWorld,
@@ -28,10 +27,9 @@ import {
   isStreetWorld,
   originX,
   originY,
-  pickRoomAtTile,
   toWorldPixels,
 } from "../../shared/street";
-import { liveObjectRectsFor, solidRectsFor } from "./object-collision";
+import { solidRectsFor } from "./object-collision";
 import {
   doorAtTile,
   canPassDoor,
@@ -103,18 +101,15 @@ export function updatePlayer(
   }
 
   player.enteredDoorId = null;
-  const door = doorAhead(player, room, axis);
+  const door = doorAhead(player, room, axis, world);
   if (!door) {
     player.refusedDoorId = null;
     return;
   }
   const dest = world.roomById.get(door.toRoomId);
-  if (isContinuousDoor(room, door, dest)) {
-    player.refusedDoorId = null;
-    return;
-  }
   if (canPassDoor(world, door)) {
-    player.enteredDoorId = door.id;
+    door.closed = false;
+    if (!isContinuousDoor(room, door, dest)) player.enteredDoorId = door.id;
     player.refusedDoorId = null;
     return;
   }
@@ -144,6 +139,10 @@ function walkStreet(
   };
   let x = player.x;
   let y = player.y;
+  const collision = {
+    solidsFor: (roomId: string) => solidRectsFor(world, roomId),
+    canPassDoor: (door: RoomState["doors"][number]) => canPassDoor(world, door),
+  };
   if (
     dx !== 0 &&
     !blockedInWorld(
@@ -151,8 +150,8 @@ function walkStreet(
       room.id,
       { ...box, x: x + dx },
       room.tileSize,
-    ) &&
-    !blockedByLiveObjects(world, room.id, { ...box, x: x + dx }, room.tileSize)
+      collision,
+    )
   ) {
     x += dx;
   }
@@ -163,12 +162,7 @@ function walkStreet(
       room.id,
       { ...box, x, y: y + dy },
       room.tileSize,
-    ) &&
-    !blockedByLiveObjects(
-      world,
-      room.id,
-      { ...box, x, y: y + dy },
-      room.tileSize,
+      collision,
     )
   ) {
     y += dy;
@@ -181,34 +175,11 @@ function walkStreet(
   player.moving = moved > 0.01;
 }
 
-function blockedByLiveObjects(
-  world: WorldState,
-  currentId: string,
-  box: Box,
-  tileSize: number,
-): boolean {
-  const halfX = box.width / 2;
-  const halfY = box.height / 2;
-  const minX = Math.floor((box.x - halfX) / tileSize);
-  const maxX = Math.floor((box.x + halfX - 0.001) / tileSize);
-  const minY = Math.floor((box.y - halfY) / tileSize);
-  const maxY = Math.floor((box.y + halfY - 0.001) / tileSize);
-  for (let ty = minY; ty <= maxY; ty++) {
-    for (let tx = minX; tx <= maxX; tx++) {
-      const placed = pickRoomAtTile(world.rooms, tx, ty, currentId);
-      if (!placed) continue;
-      const lx = tx - originX(placed);
-      const ly = ty - originY(placed);
-      if (rectBlocks(liveObjectRectsFor(world, placed.id), lx, ly)) return true;
-    }
-  }
-  return false;
-}
-
 function doorAhead(
   player: PlayerState,
   room: RoomState,
   axis: { x: number; y: number },
+  world: WorldState,
 ): ReturnType<typeof doorAtTile> {
   const size = room.tileSize;
   const ox = originX(room) * size;
@@ -219,9 +190,12 @@ function doorAhead(
   const stepY = axis.y === 0 ? 0 : axis.y > 0 ? 1 : -1;
   const aheadX = stepX !== 0 ? tx + stepX : tx;
   const aheadY = stepY !== 0 ? ty + stepY : ty;
+  const aheadDoor = doorAtTile(room, aheadX, aheadY);
   const ahead =
-    (stepX !== 0 || stepY !== 0) && isSolidCell(cellAt(room, aheadX, aheadY))
-      ? doorAtTile(room, aheadX, aheadY)
+    (stepX !== 0 || stepY !== 0) &&
+    (isSolidCell(cellAt(room, aheadX, aheadY)) ||
+      (aheadDoor !== null && !canPassDoor(world, aheadDoor)))
+      ? aheadDoor
       : null;
   return doorAtTile(room, tx, ty) ?? ahead;
 }

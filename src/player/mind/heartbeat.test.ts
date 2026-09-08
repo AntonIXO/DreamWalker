@@ -53,6 +53,34 @@ function fakeMind(patches: MapPatch[]): DreamMind {
 const CONFIG = { callBudgetPerCycle: 4, maxPatchesPerBeat: 8 };
 
 describe("Heartbeat viewport guard", () => {
+  test("a late forced beat cannot apply to a new cycle or unlock its pending beat", async () => {
+    const world = makeWorld();
+    const pending: Array<(value: CycleExitResult) => void> = [];
+    const mind = fakeMind([]);
+    mind.mutate = () => new Promise((resolve) => pending.push(resolve));
+    const heartbeat = new Heartbeat(
+      world,
+      mind,
+      new ObservationLog(),
+      CONFIG,
+      () => ({ roomId: "b", rect: { x: 0, y: 0, w: 2, h: 2 } }),
+    );
+    const first = heartbeat.force();
+    heartbeat.resetCycle();
+    const second = heartbeat.force();
+    pending[0]!({
+      patches: [{ kind: "sealDoor", doorId: "a-to-b", reason: "old cycle" }],
+      sleeperSummary: "",
+    });
+    expect((await first).entries).toEqual([]);
+    expect(world.doorById.get("a-to-b")!.type).toBe("keyLock");
+    await heartbeat.force();
+    expect(pending).toHaveLength(2);
+    pending[1]!({ patches: [], sleeperSummary: "" });
+    await second;
+    expect(heartbeat.budgetRemaining).toBe(CONFIG.callBudgetPerCycle - 1);
+  });
+
   test("force withholds a patch that patchTouches the visible viewport", async () => {
     const world = makeWorld();
     applyPatch(world, { kind: "sealDoor", doorId: "a-to-b", reason: "setup" });

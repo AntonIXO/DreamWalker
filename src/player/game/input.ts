@@ -25,6 +25,7 @@ export const Action = {
   VERBS: "verbs",
   JOURNAL: "journal",
   WORDS: "words",
+  INVENTORY: "inventory",
   HEARTBEAT: "heartbeat",
   GRANT: "grant",
   CANCEL: "cancel",
@@ -49,6 +50,7 @@ const BINDINGS: Record<string, ActionName> = {
   KeyF: Action.VERBS,
   KeyJ: Action.JOURNAL,
   KeyN: Action.WORDS,
+  KeyI: Action.INVENTORY,
   // Not `H`: that is the help overlay now, and a key that both opens a panel and wakes
   // the sleeper would make every glance at the controls change the world.
   KeyB: Action.HEARTBEAT,

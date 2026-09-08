@@ -44,6 +44,28 @@ export const OBJECT_AFFORDANCES = [
 ] as const;
 export type ObjectAffordance = (typeof OBJECT_AFFORDANCES)[number];
 
+export const MAX_OBJECT_VERB_LENGTH = 80;
+export const MAX_OBJECT_INSCRIPTION_LENGTH = 240;
+
+/** Persistent physical facts. Identity, collision, and lock policy live elsewhere. */
+export interface WorldObjectPhysicalState {
+  open?: boolean;
+  active?: boolean;
+  broken?: boolean;
+  locked?: boolean;
+  wet?: boolean;
+  dirty?: boolean;
+  inscription?: string;
+}
+
+/** Free-text commands may change only these physical facts, never locks or IDs. */
+export interface WorldObjectAlteration {
+  broken?: true;
+  wet?: boolean;
+  dirty?: boolean;
+  inscription?: string;
+}
+
 export interface WorldObjectState {
   id: string;
   name: string;
@@ -57,12 +79,7 @@ export interface WorldObjectState {
     prompt: string;
     refusal: string | null;
   } | null;
-  state: {
-    open?: boolean;
-    active?: boolean;
-    broken?: boolean;
-    locked?: boolean;
-  };
+  state: WorldObjectPhysicalState;
   tags: string[];
   /** Preserved across take/drop so a clue does not become a nameless prop. */
   clueId: string | null;
@@ -85,6 +102,9 @@ export interface ActorPose {
 }
 
 export interface WorldDoorView {
+  closed?: boolean;
+  /** Resolved lever/puzzle policy at snapshot time. */
+  passable?: boolean;
   id: string;
   type: string;
   fromRoomId: string;
@@ -118,6 +138,7 @@ export interface WorldMutator {
   setFigurePose(figureId: string, pose: ActorPose): void;
   getDoor(doorId: string): WorldDoorView | null;
   setDoorType(doorId: string, type: string): void;
+  setDoorClosed(doorId: string, closed: boolean): void;
   /** Authored walk mask only (no objects). */
   isWalkableTile(roomId: string, x: number, y: number): boolean;
   /**
@@ -251,6 +272,14 @@ export function findChebyshevPath(
       const k = keyOf(nx, ny);
       if (visited.has(k)) continue;
       if (!walkable(nx, ny)) continue;
+      // An embodied actor cannot pass through the corner where two solid
+      // cells touch; both cardinal components of a diagonal must be clear.
+      if (
+        dx !== 0 &&
+        dy !== 0 &&
+        (!walkable(cur.x + dx, cur.y) || !walkable(cur.x, cur.y + dy))
+      )
+        continue;
       visited.add(k);
       parent.set(k, cur);
       if (nx === gx && ny === gy) {

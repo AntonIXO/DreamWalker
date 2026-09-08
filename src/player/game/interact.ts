@@ -18,9 +18,13 @@ import {
   type SupportedLocale,
   type TranslationKey,
 } from "../../shared/i18n";
-import type { ActionOption, WorldAction } from "../../shared/world-action";
+import type { ActionOption } from "../../shared/world-action";
 import { availableActions } from "../../shared/world-action-engine";
-import type { ActorRef, WorldObjectState } from "../../shared/world-object";
+import type {
+  ActorPose,
+  ActorRef,
+  WorldObjectState,
+} from "../../shared/world-object";
 import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { fateOf, leverageOn, whoIsLed } from "./fates";
 import { liveObjects } from "./object-collision";
@@ -53,16 +57,10 @@ export function defaultListActions(
   world: WorldState,
   actor: ActorRef,
   target: ActionTarget,
+  playerPose: ActorPose | null = null,
 ): ActionOption[] {
   return availableActions(
-    bindWorldMutator(
-      world,
-      staticPlayerPose({
-        roomId: world.currentRoomId,
-        x: 0,
-        y: 0,
-      }),
-    ),
+    bindWorldMutator(world, staticPlayerPose(playerPose)),
     actor,
     target,
   );
@@ -91,7 +89,8 @@ export interface ActionRingRow {
   refusal: string | null;
   confirm: boolean;
   payload:
-    { kind: "verb"; verb: Verb } | { kind: "world"; action: WorldAction };
+    | { kind: "verb"; verb: Verb }
+    | { kind: "world"; action: ActionOption["action"] };
 }
 
 function nearestFigure(
@@ -222,7 +221,7 @@ export function findTarget(
   room: RoomState,
   player: PlayerState,
   locale?: SupportedLocale,
-  listActions: ListActions = defaultListActions,
+  listActions?: ListActions,
 ): InteractTarget | null {
   // A door that just turned us away outranks everything: the player pressed into it on
   // purpose, and saying why is more useful than offering to look at a nearby chair.
@@ -239,22 +238,35 @@ export function findTarget(
 
   const figure = nearestFigure(world, player, room);
   const object = nearestObject(world, player, room);
-  const objectIds = new Set(
-    floorObjects(world, room.id).map((entry) => entry.id),
-  );
+  const objectIds = new Set(liveObjects(world).map((entry) => entry.id));
   const local = toLocalPixels(room, player.x, player.y);
   const hotspot = findHotspot(
     reachableHotspots(world, room).filter(
-      (entry) => !objectIds.has(entry.id) && !objectIds.has(entry.propId ?? ""),
+      (entry) =>
+        !objectIds.has(entry.id) &&
+        !objectIds.has(entry.propId ?? "") &&
+        !(
+          entry.id.startsWith("interest:") &&
+          objectIds.has(entry.id.slice("interest:".length))
+        ),
     ),
     local.x,
     local.y,
     room.tileSize,
   );
 
+  const actionsFor: ListActions =
+    listActions ??
+    ((liveWorld, actor, target) =>
+      defaultListActions(liveWorld, actor, target, {
+        roomId: room.id,
+        x: local.x / room.tileSize,
+        y: local.y / room.tileSize,
+      }));
+
   const asFigure = (state: FigureState): InteractTarget => {
     const verbs = verbsFor(world, room, state, locale);
-    const actions = listActions(
+    const actions = actionsFor(
       world,
       { kind: "player" },
       {
@@ -279,7 +291,7 @@ export function findTarget(
   };
 
   const asObject = (state: WorldObjectState): InteractTarget => {
-    const actions = listActions(
+    const actions = actionsFor(
       world,
       { kind: "player" },
       {

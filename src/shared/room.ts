@@ -92,6 +92,8 @@ export interface RoomHotspot {
  */
 export interface RoomProp extends SolidRect {
   id: string;
+  /** Explicit receptacle metadata; names never decide physical capabilities. */
+  container?: "open" | "closed";
   /** An atlas role to tile it with, or null when a loose PNG or the backdrop draws it. */
   role: string | null;
   /** A loose PNG under `assets/`, for props too big or too specific for the atlas. */
@@ -144,6 +146,8 @@ export const THRESHOLD_KINDS = ["door", "stair", "lift", "rift"] as const;
  * carrying — that lives in `canPassDoor`, not in the geometry.
  */
 export interface RoomDoor {
+  /** Physical leaf state; walking into an unlocked door opens it. */
+  closed?: boolean;
   id: string;
   /** Tile rect. Walking into it is what opens it. */
   x: number;

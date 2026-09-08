@@ -503,6 +503,13 @@ function validateRoomShape(
     bool(prop.solid, `${path}.props[${i}].solid`);
     optionalStr(prop.role, `${path}.props[${i}].role`);
     optionalStr(prop.image, `${path}.props[${i}].image`);
+    if (
+      prop.container !== undefined &&
+      prop.container !== "open" &&
+      prop.container !== "closed"
+    ) {
+      fail(`${path}.props[${i}].container`, "expected open or closed");
+    }
   });
 
   const hotspotIds = new Set<string>();

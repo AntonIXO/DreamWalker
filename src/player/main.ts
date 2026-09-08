@@ -8,6 +8,7 @@
  */
 
 import "pixi.js/prepare";
+import "./ui/inventory.css";
 import {
   Application,
   Container,
@@ -50,7 +51,7 @@ import {
 } from "./render/walkerView";
 import { Cycle, Journal } from "./game/cycle";
 import { WordNotebook } from "./game/wordNotebook";
-import { Action, Input } from "./game/input";
+import { Action, Input, keyFor } from "./game/input";
 import { updateFigures } from "./game/figures";
 import {
   applyPatch,
@@ -60,6 +61,7 @@ import {
 } from "./game/patch";
 import { playerTile, walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
+import { RunStore, snapshotWorld, restoreWorld } from "./game/save";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
 import { forecastFor, type Forecast } from "./game/forecast";
@@ -67,12 +69,18 @@ import { MEMORY_EXHAUSTION } from "./game/exhaustion";
 import { addExhaustion } from "./game/world";
 import { learnLeverage, leverageOn } from "./game/fates";
 import { liveObjects } from "./game/object-collision";
-import { NpcActionQueue, replayWorldActions } from "./game/npc-action-queue";
-import { actionRingRowsFor, primaryObjectAction } from "./game/interact";
-import { executeWorldAction } from "../shared/world-action-engine";
-import type { WorldAction } from "../shared/world-action";
-import type { ActorRef } from "../shared/world-object";
+import { NpcActionQueue } from "./game/npc-action-queue";
+import { replayNpcActions, replayPlayerActions } from "./mind/action-feedback";
+import {
+  carriedInventoryObjects,
+  nearbyInventoryObjects,
+} from "./game/inventory";
 import { bindWorldMutator } from "./game/world-mutator";
+import { availableActions } from "../shared/world-action-engine";
+import { worldMindForFigure } from "../shared/world-mind";
+import { actionRingRowsFor, primaryObjectAction } from "./game/interact";
+import type { WorldAction } from "../shared/world-action";
+import type { ActorRef, WorldObjectState } from "../shared/world-object";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
@@ -96,6 +104,7 @@ import { ModelThinkingIndicator } from "./ui/modelThinking";
 import { WordNotebookPanel } from "./ui/wordNotebook";
 import { ClueInspectPanel } from "./ui/clueInspect";
 import { ActionRing } from "./ui/verbRing";
+import { InventoryPanel, type InventoryItem } from "./ui/inventory";
 import { Soundtrack } from "./soundtrack";
 
 type AppPhase = "lobby" | "enteringDream" | "dream";
@@ -369,8 +378,11 @@ async function boot(): Promise<void> {
   const interestsHere = (): typeof world.interests =>
     world.interests.filter(
       (interest) =>
-        rooms.shown.has(interest.roomId) ||
-        interest.roomId === world.currentRoomId,
+        (!world.objectById.has(interest.id) ||
+          (world.objectById.get(interest.id)?.mobility === "fixed" &&
+            world.objectById.get(interest.id)?.location.kind === "room")) &&
+        (rooms.shown.has(interest.roomId) ||
+          interest.roomId === world.currentRoomId),
     );
 
   const syncLiveLayer = (): void => {
@@ -378,7 +390,10 @@ async function boot(): Promise<void> {
     const objects = liveObjects(world);
     rooms.hideDynamicProps(
       objects
-        .filter((object) => object.mobility !== "fixed")
+        .filter(
+          (object) =>
+            object.mobility !== "fixed" || object.location.kind !== "room",
+        )
         .map((object) => object.id),
     );
     const holders = new Map<string, { roomId: string; x: number; y: number }>();
@@ -396,7 +411,11 @@ async function boot(): Promise<void> {
       });
     }
     actors.syncLiveObjects(
-      liveObjectPlacements(objects, holders),
+      liveObjectPlacements(objects, holders).filter(
+        (placement) =>
+          rooms.shown.has(placement.roomId) ||
+          placement.roomId === world.currentRoomId,
+      ),
       room.tileSize,
       world,
     );
@@ -449,19 +468,11 @@ async function boot(): Promise<void> {
   };
 
   const npcQueue = new NpcActionQueue();
-  const asMutator = () =>
-    bindWorldMutator(world, {
-      get: () => {
-        const tile = playerTile(session.player, currentRoom(world));
-        return { roomId: world.currentRoomId, x: tile.x, y: tile.y };
-      },
-      set: () => undefined,
-    });
   const runWorldAction = (
     action: WorldAction,
     actor: ActorRef = { kind: "player" },
   ) =>
-    executeWorldAction(asMutator(), {
+    session.dispatchWorldAction({
       actor,
       source: actor.kind === "player" ? "player" : "npc",
       action,
@@ -563,22 +574,85 @@ async function boot(): Promise<void> {
       },
       exhaustion: () => world.exhaustion,
       onWorldActions: (figure, actions) => {
-        replayWorldActions(
-          (envelope) => executeWorldAction(asMutator(), envelope),
-          { kind: "figure", id: figure.id },
-          "npc",
+        const outcome = replayNpcActions(
+          figure.id,
           actions,
+          (envelope) => session.dispatchWorldAction(envelope),
+          () => world.revision,
         );
+        mind.noteExecution(figure.id, outcome.execution);
+        if (!outcome.ok)
+          hud.whisper(
+            "Действие не удалось: " + (outcome.refusal ?? "мир изменился"),
+            4,
+          );
         return { close: figure.roomId !== world.currentRoomId };
       },
     },
     figurePortraitUrls,
   );
 
+  const examineObject = (
+    object: import("../shared/world-object").WorldObjectState,
+  ) => {
+    const room = currentRoom(world);
+    const hotspot = room.hotspots.find(
+      (entry) => entry.id === object.id || entry.propId === object.id,
+    );
+    if (hotspot && session.use(hotspot)) return;
+    const loc = object.location.kind === "room" ? object.location : null;
+    const interest = world.interests.find((entry) => entry.id === object.id);
+    const requestedCycle = cycle.number;
+    void thinking
+      .run("Рассматривает деталь мира", () =>
+        mind.examine({
+          objectId: object.id,
+          x: loc?.x ?? 0,
+          y: loc?.y ?? 0,
+          roomId: room.id,
+          interestId: interest?.id ?? null,
+          hotspotId: hotspot?.id ?? (interest ? null : object.id),
+        }),
+      )
+      .then((result) => {
+        if (cycle.number !== requestedCycle || restarting || finale.isOpen)
+          return;
+        if (result.clueObservedId) {
+          const clue = artifact.content.clues.find(
+            (candidate) => candidate.id === result.clueObservedId,
+          );
+          if (clue) {
+            wordNotebook.observe(clue.id);
+            journal.add(
+              cycle.number,
+              `УЛИКА — осмотрен предмет-ребус ${wordNotebook.observedCount}/6.`,
+            );
+            input.setCaptured(true);
+            clueInspect.open(clue, result.reply);
+          }
+        } else {
+          hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
+        }
+        if (result.yieldedShardId) noteShard(result.yieldedShardId);
+      })
+      .catch((error: unknown) => {
+        if (!(error instanceof Error && error.name === "AbortError"))
+          console.error(error);
+      });
+  };
+
   const verbRing = new ActionRing(uiLayer, {
     onClose: () => input.setCaptured(false),
+    onWords: (subject) => {
+      if (subject.kind === "object") openInventory(subject.id);
+    },
     onPick: (subject, row) => {
       if (row.payload.kind === "world") {
+        if (row.payload.action.type === "examine") {
+          const object = world.objectById.get(row.payload.action.objectId);
+          if (object) examineObject(object);
+          return;
+        }
         const result = runWorldAction(row.payload.action);
         if (!result.ok && result.refusal) hud.whisper(result.refusal, 4);
         return;
@@ -709,6 +783,8 @@ async function boot(): Promise<void> {
         return [...memories, ...fates].filter(Boolean);
       },
       onEnded: (kind) => {
+        inventory.close();
+        queueMicrotask(saveNow);
         input.setCaptured(true);
         soundtrack.setBed("finale");
         soundtrack.setDucked(false);
@@ -732,6 +808,231 @@ async function boot(): Promise<void> {
       },
     },
   );
+
+  let itemCommandGeneration = 0;
+  const inventoryMutator = () =>
+    bindWorldMutator(world, {
+      get: () => ({
+        roomId: world.currentRoomId,
+        ...playerTile(session.player, currentRoom(world)),
+      }),
+      set: () => undefined,
+    });
+  const itemView = (
+    object: WorldObjectState,
+    containerId: string | null,
+    mutator: ReturnType<typeof inventoryMutator>,
+  ): InventoryItem => {
+    const ru = getLocale() === "ru";
+    const flags: string[] = [];
+    if (object.state.broken) flags.push(ru ? "разбито" : "broken");
+    if (object.state.wet !== undefined)
+      flags.push(
+        object.state.wet ? (ru ? "мокрое" : "wet") : ru ? "сухое" : "dry",
+      );
+    if (object.state.dirty !== undefined)
+      flags.push(
+        object.state.dirty
+          ? ru
+            ? "грязное"
+            : "dirty"
+          : ru
+            ? "чистое"
+            : "clean",
+      );
+    if (object.state.open !== undefined)
+      flags.push(
+        object.state.open
+          ? ru
+            ? "открыто"
+            : "open"
+          : ru
+            ? "закрыто"
+            : "closed",
+      );
+    if (object.state.inscription !== undefined)
+      flags.push(
+        object.state.inscription
+          ? `«${object.state.inscription}»`
+          : ru
+            ? "без надписи"
+            : "no inscription",
+      );
+    if (object.state.active !== undefined)
+      flags.push(
+        object.state.active
+          ? ru
+            ? "включено"
+            : "active"
+          : ru
+            ? "выключено"
+            : "inactive",
+      );
+    const options = availableActions(
+      mutator,
+      { kind: "player" },
+      { kind: "object", id: object.id },
+    );
+    const clueImage = artifact.content.clues.find(
+      (clue) => clue.id === object.clueId,
+    )?.worldImage;
+    const image = object.visual.image ?? clueImage;
+    return {
+      id: object.id,
+      name: object.name,
+      containerId,
+      status: flags.join(" · ") || (ru ? "без изменений" : "unchanged"),
+      thumbnailUrl: image ? `${DREAM_URL}/${image}` : null,
+      canExamine: options.some(
+        (option) => option.action.type === "examine" && !option.refusal,
+      ),
+      canDrop: options.some(
+        (option) => option.action.type === "drop" && !option.refusal,
+      ),
+    };
+  };
+  let inventoryVersion = "";
+  const refreshInventory = (): void => {
+    const version = `${cycle.number}:${world.revision}:${world.currentRoomId}:${session.player.x}:${session.player.y}:${getLocale()}`;
+    if (inventoryVersion === version) return;
+    inventoryVersion = version;
+    const mutator = inventoryMutator();
+    const held = carriedInventoryObjects(world.objects);
+    const nearby = nearbyInventoryObjects(mutator);
+    inventory.refresh({
+      held: held.map(({ object, containerId }) =>
+        itemView(object, containerId, mutator),
+      ),
+      nearby: nearby.map(({ object, containerId }) =>
+        itemView(object, containerId, mutator),
+      ),
+      roomName: currentRoom(world).name,
+      locale: getLocale(),
+    });
+  };
+  const refusedAction = (refusal: string | null): string => {
+    if (getLocale() === "en")
+      return refusal
+        ? `The action failed: ${refusal}.`
+        : "The world changed; the action could not be completed.";
+    if (refusal?.includes("reach") || refusal?.includes("path"))
+      return "Слишком далеко или путь к вещи закрыт. Подойди ближе.";
+    if (refusal?.includes("held")) return "Эта вещь сейчас не у тебя.";
+    if (refusal?.includes("space")) return "Здесь не хватает места.";
+    if (refusal?.includes("locked") || refusal?.includes("sealed"))
+      return "Закрыто. Сначала нужно открыть.";
+    return "Мир изменился. Действие не удалось завершить.";
+  };
+  const inventory = new InventoryPanel(uiLayer, {
+    onClose: () => input.setCaptured(false),
+    onCancel: () => {
+      itemCommandGeneration++;
+      mind.abort();
+    },
+    onCommand: async (utterance, selectedObjectId) => {
+      const generation = ++itemCommandGeneration;
+      const requestedCycle = cycle.number;
+      const planned = await thinking.run(
+        getLocale() === "ru"
+          ? "Сон отвечает на действие"
+          : "The dream considers your action",
+        () => mind.act(utterance, selectedObjectId),
+      );
+      if (
+        generation !== itemCommandGeneration ||
+        !inventory.isOpen ||
+        restarting ||
+        cycle.number !== requestedCycle ||
+        finale.isOpen
+      )
+        throw new DOMException("Cancelled", "AbortError");
+      const firstEvent = world.worldMind.nextSequence;
+      const actual = replayPlayerActions(
+        planned.worldActions,
+        (envelope) => session.dispatchWorldAction(envelope),
+        () => world.revision,
+      );
+      let reply = actual.ok ? planned.reply : refusedAction(actual.refusal);
+      if (actual.ok) {
+        const witnessedEvents = world.worldMind.events.filter(
+          (event) => event.sequence >= firstEvent,
+        );
+        const reactions: string[] = [];
+        for (const reaction of (planned.reactions ?? []).slice(0, 2)) {
+          const figure = world.figures.find(
+            (entry) => entry.id === reaction.figureId,
+          );
+          if (
+            !figure ||
+            !worldMindForFigure(witnessedEvents, figure.id).some(
+              (event) => event.events.length > 0,
+            )
+          )
+            continue;
+          mind.noteReaction(figure.id, reaction.reply);
+          journal.addPerson(
+            cycle.number,
+            figure.id,
+            figure.name,
+            reaction.reply,
+          );
+          reactions.push(`${figure.name}: ${reaction.reply}`);
+        }
+        if (reactions.length > 0) reply += `\n\n${reactions.join("\n")}`;
+      }
+      mind.rememberAction(utterance, reply);
+      journal.add(
+        cycle.number,
+        `${getLocale() === "ru" ? "ДЕЙСТВИЕ" : "ACTION"} — ${reply}`,
+      );
+      refreshInventory();
+      queueMicrotask(saveNow);
+      return { reply };
+    },
+    onAction: (action, objectId) => {
+      const object = world.objectById.get(objectId);
+      if (!object) return { reply: refusedAction("no such object") };
+      if (action === "examine") {
+        inventory.close();
+        examineObject(object);
+        return;
+      }
+      const result = runWorldAction({ type: "drop", objectId });
+      refreshInventory();
+      return {
+        reply: result.ok
+          ? getLocale() === "ru"
+            ? "Вещь лежит у ног."
+            : "The object is at your feet."
+          : refusedAction(result.refusal),
+      };
+    },
+  });
+  const inventoryToggle = document.createElement("button");
+  inventoryToggle.type = "button";
+  inventoryToggle.className = "inventory-toggle";
+  inventoryToggle.hidden = true;
+  inventoryToggle.addEventListener("click", () =>
+    inventory.isOpen ? inventory.close() : openInventory(),
+  );
+  uiLayer.appendChild(inventoryToggle);
+  const openInventory = (objectId: string | null = null): void => {
+    if (phase !== "dream" || restarting || finale.isOpen || mind.waiting)
+      return;
+    if (
+      dialogue.isOpen ||
+      memories.isOpen ||
+      journalPanel.isOpen ||
+      wordNotebookPanel.isOpen ||
+      clueInspect.isOpen ||
+      controls.isOpen
+    )
+      return;
+    inventoryVersion = "";
+    refreshInventory();
+    inventory.open(objectId);
+    input.setCaptured(true);
+  };
 
   let phase: AppPhase = "lobby";
   let pendingEntry: "live" | "training" | null = null;
@@ -830,6 +1131,7 @@ async function boot(): Promise<void> {
       hud.setLobbyMode(false);
       phase = "dream";
       input.setCaptured(false);
+      saveNow();
     } catch (error) {
       console.error("[population]", error);
       phase = "lobby";
@@ -960,6 +1262,14 @@ async function boot(): Promise<void> {
     if (restarting) return;
     restarting = true;
     try {
+      // A panel retains the old FigureState while resetWorld installs fresh figures.
+      // Close it before planning so no reply or action can commit to the next cycle.
+      dialogue.close();
+      inventory.close();
+      inventory.close();
+      clueInspect.close();
+      verbRing.close();
+      mind.abort();
       // `endings.md` sets four cycles before the sanitar is thrown out with whatever
       // they have. The check comes first: the cycle that just expired is the last one,
       // and resetting the world under the ending screen both played a fifth cycle and
@@ -986,13 +1296,95 @@ async function boot(): Promise<void> {
       forgetCycle(mind);
       for (const room of world.rooms) rooms.invalidate(room.id);
       session.restart();
-      session.noteCycleReset();
       cycle.restart();
+      session.noteCycleReset();
       hud.whisper(t("ui.whisper_cycle_restart"), 5);
     } finally {
       restarting = false;
+      saveNow();
     }
   };
+
+  const runStore = new RunStore(sonPack.artifact());
+  let saveWarningShown = false;
+  const saveNow = (): boolean => {
+    // Never capture half a room transition or an unfinished model transaction.
+    if (
+      phase !== "dream" ||
+      restarting ||
+      !session.canSave ||
+      mind.waiting ||
+      inventory.isWaiting
+    )
+      return false;
+    const ok = runStore.write({
+      world: snapshotWorld(world),
+      session: session.snapshot(),
+      cycle: cycle.snapshot(),
+      observations: observations.snapshot(world),
+      heartbeatCalls: heartbeat.snapshot(),
+      memory: mindMemory.snapshot(),
+      journal: journal.all(),
+      notebook: wordNotebook.snapshot(),
+      conversations: mind.snapshotFigures(),
+      commands: mind.snapshotActions(),
+      ending: finale.snapshotEnding(),
+    });
+    if (!ok && !saveWarningShown) {
+      saveWarningShown = true;
+      hud.whisper(
+        getLocale() === "ru"
+          ? "Не удалось сохранить игру в браузере. Проверьте доступ к хранилищу и свободное место."
+          : "Could not save the game. Check browser storage permissions and free space.",
+        10,
+      );
+    }
+    return ok;
+  };
+  const loadedRun = runStore.load(artifact);
+  if (loadedRun.save) {
+    const saved = loadedRun.save;
+    restoreWorld(world, saved.world);
+    cycle.restore(saved.cycle);
+    observations.restore(saved.observations);
+    heartbeat.restore(saved.heartbeatCalls);
+    mindMemory.restore(saved.memory);
+    journal.restore(saved.journal);
+    wordNotebook.restore(saved.notebook);
+    mind.restoreFigures(saved.conversations);
+    mind.restoreActions(saved.commands);
+    for (const room of world.rooms) rooms.invalidate(room.id);
+    session.restore(saved.session);
+    populationInstalled = true;
+    lobby.teardown();
+    worldRoot.visible = true;
+    hud.setLobbyMode(false);
+    phase = "dream";
+    soundtrack.setBed("game");
+    layoutView();
+    if (saved.ending) finale.restoreEnding(saved.ending);
+    else
+      hud.whisper(
+        getLocale() === "ru"
+          ? "Сон продолжен с последнего сохранения."
+          : "Resumed from the last save.",
+        5,
+      );
+    // Expiry may have been saved immediately before the async cycle exit began.
+    if (cycle.expired && !saved.ending) void restartCycle();
+  } else if (loadedRun.unavailable) {
+    hud.whisper(
+      getLocale() === "ru"
+        ? "Сохранение недоступно или относится к другой версии сна."
+        : "The save is unavailable or belongs to a different version of this dream.",
+      8,
+    );
+  }
+  window.setInterval(saveNow, 1000);
+  window.addEventListener("pagehide", saveNow);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") saveNow();
+  });
 
   // A handle on the running dream, worth having in a game that is meant to be
   // self-hosted and picked apart.
@@ -1010,6 +1402,7 @@ async function boot(): Promise<void> {
     mindMemory,
     thinking,
     dialogue,
+    inventory,
     finale,
     rooms,
     session,
@@ -1029,6 +1422,7 @@ async function boot(): Promise<void> {
       return phase;
     },
     restartCycle,
+    saveNow,
     get player(): typeof session.player {
       return session.player;
     },
@@ -1038,6 +1432,8 @@ async function boot(): Promise<void> {
   app.ticker.add((ticker) => {
     const delta = Math.min(ticker.deltaMS, 100) / 1000;
     finaleFrenzy.update(delta);
+    inventoryToggle.hidden = phase !== "dream" || finale.isOpen;
+    inventoryToggle.textContent = `${getLocale() === "ru" ? "Вещи" : "Things"} · ${keyFor(Action.INVENTORY)}`;
 
     // The cycle must not burn in the procedure room. Heartbeat and inhabit wait
     // until the sanitar actually lies down next to the patient.
@@ -1080,6 +1476,7 @@ async function boot(): Promise<void> {
     // Anything that has taken over the screen also takes the sanitar's feet. Reading the
     // controls should not walk you into a wall.
     const held =
+      inventory.isOpen ||
       dialogue.isOpen ||
       controls.isOpen ||
       memories.isOpen ||
@@ -1090,7 +1487,11 @@ async function boot(): Promise<void> {
       finale.isOpen;
     // Pixi's ticker and renderer stay alive. Only the game clock is paused while network
     // latency, a cycle transition, or the finale owns the simulation.
-    const simulationPaused = mind.waiting || restarting || finale.isOpen;
+    const simulationPaused =
+      mind.waiting || inventory.isWaiting || restarting || finale.isOpen;
+    inventoryToggle.disabled =
+      restarting || (!inventory.isOpen && (held || simulationPaused));
+    if (inventory.isOpen) refreshInventory();
     hud.setMuted(held);
     soundtrack.setDucked(
       dialogue.isOpen || (finale.isOpen && !finaleFrenzy.isSequenceActive),
@@ -1114,9 +1515,7 @@ async function boot(): Promise<void> {
           y: session.player.y / room.tileSize,
         },
       );
-      npcQueue.tick(world, (envelope) =>
-        executeWorldAction(asMutator(), envelope),
-      );
+      npcQueue.tick(world, (envelope) => session.dispatchWorldAction(envelope));
     }
 
     // A street map is one country: follow the walker. A single-room dream still
@@ -1130,6 +1529,10 @@ async function boot(): Promise<void> {
     // --- one-shot actions
     if (input.consume(Action.DEBUG)) debug.toggle();
     if (input.consume(Action.HELP)) controls.toggle();
+    if (input.consume(Action.INVENTORY)) {
+      if (inventory.isOpen) inventory.close();
+      else openInventory();
+    }
     if (input.consume(Action.MEMORIES)) {
       if (memories.isOpen) memories.close();
       else {
@@ -1155,7 +1558,8 @@ async function boot(): Promise<void> {
     // Escape peels one layer at a time, outermost first, so it never closes a
     // conversation the player only meant to look away from.
     if (input.consume(Action.CANCEL)) {
-      if (controls.isOpen) controls.close();
+      if (inventory.isOpen) inventory.close();
+      else if (controls.isOpen) controls.close();
       else if (memories.isOpen) memories.close();
       else if (journalPanel.isOpen) journalPanel.close();
       else if (wordNotebookPanel.isOpen) wordNotebookPanel.close();
@@ -1168,7 +1572,14 @@ async function boot(): Promise<void> {
     }
 
     if (input.consume(Action.HEARTBEAT)) {
-      void thinking.run("Перестраивает сон", () => heartbeat.force());
+      if (!simulationPaused) {
+        void thinking
+          .run("Перестраивает сон", () => heartbeat.force())
+          .catch((error: unknown) => {
+            if (!(error instanceof Error && error.name === "AbortError"))
+              console.error(error);
+          });
+      }
     }
 
     if (input.consume(Action.GRANT)) {
@@ -1223,45 +1634,13 @@ async function boot(): Promise<void> {
         }
       } else if (target?.kind === "object") {
         const pick = primaryObjectAction(target.actions);
-        if (pick) {
+        if (pick && pick.action.type !== "examine") {
           const result = runWorldAction(pick.action);
           if (!result.ok && result.refusal) hud.whisper(result.refusal, 4);
         } else if (target.object.interaction?.refusal) {
           hud.whisper(target.object.interaction.refusal, 4);
         } else {
-          const loc =
-            target.object.location.kind === "room"
-              ? target.object.location
-              : null;
-          void thinking
-            .run("Рассматривает деталь мира", () =>
-              mind.examine({
-                x: loc?.x ?? 0,
-                y: loc?.y ?? 0,
-                roomId: room.id,
-                interestId: null,
-                hotspotId: target.object.id,
-              }),
-            )
-            .then((result) => {
-              if (result.clueObservedId) {
-                const clue = artifact.content.clues.find(
-                  (candidate) => candidate.id === result.clueObservedId,
-                );
-                if (clue) {
-                  wordNotebook.observe(clue.id);
-                  journal.add(
-                    cycle.number,
-                    `УЛИКА — осмотрен предмет-ребус ${wordNotebook.observedCount}/6.`,
-                  );
-                  input.setCaptured(true);
-                  clueInspect.open(clue, result.reply);
-                }
-              } else {
-                hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
-              }
-              if (result.yieldedShardId) noteShard(result.yieldedShardId);
-            });
+          examineObject(target.object);
         }
       } else if (target?.kind === "hotspot") {
         const hotspot = target.hotspot;
@@ -1303,6 +1682,10 @@ async function boot(): Promise<void> {
                 hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
               }
               if (result.yieldedShardId) noteShard(result.yieldedShardId);
+            })
+            .catch((error: unknown) => {
+              if (!(error instanceof Error && error.name === "AbortError"))
+                console.error(error);
             });
         }
       } else if (target) {
@@ -1313,7 +1696,8 @@ async function boot(): Promise<void> {
     }
 
     // --- time
-    if (!simulationPaused && cycle.update(delta)) void restartCycle();
+    if (!simulationPaused && !mind.waiting && cycle.update(delta))
+      void restartCycle();
     shiver.update(delta);
     camera.update(delta);
     dreamFx.setEnabled(true);

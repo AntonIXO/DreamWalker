@@ -57,13 +57,30 @@ export function bindWorldMutator(
     set revision(value: number) {
       world.revision = value;
     },
-    objects: world.objects,
+    get objects() {
+      return world.objects;
+    },
     get objectById() {
       return world.objectById;
     },
     keysHeld: world.keysHeld,
-    figurePoses,
-    doorById,
+    get figurePoses() {
+      figurePoses.clear();
+      for (const figure of world.figures) {
+        figurePoses.set(figure.id, {
+          roomId: figure.roomId,
+          x: figure.x,
+          y: figure.y,
+        });
+      }
+      return figurePoses;
+    },
+    get doorById() {
+      doorById.clear();
+      for (const id of world.doorById.keys())
+        doorById.set(id, viewOfDoor(world, id));
+      return doorById;
+    },
     getPlayerPose: () => {
       const pose = player.get();
       return pose ? { ...pose } : null;
@@ -78,16 +95,19 @@ export function bindWorldMutator(
         figurePoses.set(figureId, pose);
         return { ...pose };
       }
-      const stored = figurePoses.get(figureId);
-      return stored ? { ...stored } : null;
+      figurePoses.delete(figureId);
+      return null;
     },
     setFigurePose: (figureId, pose) => {
-      figurePoses.set(figureId, { ...pose });
       const figure = world.figures.find((entry) => entry.id === figureId);
       if (figure) {
+        figurePoses.set(figureId, { ...pose });
         figure.roomId = pose.roomId;
         figure.x = pose.x;
         figure.y = pose.y;
+        figure.targetX = null;
+        figure.targetY = null;
+        figure.walking = false;
         figure.revision += 1;
       }
     },
@@ -105,6 +125,10 @@ export function bindWorldMutator(
       const view = doorById.get(doorId);
       if (view) view.type = type;
       else doorById.set(doorId, viewOfDoor(world, doorId));
+    },
+    setDoorClosed: (doorId, closed) => {
+      const door = world.doorById.get(doorId);
+      if (door) door.closed = closed;
     },
     isWalkableTile: (roomId, x, y) => {
       const room = world.roomById.get(roomId);
@@ -151,6 +175,8 @@ function viewOfDoor(world: WorldState, doorId: string): WorldDoorView {
     destRoom?.entries.find((candidate) => candidate.id === dest.entryId) ??
     destRoom?.entries[0];
   return {
+    closed: door.closed,
+    passable: canPassDoor(world, door),
     id: door.id,
     type: door.type,
     fromRoomId,

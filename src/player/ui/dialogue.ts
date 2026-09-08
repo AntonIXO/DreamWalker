@@ -77,6 +77,7 @@ export class DialoguePanel {
   private readonly voice: VoiceInput;
   private figure: FigureState | null = null;
   private busy = false;
+  private turnGeneration = 0;
   private voiceMode = false;
   private applyingCaption = false;
   private idlePlaceholder = "что ты скажешь";
@@ -301,7 +302,10 @@ export class DialoguePanel {
 
   close(): void {
     if (this.root.hidden) return;
+    this.turnGeneration++;
     if (this.busy) this.mind.abort();
+    this.busy = false;
+    this.setFormEnabled(true);
     this.voice.halt();
     this.root.hidden = true;
     this.figure = null;
@@ -438,6 +442,7 @@ export class DialoguePanel {
     const figure = this.figure;
     const utterance = this.inputEl.value.trim();
     if (!figure || !utterance || this.busy) return;
+    const generation = ++this.turnGeneration;
 
     this.voice.halt();
     this.busy = true;
@@ -466,12 +471,14 @@ export class DialoguePanel {
               leverageOffered,
             },
             (partial) => {
-              if (this.figure !== figure) return;
+              if (this.turnGeneration !== generation || this.figure !== figure)
+                return;
               setMarkdown(pending, partial || "…");
             },
           ),
       );
     } catch (error) {
+      if (this.turnGeneration !== generation || this.figure !== figure) return;
       // A missing model is silence, not a canned line in this person's mouth.
       pending.remove();
       const aborted =
@@ -484,11 +491,7 @@ export class DialoguePanel {
 
     // Walking away mid-answer is a legitimate move, and a model turn is slow enough to
     // make it a common one. Whatever they were going to say is lost, as it should be.
-    if (this.figure !== figure) {
-      this.busy = false;
-      this.setFormEnabled(true);
-      return;
-    }
+    if (this.turnGeneration !== generation || this.figure !== figure) return;
 
     setMarkdown(pending, response.reply);
     pending.className = "said-by-them";
@@ -573,6 +576,7 @@ export class DialoguePanel {
   }
 
   destroy(): void {
+    this.close();
     window.removeEventListener("keydown", this.onVoiceKey);
     this.voice.destroy();
     this.root.remove();
@@ -612,7 +616,6 @@ function labelFor(leverageId: string): string {
   return leverageId.split(":")[1]?.replace(/-/g, " ") ?? leverageId;
 }
 
-function worldActionsOf(response: TurnResponse): WorldAction[] {
-  const extra = response as TurnResponse & { worldActions?: WorldAction[] };
-  return Array.isArray(extra.worldActions) ? extra.worldActions : [];
+export function worldActionsOf(response: TurnResponse): WorldAction[] {
+  return response.worldActions.map((envelope) => envelope.action);
 }

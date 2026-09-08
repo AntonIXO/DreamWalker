@@ -1,0 +1,226 @@
+.inventory-panel {
+  width: min(54rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  gap: 1rem;
+}
+
+.inventory-panel .inventory-header {
+  align-items: center;
+}
+.inventory-panel .inventory-close {
+  white-space: nowrap;
+}
+.inventory-panel .inventory-room {
+  margin: 0;
+  font-size: 0.75rem;
+}
+.inventory-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+.inventory-columns > section {
+  min-width: 0;
+}
+.inventory-panel .inventory-columns h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+.inventory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 2px;
+}
+.inventory-panel .inventory-empty {
+  padding: 0.65rem 0;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.inventory-panel button.inventory-item {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  width: 100%;
+  min-height: 3.7rem;
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  color: var(--ink);
+  background: transparent;
+  border-color: var(--panel-line, var(--edge));
+}
+.inventory-panel button.inventory-item[aria-pressed="true"] {
+  background: #222027;
+  border-color: #8b847b;
+}
+.inventory-panel button.inventory-item:hover:not(:disabled) {
+  background: #18171d;
+  border-color: var(--panel-focus, #8b847b);
+}
+.inventory-item-art {
+  position: relative;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  color: var(--ink-dim);
+}
+.inventory-item-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: var(--panel-bg, #101016);
+}
+.inventory-item-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+.inventory-item-copy strong {
+  font-size: 0.8rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.inventory-item-status,
+.inventory-item-container {
+  font-size: 0.65rem;
+  line-height: 1.4;
+  color: #a49d92;
+  overflow-wrap: anywhere;
+}
+.inventory-item-container {
+  color: var(--ink-dim);
+}
+.inventory-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--panel-line, var(--edge));
+}
+.inventory-selected-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.inventory-panel .inventory-selected-status {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.inventory-quick {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+.inventory-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.inventory-command-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+}
+.inventory-examples {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.inventory-panel button.inventory-example {
+  min-height: 1.8rem;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+}
+.inventory-command-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.inventory-panel button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.inventory-panel .inventory-reply {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  background: #17161c;
+  border-left: 2px solid #857967;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.inventory-panel .inventory-reply[data-error="true"] {
+  border-left-color: var(--warn);
+}
+.inventory-panel [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .inventory-panel {
+    padding: 1rem;
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+  .inventory-columns {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  .inventory-list {
+    max-height: 10rem;
+  }
+  .inventory-panel .inventory-close {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inventory-panel button,
+  .inventory-panel input {
+    transition: none;
+  }
+}
+
+.inventory-toggle {
+  position: fixed;
+  left: 0.7rem;
+  bottom: 0.7rem;
+  z-index: 12;
+  min-height: 2.1rem;
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: rgba(8, 8, 11, 0.88);
+  border: 1px solid var(--edge);
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+.inventory-toggle:hover,
+.inventory-toggle:focus-visible {
+  border-color: var(--ink-dim);
+  color: #fff;
+}
+.inventory-toggle:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 2px;
+}
+.inventory-toggle[hidden] {
+  display: none;
+}

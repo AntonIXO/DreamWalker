@@ -12,7 +12,7 @@ import {
   primaryObjectAction,
   type ListActions,
 } from "./interact";
-import { createWorld } from "./world";
+import { createWorld, rebuildObjectIndex } from "./world";
 
 function tiny() {
   return createWorld(
@@ -87,6 +87,36 @@ describe("findTarget objects", () => {
       "use",
     ]);
     expect(target.actions[1]?.refusal).toBe("не к чему");
+  });
+
+  test("default actions use the player's live position, including room origin", () => {
+    const world = tiny();
+    const room = world.roomById.get("a")!;
+    room.originX = 20;
+    room.originY = 10;
+    const player = createPlayer(room, "default");
+    setLiveObjects(world, [bottle({ body: null })]);
+    rebuildObjectIndex(world);
+    player.x = (room.originX + 5) * room.tileSize;
+    player.y = (room.originY + 4) * room.tileSize;
+    const target = findTarget(world, room, player);
+    expect(target?.kind).toBe("object");
+    if (target?.kind !== "object") return;
+    expect(
+      target.actions.find((row) => row.affordance === "take")?.refusal,
+    ).toBeNull();
+  });
+
+  test("taking an authored clue does not leave a ghost hotspot behind", () => {
+    const world = tiny();
+    const room = world.roomById.get("a")!;
+    const player = createPlayer(room, "default");
+    world.figures.length = 0;
+    const shelf = world.objectById.get("shelf")!;
+    shelf.location = { kind: "held", actor: { kind: "player" } };
+    player.x = 9 * room.tileSize;
+    player.y = 4 * room.tileSize;
+    expect(findTarget(world, room, player)).toBeNull();
   });
 
   test("figures still resolve as talk targets", () => {

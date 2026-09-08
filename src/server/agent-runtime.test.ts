@@ -16,6 +16,7 @@ import {
   AgentRuntime,
   dialogueSchema,
   NPC_WORLD_TOOL_NAMES,
+  NPC_DIALOGUE_TOOL_NAMES,
   npcDialogueTools,
 } from "./agent-runtime";
 import type { CodexAccountProcess } from "./codex-account";
@@ -259,7 +260,9 @@ describe("npc dialogue tools", () => {
         events: [],
       })),
     );
-    expect(Object.keys(tools).sort()).toEqual([...NPC_WORLD_TOOL_NAMES].sort());
+    expect(Object.keys(tools).sort()).toEqual(
+      [...NPC_DIALOGUE_TOOL_NAMES].sort(),
+    );
     expect("shiftWalls" in tools).toBe(false);
     expect(NPC_WORLD_TOOL_NAMES).not.toContain("shiftWalls");
   });

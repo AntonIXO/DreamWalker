@@ -2,6 +2,7 @@ import { resolve, sep } from "node:path";
 
 import type {
   AiStreamEvent,
+  ActionRequestPayload,
   CycleExitRequestPayload,
   DialogueRequestPayload,
   ExamineRequestPayload,
@@ -220,6 +221,13 @@ async function api(
     } catch (error) {
       return accountError(error);
     }
+  }
+
+  if (pathname === "/api/ai/action" && request.method === "POST") {
+    return aiRoute<
+      ActionRequestPayload,
+      Awaited<ReturnType<typeof agents.act>>
+    >(request, (payload, signal, emit) => agents.act(payload, signal, emit));
   }
 
   if (pathname === "/api/ai/dialogue" && request.method === "POST") {

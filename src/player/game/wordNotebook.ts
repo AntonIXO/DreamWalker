@@ -24,6 +24,16 @@ export class WordNotebook {
     }
   }
 
+  snapshot(): StoredNotebook {
+    return { words: [...this.wordsValue], observedClueIds: [...this.observed] };
+  }
+
+  restore(state: StoredNotebook): void {
+    this.wordsValue = [...state.words];
+    this.observed = new Set(state.observedClueIds);
+    this.persist();
+  }
+
   get words(): readonly string[] {
     return this.wordsValue;
   }

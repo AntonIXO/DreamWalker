@@ -23,10 +23,13 @@ import {
   isActorRef,
   isHeldBy,
   solidObjectCovers,
+  MAX_OBJECT_VERB_LENGTH,
+  MAX_OBJECT_INSCRIPTION_LENGTH,
   type ActorPose,
   type ActorRef,
   type AnyActor,
   type ObjectAffordance,
+  type WorldObjectAlteration,
   type WorldDoorView,
   type WorldMutator,
   type WorldObjectState,
@@ -112,6 +115,10 @@ export function createWorldMutator(seed: WorldMutatorSeed): WorldMutator {
       const door = doorById.get(doorId);
       if (door) door.type = type;
     },
+    setDoorClosed: (doorId, closed) => {
+      const door = doorById.get(doorId);
+      if (door) door.closed = closed;
+    },
     isWalkableTile: seed.isWalkableTile,
     canPassDoor: (doorId) => {
       const door = doorById.get(doorId);
@@ -147,12 +154,9 @@ export function cloneWorldMutator(world: WorldMutator): WorldMutator {
     passable.set(id, world.canPassDoor(id));
   }
   const figurePoses = new Map<string, ActorPose>();
-  for (const [id, pose] of world.figurePoses) {
-    figurePoses.set(id, { ...pose });
-  }
-  for (const id of figurePoses.keys()) {
+  for (const id of world.figurePoses.keys()) {
     const live = world.getFigurePose(id);
-    if (live) figurePoses.set(id, live);
+    if (live) figurePoses.set(id, { ...live });
   }
   return createWorldMutator({
     revision: world.revision,
@@ -160,7 +164,10 @@ export function cloneWorldMutator(world: WorldMutator): WorldMutator {
     keysHeld: new Set(world.keysHeld),
     playerPose: world.getPlayerPose(),
     figurePoses,
-    doors: [...world.doorById.values()].map((door) => ({ ...door })),
+    doors: [...world.doorById.keys()].flatMap((id) => {
+      const door = world.getDoor(id);
+      return door ? [{ ...door }] : [];
+    }),
     isWalkableTile: (roomId, x, y) => world.isWalkableTile(roomId, x, y),
     canPassDoor: (doorId) => passable.get(doorId) ?? false,
   });
@@ -213,6 +220,9 @@ export function executeWorldAction(
       return execActivate(world, actor, pose, action.objectId);
     case "use":
       return execUse(world, actor, pose, action);
+    case "alter":
+    case "gesture":
+      return execExpressive(world, actor, pose, action);
     case "traverseDoor":
       return execTraverse(world, actor, pose, action.doorId);
     default:
@@ -235,37 +245,99 @@ export function availableActions(
   if (target.kind === "object") {
     const object = world.objectById.get(target.id);
     if (!object) return [];
-    return object.affordances.map((affordance) => ({
-      action: actionForAffordance(affordance, object, actor),
-      affordance,
-      label: object.interaction?.prompt || object.name,
-      refusal: object.affordances.includes(affordance)
-        ? null
-        : (object.interaction?.refusal ?? "cannot"),
-    }));
+    const held = isHeldBy(object, actor);
+    const access =
+      requireObjectAccess(world, actor, pose, object)?.refusal ?? null;
+    const options: ActionOption[] = [];
+    for (const affordance of object.affordances) {
+      // Give chooses a recipient; put chooses a container. Neither has a
+      // meaningful self-target in this object's menu.
+      if (affordance === "give" || affordance === "put") continue;
+      if (affordance === "drop" && !held) continue;
+      if (affordance === "take" && held) continue;
+      let refusal = access;
+      if (affordance === "take" && object.location.kind === "held") {
+        refusal = "already held";
+      } else if (affordance === "take" && object.mobility !== "carryable") {
+        refusal = "cannot take this";
+      } else if (
+        affordance === "use" &&
+        object.mobility === "carryable" &&
+        !held
+      ) {
+        refusal = "not held";
+      } else if (affordance === "open" && !access && object.state.locked) {
+        if (!object.keyId || !actorHasKey(world, actor, object.keyId)) {
+          refusal = object.interaction?.refusal ?? "locked";
+        }
+      } else if (affordance === "drop" && !dropAtFeet(world, pose, object)) {
+        refusal = "no space";
+      } else if (affordance === "traverse") {
+        const door = world.getDoor(object.id);
+        refusal = door
+          ? (requireDoorAccess(world, pose, door)?.refusal ?? null)
+          : "no such object";
+      }
+      options.push({
+        action: actionForAffordance(affordance, object),
+        affordance,
+        label: object.interaction?.prompt || object.name,
+        refusal,
+      });
+    }
+    if (isContainer(object)) {
+      for (const item of world.objects) {
+        if (
+          !isHeldBy(item, actor) ||
+          !item.affordances.includes("put") ||
+          item.id === object.id
+        )
+          continue;
+        options.push({
+          action: { type: "put", objectId: item.id, intoObjectId: object.id },
+          affordance: "put",
+          label: item.name,
+          refusal:
+            requirePutTarget(world, actor, pose, item, object)?.refusal ?? null,
+        });
+      }
+    }
+    return options;
   }
 
   if (target.kind === "door") {
     const door = world.getDoor(target.id);
     if (!door) return [];
+    const access = requireDoorAccess(world, pose, door)?.refusal ?? null;
+    const policy =
+      door.type === "sealed"
+        ? "sealed"
+        : mayPassDoor(world, actor, door)
+          ? null
+          : "locked";
     return [
       {
         action: { type: "open", targetId: door.id },
         affordance: "open",
         label: "open",
-        refusal: null,
+        refusal: access ?? policy,
       },
       {
         action: { type: "close", targetId: door.id },
         affordance: "close",
         label: "close",
-        refusal: null,
+        refusal: access ?? (door.type === "sealed" ? "sealed" : null),
       },
       {
         action: { type: "traverseDoor", doorId: door.id },
         affordance: "traverse",
         label: "go through",
-        refusal: null,
+        refusal:
+          access ??
+          policy ??
+          (world.canWalk(door.toRoomId, door.toX, door.toY)
+            ? null
+            : "blocked arrival"),
       },
     ];
   }
@@ -286,36 +358,33 @@ export function availableActions(
     ];
   }
 
-  const held = world.objects.find((object) => isHeldBy(object, actor));
-  if (!held) return [];
-  return [
-    {
-      action: {
-        type: "give",
-        objectId: held.id,
-        to: { kind: "figure", id: target.id },
-      },
+  const recipient: ActorRef = { kind: "figure", id: target.id };
+  const refusal =
+    requireGiveTarget(world, actor, pose, recipient)?.refusal ?? null;
+  return world.objects
+    .filter(
+      (object) =>
+        isHeldBy(object, actor) && object.affordances.includes("give"),
+    )
+    .map((object) => ({
+      action: { type: "give", objectId: object.id, to: recipient },
       affordance: "give",
-      label: held.name,
-      refusal: null,
-    },
-  ];
+      label: object.name,
+      refusal,
+    }));
 }
 
 function actionForAffordance(
-  affordance: ObjectAffordance,
+  affordance: Exclude<ObjectAffordance, "give" | "put">,
   object: WorldObjectState,
-  actor: ActorRef,
-): WorldAction {
+): ActionOption["action"] {
   switch (affordance) {
+    case "examine":
+      return { type: "examine", objectId: object.id };
     case "take":
       return { type: "take", objectId: object.id };
     case "drop":
       return { type: "drop", objectId: object.id };
-    case "give":
-      return { type: "give", objectId: object.id, to: actor };
-    case "put":
-      return { type: "put", objectId: object.id, intoObjectId: object.id };
     case "open":
       return { type: "open", targetId: object.id };
     case "close":
@@ -378,28 +447,8 @@ function execTake(
   if (blocked) return blocked;
   if (object.mobility !== "carryable") return refused("cannot take this");
 
-  if (object.location.kind === "inside") {
-    const parent = world.objectById.get(object.location.objectId);
-    if (!parent) return refused("no such object");
-    if (parent.state.open !== true) return refused("container is closed");
-    const parentHere = parent.location.kind === "room" ? parent.location : null;
-    if (parentHere) {
-      if (parentHere.roomId !== pose.roomId) return refused("different room");
-      if (!inReachOfObject(pose, parent)) return refused("out of reach");
-      if (!world.hasPath(pose.roomId, pose, tileOf(parentHere), parent.id)) {
-        return refused("no path");
-      }
-    }
-  } else if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId)
-      return refused("different room");
-    if (!inReachOfObject(pose, object)) return refused("out of reach");
-    if (!world.hasPath(pose.roomId, pose, tileOf(object.location), object.id)) {
-      return refused("no path");
-    }
-  } else {
-    return refused("cannot take this");
-  }
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
 
   const fromRoomId =
     object.location.kind === "room" ? object.location.roomId : null;
@@ -434,11 +483,17 @@ function execDrop(
   let dest: { x: number; y: number } | null;
   if (action.x !== undefined && action.y !== undefined) {
     dest = { x: Math.round(action.x), y: Math.round(action.y) };
-    if (!world.canWalk(pose.roomId, dest.x, dest.y, object.id)) {
+    if (Math.hypot(dest.x - pose.x, dest.y - pose.y) > DEFAULT_REACH) {
+      return refused("out of reach");
+    }
+    if (!world.hasPath(pose.roomId, pose, dest, object.id)) {
+      return refused("no path");
+    }
+    if (!canPlaceObject(world, pose.roomId, object, dest.x, dest.y)) {
       return refused("blocked");
     }
   } else {
-    dest = dropAtFeet(world, pose, object.id);
+    dest = dropAtFeet(world, pose, object);
     if (!dest) return refused("no space");
   }
 
@@ -476,14 +531,8 @@ function execGive(
   if (!isHeldBy(object, actor)) return refused("not held");
   const blocked = requireAffordance(object, "give");
   if (blocked) return blocked;
-  if (actorsEqual(actor, action.to)) return refused("already held");
-
-  const toPose = poseOf(world, action.to);
-  if (!toPose) return refused("actor does not exist");
-  if (toPose.roomId !== pose.roomId) return refused("different room");
-  if (Math.hypot(pose.x - toPose.x, pose.y - toPose.y) > DEFAULT_REACH) {
-    return refused("out of reach");
-  }
+  const inaccessible = requireGiveTarget(world, actor, pose, action.to);
+  if (inaccessible) return inaccessible;
 
   object.location = { kind: "held", actor: action.to };
   syncKeyPossession(world, object);
@@ -514,14 +563,8 @@ function execPut(
   if (!isHeldBy(object, actor)) return refused("not held");
   const blocked = requireAffordance(object, "put");
   if (blocked) return blocked;
-  if (!isContainer(container)) return refused("not a container");
-  if (container.state.open !== true) return refused("container is closed");
-  if (container.location.kind === "room") {
-    if (container.location.roomId !== pose.roomId) {
-      return refused("different room");
-    }
-    if (!inReachOfObject(pose, container)) return refused("out of reach");
-  }
+  const inaccessible = requirePutTarget(world, actor, pose, object, container);
+  if (inaccessible) return inaccessible;
 
   object.location = { kind: "inside", objectId: container.id };
   syncKeyPossession(world, object);
@@ -550,14 +593,8 @@ function execOpen(
   if (!object) return refused("no such object");
   const blocked = requireAffordance(object, "open");
   if (blocked) return blocked;
-  if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId)
-      return refused("different room");
-    if (!inReachOfObject(pose, object)) return refused("out of reach");
-    if (!world.hasPath(pose.roomId, pose, tileOf(object.location), object.id)) {
-      return refused("no path");
-    }
-  }
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
   if (object.state.locked) {
     if (!object.keyId || !actorHasKey(world, actor, object.keyId)) {
       return refused(object.interaction?.refusal ?? "locked");
@@ -584,11 +621,8 @@ function execClose(
   if (!object) return refused("no such object");
   const blocked = requireAffordance(object, "close");
   if (blocked) return blocked;
-  if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId)
-      return refused("different room");
-    if (!inReachOfObject(pose, object)) return refused("out of reach");
-  }
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
   object.state.open = false;
   return succeed(world, {
     rooms: [pose.roomId],
@@ -603,11 +637,8 @@ function execOpenDoor(
   pose: ActorPose,
   door: WorldDoorView,
 ): WorldActionResult {
-  if (door.fromRoomId !== pose.roomId) return refused("different room");
-  if (!inReachOfDoor(pose, door)) return refused("out of reach");
-  if (!world.hasPath(pose.roomId, pose, { x: door.x, y: door.y })) {
-    return refused("no path");
-  }
+  const inaccessible = requireDoorAccess(world, pose, door);
+  if (inaccessible) return inaccessible;
   // Sealed doors are sleeper-only; patch.ts openDoor restores sealHistory.
   if (door.type === "sealed") return refused("sealed");
   if (door.type === "keyLock") {
@@ -617,7 +648,7 @@ function execOpenDoor(
   } else if (door.type === "leverLock" || door.type === "puzzleLock") {
     if (!world.canPassDoor(door.id)) return refused("locked");
   }
-  world.setDoorType(door.id, "open");
+  world.setDoorClosed(door.id, false);
   return succeed(world, {
     rooms: compact([door.fromRoomId, door.toRoomId]),
     objects: [],
@@ -631,9 +662,10 @@ function execCloseDoor(
   pose: ActorPose,
   door: WorldDoorView,
 ): WorldActionResult {
-  if (door.fromRoomId !== pose.roomId) return refused("different room");
-  if (!inReachOfDoor(pose, door)) return refused("out of reach");
-  world.setDoorType(door.id, door.keyId ? "keyLock" : "sealed");
+  const inaccessible = requireDoorAccess(world, pose, door);
+  if (inaccessible) return inaccessible;
+  if (door.type === "sealed") return refused("sealed");
+  world.setDoorClosed(door.id, true);
   return succeed(world, {
     rooms: compact([door.fromRoomId, door.toRoomId]),
     objects: [],
@@ -651,11 +683,8 @@ function execActivate(
   if (!object) return refused("no such object");
   const blocked = requireAffordance(object, "activate");
   if (blocked) return blocked;
-  if (object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId)
-      return refused("different room");
-    if (!inReachOfObject(pose, object)) return refused("out of reach");
-  }
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
   object.state.active = true;
   return succeed(world, {
     rooms: [pose.roomId],
@@ -679,22 +708,17 @@ function execUse(
   if (object.mobility === "carryable" && !held) {
     return refused("not held");
   }
-  if (!held && object.location.kind === "room") {
-    if (object.location.roomId !== pose.roomId)
-      return refused("different room");
-    if (!inReachOfObject(pose, object)) return refused("out of reach");
-  }
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
 
   if (action.targetId) {
     const targetObject = world.objectById.get(action.targetId);
     const targetDoor = world.getDoor(action.targetId);
     if (!targetObject && !targetDoor) return refused("no such object");
-    if (targetObject?.location.kind === "room") {
-      if (targetObject.location.roomId !== pose.roomId) {
-        return refused("different room");
-      }
-      if (!inReachOfObject(pose, targetObject)) return refused("out of reach");
-    }
+    const inaccessibleTarget = targetObject
+      ? requireObjectAccess(world, actor, pose, targetObject)
+      : requireDoorAccess(world, pose, targetDoor!);
+    if (inaccessibleTarget) return inaccessibleTarget;
   }
 
   return succeed(world, {
@@ -711,6 +735,109 @@ function execUse(
   });
 }
 
+/** Interpret bounded physical deltas; never let narrative text mutate structure. */
+function execExpressive(
+  world: WorldMutator,
+  actor: AnyActor,
+  pose: ActorPose,
+  action: Extract<WorldAction, { type: "alter" | "gesture" }>,
+): WorldActionResult {
+  if (
+    typeof action.verb !== "string" ||
+    action.verb.trim().length === 0 ||
+    action.verb.length > MAX_OBJECT_VERB_LENGTH
+  )
+    return refused("invalid interaction text");
+  const verb = action.verb.trim();
+  const object = world.objectById.get(action.objectId);
+  if (!object) return refused("no such object");
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
+  if (object.interaction?.refusal) return refused(object.interaction.refusal);
+  if (action.targetId !== undefined) {
+    const targetObject = world.objectById.get(action.targetId);
+    const targetDoor = world.getDoor(action.targetId);
+    if (!targetObject && !targetDoor) return refused("no such object");
+    const targetAccess = targetObject
+      ? requireObjectAccess(world, actor, pose, targetObject)
+      : requireDoorAccess(world, pose, targetDoor!);
+    if (targetAccess) return targetAccess;
+    if (targetObject?.interaction?.refusal)
+      return refused(targetObject.interaction.refusal);
+  }
+  if (action.type === "gesture") {
+    return succeed(world, {
+      rooms: [pose.roomId],
+      objects: [object.id],
+      events: [
+        {
+          type: "object.gestured",
+          objectId: object.id,
+          targetId: action.targetId ?? null,
+          actor,
+          verb,
+          effect: "none",
+        },
+      ],
+    });
+  }
+  const raw = action.changes;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw))
+    return refused("invalid physical changes");
+  const allowed = new Set(["broken", "wet", "dirty", "inscription"]);
+  if (Object.keys(raw).some((key) => !allowed.has(key)))
+    return refused("unsupported physical change");
+  const changes: WorldObjectAlteration = {};
+  if (raw.broken !== undefined) {
+    if (raw.broken !== true) return refused("cannot repair this");
+    if (object.mobility === "fixed")
+      return refused("cannot break a fixed object");
+    changes.broken = true;
+  }
+  for (const key of ["wet", "dirty"] as const) {
+    if (raw[key] === undefined) continue;
+    if (typeof raw[key] !== "boolean")
+      return refused("invalid physical changes");
+    changes[key] = raw[key];
+  }
+  if (raw.inscription !== undefined) {
+    if (
+      typeof raw.inscription !== "string" ||
+      raw.inscription.length > MAX_OBJECT_INSCRIPTION_LENGTH
+    ) {
+      return refused("invalid inscription");
+    }
+    changes.inscription = raw.inscription;
+  }
+  if (Object.keys(changes).length === 0)
+    return refused("no physical change requested");
+  if (
+    Object.entries(changes).every(
+      ([key, value]) =>
+        object.state[key as keyof WorldObjectAlteration] === value,
+    )
+  ) {
+    return refused("already in that state");
+  }
+  const before = { ...object.state };
+  Object.assign(object.state, changes);
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [object.id],
+    events: [
+      {
+        type: "object.changed",
+        objectId: object.id,
+        targetId: action.targetId ?? null,
+        actor,
+        verb,
+        before,
+        after: { ...object.state },
+      },
+    ],
+  });
+}
+
 function execTraverse(
   world: WorldMutator,
   actor: ActorRef,
@@ -719,13 +846,14 @@ function execTraverse(
 ): WorldActionResult {
   const door = world.getDoor(doorId);
   if (!door) return refused("no such object");
-  if (door.fromRoomId !== pose.roomId) return refused("different room");
-  if (!inReachOfDoor(pose, door)) return refused("out of reach");
-  if (!world.hasPath(pose.roomId, pose, { x: door.x, y: door.y })) {
-    return refused("no path");
-  }
+  const inaccessible = requireDoorAccess(world, pose, door);
+  if (inaccessible) return inaccessible;
   if (!mayPassDoor(world, actor, door)) return refused("locked");
+  if (!world.canWalk(door.toRoomId, door.toX, door.toY)) {
+    return refused("blocked arrival");
+  }
 
+  world.setDoorClosed(door.id, false);
   const next = { roomId: door.toRoomId, x: door.toX, y: door.toY };
   setPose(world, actor, next);
   return succeed(world, {
@@ -768,13 +896,15 @@ function poseAtAction(
     };
   }
   const id =
-    "targetId" in action
-      ? action.targetId
-      : "objectId" in action
-        ? action.objectId
-        : "doorId" in action
-          ? action.doorId
-          : null;
+    action.type === "alter" || action.type === "gesture"
+      ? action.objectId
+      : "targetId" in action
+        ? action.targetId
+        : "objectId" in action
+          ? action.objectId
+          : "doorId" in action
+            ? action.doorId
+            : null;
   if (!id) return world.getPlayerPose();
   const door = world.getDoor(id);
   if (door) return { roomId: door.fromRoomId, x: door.x, y: door.y };
@@ -796,12 +926,28 @@ function execAsSystem(
   action: WorldAction,
 ): WorldActionResult {
   switch (action.type) {
-    case "open":
+    case "open": {
+      const door = world.getDoor(action.targetId);
+      if (actor.kind === "script" && door?.type === "sealed") {
+        world.setDoorType(door.id, "open");
+        world.setDoorClosed(door.id, false);
+        return succeed(world, {
+          rooms: [door.fromRoomId, door.toRoomId],
+          objects: [],
+          events: [{ type: "door.opened", doorId: door.id, actor }],
+        });
+      }
       return execOpen(world, actor, pose, action.targetId);
+    }
     case "close":
       return execClose(world, actor, pose, action.targetId);
     case "take":
       return execSystemTake(world, actor, pose, action.objectId);
+    case "alter":
+    case "gesture":
+      return actor.kind === "script"
+        ? execExpressive(world, actor, pose, action)
+        : refused("system actor cannot perform this action");
     default:
       return refused("system actor cannot perform this action");
   }
@@ -854,6 +1000,137 @@ function requireAffordance(
   return refused(`cannot ${affordance} this`);
 }
 
+function requireGiveTarget(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  recipient: ActorRef,
+): WorldActionResult | null {
+  if (actorsEqual(actor, recipient)) return refused("already held");
+  const toPose = poseOf(world, recipient);
+  if (!toPose) return refused("actor does not exist");
+  if (toPose.roomId !== pose.roomId) return refused("different room");
+  if (Math.hypot(pose.x - toPose.x, pose.y - toPose.y) > DEFAULT_REACH) {
+    return refused("out of reach");
+  }
+  return world.hasPath(pose.roomId, pose, toPose) ? null : refused("no path");
+}
+
+function requirePutTarget(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  object: WorldObjectState,
+  container: WorldObjectState,
+): WorldActionResult | null {
+  if (!isContainer(container)) return refused("not a container");
+  if (container.state.open !== true) return refused("container is closed");
+  const ancestry = new Set<string>();
+  let ancestor: WorldObjectState | undefined = container;
+  while (ancestor) {
+    if (ancestor.id === object.id || ancestry.has(ancestor.id)) {
+      return refused("circular containment");
+    }
+    ancestry.add(ancestor.id);
+    ancestor =
+      ancestor.location.kind === "inside"
+        ? world.objectById.get(ancestor.location.objectId)
+        : undefined;
+  }
+  return requireObjectAccess(world, actor, pose, container);
+}
+
+/** Resolve every container boundary before allowing an embodied interaction. */
+function requireObjectAccess(
+  world: WorldMutator,
+  actor: AnyActor,
+  pose: ActorPose,
+  object: WorldObjectState,
+): WorldActionResult | null {
+  const visited = new Set<string>();
+  let current = object;
+  while (true) {
+    if (visited.has(current.id)) return refused("circular containment");
+    visited.add(current.id);
+    switch (current.location.kind) {
+      case "removed":
+        return refused("already gone");
+      case "held":
+        return isActorRef(actor) && isHeldBy(current, actor)
+          ? null
+          : refused("not held");
+      case "inside": {
+        const parent = world.objectById.get(current.location.objectId);
+        if (!parent) return refused("no such object");
+        if (parent.state.open !== true) return refused("container is closed");
+        current = parent;
+        break;
+      }
+      case "room":
+        if (current.location.roomId !== pose.roomId) {
+          return refused("different room");
+        }
+        if (!inReachOfObject(pose, current)) return refused("out of reach");
+        return hasObjectApproach(world, pose, current)
+          ? null
+          : refused("no path");
+    }
+  }
+}
+
+function hasObjectApproach(
+  world: WorldMutator,
+  pose: ActorPose,
+  object: WorldObjectState,
+): boolean {
+  if (object.location.kind !== "room") return false;
+  if (world.hasPath(pose.roomId, pose, tileOf(object.location), object.id))
+    return true;
+  if (!object.body) return false;
+  // A prop can start on a wall (a window, for example). Its authored
+  // footprint may still be reachable from the floor along another edge.
+  const left = Math.floor(object.location.x);
+  const top = Math.floor(object.location.y);
+  for (let y = top - 1; y <= top + object.body.h; y += 1) {
+    for (let x = left - 1; x <= left + object.body.w; x += 1) {
+      const withinX = x >= left && x < left + object.body.w;
+      const withinY = y >= top && y < top + object.body.h;
+      if (!withinX && !withinY) continue;
+      if (
+        world.canWalk(pose.roomId, x, y) &&
+        world.hasPath(pose.roomId, pose, { x, y })
+      )
+        return true;
+    }
+  }
+  return false;
+}
+
+/** Wall thresholds are entered from an adjacent floor tile, never punched open. */
+function requireDoorAccess(
+  world: WorldMutator,
+  pose: ActorPose,
+  door: WorldDoorView,
+): WorldActionResult | null {
+  if (door.fromRoomId !== pose.roomId) return refused("different room");
+  if (!inReachOfDoor(pose, door)) return refused("out of reach");
+  for (let y = door.y - 1; y <= door.y + door.h; y += 1) {
+    for (let x = door.x - 1; x <= door.x + door.w; x += 1) {
+      const withinX = x >= door.x && x < door.x + door.w;
+      const withinY = y >= door.y && y < door.y + door.h;
+      if (!withinX && !withinY) continue;
+      if (Math.hypot(x - pose.x, y - pose.y) > DEFAULT_REACH) continue;
+      if (
+        world.canWalk(pose.roomId, x, y) &&
+        world.hasPath(pose.roomId, pose, { x, y })
+      ) {
+        return null;
+      }
+    }
+  }
+  return refused("no path");
+}
+
 function reachOf(object: WorldObjectState): number {
   return object.interaction?.reach ?? DEFAULT_REACH;
 }
@@ -903,10 +1180,27 @@ function tileOf(location: { x: number; y: number }): { x: number; y: number } {
   return { x: Math.round(location.x), y: Math.round(location.y) };
 }
 
+function canPlaceObject(
+  world: WorldMutator,
+  roomId: string,
+  object: WorldObjectState,
+  x: number,
+  y: number,
+): boolean {
+  const width = object.body?.w ?? 1;
+  const height = object.body?.h ?? 1;
+  for (let dy = 0; dy < height; dy += 1) {
+    for (let dx = 0; dx < width; dx += 1) {
+      if (!world.canWalk(roomId, x + dx, y + dy, object.id)) return false;
+    }
+  }
+  return true;
+}
+
 function dropAtFeet(
   world: WorldMutator,
   pose: ActorPose,
-  ignoreObjectId?: string,
+  object: WorldObjectState,
 ): { x: number; y: number } | null {
   const x = Math.round(pose.x);
   const y = Math.round(pose.y);
@@ -924,7 +1218,11 @@ function dropAtFeet(
   for (const [dx, dy] of candidates) {
     const tx = x + dx;
     const ty = y + dy;
-    if (world.canWalk(pose.roomId, tx, ty, ignoreObjectId)) {
+    if (Math.hypot(tx - pose.x, ty - pose.y) > DEFAULT_REACH) continue;
+    if (
+      canPlaceObject(world, pose.roomId, object, tx, ty) &&
+      world.hasPath(pose.roomId, pose, { x: tx, y: ty }, object.id)
+    ) {
       return { x: tx, y: ty };
     }
   }

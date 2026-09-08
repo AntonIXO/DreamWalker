@@ -53,6 +53,7 @@ export const ru: TranslationSchema = {
     key_verbs: "что ещё можно сделать с человеком",
     key_journal: "журнал людей",
     key_words: "блокнот шести слов",
+    key_inventory: "вещи и действия словами",
     key_help: "это окно",
     key_debug: "карта, граф миссии, журнал правок",
     key_heartbeat: "разбудить спящего сейчас",

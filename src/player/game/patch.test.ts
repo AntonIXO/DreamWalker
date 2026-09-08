@@ -428,3 +428,109 @@ describe("MapPatch embodied wrappers", () => {
     expect(world.doorById.get("a-to-b")!.type).toBe("keyLock");
   });
 });
+
+describe("live interest objects", () => {
+  test("placing and moving an interest updates the object catalog and its slot", () => {
+    const world = makeWorld();
+    const interest = POPULATION.interests[0]!;
+    expect(
+      applyPatch(world, { kind: "placeInterest", interest, reason: "test" }).ok,
+    ).toBe(true);
+    const placed = world.interests.find((entry) => entry.id === interest.id)!;
+    const object = world.objectById.get(interest.id);
+    expect(object).toBeDefined();
+    expect(world.objects).toContain(object!);
+    expect(object?.location).toEqual({
+      kind: "room",
+      roomId: placed.roomId,
+      x: placed.x,
+      y: placed.y,
+    });
+    expect(
+      applyPatch(world, {
+        kind: "moveInterest",
+        interestId: interest.id,
+        toRoomId: "b",
+        reason: "test",
+      }).ok,
+    ).toBe(true);
+    expect(object?.location).toEqual({
+      kind: "room",
+      roomId: "b",
+      x: placed.x,
+      y: placed.y,
+    });
+    expect(
+      world.roomById
+        .get("b")!
+        .figureSlots.some((slot) => slot.id === placed.slotId),
+    ).toBe(true);
+  });
+
+  test("an existing migrated interest moves in both catalogs", () => {
+    const world = makeWorld();
+    installPopulation(world, POPULATION);
+    const interest = world.interests[0]!;
+    const object = world.objectById.get(interest.id)!;
+    expect(
+      applyPatch(world, {
+        kind: "moveInterest",
+        interestId: interest.id,
+        toRoomId: "b",
+        reason: "test",
+      }).ok,
+    ).toBe(true);
+    expect(object.location).toEqual({
+      kind: "room",
+      roomId: "b",
+      x: interest.x,
+      y: interest.y,
+    });
+  });
+
+  test("a dead figure's remains are physical objects before and after reset", () => {
+    const world = makeWorld();
+    const figure = world.figures[0]!;
+    expect(
+      applyPatch(world, {
+        kind: "markFigure",
+        figureId: figure.id,
+        fate: "dead",
+        quoted: null,
+        reason: "test",
+      }).ok,
+    ).toBe(true);
+    const id = `remains:${figure.id}`;
+    expect(world.objectById.get(id)?.holdsShardId).toBe("shard1");
+    resetWorld(world, 2);
+    expect(world.objectById.get(id)?.holdsShardId).toBe("shard1");
+    expect(world.objects).toContain(world.objectById.get(id)!);
+  });
+
+  test("a sleeper move cannot confiscate an interest that someone now holds", () => {
+    const world = makeWorld();
+    installPopulation(world, POPULATION);
+    const interest = world.interests[0]!;
+    const object = world.objectById.get(interest.id)!;
+    object.location = { kind: "held", actor: { kind: "player" } };
+    expect(
+      applyPatch(world, {
+        kind: "moveInterest",
+        interestId: interest.id,
+        toRoomId: "b",
+        reason: "test",
+      }).ok,
+    ).toBe(false);
+    expect(
+      applyPatch(world, {
+        kind: "removeInterest",
+        interestId: interest.id,
+        reason: "test",
+      }).ok,
+    ).toBe(false);
+    expect(object.location).toEqual({
+      kind: "held",
+      actor: { kind: "player" },
+    });
+  });
+});

@@ -79,6 +79,15 @@ export class MindMemory {
     }
   }
 
+  snapshot(): StoredMindState {
+    return structuredClone(this.state);
+  }
+
+  restore(state: StoredMindState): void {
+    this.state = structuredClone(state);
+    this.save();
+  }
+
   get knownShardIds(): readonly string[] {
     return this.state.knownShardIds;
   }

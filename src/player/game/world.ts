@@ -32,6 +32,7 @@ import { clampExhaustion } from "./exhaustion";
 import type { ScriptFlag } from "../../shared/pack";
 import { cloneObject, type WorldObjectState } from "../../shared/world-object";
 import { migrateWorldObjects } from "./object-migration";
+import { createWorldMind, type WorldMindState } from "../../shared/world-mind";
 
 export interface FigureState extends FigurePlacement {
   facing: Direction;
@@ -112,6 +113,8 @@ export interface WorldState {
   baseObjects: WorldObjectState[];
   /** Bumped on every successful world action. */
   revision: number;
+  /** Physical event receipts and their event-time witnesses; forgotten each cycle. */
+  worldMind: WorldMindState;
 
   /** What the sanitar has got hold of. Doors consult these. */
   keysHeld: Set<string>;
@@ -229,6 +232,7 @@ export function createWorld(artifact: DreamArtifact): WorldState {
     objectById: indexObjects(objects),
     baseObjects: objects.map(cloneObject),
     revision: 0,
+    worldMind: createWorldMind(),
     keysHeld: new Set(),
     leversPulled: new Set(),
     puzzlesSolved: new Set(),
@@ -319,8 +323,15 @@ export function resetWorld(world: WorldState, cycle = 1): void {
   world.objects.push(...world.baseObjects.map(cloneObject));
   world.objectById = indexObjects(world.objects);
   world.revision = 0;
+  world.worldMind = createWorldMind();
   // The rebuild above resurrects everybody. This puts back what was done to them.
   applyFateLedger(world, cycle);
+  for (const interest of world.interests) {
+    if (world.objectById.has(interest.id)) continue;
+    const object = migrateWorldObjects([], [interest])[0]!;
+    world.objects.push(object);
+    world.objectById.set(object.id, object);
+  }
 
   world.currentRoomId = world.artifact.spawn.roomId;
 

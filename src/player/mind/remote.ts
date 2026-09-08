@@ -11,13 +11,19 @@ import type {
   FigureMemory,
   WorldSnapshot,
   WorldSnapshotObject,
+  NpcExecutionFeedback,
+  ActionRequestPayload,
+  ActionResult,
+  PlayerActionLine,
 } from "../../shared/ai";
 import type { ActorPose, WorldObjectState } from "../../shared/world-object";
 import type { DreamArtifact } from "../../shared/dream";
 import { fallbackPopulation } from "../../shared/population";
 import { isMoneyHotspot, rollWallet } from "../../shared/wallet";
 import { RETURNS_WHOLE } from "../../shared/verbs";
-import type { WorldState } from "../game/world";
+import { worldMindForFigure } from "../../shared/world-mind";
+import { type WorldState } from "../game/world";
+import { bindWorldMutator, staticPlayerPose } from "../game/world-mutator";
 import { MindMemory } from "./memory";
 import type { Observation } from "./observation";
 import type {
@@ -29,6 +35,8 @@ import type {
 import { lookAt } from "../../../dreams/son/looks";
 
 const REQUEST_TIMEOUT_MS = 25_000;
+/** A dialogue can observe, preview, and act before producing its spoken reply. */
+const DIALOGUE_TIMEOUT_MS = 60_000;
 const INHABIT_TIMEOUT_MS = 20_000;
 /** Spoken turns kept for the model. Two lines per exchange; this is the cycle. */
 const TRANSCRIPT_LINES = 80;
@@ -71,6 +79,7 @@ export interface SnapshotExtras {
 
 function snapshotObjectOf(object: WorldObjectState): WorldSnapshotObject {
   return {
+    interaction: object.interaction ? { ...object.interaction } : null,
     id: object.id,
     name: object.name,
     location: { ...object.location },
@@ -100,7 +109,10 @@ export function snapshot(
   // out of `world.figures` is what makes them gone; leaving them out of here would make
   // them never have existed, and then nobody could say «его нет там, где он был».
   const absent = [...world.fates.entries()]
-    .filter(([id]) => !world.figures.some((figure) => figure.id === id))
+    .filter(
+      ([id]) =>
+        !hidden(id) && !world.figures.some((figure) => figure.id === id),
+    )
     .map(([id, record]) => ({
       id,
       name: world.baseFigures.find((figure) => figure.id === id)?.name ?? id,
@@ -115,6 +127,17 @@ export function snapshot(
     }));
 
   return {
+    worldMind:
+      forFigureId === null
+        ? structuredClone(world.worldMind.events)
+        : worldMindForFigure(world.worldMind, forFigureId),
+    geometry: Object.fromEntries(
+      world.rooms.map((room) => [
+        room.id,
+        { width: room.width, height: room.height, cells: [...room.cells] },
+      ]),
+    ),
+    keysHeld: [...world.keysHeld],
     rooms: world.rooms.map((room) => ({
       id: room.id,
       name: room.name,
@@ -123,16 +146,9 @@ export function snapshot(
       visitCount: world.visitCounts.get(room.id) ?? 0,
       tags: room.tags,
     })),
-    doors: [...world.doorById.entries()].map(([id, door]) => ({
-      id,
-      type: door.type,
-      fromRoomId: world.roomIdByDoorId.get(id) ?? "",
-      toRoomId: door.toRoomId,
-      x: door.x,
-      y: door.y,
-      keyId: door.keyId,
-      threshold: door.threshold,
-    })),
+    doors: [
+      ...bindWorldMutator(world, staticPlayerPose(null)).doorById.values(),
+    ],
     figures: [
       ...world.figures.map((figure) => ({
         id: figure.id,
@@ -144,18 +160,16 @@ export function snapshot(
         role: figure.role,
         personality: figure.personality,
         activity: figure.activity,
-        record: world.fates.get(figure.id) ?? null,
+        record: hidden(figure.id) ? null : (world.fates.get(figure.id) ?? null),
       })),
       ...absent,
-    ]
-      .filter((figure) => !hidden(figure.id))
-      .map(({ record, ...figure }) => ({
-        ...figure,
-        fate: record?.fate ?? "present",
-        fateCycle: record?.cycle ?? null,
-        fateRoomId: record?.roomId ?? null,
-        fateQuoted: record?.quoted ?? null,
-      })),
+    ].map(({ record, ...figure }) => ({
+      ...figure,
+      fate: record?.fate ?? "present",
+      fateCycle: record?.cycle ?? null,
+      fateRoomId: record?.roomId ?? null,
+      fateQuoted: record?.quoted ?? null,
+    })),
     interests: world.interests.map((interest) => ({
       id: interest.id,
       name: interest.name,
@@ -198,6 +212,7 @@ async function streamRequest<T>(
     body: JSON.stringify(payload),
     signal,
   });
+  signal.throwIfAborted();
   if (!response.body)
     throw new RemoteMindError("internal", "Сон не вернул поток.");
 
@@ -215,19 +230,25 @@ async function streamRequest<T>(
     }
   };
 
-  while (true) {
-    const { value: chunk, done } = await reader.read();
-    if (done) break;
-    pending += chunk;
-    const lines = pending.split("\n");
-    pending = lines.pop() ?? "";
-    for (const line of lines) consume(line);
+  try {
+    while (true) {
+      const { value: chunk, done } = await reader.read();
+      signal.throwIfAborted();
+      if (done) break;
+      pending += chunk;
+      const lines = pending.split("\n");
+      pending = lines.pop() ?? "";
+      for (const line of lines) consume(line);
+    }
+    consume(pending);
+    signal.throwIfAborted();
+    if (value === undefined) {
+      throw new RemoteMindError("internal", "Сон оборвал ответ.");
+    }
+    return value;
+  } finally {
+    reader.releaseLock();
   }
-  consume(pending);
-  if (value === undefined) {
-    throw new RemoteMindError("internal", "Сон оборвал ответ.");
-  }
-  return value;
 }
 
 export async function inhabitDream(
@@ -263,6 +284,7 @@ export async function inhabitDream(
 export class RemoteMind implements DreamMind {
   readonly name = "remote";
   private readonly figureMemories = new Map<string, FigureMemory>();
+  private actionHistory: PlayerActionLine[] = [];
   private activeController: AbortController | null = null;
   private failures = 0;
 
@@ -281,10 +303,19 @@ export class RemoteMind implements DreamMind {
     return this.failures;
   }
 
-  private controller(): AbortController {
+  private controller(timeoutMs = REQUEST_TIMEOUT_MS): AbortController {
     this.abort();
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const timeout = setTimeout(
+      () =>
+        controller.abort(
+          new DOMException(
+            "The dream took too long to answer.",
+            "TimeoutError",
+          ),
+        ),
+      timeoutMs,
+    );
     controller.signal.addEventListener("abort", () => clearTimeout(timeout), {
       once: true,
     });
@@ -297,8 +328,16 @@ export class RemoteMind implements DreamMind {
     if (this.activeController === controller) this.activeController = null;
   }
 
-  private failed(error: unknown): boolean {
-    if (error instanceof DOMException && error.name === "AbortError")
+  private failed(error: unknown, controller: AbortController): boolean {
+    // A deadline is a transport failure and must trigger the advertised fallback.
+    // Walking away or replacing a request must never execute a substitute action.
+    const timedOut = controller.signal.reason?.name === "TimeoutError";
+    if (controller.signal.aborted && !timedOut) return false;
+    if (
+      !timedOut &&
+      error instanceof DOMException &&
+      error.name === "AbortError"
+    )
       return false;
     if (error instanceof RemoteMindError && error.code === "aborted")
       return false;
@@ -316,9 +355,10 @@ export class RemoteMind implements DreamMind {
       lines: [],
     };
     const offeredMemory = this.memory.memory(request.offeredMemoryId);
-    const controller = this.controller();
+    const controller = this.controller(DIALOGUE_TIMEOUT_MS);
     const payload: DialogueRequestPayload = {
       slug: this.world.artifact.slug,
+      runId: this.memory.runId,
       cycleNumber: this.context.cycleNumber(),
       figureId: request.figureId,
       utterance: request.utterance,
@@ -344,7 +384,7 @@ export class RemoteMind implements DreamMind {
       this.rememberTurn(request, result, offeredMemory?.id ?? null);
       return result;
     } catch (error) {
-      this.failed(error);
+      this.failed(error, controller);
       throw error;
     } finally {
       this.finish(controller);
@@ -366,6 +406,9 @@ export class RemoteMind implements DreamMind {
     );
     figureMemory.lines = figureMemory.lines.slice(-TRANSCRIPT_LINES);
     figureMemory.summary = result.figureMemorySummary.slice(-800);
+    if (result.intent !== undefined) {
+      figureMemory.intent = result.intent?.trim().slice(0, 240) || null;
+    }
     this.figureMemories.set(request.figureId, figureMemory);
     if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
     if (result.tell) {
@@ -382,13 +425,15 @@ export class RemoteMind implements DreamMind {
   async examine(request: ExamineRequest) {
     // Money hotspots go to the server even when a line is authored for them: the
     // sensory line there depends on the wallet, and the wallet lives only server-side.
-    const looked = isMoneyHotspot(request.hotspotId)
-      ? null
-      : lookAt(request.hotspotId ?? null);
+    const looked =
+      request.objectId || isMoneyHotspot(request.hotspotId)
+        ? null
+        : lookAt(request.hotspotId ?? null);
     if (looked) return looked;
     const controller = this.controller();
     const payload: ExamineRequestPayload = {
       slug: this.world.artifact.slug,
+      objectId: request.objectId ?? null,
       runId: this.memory.runId,
       cycleNumber: this.context.cycleNumber(),
       roomId: request.roomId,
@@ -399,7 +444,9 @@ export class RemoteMind implements DreamMind {
       knownShardIds: [...this.memory.knownShardIds],
       // A thing is still part of the dream, and the dream does not notice what happened
       // to Кирилл either.
-      world: snapshot(this.world, "upper-dynamic", "__thing__"),
+      world: snapshot(this.world, "upper-dynamic", "__thing__", {
+        playerPose: this.context.playerPose?.() ?? null,
+      }),
       locale: getLocale(),
     };
     try {
@@ -409,11 +456,77 @@ export class RemoteMind implements DreamMind {
       if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
       return result;
     } catch (error) {
-      if (!this.failed(error)) throw error;
+      if (!this.failed(error, controller)) throw error;
       return this.fallback.examine(request);
     } finally {
       this.finish(controller);
     }
+  }
+
+  /** Free-form player intent is adjudicated against the same physical world as NPCs. */
+  async act(
+    utterance: string,
+    selectedObjectId: string | null,
+  ): Promise<ActionResult> {
+    const controller = this.controller(DIALOGUE_TIMEOUT_MS);
+    const payload: ActionRequestPayload = {
+      slug: this.world.artifact.slug,
+      runId: this.memory.runId,
+      cycleNumber: this.context.cycleNumber(),
+      utterance,
+      selectedObjectId,
+      history: structuredClone(this.actionHistory),
+      world: snapshot(this.world, "upper-dynamic", "__player__", {
+        playerPose: this.context.playerPose?.() ?? null,
+      }),
+      locale: getLocale(),
+    };
+    // The player remembers their own confirmed actions; other people's unseen acts
+    // are not part of the command interpreter's context.
+    payload.world.worldMind = structuredClone(
+      this.world.worldMind.events
+        .filter((event) => event.actor?.kind === "player")
+        .slice(-12),
+    );
+    try {
+      return await streamRequest<ActionResult>(
+        "/api/ai/action",
+        payload,
+        controller.signal,
+      );
+    } catch (error) {
+      this.failed(error, controller);
+      throw error;
+    } finally {
+      this.finish(controller);
+    }
+  }
+
+  /** Called only after the browser has applied or refused the actual command. */
+  rememberAction(utterance: string, reply: string): void {
+    this.actionHistory.push(
+      { speaker: "player", text: utterance.slice(0, 500) },
+      { speaker: "world", text: reply.slice(0, 800) },
+    );
+    this.actionHistory = this.actionHistory.slice(-16);
+  }
+
+  noteReaction(figureId: string, reply: string): void {
+    const memory = this.figureMemories.get(figureId) ?? {
+      summary: "",
+      lines: [],
+    };
+    memory.lines.push({ speaker: "figure", text: reply.slice(0, 320) });
+    memory.lines = memory.lines.slice(-TRANSCRIPT_LINES);
+    this.figureMemories.set(figureId, memory);
+  }
+
+  snapshotActions(): PlayerActionLine[] {
+    return structuredClone(this.actionHistory);
+  }
+
+  restoreActions(history: readonly PlayerActionLine[] = []): void {
+    this.actionHistory = structuredClone(history.slice(-16));
   }
 
   async mutate(observation: Observation) {
@@ -437,7 +550,7 @@ export class RemoteMind implements DreamMind {
       this.memory.replaceSleeperSummary(result.sleeperSummary);
       return result;
     } catch (error) {
-      if (!this.failed(error)) throw error;
+      if (!this.failed(error, controller)) throw error;
       return this.fallback.mutate(observation);
     } finally {
       this.finish(controller);
@@ -459,7 +572,7 @@ export class RemoteMind implements DreamMind {
         controller.signal,
       );
     } catch (error) {
-      if (!this.failed(error)) throw error;
+      if (!this.failed(error, controller)) throw error;
       // The finale is the one place a stand-in must not guess. A dropped connection
       // is a miss with its own line, never a prize.
       const silent: FinaleResult = {
@@ -480,8 +593,45 @@ export class RemoteMind implements DreamMind {
     return this.figureMemories.get(figureId)?.lines ?? [];
   }
 
-  forgetFigures(): void {
+  /** Store the result of replay, not the model's claim that its plan succeeded. */
+  noteExecution(
+    figureId: string,
+    feedback: readonly NpcExecutionFeedback[],
+  ): void {
+    if (feedback.length === 0) return;
+    const memory = this.figureMemories.get(figureId) ?? {
+      summary: "",
+      lines: [],
+    };
+    memory.execution = structuredClone(feedback.slice(-8));
+    // A sandbox success may have cleared the intent before the real world refused it.
+    // Keep the player's request available for reconsideration on the next turn.
+    if (feedback.some((entry) => !entry.ok) && !memory.intent) {
+      memory.intent =
+        memory.lines
+          .slice()
+          .reverse()
+          .find((line) => line.speaker === "sanitar")
+          ?.text.slice(0, 240) ?? null;
+    }
+    this.figureMemories.set(figureId, memory);
+  }
+
+  snapshotFigures() {
+    return structuredClone(this.figureMemories);
+  }
+
+  restoreFigures(state: ReturnType<RemoteMind["snapshotFigures"]>): void {
+    this.abort();
     this.figureMemories.clear();
+    for (const [id, memory] of state)
+      this.figureMemories.set(id, structuredClone(memory));
+  }
+
+  forgetFigures(): void {
+    this.abort();
+    this.figureMemories.clear();
+    this.actionHistory = [];
     this.fallback.forgetFigures();
   }
 

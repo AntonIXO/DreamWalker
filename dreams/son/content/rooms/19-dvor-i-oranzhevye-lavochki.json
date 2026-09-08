@@ -52,6 +52,7 @@
     },
     {
       "id": "urna-nabitaia-akkuratno",
+      "container": "open",
       "x": 12,
       "y": 6,
       "w": 1,

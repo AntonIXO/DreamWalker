@@ -90,3 +90,55 @@ describe("updatePlayer live objects", () => {
     expect(player.y).toBeLessThan(3 * room.tileSize + 8);
   });
 });
+
+describe("street collision", () => {
+  test("taking an authored solid frees the old footprint on a street map", () => {
+    const world = createWorld(
+      validateDreamArtifact(structuredClone(fixture)) as DreamArtifact,
+    );
+    const room = world.roomById.get("a")!;
+    room.originX = 20;
+    const crate = world.objectById.get("a-crate")!;
+    crate.location = { kind: "held", actor: { kind: "player" } };
+    const player = createPlayer(room, "default");
+    player.x = (room.originX + 3.5) * room.tileSize;
+    player.y = 5.5 * room.tileSize;
+    for (let i = 0; i < 30; i++) {
+      updatePlayer(player, room, world, { x: 0, y: -1 }, 1 / 30);
+    }
+    expect(player.y).toBeLessThan(4 * room.tileSize);
+  });
+
+  test.each(["sealed", "keyLock", "leverLock", "puzzleLock"] as const)(
+    "%s still blocks a continuous street threshold",
+    (type) => {
+      const world = createWorld(
+        validateDreamArtifact(structuredClone(fixture)) as DreamArtifact,
+      );
+      const room = world.roomById.get("a")!;
+      const destination = world.roomById.get("b")!;
+      room.originX = 20;
+      destination.originX = room.originX + room.width;
+      destination.originY = room.originY;
+      const door = room.doors[0]!;
+      Object.assign(door, {
+        x: room.width - 1,
+        y: 4,
+        w: 1,
+        h: 1,
+        type,
+        threshold: "door",
+      });
+      const player = createPlayer(room, "default");
+      player.x = (room.originX + room.width - 1.5) * room.tileSize;
+      player.y = 4.5 * room.tileSize;
+      for (let i = 0; i < 30; i++) {
+        updatePlayer(player, room, world, { x: 1, y: 0 }, 1 / 30);
+      }
+      expect(player.refusedDoorId).toBe(door.id);
+      expect(player.x).toBeLessThan(
+        (room.originX + room.width - 1) * room.tileSize,
+      );
+    },
+  );
+});

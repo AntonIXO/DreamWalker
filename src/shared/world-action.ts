@@ -4,7 +4,13 @@
  * Must stay free of DOM and node APIs.
  */
 
-import type { ActorRef, AnyActor, ObjectAffordance } from "./world-object";
+import type {
+  ActorRef,
+  AnyActor,
+  ObjectAffordance,
+  WorldObjectAlteration,
+  WorldObjectPhysicalState,
+} from "./world-object";
 
 export type WorldActionSource = "player" | "npc" | "script" | "sleeper";
 
@@ -18,6 +24,14 @@ export type WorldAction =
   | { type: "close"; targetId: string }
   | { type: "activate"; objectId: string }
   | { type: "use"; objectId: string; targetId?: string }
+  | {
+      type: "alter";
+      objectId: string;
+      verb: string;
+      changes: WorldObjectAlteration;
+      targetId?: string;
+    }
+  | { type: "gesture"; objectId: string; verb: string; targetId?: string }
   | { type: "traverseDoor"; doorId: string };
 
 /** Sleeper/admin actions NPC tools must never receive. */
@@ -79,6 +93,24 @@ export type WorldEvent =
       actor: AnyActor;
     }
   | {
+      type: "object.changed";
+      objectId: string;
+      targetId: string | null;
+      actor: AnyActor;
+      verb: string;
+      before: WorldObjectPhysicalState;
+      after: WorldObjectPhysicalState;
+    }
+  | {
+      type: "object.gestured";
+      objectId: string;
+      targetId: string | null;
+      actor: AnyActor;
+      verb: string;
+      /** The gesture is observable; no unsupported physical result is claimed. */
+      effect: "none";
+    }
+  | {
       type: "door.opened";
       doorId: string;
       actor: AnyActor;
@@ -118,7 +150,7 @@ export interface WorldActionResult {
 }
 
 export interface ActionOption {
-  action: WorldAction;
+  action: WorldAction | { type: "examine"; objectId: string };
   affordance: ObjectAffordance | "move";
   label: string;
   refusal: string | null;
@@ -140,3 +172,17 @@ export const NPC_ACTION_TYPES: ReadonlySet<WorldAction["type"]> = new Set<
 ]);
 
 export const MAX_WORLD_ACTIONS_PER_TURN = 8;
+
+/** Item-command sessions never move an actor or perform map/admin mutations. */
+export const PLAYER_ACTION_TYPES: ReadonlySet<WorldAction["type"]> = new Set([
+  "take",
+  "drop",
+  "give",
+  "put",
+  "open",
+  "close",
+  "activate",
+  "use",
+  "alter",
+  "gesture",
+]);

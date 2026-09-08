@@ -105,6 +105,11 @@ export class Journal {
     return this.entries.length;
   }
 
+  restore(entries: readonly JournalEntry[]): void {
+    this.entries = structuredClone([...entries]);
+    this.persist();
+  }
+
   clear(): void {
     this.entries = [];
     this.persist();
@@ -117,6 +122,15 @@ export class Cycle {
 
   constructor(private readonly artifact: DreamArtifact) {
     this.remainingMs = artifact.cycle.durationMs;
+  }
+
+  snapshot() {
+    return { number: this.index, remainingMs: this.remainingMs };
+  }
+
+  restore(state: ReturnType<Cycle["snapshot"]>): void {
+    this.index = state.number;
+    this.remainingMs = state.remainingMs;
   }
 
   get number(): number {
