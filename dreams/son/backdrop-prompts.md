@@ -528,16 +528,16 @@ overly practical, and wrong—not merely grimy.
 ## Post-processing and acceptance
 
 - Generate one image per room, never a multi-room sheet.
-- Resize place murals to `320×176` and meta murals to `256×144` with a box/area filter,
-  then remap to the shared 28-color palette without adding a second diffusion pass; the
-  generated source already carries deliberate ordered pixel dithering.
-- `m3-sklad-ostavlennogo` is integrated into the street map with cell-fitted east/south
-  thresholds, so keep it at the exact room size `320×176` rather than the legacy 16:9
-  meta-space size.
+- Preserve every generated room mural at its native high resolution (currently about
+  `1690×931`). Do not reduce it to the logical `320×176` room grid and do not palette-remap
+  the final PNG: Pixi maps the high-resolution underlay onto that world footprint using
+  linear sampling, while collision-authoritative walls, doors and props remain crisp
+  nearest-sampled layers above it.
 - Preserve the lobby mural as a `1152×832` (4× logical resolution) true-color texture;
   Pixi maps it onto the exact `288×208` 18×13 world footprint. Do not palette-reduce this
-  image: the high-resolution detail is intentional and nearest sampling keeps it crisp.
+  image: the high-resolution detail is intentional.
 - Reject any result that is oblique/isometric, hides a named threshold, blocks the central
   route, bakes in people, contains readable text, or loses the room's canonical anomaly.
-- Verify after reduction: silhouettes and approach spaces must still read at 1× scale.
+- Verify in the actual browser viewport: the loaded TextureSource dimensions must match
+  the high-resolution file rather than a reduced thumbnail or atlas fallback.
 - The final filename must remain `<room-id>.png`; `lord build son` publishes them.

@@ -22,6 +22,7 @@ import {
   validateDreamArtifact,
   type DreamArtifact,
 } from "../shared/dream";
+import { isStreetWorld, worldBounds } from "../shared/street";
 import {
   getLocale,
   onLocaleChange,
@@ -206,6 +207,9 @@ async function boot(): Promise<void> {
         ? [{ id: room.id, path: room.graphics.backdropImage }]
         : [],
     ),
+    // Full-resolution room paintings are sampled independently from 16px atlas art.
+    // Two concurrent decodes stay well below Chromium's ImageBitmap pressure limit.
+    { concurrency: 2, scaleMode: "linear" },
   );
 
   // Object art, keyed the way RoomScene asks for it. `strategy: "skip"` means a room
@@ -217,6 +221,7 @@ async function boot(): Promise<void> {
         prop.image ? [{ id: `${room.id}:${prop.id}`, path: prop.image }] : [],
       ),
     ),
+    { concurrency: 4, scaleMode: "nearest" },
   );
 
   const world = createWorld(artifact);
@@ -1211,6 +1216,14 @@ async function boot(): Promise<void> {
       return;
     }
     const room = currentRoom(world);
+    if (isStreetWorld(world.rooms)) {
+      const bounds = worldBounds(world.rooms);
+      camera.setWorldSize(bounds.w, bounds.h);
+      camera.fit(FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h);
+      camera.cutTo(session.player.x, session.player.y);
+      rooms.resizeOverlay(app.screen.width, app.screen.height);
+      return;
+    }
     camera.setWorldSize(room.width, room.height);
     if (room.camera === "follow") {
       camera.fit(FOLLOW_VIEW_TILES.w, FOLLOW_VIEW_TILES.h);

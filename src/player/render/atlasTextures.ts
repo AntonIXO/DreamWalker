@@ -103,12 +103,13 @@ export function variantFor(textures: Texture[], x: number, y: number): Texture {
 export async function loadOptionalTexture(
   url: string,
   alias: string,
+  scaleMode: "nearest" | "linear" = "nearest",
 ): Promise<Texture | null> {
   const texture = await Assets.load<Texture | undefined>(
     {
       src: url,
       alias,
-      data: { scaleMode: "nearest" },
+      data: { scaleMode },
     },
     {
       strategy: "skip",
@@ -117,7 +118,7 @@ export async function loadOptionalTexture(
     },
   );
   if (!texture) return null;
-  texture.source.scaleMode = "nearest";
+  texture.source.scaleMode = scaleMode;
   texture.source.autoGenerateMipmaps = false;
   return texture;
 }
@@ -126,14 +127,32 @@ export async function loadOptionalTexture(
 export async function loadExternalTextures(
   baseUrl: string,
   sources: Array<{ id: string; path: string }>,
+  options: {
+    concurrency?: number;
+    scaleMode?: "nearest" | "linear";
+  } = {},
 ): Promise<Map<string, Texture>> {
   const textures = new Map<string, Texture>();
+  const concurrency = Math.max(1, Math.floor(options.concurrency ?? 4));
+  const scaleMode = options.scaleMode ?? "nearest";
+  let cursor = 0;
+
+  // `Assets.load` caches each file, but feeding the browser a hundred independent PNG
+  // decodes through one Promise.all can still exhaust ImageBitmap/decoder resources.
+  // Keep a small bounded pool: art is optional, but "optional" must not mean that a
+  // valid room silently falls back to grey tiles because its neighbours loaded at once.
   await Promise.all(
-    sources.map(async ({ id, path }) => {
-      const url = `${baseUrl}/${path}`;
-      const texture = await loadOptionalTexture(url, `dream-external:${id}`);
-      if (!texture) return;
-      textures.set(id, texture);
+    Array.from({ length: Math.min(concurrency, sources.length) }, async () => {
+      while (cursor < sources.length) {
+        const source = sources[cursor++]!;
+        const url = `${baseUrl}/${source.path}`;
+        const texture = await loadOptionalTexture(
+          url,
+          `dream-external:${source.id}`,
+          scaleMode,
+        );
+        if (texture) textures.set(source.id, texture);
+      }
     }),
   );
   return textures;
