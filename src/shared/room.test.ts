@@ -15,7 +15,7 @@ function graphics(over: Partial<RoomGraphics> = {}): RoomGraphics {
 }
 
 describe("muralShowsTheRoom", () => {
-  test("a cells painting is the furniture", () => {
+  test("a cells painting is the room-sized underlay", () => {
     expect(
       muralShowsTheRoom(
         graphics({ backdropImage: "assets/rooms/08-apartment.png" }),
@@ -49,12 +49,12 @@ describe("hidePropSprites", () => {
     ).toBe(true);
   });
 
-  test("a painted room hides the brown fallback even if the PNG failed to load", () => {
+  test("a painted room still shows the objects whose rectangles collide", () => {
     expect(
       hidePropSprites({
         tags: [],
         graphics: graphics({ backdropImage: "assets/rooms/08.png" }),
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 });

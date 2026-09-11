@@ -443,12 +443,15 @@ Mood: warm, wet, recently cleaned, physiologically uncomfortable but deadpan.
 ## M3 — Склад оставленного
 
 ```text
-Scene: the supermarket's abandoned-bag shelf repeated toward an impossible horizonless
-depth. Shelves hold backpacks, bean sacks, an unflashed phone, a dented laptop, sleeping
-bag, towel and many empty grey placeholder boxes; half the objects look finished and half
-remain flat blocks. Keep a long clear central aisle and empty shelf/floor positions for
-every object the player may later drop. A distant empty chair faces away, reserving the
-aunt's place without depicting her.
+Scene: an impossible warehouse of abandoned belongings, with shallow shelving embedded
+only into the solid north wall and small stacks embedded into solid perimeter corners.
+Rows 2–9 are one continuous, empty, clearly walkable warehouse floor: no aisle shelves,
+crates, furniture, pits, pillars, dark strips, or freestanding objects. Flat scuffs and
+ghost rectangles may mark where forgotten things used to stand, but must not read as
+obstacles. The exact runtime geometry will be drawn above this atmospheric underlay.
+Exits: solid east wall with one open two-tile doorway exactly at rows 5–6; solid south
+wall with one open two-tile doorway exactly at columns 7–8. Keep direct clear routes from
+the center to both and draw no other exits.
 Mood: maximum static; stretched fluorescent hum and delayed echo made visible in spacing.
 ```
 
@@ -528,6 +531,9 @@ overly practical, and wrong—not merely grimy.
 - Resize place murals to `320×176` and meta murals to `256×144` with a box/area filter,
   then remap to the shared 28-color palette without adding a second diffusion pass; the
   generated source already carries deliberate ordered pixel dithering.
+- `m3-sklad-ostavlennogo` is integrated into the street map with cell-fitted east/south
+  thresholds, so keep it at the exact room size `320×176` rather than the legacy 16:9
+  meta-space size.
 - Preserve the lobby mural as a `1152×832` (4× logical resolution) true-color texture;
   Pixi maps it onto the exact `288×208` 18×13 world footprint. Do not palette-reduce this
   image: the high-resolution detail is intentional and nearest sampling keeps it crisp.

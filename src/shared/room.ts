@@ -199,25 +199,20 @@ export interface RoomGraphics {
   glitchPreset: "none" | "split" | "double-edge" | "wrong-palette";
 }
 
-/**
- * A cells-fitted painting is the room. Atlas prop tiles and object sheets on top of
- * it are the brown blocks sitting on the furniture — every room names `prop` as a
- * fallback, and the object PNGs are opaque 2×2 stamps laid in a row at y=3.
- */
+/** A cells-fitted painting is a room-sized atmospheric underlay. Runtime geometry,
+ * connected thresholds and prop sprites still sit above it and remain authoritative. */
 export function muralShowsTheRoom(graphics: RoomGraphics): boolean {
   return graphics.backdropFit === "cells" && graphics.backdropImage != null;
 }
 
-/**
- * Whether the room should hide prop sprites. Painted rooms already show the furniture;
- * generated streets were scattering the same opaque object sheets as "loot".
- */
+/** Generated route segments have no authored furniture; every actual room shows the
+ * object sprites whose rectangles drive collision. A backdrop is atmosphere, not a
+ * licence to turn real hitboxes invisible. */
 export function hidePropSprites(room: {
   tags: readonly string[];
   graphics: RoomGraphics;
 }): boolean {
-  if (room.tags.includes("route")) return true;
-  return muralShowsTheRoom(room.graphics);
+  return room.tags.includes("route");
 }
 
 export interface MetaConfig {

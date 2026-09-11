@@ -7,13 +7,13 @@
  * A room is small enough that this is cheaper than chunking ever was, and it means
  * entering a room costs one `visible = true` rather than a re-tile.
  *
- * Three layers, in the order a top-down room reads:
+ * Five layers, in the order a top-down room reads:
  *
  *   0  backdrop — the authored PNG, when there is one
- *   1  tiles    — atlas floor/wall art from the ASCII mask, drawn *under* the backdrop
- *                 so a room with art shows the art and a room without still walks
- *   2  props    — authored rects: the prop's own PNG if it has one, else atlas tiles.
- *                 Skipped when a cells mural is loaded: the painting is the furniture.
+ *   1  tiles    — atlas fallback from the ASCII mask, drawn under the backdrop
+ *   1.25 geometry — real walls and threshold cells redrawn over a mural
+ *   1.5 doors   — every real connected threshold, at its actual cell
+ *   2  props    — authored rects at the same coordinates used by collision
  *   3  actors   — the walker and the figures, y-sorted
  *
  * A meta-space sets `backdropFit: "screen"`: its picture is parented outside the camera
@@ -339,11 +339,16 @@ export class RoomScene {
       container.addChild(sprite);
     }
 
-    // A loaded cells mural is the furniture and the architecture. Drawing atlas
-    // `doorOpen` / `prop` tiles over it is how a painted apartment grew a row of brown
-    // triangles and a beige strip across its north wall.
+    // A mural supplies atmosphere, never geometry. The collision mask and connected
+    // doors are redrawn over it so the picture cannot claim a blocked opening is open
+    // or hide a real exit behind arbitrary generated furniture.
     const mural =
       muralShowsTheRoom(room.graphics) && this.backdrops.has(room.id);
+    if (mural) {
+      const geometry = this.drawGeometryOverlay(room);
+      geometry.zIndex = 1.25;
+      container.addChild(geometry);
+    }
 
     const doors = this.drawDoors(room, mural);
     doors.zIndex = 1.5;
@@ -352,7 +357,7 @@ export class RoomScene {
     // One layer for everything standing in the room. Objects used to be a second layer
     // at the same z, drawn after — so an object always covered a prop regardless of who
     // was in front. They are the same kind of thing and now they sort against each other.
-    const props = this.drawProps(room);
+    const props = this.drawProps(room, mural);
     props.zIndex = 2;
     container.addChild(props);
 
@@ -450,11 +455,64 @@ export class RoomScene {
   }
 
   /**
+   * The part of the authored mask a painting is not allowed to lie about.
+   *
+   * Floors stay painted. Walls, wall faces and threshold cells use the same atlas roles
+   * that collision reads, and therefore meet neighbouring street tiles at the exact
+   * published coordinates rather than wherever an image model happened to draw a door.
+   */
+  private drawGeometryOverlay(room: RoomState): Container {
+    const layer = new Container({
+      label: `room-geometry:${room.id}`,
+      eventMode: "none",
+    });
+    const size = room.tileSize;
+
+    for (let y = 0; y < room.height; y++) {
+      for (let x = 0; x < room.width; x++) {
+        const cell = cellAt(room, x, y);
+        if (
+          cell !== "wall" &&
+          cell !== "wallFace" &&
+          cell !== "threshold" &&
+          cell !== "tree"
+        ) {
+          continue;
+        }
+        const role = this.roleFor(room, cell);
+        const textures = this.atlas.roles.get(role);
+        if (textures && textures.length > 0) {
+          layer.addChild(
+            new Sprite({
+              texture: this.tileTexture(room, role, cell, x, y, textures),
+              x: x * size,
+              y: y * size,
+              roundPixels: true,
+              eventMode: "none",
+            }),
+          );
+          continue;
+        }
+        const fill =
+          cell === "wall" || cell === "wallFace" || cell === "tree"
+            ? this.colors.wall
+            : this.colors.metal;
+        layer.addChild(
+          new Graphics({ eventMode: "none", roundPixels: true })
+            .rect(x * size, y * size, size, size)
+            .fill(fill),
+        );
+      }
+    }
+    return layer;
+  }
+
+  /**
    * Thresholds sit above the tiles so a room without a mural still shows its south
    * door. Atlas roles `doorOpen` / `doorLocked` / `doorSealed` already exist.
    *
-   * A cells mural already painted the architecture; stamping those roles on top of
-   * it covers the picture with beige blocks, including across a painted archway.
+   * A mural is not trusted to know where the world graph attached its exits. Every
+   * connected threshold is therefore visible at the coordinates used for traversal.
    */
   private drawDoors(room: RoomState, mural: boolean): Container {
     const layer = new Container({
@@ -495,12 +553,14 @@ export class RoomScene {
         }
       }
     }
-    if (mural || room.tags.includes("route")) return layer;
+    if (room.tags.includes("route")) return layer;
     for (const door of room.doors) {
       if (door.threshold === "rift") continue;
       // Open street doorways are holes in the wall, not beige tiles pasted on the
       // painting. Locked and lift doors still need a mark.
-      if (door.threshold === "door" && door.type === "open") continue;
+      if (!mural && door.threshold === "door" && door.type === "open") {
+        continue;
+      }
       const role =
         door.type === "sealed"
           ? "doorSealed"
@@ -579,15 +639,15 @@ export class RoomScene {
    * you can sleep on — so once they have art it is drawn at the hotspot's own position,
    * anchored at its foot so a walker standing below it draws in front.
    */
-  private drawProps(room: RoomState): Container {
+  private drawProps(room: RoomState, mural: boolean): Container {
     const layer = new Container({
       label: `room-props:${room.id}`,
       eventMode: "none",
       sortableChildren: true,
     });
     const size = room.tileSize;
-    // Atlas `prop` is a brown 16×16 block. Object sheets are the same colour with a
-    // silhouette stamped on. Neither belongs on a painted room or a generated street.
+    // Route pieces have no authored furniture. In every real room these sprites are the
+    // visible counterpart of the exact same rectangles used by collision.
     if (hidePropSprites(room)) return layer;
 
     for (const prop of room.props) {
@@ -598,6 +658,17 @@ export class RoomScene {
         eventMode: "none",
         label: `prop:${prop.id}`,
       });
+      if (mural && prop.solid) {
+        // A square object painting can sit inside a wide collision rect (the pool is
+        // 12×4 tiles). Mark the whole occupied footprint so no part of a hitbox is
+        // invisible even when the illustrative sprite itself is deliberately contained.
+        node.addChild(
+          new Graphics({ eventMode: "none", roundPixels: true })
+            .rect(0, 0, prop.w * size, prop.h * size)
+            .fill({ color: this.colors.ink, alpha: 0.16 })
+            .stroke({ color: this.colors.accent, alpha: 0.5, width: 1 }),
+        );
+      }
       // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
       // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
       // with square art reads as a square thing on a wide footprint, not a stretched
