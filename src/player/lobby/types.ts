@@ -44,7 +44,9 @@ export type FurnitureKind =
   | "drip"
   | "carpet"
   | "plaque"
-  | "gonzo";
+  | "gonzo"
+  /** Solid set dressing painted into the authored lobby mural. */
+  | "decor";
 
 export interface LobbyFurniture {
   id: string;

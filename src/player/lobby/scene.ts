@@ -1,10 +1,10 @@
 /**
- * Draws the procedure room with atlas floor/wall tiles and furniture.
+ * Draws the procedure room from its authored mural, with atlas/furniture fallbacks.
  *
  * Layout follows the hand sketch (`room.png`): north desk / cross / locker / terminal /
- * ward doors, south bed / drip / apparatus / carpet. Furniture is Graphics so a later
- * artist can swap a piece without touching hotspot logic. `cacheAsTexture` is nearest
- * so the drawings stay as crisp as the tiles once the camera zooms them.
+ * ward doors, south bed / drip / apparatus / carpet. The mural is the architecture and
+ * fixed furniture; the generated patient/apparatus painting and live sanitar remain
+ * separate actors. Atlas tiles and Graphics furniture stay as a load-failure fallback.
  */
 
 import { Container, Graphics, Sprite, type Texture } from "pixi.js";
@@ -33,6 +33,7 @@ export class LobbyScene {
     artifact: DreamArtifact,
     atlas: AtlasTextures,
     patientTexture: Texture | null = null,
+    backdropTexture: Texture | null = null,
   ) {
     this.colors = lobbyColors(artifact);
     this.root = new Container({
@@ -43,9 +44,22 @@ export class LobbyScene {
       sortableChildren: true,
     });
 
-    const tiles = this.drawTiles(atlas);
-    tiles.zIndex = 0;
-    this.root.addChild(tiles);
+    if (backdropTexture) {
+      const backdrop = new Sprite({
+        texture: backdropTexture,
+        label: "lobby-backdrop",
+        eventMode: "none",
+        roundPixels: true,
+        width: definition.width * definition.tileSize,
+        height: definition.height * definition.tileSize,
+      });
+      backdrop.zIndex = 0;
+      this.root.addChild(backdrop);
+    } else {
+      const tiles = this.drawTiles(atlas);
+      tiles.zIndex = 0;
+      this.root.addChild(tiles);
+    }
 
     this.furniture = new Container({
       label: "lobby-furniture",
@@ -80,6 +94,18 @@ export class LobbyScene {
       ) {
         continue;
       }
+      // The authored mural already contains the room's fixed furniture. Hotspot and
+      // collision geometry still come from LOBBY_DEFINITION; only the old drawing is
+      // skipped, so a new painting cannot silently rewrite gameplay.
+      if (
+        backdropTexture &&
+        !(
+          !patientTexture &&
+          (piece.kind === "apparatus" || piece.kind === "drip")
+        )
+      ) {
+        continue;
+      }
       const node = this.drawFurniture(piece.kind, piece.w, piece.h);
       node.x = piece.x * definition.tileSize;
       node.y = piece.y * definition.tileSize;
@@ -89,11 +115,13 @@ export class LobbyScene {
       this.furniture.addChild(node);
     }
 
-    this.furniture.cacheAsTexture({
-      scaleMode: "nearest",
-      resolution: 1,
-      antialias: false,
-    });
+    if (!backdropTexture) {
+      this.furniture.cacheAsTexture({
+        scaleMode: "nearest",
+        resolution: 1,
+        antialias: false,
+      });
+    }
 
     this.root.addChild(signals);
 
@@ -216,10 +244,15 @@ export class LobbyScene {
   }
 
   /**
-   * The tank sits on the apparatus tile, not across the whole south wall.
-   * Four tiles tall is the bed/apparatus block; eight ate half the lobby.
+   * Fit the tank to the authored installation pad painted into the lobby mural.
+   * Position and collision share the same furniture slot so changing the room art cannot
+   * leave a correctly blocked capsule visibly standing somewhere else.
    */
   private placePatient(texture: Texture, tileSize: number): Sprite {
+    const slot = this.definition.furniture.find(
+      (piece) => piece.kind === "apparatus",
+    );
+    if (!slot) throw new Error("lobby is missing its apparatus slot");
     const sprite = new Sprite({
       texture,
       anchor: { x: 0.5, y: 1 },
@@ -227,17 +260,16 @@ export class LobbyScene {
       eventMode: "none",
       label: "lobby-patient",
     });
-    const maxW = 3 * tileSize;
-    const maxH = 4 * tileSize;
+    const maxW = slot.w * tileSize;
+    const maxH = slot.h * tileSize;
     const scale = Math.min(
       maxW / Math.max(1, texture.width),
       maxH / Math.max(1, texture.height),
     );
     sprite.scale.set(scale);
-    // Apparatus is at (5, 7) w=2 h=3. Feet on its south edge, centred on it.
-    sprite.x = Math.round(6 * tileSize);
-    sprite.y = Math.round(10 * tileSize);
-    sprite.zIndex = 10 * tileSize;
+    sprite.x = Math.round((slot.x + slot.w / 2) * tileSize);
+    sprite.y = Math.round((slot.y + slot.h) * tileSize);
+    sprite.zIndex = sprite.y;
     return sprite;
   }
 
@@ -315,6 +347,11 @@ export class LobbyScene {
       g.rect(2, 4, 11, 9).fill(c.accent);
       g.rect(3, 5, 9, 3).fill(c.paper);
       g.rect(4, 9, 7, 2).fill(c.rust);
+    } else if (kind === "decor") {
+      // The mural normally draws these. If it fails to load, keep their collision
+      // legible instead of leaving invisible walls around the fallback room.
+      g.rect(0, 0, pw, ph).fill(c.ink);
+      g.rect(1, 1, Math.max(0, pw - 2), Math.max(0, ph - 2)).fill(c.metal);
     }
     return g;
   }

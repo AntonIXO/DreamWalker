@@ -228,8 +228,10 @@ async function boot(): Promise<void> {
   await app.init({
     background,
     resizeTo: pixiHost,
-    // Integer backing-store scale only. 1.25× / 1.5× dpr shimmers 16px tiles.
-    resolution: Math.max(1, Math.round(window.devicePixelRatio || 1)),
+    // Match the browser's physical-pixel ratio exactly. Rounding a fractional DPR up
+    // makes the compositor resample the entire finished canvas back down (for example
+    // 2x -> 1.667x), which softens even nearest-sampled textures and DOM-aligned UI.
+    resolution: Math.max(1, window.devicePixelRatio || 1),
     autoDensity: true,
     antialias: false,
     roundPixels: true,
@@ -298,6 +300,10 @@ async function boot(): Promise<void> {
   const lobbyPatient = await loadOptionalTexture(
     new URL("../../assets/figures/lobby-patient.png", import.meta.url).href,
     "lobby-patient",
+  );
+  const lobbyBackdrop = await loadOptionalTexture(
+    new URL("../../assets/lobby/procedure-room.png", import.meta.url).href,
+    "lobby-procedure-room",
   );
   const playerSprite = new WalkerSprite(atlas, "player", sanitarWalk);
   actors.add(playerSprite);
@@ -1170,7 +1176,11 @@ async function boot(): Promise<void> {
       },
       onEnterDream: requestEntry,
     },
-    { sanitarWalk, patientTexture: lobbyPatient },
+    {
+      sanitarWalk,
+      patientTexture: lobbyPatient,
+      backdropTexture: lobbyBackdrop,
+    },
   );
   cameraRoot.addChild(lobby.scene.root);
   // Deliberately not awaited. `prepare.upload` resolves on a ticker tick, and a

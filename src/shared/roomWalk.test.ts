@@ -171,6 +171,36 @@ describe("the lobby still walks the way it did", () => {
     expect(walker.facing).toBe("w");
   });
 
+  test("the mural's visible furniture is solid and its open floor is not", () => {
+    const blockedTiles = [
+      [1, 3], // roots and capybara cabinet
+      [17, 4], // printer feeding the drain
+      [15, 10], // meat pedestal, dome bin and sofa
+      [2, 8], // bed
+      [6, 8], // patient apparatus
+    ] as const;
+    const openTiles = [
+      [8, 4],
+      [13, 5],
+      [13, 10],
+    ] as const;
+    const at = (x: number, y: number) =>
+      blockedInRoom(
+        LOBBY_DEFINITION,
+        LOBBY_DEFINITION.furniture,
+        {
+          x: (x + 0.5) * size,
+          y: (y + 0.5) * size,
+          width: 9,
+          height: 7,
+        },
+        size,
+      );
+
+    for (const [x, y] of blockedTiles) expect(at(x, y)).toBe(true);
+    for (const [x, y] of openTiles) expect(at(x, y)).toBe(false);
+  });
+
   test("cannot walk out through the north wall", () => {
     const walker = createWalker(spawn.x * size, spawn.y * size, spawn.facing);
     for (let i = 0; i < 600; i++) {
@@ -187,15 +217,50 @@ describe("the lobby still walks the way it did", () => {
     expect(walker.y).toBeGreaterThan(2 * size - size);
   });
 
-  test("every authored hotspot is reachable from somewhere standable", () => {
-    for (const hotspot of LOBBY_DEFINITION.hotspots) {
-      const found = findHotspot(
-        LOBBY_DEFINITION.hotspots,
-        hotspot.x * size,
-        hotspot.y * size,
+  test("every authored hotspot is reachable from the connected open floor", () => {
+    const key = (x: number, y: number) => `${x}:${y}`;
+    const standable = (x: number, y: number) =>
+      !blockedInRoom(
+        LOBBY_DEFINITION,
+        LOBBY_DEFINITION.furniture,
+        {
+          x: (x + 0.5) * size,
+          y: (y + 0.5) * size,
+          width: 9,
+          height: 7,
+        },
         size,
       );
-      expect(found).not.toBeNull();
+    const start = { x: Math.floor(spawn.x), y: Math.floor(spawn.y) };
+    const queue = [start];
+    const reached = new Set([key(start.x, start.y)]);
+    while (queue.length > 0) {
+      const here = queue.shift()!;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const x = here.x + dx;
+        const y = here.y + dy;
+        const next = key(x, y);
+        if (reached.has(next) || !standable(x, y)) continue;
+        reached.add(next);
+        queue.push({ x, y });
+      }
+    }
+
+    for (const hotspot of LOBBY_DEFINITION.hotspots) {
+      const approachable = [...reached].some((cell) => {
+        const [x, y] = cell.split(":").map(Number) as [number, number];
+        return (
+          Math.hypot(x + 0.5 - hotspot.x, y + 0.5 - hotspot.y) <= hotspot.reach
+        );
+      });
+      expect(approachable, `${hotspot.id} needs a standable approach`).toBe(
+        true,
+      );
     }
   });
 });

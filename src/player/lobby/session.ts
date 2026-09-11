@@ -52,6 +52,7 @@ export class LobbySession {
     extras: {
       sanitarWalk?: AuthoredWalk | null;
       patientTexture?: Texture | null;
+      backdropTexture?: Texture | null;
     } = {},
   ) {
     this.scene = new LobbyScene(
@@ -59,6 +60,7 @@ export class LobbySession {
       artifact,
       atlas,
       extras.patientTexture ?? null,
+      extras.backdropTexture ?? null,
     );
     this.walker = createLobbyWalker(this.definition);
     this.sprite = new WalkerSprite(atlas, "player", extras.sanitarWalk ?? null);
