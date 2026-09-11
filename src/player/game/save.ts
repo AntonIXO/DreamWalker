@@ -10,7 +10,12 @@ import type { MindMemory } from "../mind/memory";
 import type { RemoteMind } from "../mind/remote";
 import type { Observation } from "../mind/observation";
 import type { FinalePanel } from "../ui/finale";
-import { buildDoorIndexes, rebuildObjectIndex, type WorldState } from "./world";
+import {
+  buildDoorIndexes,
+  rebuildObjectIndex,
+  type FigureState,
+  type WorldState,
+} from "./world";
 
 type SavedWorld = Omit<
   WorldState,
@@ -47,6 +52,92 @@ export function snapshotWorld(world: WorldState): SavedWorld {
   return state;
 }
 
+/**
+ * Repair checkpoints written before meta-spaces were made empty.
+ *
+ * A led figure can be present in an older save even though current movement rejects
+ * meta-space destinations. Keeping that stale location would resurrect a conversation
+ * target in a room that cannot host one, so put it back on its authored/population home
+ * (or another free authored slot) before the session resumes.
+ */
+function repairMetaFigureLocations(world: WorldState): void {
+  const authored = new Map(
+    world.artifact.figures.map((figure) => [figure.id, figure]),
+  );
+
+  const repair = (figures: FigureState[]): void => {
+    const occupied = new Set<string>();
+    for (const figure of figures) {
+      const room = world.roomById.get(figure.roomId);
+      if (!room || room.kind === "meta") continue;
+      if (room.figureSlots.some((slot) => slot.id === figure.slotId)) {
+        occupied.add(`${room.id}:${figure.slotId}`);
+      }
+    }
+
+    for (let index = figures.length - 1; index >= 0; index--) {
+      const figure = figures[index]!;
+      const current = world.roomById.get(figure.roomId);
+      if (current && current.kind !== "meta") continue;
+
+      const base = world.baseFigures.find(
+        (candidate) => candidate.id === figure.id,
+      );
+      const original = authored.get(figure.id);
+      const preferredRoomIds = [base?.roomId, original?.roomId].filter(
+        (roomId, first, all): roomId is string =>
+          Boolean(roomId) && all.indexOf(roomId) === first,
+      );
+      const candidates = [
+        ...preferredRoomIds,
+        ...world.rooms.map((room) => room.id),
+      ];
+      const preferredSlotId = base?.slotId ?? original?.slotId;
+      let placement: {
+        room: (typeof world.rooms)[number];
+        slot: (typeof world.rooms)[number]["figureSlots"][number];
+      } | null = null;
+      for (const roomId of candidates) {
+        const room = world.roomById.get(roomId);
+        if (!room || room.kind === "meta") continue;
+        const slot =
+          (preferredSlotId &&
+            room.figureSlots.find(
+              (candidate) =>
+                candidate.id === preferredSlotId &&
+                !occupied.has(`${room.id}:${candidate.id}`),
+            )) ??
+          room.figureSlots.find(
+            (candidate) => !occupied.has(`${room.id}:${candidate.id}`),
+          );
+        if (slot) {
+          placement = { room, slot };
+          break;
+        }
+      }
+
+      if (!placement) {
+        figures.splice(index, 1);
+        continue;
+      }
+      figure.roomId = placement.room.id;
+      figure.slotId = placement.slot.id;
+      figure.x = placement.slot.x;
+      figure.y = placement.slot.y;
+      figure.targetX = null;
+      figure.targetY = null;
+      figure.walking = false;
+      figure.revision = Number.isFinite(figure.revision)
+        ? figure.revision + 1
+        : 1;
+      occupied.add(`${placement.room.id}:${placement.slot.id}`);
+    }
+  };
+
+  repair(world.baseFigures);
+  repair(world.figures);
+}
+
 /** Restore before resuming simulation, preserving the world and room references. */
 export function restoreWorld(world: WorldState, state: SavedWorld): void {
   const { rooms, worldMind, ...rest } = state;
@@ -54,6 +145,7 @@ export function restoreWorld(world: WorldState, state: SavedWorld): void {
   world.worldMind = worldMind ? structuredClone(worldMind) : createWorldMind();
   for (const saved of rooms)
     Object.assign(world.roomById.get(saved.id)!, saved);
+  repairMetaFigureLocations(world);
   // Container capabilities were added without relocating authored objects. Upgrade
   // old checkpoints in place, preserving everything the player changed or carries.
   const containers = new Map(

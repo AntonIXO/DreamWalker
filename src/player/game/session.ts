@@ -418,11 +418,11 @@ export class DreamSession {
   }
 
   /**
-   * Whoever is being led comes through the threshold too.
+   * Whoever is being led comes through an ordinary threshold too.
    *
    * Routes have no figure slots, so this does not go through `moveFigure` — that
-   * patch seats someone, and a street is not a seat. They stand on the doorway
-   * they just walked into.
+   * patch seats someone, and a street is not a seat. Meta-spaces are empty, so a led
+   * figure waits on the other side instead.
    */
   private leadAlong(toRoomId: string, fromRoomId: string): void {
     const led = whoIsLed(this.world);

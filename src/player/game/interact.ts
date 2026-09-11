@@ -98,6 +98,7 @@ function nearestFigure(
   player: PlayerState,
   room: RoomState,
 ): { figure: FigureState; distance: number } | null {
+  if (room.kind === "meta") return null;
   let best: FigureState | null = null;
   let bestDistance = Infinity;
   for (const figure of world.figures) {

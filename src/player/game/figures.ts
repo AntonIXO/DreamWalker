@@ -173,6 +173,10 @@ function worldStepOpen(
   if (!placed) return null;
   const room = world.roomById.get(placed.id);
   if (!room) return null;
+  // Meta-spaces are empty by contract. A led figure may cross ordinary rooms and
+  // streets, but must wait on the other side of a rift instead of becoming a target in
+  // a room where no figures are meant to exist.
+  if (room.kind === "meta") return null;
   const lx = tx - originX(room);
   const ly = ty - originY(room);
   if (
@@ -273,8 +277,9 @@ function standIn(
 }
 
 /**
- * Take a led figure through a threshold. Routes have no slots, so this does not
- * ask `moveFigure` — that patch is for the sleeper seating someone, not for a walk.
+ * Take a led figure through an ordinary threshold. Routes have no slots, so this does
+ * not ask `moveFigure` — that patch is for the sleeper seating someone, not for a walk.
+ * Meta-spaces are the exception: they must stay empty.
  */
 export function escortFigure(
   world: WorldState,
@@ -285,6 +290,7 @@ export function escortFigure(
   const figure = world.figures.find((entry) => entry.id === figureId);
   const room = world.roomById.get(toRoomId);
   if (!figure || !room) return false;
+  if (room.kind === "meta") return false;
   if (figure.roomId === toRoomId) return true;
   const stand = standIn(world, room, at);
   if (!stand) return false;

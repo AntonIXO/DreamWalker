@@ -14,6 +14,7 @@ import { executeWorldAction } from "../../shared/world-action-engine";
 import type { WorldActionEnvelope } from "../../shared/world-action";
 import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { ObservationLog } from "../mind/observation";
+import { sonArtifact } from "../../../dreams/son/pack";
 
 function setup() {
   const artifact = validateDreamArtifact(structuredClone(fixture));
@@ -78,6 +79,27 @@ function setup() {
 }
 
 describe("run checkpoints", () => {
+  test("repairs a figure stranded in a meta-space by an older checkpoint", () => {
+    const artifact = sonArtifact();
+    const world = createWorld(artifact);
+    const mama = world.figures.find((figure) => figure.id === "mama")!;
+    mama.roomId = "m5-odinochestvo";
+    mama.x = 10;
+    mama.y = 5;
+
+    const resumed = createWorld(artifact);
+    restoreWorld(resumed, snapshotWorld(world));
+
+    expect(resumed.figures.find((figure) => figure.id === "mama")?.roomId).toBe(
+      "18-kupol-bez-sten",
+    );
+    expect(
+      resumed.figures.some(
+        (figure) => resumed.roomById.get(figure.roomId)?.kind === "meta",
+      ),
+    ).toBe(false);
+  });
+
   test("adding authored container capabilities upgrades old saves without losing carried items or words", () => {
     const { artifact, store, storage, world, snapshot } = setup();
     const prop = artifact.rooms.flatMap((room) => room.props)[0]!;

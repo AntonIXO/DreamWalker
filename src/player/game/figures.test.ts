@@ -15,6 +15,50 @@ const YARD = "19-dvor-i-oranzhevye-lavochki";
 const STREET = "path-1-2-e";
 
 describe("a led figure", () => {
+  test("cannot be escorted into a meta-space", () => {
+    const world = createWorld(artifact);
+    const figure = world.figures.find((entry) => entry.id === "mama")!;
+    applyPatch(world, {
+      kind: "markFigure",
+      figureId: "mama",
+      fate: "led",
+      quoted: null,
+      reason: "test",
+    });
+
+    expect(
+      escortFigure(world, "mama", "m5-odinochestvo", { x: 10, y: 5 }),
+    ).toBe(false);
+    expect(figure.roomId).toBe("18-kupol-bez-sten");
+  });
+
+  test("does not follow the sanitar into a meta-space", () => {
+    const world = createWorld(artifact);
+    const figure = world.figures.find((entry) => entry.id === "mama")!;
+    const from = world.roomById.get("m4-razvilka-gde-ty-ostalsia")!;
+    figure.roomId = from.id;
+    figure.x = 18;
+    figure.y = 6;
+    applyPatch(world, {
+      kind: "markFigure",
+      figureId: "mama",
+      fate: "led",
+      quoted: null,
+      reason: "test",
+    });
+
+    const target = world.roomById.get("m5-odinochestvo")!;
+    const toward = {
+      x: originX(target) + 10,
+      y: originY(target) + 5,
+    };
+    for (let i = 0; i < 240; i++) {
+      updateFigures(world, 0, 1 / 30, null, from.id, toward);
+    }
+
+    expect(figure.roomId).not.toBe(target.id);
+  });
+
   test("can be escorted onto a street that has no figure slots", () => {
     const world = createWorld(artifact);
     const figure = world.figures.find((entry) => entry.id === "kirill")!;
