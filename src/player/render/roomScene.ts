@@ -357,7 +357,7 @@ export class RoomScene {
     // One layer for everything standing in the room. Objects used to be a second layer
     // at the same z, drawn after — so an object always covered a prop regardless of who
     // was in front. They are the same kind of thing and now they sort against each other.
-    const props = this.drawProps(room, mural);
+    const props = this.drawProps(room);
     props.zIndex = 2;
     container.addChild(props);
 
@@ -639,7 +639,7 @@ export class RoomScene {
    * you can sleep on — so once they have art it is drawn at the hotspot's own position,
    * anchored at its foot so a walker standing below it draws in front.
    */
-  private drawProps(room: RoomState, mural: boolean): Container {
+  private drawProps(room: RoomState): Container {
     const layer = new Container({
       label: `room-props:${room.id}`,
       eventMode: "none",
@@ -658,22 +658,9 @@ export class RoomScene {
         eventMode: "none",
         label: `prop:${prop.id}`,
       });
-      if (mural && prop.solid) {
-        // A square object painting can sit inside a wide collision rect (the pool is
-        // 12×4 tiles). Mark the whole occupied footprint so no part of a hitbox is
-        // invisible even when the illustrative sprite itself is deliberately contained.
-        node.addChild(
-          new Graphics({ eventMode: "none", roundPixels: true })
-            .rect(0, 0, prop.w * size, prop.h * size)
-            .fill({ color: this.colors.ink, alpha: 0.16 })
-            .stroke({ color: this.colors.accent, alpha: 0.5, width: 1 }),
-        );
-      }
-      // Generated object art. It arrives on a 64px sheet cell against a 16px tile, so
-      // it is fitted to the prop's own rect rather than to a constant — a 3x2 bench
-      // with square art reads as a square thing on a wide footprint, not a stretched
-      // one — and anchored on the bottom edge so the art stands on its own base.
-      const box = Math.min(prop.w, prop.h) * size;
+      // The authored rectangle is both the collision body and the visual body. Scaling
+      // the object texture to exactly that rect means there is no second, invisible
+      // footprint beside or around the thing the player sees.
       const sprite = new Sprite({
         texture: objectTexture,
         roundPixels: true,
@@ -682,7 +669,7 @@ export class RoomScene {
         x: (prop.w * size) / 2,
         y: prop.h * size,
       });
-      sprite.setSize(box, box);
+      sprite.setSize(prop.w * size, prop.h * size);
       node.addChild(sprite);
       node.x = prop.x * size;
       node.y = prop.y * size;
