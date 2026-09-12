@@ -582,6 +582,39 @@ describe("createWorld integration", () => {
 });
 
 describe("door and drop regressions", () => {
+  test("fractional arrivals use the containing tile without rounding the actor or collision", () => {
+    const mutator = createWorldMutator({
+      objects: [
+        object({
+          id: "narrow-body",
+          location: { kind: "room", roomId: "b", x: 1, y: 6 },
+          body: { w: 0.25, h: 1, solid: true },
+        }),
+      ],
+      figurePoses: [[NPC.id, { roomId: "a", x: 6, y: 3 }]],
+      doors: [
+        door({ id: "fractional-door", type: "open", toX: 1.5, toY: 6.5 }),
+      ],
+      isWalkableTile: (roomId, x, y) =>
+        Number.isInteger(x) &&
+        Number.isInteger(y) &&
+        (roomId === "a" ? openFloor(roomId, x, y) : x === 1 && y === 6),
+    });
+    expect(mutator.canWalk("b", 1.1, 6.5)).toBe(false);
+    expect(mutator.canWalk("b", 0.9, 6.5)).toBe(false);
+    const result = executeWorldAction(mutator, {
+      actor: NPC,
+      source: "npc",
+      action: { type: "traverseDoor", doorId: "fractional-door" },
+    });
+    expect(result.ok).toBe(true);
+    expect(mutator.getFigurePose(NPC.id)).toEqual({
+      roomId: "b",
+      x: 1.5,
+      y: 6.5,
+    });
+  });
+
   test("ordinary close/open and traversal preserve lock policy", () => {
     const world = worldOf({
       doors: [door({ id: "d", type: "open", keyId: null })],

@@ -247,6 +247,63 @@ describe("sandbox clone", () => {
   });
 });
 
+describe("fractional door arrivals", () => {
+  function arrivalSnapshot(x: number, y: number): WorldSnapshot {
+    const snapshot = snap();
+    snapshot.figures[0]!.x = 4;
+    snapshot.figures[0]!.y = 2;
+    snapshot.doors[0]!.toX = x;
+    snapshot.doors[0]!.toY = y;
+    snapshot.geometry = {
+      hall: { width: 8, height: 8, cells: Array(8).fill("........") },
+      yard: {
+        width: 8,
+        height: 8,
+        cells: ["########", ...Array(6).fill("#......#"), "########"],
+      },
+    };
+    return snapshot;
+  }
+
+  test("preview and execution land at the exact authored fraction", () => {
+    const session = createNpcWorldSession(arrivalSnapshot(1.5, 6.5), "npc-1");
+    const preview = session.preview([{ type: "traverseDoor", doorId: "d1" }]);
+    expect(preview.ok).toBe(true);
+    expect(preview.actorPose).toEqual({ roomId: "yard", x: 1.5, y: 6.5 });
+    expect(session.world.getFigurePose("npc-1")?.roomId).toBe("hall");
+    expect(session.runTool("traverse", { doorId: "d1" }).ok).toBe(true);
+    expect(session.world.getFigurePose("npc-1")).toEqual(preview.actorPose);
+  });
+
+  test("integer and fractional arrivals inside walls or solid objects stay blocked", () => {
+    for (const [x, y] of [
+      [0, 4],
+      [0.5, 4.5],
+      [3, 3],
+      [3.5, 3.5],
+    ]) {
+      const snapshot = arrivalSnapshot(x!, y!);
+      snapshot.objects = [
+        objectAt("crate", {
+          location: { kind: "room", roomId: "yard", x: 3, y: 3 },
+        }),
+      ];
+      const session = createNpcWorldSession(snapshot, "npc-1");
+      expect(
+        session.preview([{ type: "traverseDoor", doorId: "d1" }]).refusal,
+      ).toBe("blocked arrival");
+      expect(session.runTool("traverse", { doorId: "d1" }).refusal).toBe(
+        "blocked arrival",
+      );
+      expect(session.world.getFigurePose("npc-1")).toEqual({
+        roomId: "hall",
+        x: 4,
+        y: 2,
+      });
+    }
+  });
+});
+
 describe("assertReplayMatches", () => {
   test("passes when ok, affected ids, and object locations match", () => {
     const sandbox = okResult({

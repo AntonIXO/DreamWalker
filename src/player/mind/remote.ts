@@ -21,7 +21,10 @@ import type { DreamArtifact } from "../../shared/dream";
 import { fallbackPopulation } from "../../shared/population";
 import { isMoneyHotspot, rollWallet } from "../../shared/wallet";
 import { RETURNS_WHOLE } from "../../shared/verbs";
-import { worldMindForFigure } from "../../shared/world-mind";
+import {
+  canObserveWorldPose,
+  worldMindForFigure,
+} from "../../shared/world-mind";
 import { type WorldState } from "../game/world";
 import { bindWorldMutator, staticPlayerPose } from "../game/world-mutator";
 import { MindMemory } from "./memory";
@@ -42,6 +45,7 @@ const INHABIT_TIMEOUT_MS = 20_000;
 const TRANSCRIPT_LINES = 80;
 
 export interface RemoteMindContext {
+  observe?(): void;
   cycleNumber(): number;
   journal(): string[];
   playerPose?(): ActorPose | null;
@@ -350,6 +354,8 @@ export class RemoteMind implements DreamMind {
     request: TurnRequest,
     onPartial?: (reply: string) => void,
   ): Promise<TurnResponse> {
+    this.refreshFigureLife(request.figureId);
+    this.context.observe?.();
     const figureMemory = this.figureMemories.get(request.figureId) ?? {
       summary: "",
       lines: [],
@@ -372,6 +378,10 @@ export class RemoteMind implements DreamMind {
       }),
       exhaustion: this.world.exhaustion,
       locale: getLocale(),
+      memories: this.memory.episodes.forObserver(
+        request.figureId,
+        this.context.cycleNumber(),
+      ),
     };
 
     try {
@@ -410,6 +420,10 @@ export class RemoteMind implements DreamMind {
       figureMemory.intent = result.intent?.trim().slice(0, 240) || null;
     }
     this.figureMemories.set(request.figureId, figureMemory);
+    if (RETURNS_WHOLE.has(request.figureId))
+      figureMemory.deathCount = this.deathCount(request.figureId);
+    this.rememberSpeech("player", request.utterance, request.figureId);
+    this.rememberSpeech(request.figureId, result.reply);
     if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
     if (result.tell) {
       this.memory.addTell(
@@ -422,16 +436,104 @@ export class RemoteMind implements DreamMind {
     if (offeredMemoryId) this.memory.spendMemory(offeredMemoryId);
   }
 
+  private refreshFigureLife(figureId: string): void {
+    this.memory.refreshFigureLives(this.world.fateHistory);
+    if (!RETURNS_WHOLE.has(figureId)) return;
+    const deaths = this.deathCount(figureId);
+    const memory = this.figureMemories.get(figureId);
+    if (memory && (memory.deathCount ?? 0) !== deaths) {
+      this.figureMemories.delete(figureId);
+    }
+  }
+
+  private deathCount(figureId: string): number {
+    return this.memory.figureLife(figureId);
+  }
+
+  /** Speech is evidence of what was said, never evidence of successful physics. */
+  private rememberSpeech(
+    speakerId: string,
+    text: string,
+    interlocutorId?: string,
+  ): void {
+    const player = this.context.playerPose?.() ?? {
+      roomId: this.world.currentRoomId,
+      x: 0,
+      y: 0,
+    };
+    const speaker =
+      speakerId === "player"
+        ? player
+        : this.world.figures.find((figure) => figure.id === speakerId);
+    if (!speaker) return;
+    const mutator = bindWorldMutator(this.world, staticPlayerPose(player));
+    const observers = this.world.figures
+      .filter(
+        (figure) =>
+          figure.id === interlocutorId ||
+          figure.id === speakerId ||
+          canObserveWorldPose(mutator, figure, speaker),
+      )
+      .map((figure) => figure.id);
+    const playerHears =
+      speakerId === "player" || canObserveWorldPose(mutator, player, speaker);
+    const room = this.world.roomById.get(speaker.roomId);
+    const name =
+      speakerId === "player"
+        ? "Санитар"
+        : (this.world.figures.find((figure) => figure.id === speakerId)?.name ??
+          speakerId);
+    this.memory.episodes.add({
+      id: `speech:${crypto.randomUUID()}`,
+      cycle: this.context.cycleNumber(),
+      kind: "dialogue",
+      text: `В месте «${room?.name ?? speaker.roomId}» ${name} сказал: «${text.slice(0, 950)}». Это услышанная реплика; действия подтверждаются только квитанциями мира.`,
+      roomIds: [speaker.roomId],
+      entityIds: [speakerId, ...(interlocutorId ? [interlocutorId] : [])],
+      observerIds: [
+        "sleeper",
+        ...(playerHears ? ["player"] : []),
+        ...observers,
+      ],
+    });
+  }
+
+  private rememberExamination(request: ExamineRequest, reply: string): void {
+    const roomId = request.roomId ?? this.world.currentRoomId;
+    const objectId =
+      request.objectId ?? request.interestId ?? request.hotspotId;
+    const name = objectId
+      ? (this.world.objectById.get(objectId)?.name ?? objectId)
+      : "деталь";
+    this.memory.episodes.add({
+      id: `examine:${crypto.randomUUID()}`,
+      cycle: this.context.cycleNumber(),
+      kind: "observation",
+      text: `Санитар осмотрел ${name} в месте «${this.world.roomById.get(roomId)?.name ?? roomId}»: ${reply}`,
+      roomIds: [roomId],
+      entityIds: objectId ? [objectId] : [],
+      observerIds: ["player", "sleeper"],
+    });
+  }
+
   async examine(request: ExamineRequest) {
+    this.context.observe?.();
     // Money hotspots go to the server even when a line is authored for them: the
     // sensory line there depends on the wallet, and the wallet lives only server-side.
     const looked =
       request.objectId || isMoneyHotspot(request.hotspotId)
         ? null
         : lookAt(request.hotspotId ?? null);
-    if (looked) return looked;
+    if (looked) {
+      this.rememberExamination(request, looked.reply);
+      return looked;
+    }
     const controller = this.controller();
     const payload: ExamineRequestPayload = {
+      memories: this.memory.episodes.forObserver(
+        "player",
+        this.context.cycleNumber(),
+      ),
       slug: this.world.artifact.slug,
       objectId: request.objectId ?? null,
       runId: this.memory.runId,
@@ -454,6 +556,7 @@ export class RemoteMind implements DreamMind {
         Awaited<ReturnType<DreamMind["examine"]>>
       >("/api/ai/examine", payload, controller.signal);
       if (result.yieldedShardId) this.memory.learnShard(result.yieldedShardId);
+      this.rememberExamination(request, result.reply);
       return result;
     } catch (error) {
       if (!this.failed(error, controller)) throw error;
@@ -468,8 +571,13 @@ export class RemoteMind implements DreamMind {
     utterance: string,
     selectedObjectId: string | null,
   ): Promise<ActionResult> {
+    this.context.observe?.();
     const controller = this.controller(DIALOGUE_TIMEOUT_MS);
     const payload: ActionRequestPayload = {
+      memories: this.memory.episodes.forObserver(
+        "player",
+        this.context.cycleNumber(),
+      ),
       slug: this.world.artifact.slug,
       runId: this.memory.runId,
       cycleNumber: this.context.cycleNumber(),
@@ -512,12 +620,16 @@ export class RemoteMind implements DreamMind {
   }
 
   noteReaction(figureId: string, reply: string): void {
+    this.refreshFigureLife(figureId);
+    this.rememberSpeech(figureId, reply);
     const memory = this.figureMemories.get(figureId) ?? {
       summary: "",
       lines: [],
     };
     memory.lines.push({ speaker: "figure", text: reply.slice(0, 320) });
     memory.lines = memory.lines.slice(-TRANSCRIPT_LINES);
+    if (RETURNS_WHOLE.has(figureId))
+      memory.deathCount = this.deathCount(figureId);
     this.figureMemories.set(figureId, memory);
   }
 
@@ -530,8 +642,14 @@ export class RemoteMind implements DreamMind {
   }
 
   async mutate(observation: Observation) {
+    this.context.observe?.();
     const controller = this.controller();
     const payload: CycleExitRequestPayload = {
+      runId: this.memory.runId,
+      memories: this.memory.episodes.forObserver(
+        "sleeper",
+        this.context.cycleNumber(),
+      ),
       slug: this.world.artifact.slug,
       cycleNumber: this.context.cycleNumber(),
       observation,
@@ -590,6 +708,7 @@ export class RemoteMind implements DreamMind {
   }
 
   conversation(figureId: string): readonly FigureTranscriptLine[] {
+    this.refreshFigureLife(figureId);
     return this.figureMemories.get(figureId)?.lines ?? [];
   }
 
@@ -599,11 +718,14 @@ export class RemoteMind implements DreamMind {
     feedback: readonly NpcExecutionFeedback[],
   ): void {
     if (feedback.length === 0) return;
+    this.refreshFigureLife(figureId);
     const memory = this.figureMemories.get(figureId) ?? {
       summary: "",
       lines: [],
     };
     memory.execution = structuredClone(feedback.slice(-8));
+    if (RETURNS_WHOLE.has(figureId))
+      memory.deathCount = this.deathCount(figureId);
     // A sandbox success may have cleared the intent before the real world refused it.
     // Keep the player's request available for reconsideration on the next turn.
     if (feedback.some((entry) => !entry.ok) && !memory.intent) {
@@ -626,6 +748,7 @@ export class RemoteMind implements DreamMind {
     this.figureMemories.clear();
     for (const [id, memory] of state)
       this.figureMemories.set(id, structuredClone(memory));
+    for (const id of RETURNS_WHOLE) this.refreshFigureLife(id);
   }
 
   forgetFigures(): void {

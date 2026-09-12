@@ -12,6 +12,7 @@ import type {
 import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
 import { resolveAiBackend } from "./config";
+import { warmSemanticMemory } from "./semantic-memory";
 
 const root = process.cwd();
 const port = Number(process.env.DREAMWALKER_API_PORT ?? 8080);
@@ -21,6 +22,8 @@ const codexHome = resolve(
   process.env.DREAMWALKER_CODEX_HOME ?? `${root}/.dreamwalker/codex-home`,
 );
 const backend = resolveAiBackend();
+// Download/load local embeddings in the background; gameplay never waits for startup.
+void warmSemanticMemory();
 
 const account = new CodexAccountProcess({
   codexPath,

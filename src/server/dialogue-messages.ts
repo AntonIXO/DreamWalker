@@ -120,6 +120,9 @@ export function dialogueWorldContext(
     }
   }
   return {
+    self: speaker
+      ? { roomId: speaker.roomId, x: speaker.x, y: speaker.y }
+      : null,
     room: world.rooms.find((room) => room.id === roomId) ?? null,
     geometry: roomId ? (world.geometry?.[roomId] ?? null) : null,
     player,
@@ -189,8 +192,9 @@ export function dialogueTurnMessages(
   utterance: string,
 ): ModelMessage[] {
   const messages: ModelMessage[] = [];
-  for (const line of lines) {
-    const text = line.text.trim();
+  // Older exchanges are recalled by relevance; keep only the immediate chat verbatim.
+  for (const line of lines.slice(-16)) {
+    const text = line.text.trim().slice(0, 1200);
     if (!text) continue;
     messages.push({
       role: line.speaker === "sanitar" ? "user" : "assistant",
@@ -224,6 +228,11 @@ observe_world показывает то, что ты можешь сейчас �
 На вопрос о том, что изменилось, отвечай только по текущему наблюдению,
 засвидетельствованным событиям и прямо заданной истории из soul. Не придумывай
 прошлые пропажи, действия или свидетелей ради живости; если не знаешь — так и скажи.
+Воспоминание heard_report — реально услышанный рассказ: source называет рассказчика,
+а не участника, которого ты сам видел. Если спрашивают, откуда ты знаешь о событии,
+прямо назови этот источник («мне рассказал …»). Не заменяй имеющийся рассказ общим
+«я не видел» или описанием предмета, который виден сейчас. Не приписывай себе чужое
+наблюдение; несколько пересказов одного originId не подтверждают друг друга.
 
 Перед сложной, опасной или зависимой цепочкой проверь её через preview_actions:
 назови краткую практическую цель и конкретные действия. Это мысленная проверка,
@@ -255,6 +264,11 @@ closed containers or events you did not witness.
 When asked what changed, rely only on current observations, witnessed events, and
 explicitly authored lore from your soul. Never invent past disappearances, actions,
 or witnesses for color; when you do not know, say so.
+An entry marked heard_report is a report you actually heard: source identifies its
+speaker, not someone you personally witnessed. When asked how you know, explicitly
+name that source ("... told me"). Do not replace an available report with only "I
+didn't see it" or a description of what is visible now. Never claim someone else's
+observation as your own; retellings of the same originId do not corroborate each other.
 
 Before a complex, risky, or dependent sequence, use preview_actions with a brief
 practical goal and concrete actions. This is a prediction, never execution. A

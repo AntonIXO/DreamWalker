@@ -3,6 +3,7 @@ import type {
   WorldObjectState,
 } from "./world-object";
 import type { WorldMindEvent } from "./world-mind";
+import type { MemoryEpisode } from "./episodic-memory";
 import type { MapPatch } from "./map-patch";
 import type { PortraitState } from "./content";
 import type { FigureFate, Verb } from "./verbs";
@@ -156,6 +157,8 @@ export interface InhabitRequestPayload {
 }
 
 export interface FigureMemory {
+  /** Incarnation boundary for figures that return without remembering their death. */
+  deathCount?: number;
   summary: string;
   lines: FigureTranscriptLine[];
   /** An outstanding goal or promise; never evidence that it has been fulfilled. */
@@ -277,6 +280,7 @@ export interface WorldSnapshot {
 }
 
 export interface DialogueRequestPayload {
+  memories?: MemoryEpisode[];
   slug: string;
   /** Selects this run's population; optional for older clients. */
   runId?: string;
@@ -341,6 +345,7 @@ export interface DialogueResult {
 }
 
 export interface ExamineRequestPayload {
+  memories?: MemoryEpisode[];
   slug: string;
   /** Live inventory/floor identity, independent of its authored room. */
   objectId?: string | null;
@@ -379,6 +384,7 @@ export interface PlayerActionLine {
 }
 
 export interface ActionRequestPayload {
+  memories?: MemoryEpisode[];
   slug: string;
   runId?: string;
   cycleNumber: number;
@@ -397,6 +403,8 @@ export interface ActionResult {
 }
 
 export interface CycleExitRequestPayload {
+  runId?: string;
+  memories?: MemoryEpisode[];
   slug: string;
   cycleNumber: number;
   observation: AiObservation;

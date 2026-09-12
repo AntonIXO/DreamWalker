@@ -21,6 +21,11 @@ import {
   type ModelMessage,
 } from "ai";
 import { z } from "zod";
+import {
+  recallContext,
+  MEMORY_CONTEXT_RULES,
+  WORLD_MEMORY_RULES,
+} from "./context-memory";
 
 import {
   DREAM_MODEL,
@@ -1349,6 +1354,13 @@ export class AgentRuntime {
           role: line.speaker === "player" ? "user" : "assistant",
           content: line.text.slice(0, 600),
         }));
+      const memories = await recallContext(
+        request.memories,
+        "player",
+        request.cycleNumber,
+        `${request.utterance}\n${scene.room.name}\n${selectedObject?.name ?? ""}`,
+        signal,
+      );
       const plan = await this.generate(
         playerActionPlanSchema,
         playerActionInstructions(request.locale),
@@ -1360,6 +1372,8 @@ export class AgentRuntime {
               `Genre: ${this.artifact.genreContract}`,
               `Selected object (pronouns refer here unless the command says otherwise):\n${json(selectedObject ?? null)}`,
               `Visible physical scene and inventory:\n${json(scene)}`,
+              MEMORY_CONTEXT_RULES,
+              `Доступная память санитара:\n${json(memories)}`,
               `Reaction candidates (only these people may speak, and only if they witness the result):\n${json(candidates.map((figure) => ({ id: figure.id, name: figure.name, activity: figure.activity, soul: this.soulFor(figure.id) })))}`,
               `Player command:\n${request.utterance}`,
             ].join("\n\n"),
@@ -1443,6 +1457,22 @@ export class AgentRuntime {
       const isEn = request.locale === "en";
       const price = shardPrice(figure.id, isEn ? "en" : "ru");
       const session = createNpcWorldSession(request.world, request.figureId);
+      const scene = dialogueWorldContext(
+        request.world,
+        figure.id,
+        session.world,
+      );
+      const memories = await recallContext(
+        request.memories,
+        figure.id,
+        request.cycleNumber,
+        request.utterance,
+        signal,
+        Object.fromEntries(
+          request.world.figures.map((entry) => [entry.id, entry.name]),
+        ),
+        request.figureMemory.lines.slice(-16),
+      );
       const situation = [
         `Жанровый контракт: ${this.artifact.genreContract}`,
         `Стиль сна: ${this.artifact.styleWords.join(", ")}`,
@@ -1451,8 +1481,8 @@ export class AgentRuntime {
         `Фигура: ${figure.name}`,
         `Её роль: ${profile?.role ?? figure.role}`,
         `Пометки (если расходятся с soul — soul важнее): личность ${profile?.personality ?? figure.personality}; голос ${profile?.voice ?? "как в soul"}; хочет ${profile?.desire ?? "своего"}; боится ${profile?.fear ?? "чужого"}; не говорит про ${profile?.taboo ?? "то, чего здесь знать неоткуда"}`,
-        `Сейчас она: ${figure.activity}`,
-        `Комната: ${figure.roomId}`,
+        `Занятие по распорядку (привычка, не квитанция о нынешнем состоянии вещей): ${figure.activity}`,
+        `Ты сейчас в месте «${scene.room?.name ?? figure.roomId}» (${figure.roomId}), координаты (${figure.x}, ${figure.y}). Это твоё действительное местоположение, даже если soul описывает привычное место.`,
         `Настроение места: ${population.roomMoods[figure.roomId] ?? "обычный день слегка не сходится сам с собой"}`,
         shard
           ? `Единственная доступная фигуре зацепка: ${shard.id} — ${shard.hint}`
@@ -1474,12 +1504,13 @@ export class AgentRuntime {
               : "Цена не уплачена. yieldedShardId оставь пустым и ничего не подсказывай про зацепку."
           : "",
         `Уже известные игроку зацепки: ${request.knownShardIds.join(", ") || "нет"}`,
-        `Память спящего: ${request.sleeper.summary || "пока пусто"}`,
+        MEMORY_CONTEXT_RULES,
+        `Твоя доступная память из разных комнат (включая услышанные разговоры):\n${json(memories)}`,
         `Что ты уже понял об этом человеке в этом цикле: ${request.figureMemory.summary || "пока ничего"}`,
         `Незавершённая цель или обещание (не свершившийся факт): ${request.figureMemory.intent ?? "нет"}`,
         `Фактические execution-квитанции игры с прошлого ответа (важнее прошлых реплик):\n${json(request.figureMemory.execution ?? [])}`,
         `Предъявленный рычаг давления: ${request.leverageOffered ?? "нет"}`,
-        `Доступное телу окружение (используй точные id и координаты в инструментах):\n${json(dialogueWorldContext(request.world, figure.id, session.world))}`,
+        `Доступное телу окружение прямо сейчас (используй точные id и координаты в инструментах):\n${json(scene)}`,
         request.offeredMemory
           ? `Игрок отдаёт воспоминание ${request.offeredMemory.id}: ${request.offeredMemory.text}`
           : "Воспоминание не предложено.",
@@ -1820,6 +1851,13 @@ export class AgentRuntime {
         request.locale === "en"
           ? EXAMINE_INSTRUCTIONS_EN
           : EXAMINE_INSTRUCTIONS;
+      const memories = await recallContext(
+        request.memories,
+        "player",
+        request.cycleNumber,
+        `${subjectName} ${room?.name ?? ""} ${sensory}`,
+        signal,
+      );
       const output = await this.generate(
         examineSchema,
         examineInstructions,
@@ -1828,6 +1866,8 @@ export class AgentRuntime {
           `Место: ${room?.name ?? "безымянный проход"}`,
           `Вещь: ${subjectName}`,
           `Заданное чувственное наблюдение: ${sensory}`,
+          MEMORY_CONTEXT_RULES,
+          `Предыдущие наблюдения санитара:\n${json(memories)}`,
           ...(worldObject
             ? [
                 `Текущее физическое состояние вещи:\n${json(worldObject.state)}`,
@@ -1863,6 +1903,13 @@ export class AgentRuntime {
       assertSlug(this.artifact, request.slug);
       const cycleInstructions =
         request.locale === "en" ? CYCLE_INSTRUCTIONS_EN : CYCLE_INSTRUCTIONS;
+      const memories = await recallContext(
+        request.memories,
+        "sleeper",
+        request.cycleNumber,
+        `${request.sleeper.summary}\n${json(request.observation)}\nпоступки санитара повторения встречи маршруты между комнатами`,
+        signal,
+      );
       const output = await this.generate(
         cycleSchema,
         cycleInstructions,
@@ -1870,6 +1917,9 @@ export class AgentRuntime {
           `Жанровый контракт: ${this.artifact.genreContract}`,
           `Цикл ${request.cycleNumber} завершён.`,
           `Старая память спящего:\n${request.sleeper.summary || "пусто"}`,
+          MEMORY_CONTEXT_RULES,
+          `Память событий этого прохождения из разных комнат и циклов:\n${json(memories)}`,
+          WORLD_MEMORY_RULES,
           `Точные оговорки:\n${json(request.sleeper.tells.slice(-20))}`,
           `Наблюдение:\n${json(request.observation)}`,
           `Разговоры этого цикла:\n${json(request.transcripts)}`,

@@ -1,5 +1,8 @@
 import type { DreamMemory, SleeperMemory } from "../../shared/ai";
 import { isRunId, newRunId } from "../../shared/wallet";
+import { EpisodicMemory } from "../../shared/episodic-memory";
+import { RETURNS_WHOLE } from "../../shared/verbs";
+import { RumorExchange } from "./rumors";
 
 interface StoredMindState {
   /** One descent into the dream. Seeds the wallet and the deal; a reload keeps it. */
@@ -8,6 +11,9 @@ interface StoredMindState {
   sleeper: SleeperMemory;
   memories: DreamMemory[];
   exhaustion: number;
+  episodes?: ReturnType<EpisodicMemory["snapshot"]>;
+  rumors?: ReturnType<RumorExchange["snapshot"]>;
+  figureLives?: Record<string, number>;
 }
 
 function emptyState(): StoredMindState {
@@ -23,9 +29,13 @@ function emptyState(): StoredMindState {
 /** Persistent knowledge belonging to the sanitar and the sleeper, not to one figure. */
 export class MindMemory {
   private state: StoredMindState;
+  readonly episodes = new EpisodicMemory();
+  readonly rumors = new RumorExchange(this.episodes);
 
   constructor(private readonly slug: string) {
     this.state = this.load();
+    this.episodes.restore(this.state.episodes);
+    this.rumors.restore(this.state.rumors);
   }
 
   private get key(): string {
@@ -65,6 +75,16 @@ export class MindMemory {
           Number.isFinite(parsed.exhaustion)
             ? parsed.exhaustion
             : 0,
+        episodes: parsed.episodes,
+        rumors: parsed.rumors,
+        figureLives: Object.fromEntries(
+          Object.entries(parsed.figureLives ?? {}).filter(
+            ([id, count]) =>
+              RETURNS_WHOLE.has(id) &&
+              Number.isSafeInteger(count) &&
+              count >= 0,
+          ),
+        ),
       };
     } catch {
       return emptyState();
@@ -73,18 +93,24 @@ export class MindMemory {
 
   private save(): void {
     try {
-      localStorage.setItem(this.key, JSON.stringify(this.state));
+      localStorage.setItem(this.key, JSON.stringify(this.snapshot()));
     } catch {
       // The game remains playable when storage is disabled; persistence is the casualty.
     }
   }
 
   snapshot(): StoredMindState {
-    return structuredClone(this.state);
+    return {
+      ...structuredClone(this.state),
+      episodes: this.episodes.snapshot(),
+      rumors: this.rumors.snapshot(),
+    };
   }
 
   restore(state: StoredMindState): void {
     this.state = structuredClone(state);
+    this.episodes.restore(state.episodes);
+    this.rumors.restore(state.rumors);
     this.save();
   }
 
@@ -96,15 +122,40 @@ export class MindMemory {
     return this.state.runId;
   }
 
-  /** A new descent: new wallet, new deal. Words, tells and memories stay — §5. */
+  /** A new descent: meta-progress stays, but this run's experiences do not carry over. */
   newRun(): string {
     this.state.runId = newRunId();
+    this.episodes.clear();
+    this.rumors.reset();
+    this.state.figureLives = {};
+    this.state.sleeper = { summary: "", tells: [] };
     this.save();
     return this.state.runId;
   }
 
   get sleeper(): SleeperMemory {
     return structuredClone(this.state.sleeper);
+  }
+
+  /** One incarnation boundary, applied before sensing, recall or rumor delivery. */
+  refreshFigureLives(
+    history: readonly { figureId: string; fate: string }[],
+  ): void {
+    const lives = (this.state.figureLives ??= {});
+    for (const id of RETURNS_WHOLE) {
+      const deaths = history.filter(
+        (entry) => entry.figureId === id && entry.fate === "dead",
+      ).length;
+      if ((lives[id] ?? 0) !== deaths) {
+        this.episodes.forgetObserver(id);
+        this.rumors.forgetFigure(id);
+      }
+      lives[id] = deaths;
+    }
+  }
+
+  figureLife(figureId: string): number {
+    return this.state.figureLives?.[figureId] ?? 0;
   }
 
   get memories(): readonly DreamMemory[] {
@@ -194,6 +245,8 @@ export class MindMemory {
 
   clear(): void {
     this.state = emptyState();
+    this.episodes.clear();
+    this.rumors.reset();
     this.save();
   }
 }

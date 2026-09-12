@@ -83,7 +83,7 @@ src/server/        OAuth/account RPC, AI agents, API, and static production serv
 ## How the world is made
 
 There is no generated overworld. The diary in `dream-walker-bible.md` / `dream-walker-anton/`
-*is* the mission: 25 places, 4 meta-spaces, 14 figures. Rooms are ASCII boxes with
+_is_ the mission: 25 places, 4 meta-spaces, 14 figures. Rooms are ASCII boxes with
 authored connections. You leave a room by walking into a threshold — a door, a staircase,
 a one-way lift, or a `rift`, which is a doorway that comes out somewhere it should not.
 Inhabit deals every card into a new arrangement each run;
@@ -115,11 +115,19 @@ pre-container saves are upgraded without losing held objects or notebook entries
 
 ## World Mind and NPC decisions
 
-World Mind keeps a bounded ledger of physical actions and their observed results.
-NPCs receive their own actions and events they witnessed nearby, with walls and
+World Mind records successful physical actions, observed movement and conversations
+in a run archive of up to 1,024 episodes. Dialogue context combines relevant memories
+with the current room, visible people and objects, and the figure's own route. Current
+observations and actual action receipts take precedence over old memories or the
+figure's habitual location in its character card.
+
+NPCs receive their own experience and events they witnessed nearby, with walls and
 closed containers limiting perception. Arriving later does not reveal past events.
-The sleeper receives the full ledger when planning the next cycle; the Eye retains
-its authored knowledge of deaths.
+Every five seconds of unpaused game time, nearby figures can exchange an attributed
+report, with a sixty-second cooldown per pair and at most two retellings. Reports retain their source and
+remain hearsay, rather than becoming the listener's claimed firsthand experience.
+NPC recall is limited to the current cycle; the sleeper's world memory spans the whole
+run across cycle resets. The Eye also retains its authored knowledge of deaths.
 
 NPCs can `observe_world` and `preview_actions` before acting. A preview runs on a
 copy, stops at the first refusal, and cannot change the game or spend the physical
@@ -132,8 +140,9 @@ avoid a redundant model call.
 Each figure retains a short unfinished intent and the browser's execution feedback.
 If replay fails, the next turn sees the failure even when the model predicted success.
 Goals guide the next conversation; they do not schedule hidden background actions.
-The ledger, intents and feedback survive a reload and clear with the cycle, while
-the sleeper's summary survives as before.
+The archive, intents and feedback survive a reload. A new cycle clears ordinary NPC
+recall, intents and feedback, while the sleeper retains the run archive and its summary.
+Starting a new run clears the archive; it is not shared between separate playthroughs.
 
 ## The heartbeat
 
@@ -215,11 +224,34 @@ server-side judge:
 - finale is not generative: it normalizes twelve words, validates the English BIP39
   checksum and compares the SHA-256 commitment exactly. A miss never reveals the answer.
 
-`RemoteMind` keeps the last six lines and a compact summary per figure for the current
-cycle, plus persistent discovered shards, sleeper
-tells, and exactly three irreplaceable player memories. A memory can be offered in a
-conversation or burned with `M` for `+2:00`. Any failed call falls back per action to
-`ScriptedMind`; the Pixi ticker keeps rendering while only simulation is paused.
+Dialogue receives the last sixteen spoken lines, a compact per-figure summary, up to
+six relevant episodes and two recent events. Duplicate observations and dialogue
+already present in those sixteen lines do not consume retrieval slots. Authored habits
+are not recorded as observed facts. Discovered shards and the three irreplaceable player
+memories remain separate from the run's event archive. A player memory can be offered
+in conversation or burned with `M` for `+2:00`. Examination and cycle planning can fall
+back to `ScriptedMind`; dialogue reports a connection failure without inventing a reply.
+The Pixi ticker keeps rendering while only simulation is paused.
+
+`src/server/semantic-memory.ts` retrieves relevant episodes with local multilingual
+sentence embeddings (`Xenova/paraphrase-multilingual-MiniLM-L12-v2`, quantized CPU
+inference through Transformers.js). The server warms the model once in the background;
+its downloaded weights are cached in `.dreamwalker/models/`. Embedding computation
+sends no episode or query text to an external embedding service and needs no API key.
+
+Retrieval searches all eligible episodes in the bounded run archive, including older
+events that share no words or language with the query. Inference runs in batches of
+16 texts with a 2,048-vector LRU cache and one replacing pending job. A request waits
+at most 600 ms by default, then uses cached vectors and lexical matching; model loading
+or failure immediately falls back to lexical matching. Memory eligibility is checked
+before retrieval, so a cached embedding cannot reveal another character's private past.
+
+The regular suite uses deterministic embeddings. To also download/load the real model
+and verify English-to-Russian recall beneath 320 newer events:
+
+```bash
+DREAMWALKER_TEST_EMBEDDINGS=1 bun test src/server/semantic-memory.test.ts
+```
 
 Generated population is cached under `.dreamwalker/runtime/`, keyed by dream slug and
 sealed-secret hash. A disconnected first run receives a deterministic population made

@@ -133,7 +133,7 @@ export function bindWorldMutator(
     isWalkableTile: (roomId, x, y) => {
       const room = world.roomById.get(roomId);
       if (!room) return false;
-      return isWalkableCell(cellAt(room, x, y));
+      return isWalkableCell(cellAt(room, Math.floor(x), Math.floor(y)));
     },
     canPassDoor: (doorId) => {
       const door = world.doorById.get(doorId);
@@ -143,7 +143,10 @@ export function bindWorldMutator(
     canWalk: (roomId, x, y, ignoreObjectId) => {
       const room = world.roomById.get(roomId);
       if (!room) return false;
-      if (!isWalkableCell(cellAt(room, x, y))) return false;
+      // Authored arrivals may sit between tile centres. Only the mask lookup is
+      // discrete; keep the actual point for object collision and the final pose.
+      if (!isWalkableCell(cellAt(room, Math.floor(x), Math.floor(y))))
+        return false;
       return !solidObjectCovers(world.objects, roomId, x, y, ignoreObjectId);
     },
     hasPath: (roomId, from, to, ignoreObjectId) => {

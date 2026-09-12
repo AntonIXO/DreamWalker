@@ -206,6 +206,144 @@ function toolCall(name: string, input: unknown) {
 }
 
 describe("NPC dialogue context and execution", () => {
+  test("the universe mind recalls private events from every room across cycle resets", async () => {
+    const model = new MockLanguageModelV3({
+      doGenerate: textResult({
+        patches: [],
+        sleeperSummary: "Санитар ищет бутылку.",
+      }),
+    });
+    const world = request().world;
+    await runtime(model).endCycle(
+      {
+        slug: request().slug,
+        cycleNumber: 2,
+        runId: RUN_A,
+        world,
+        knownShardIds: [],
+        sleeper: { summary: "", tells: [] },
+        transcripts: {},
+        observation: {
+          elapsedSeconds: 200,
+          currentRoomId: ROOM,
+          visitedRoomIds: [ROOM],
+          dwell: {},
+          refusedDoors: {},
+          approachedFigures: {},
+          learnedShardIds: [],
+          beatsThisCycle: 0,
+          fatesThisCycle: {},
+        },
+        memories: [
+          {
+            id: "earlier-secret",
+            sequence: 1,
+            cycle: 1,
+            kind: "dialogue",
+            text: "GLOBAL_PRIOR_CYCLE: разговор художника в другой комнате",
+            roomIds: ["hotel"],
+            entityIds: ["artist"],
+            observerIds: ["sleeper", "artist"],
+          },
+          {
+            id: "elsewhere",
+            sequence: 2,
+            cycle: 2,
+            kind: "action",
+            text: "GLOBAL_OFFSCREEN: другая фигура перенесла чашку",
+            roomIds: ["kitchen"],
+            entityIds: ["another"],
+            observerIds: ["sleeper", "another"],
+          },
+        ],
+      },
+      new AbortController().signal,
+    );
+    const prompt = JSON.stringify(model.doGenerateCalls[0]!.prompt);
+    expect(prompt).toContain("GLOBAL_PRIOR_CYCLE");
+    expect(prompt).toContain("GLOBAL_OFFSCREEN");
+    expect(prompt).toContain("разум всего сна");
+    expect(prompt).toContain(
+      "Не приписывай свои общие знания каждому персонажу",
+    );
+  });
+  test("dynamic context recalls across rooms without exposing private, sleeper or previous-cycle memories", async () => {
+    const model = new MockLanguageModelV3({ doGenerate: textResult(reply) });
+    const payload = request();
+    payload.sleeper.summary = "SLEEPER_PRIVATE_SECRET";
+    payload.memories = [
+      {
+        id: "shared",
+        sequence: 1,
+        cycle: payload.cycleNumber,
+        kind: "dialogue",
+        text: "OVERHEARD_IN_OLD_ROOM: санитар говорил о бутылке",
+        roomIds: ["old-room"],
+        entityIds: ["another-npc"],
+        observerIds: [payload.figureId, "another-npc"],
+        originId: "heard-origin",
+        provenance: {
+          kind: "heard",
+          originWitnessId: "turyshev",
+          speakerId: "turyshev",
+          hops: 1,
+          acquiredCycle: payload.cycleNumber,
+          acquiredRoomId: ROOM,
+        },
+      },
+      {
+        id: "private",
+        sequence: 2,
+        cycle: payload.cycleNumber,
+        kind: "dialogue",
+        text: "PRIVATE_NPC_SECRET",
+        roomIds: [ROOM],
+        entityIds: [],
+        observerIds: ["another-npc"],
+      },
+      {
+        id: "sleeper",
+        sequence: 3,
+        cycle: payload.cycleNumber,
+        kind: "action",
+        text: "SLEEPER_ARCHIVE_SECRET",
+        roomIds: [ROOM],
+        entityIds: [],
+        observerIds: ["sleeper"],
+      },
+      {
+        id: "old-cycle",
+        sequence: 4,
+        cycle: payload.cycleNumber - 1,
+        kind: "dialogue",
+        text: "PREVIOUS_CYCLE_SECRET",
+        roomIds: [ROOM],
+        entityIds: [],
+        observerIds: [payload.figureId],
+      },
+    ];
+    payload.figureMemory.lines = Array.from({ length: 24 }, (_, i) => ({
+      speaker: i % 2 ? ("figure" as const) : ("sanitar" as const),
+      text: `TRANSCRIPT_${i}_END`,
+    }));
+    await runtime(model).dialogue(
+      payload,
+      new AbortController().signal,
+      () => {},
+    );
+    const prompt = JSON.stringify(model.doGenerateCalls[0]!.prompt);
+    expect(prompt).toContain("OVERHEARD_IN_OLD_ROOM");
+    expect(prompt).toContain("heard_report");
+    expect(prompt).toContain("рассказал об этом");
+    expect(prompt).toContain(payload.world.rooms[0]!.name);
+    expect(prompt).toContain("действительное местоположение");
+    expect(prompt).not.toContain("SLEEPER_PRIVATE_SECRET");
+    expect(prompt).not.toContain("SLEEPER_ARCHIVE_SECRET");
+    expect(prompt).not.toContain("PRIVATE_NPC_SECRET");
+    expect(prompt).not.toContain("PREVIOUS_CYCLE_SECRET");
+    expect(prompt).not.toContain("TRANSCRIPT_0_END");
+    expect(prompt).toContain("TRANSCRIPT_23_END");
+  });
   test("trimming a third spoken quote clears tell and resonance without another generation", async () => {
     const model = new MockLanguageModelV3({
       doGenerate: textResult({

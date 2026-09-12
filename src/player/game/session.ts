@@ -19,7 +19,11 @@ import {
   MAX_WORLD_ACTIONS_PER_TURN,
 } from "../../shared/world-action";
 import { executeWorldAction } from "../../shared/world-action-engine";
-import { captureWorldAction, recordWorldAction } from "../../shared/world-mind";
+import {
+  captureWorldAction,
+  recordWorldAction,
+  type WorldMindEvent,
+} from "../../shared/world-mind";
 import { runReactions } from "../../shared/world-reaction";
 import { bindWorldMutator } from "./world-mutator";
 import { FOLLOW_VIEW_TILES, type Camera } from "../render/camera";
@@ -61,6 +65,7 @@ import {
 export type ArrivalStyle = "door" | "rift" | "meta-exit" | "cut";
 
 export interface SessionCallbacks {
+  onWorldAction?(event: WorldMindEvent): void;
   onEnterRoom(room: RoomState, visits: number): void;
   onRefused(doorId: string, text: string): void;
   whisper?(text: string): void;
@@ -487,7 +492,7 @@ export class DreamSession {
       const before = captureWorldAction(mutator, envelope);
       const result = executeWorldAction(mutator, envelope);
       if (result.ok) {
-        recordWorldAction(
+        const event = recordWorldAction(
           this.world.worldMind,
           mutator,
           envelope,
@@ -495,6 +500,7 @@ export class DreamSession {
           before,
           this.callbacks.cycleNumber?.() ?? 1,
         );
+        if (event) this.callbacks.onWorldAction?.(event);
         runReactions(this.host(), result.events, this.scripts);
         this.showRoom(this.room, false);
       }

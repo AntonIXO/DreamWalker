@@ -85,6 +85,8 @@ import type { ActorRef, WorldObjectState } from "../shared/world-object";
 import { Heartbeat } from "./mind/heartbeat";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
+import { ContextMemory } from "./mind/context-memory";
+import { episodesForWorldEvent } from "../shared/episodic-memory";
 import { inhabitDream } from "./mind/remote";
 import { fallbackPopulation } from "../shared/population";
 import { rollWallet } from "../shared/wallet";
@@ -344,6 +346,7 @@ async function boot(): Promise<void> {
   const journal = new Journal(artifact.slug);
   const wordNotebook = new WordNotebook(artifact.slug);
   const mindMemory = new MindMemory(artifact.slug);
+  const contextMemory = new ContextMemory(mindMemory);
   const hud = new Hud(uiLayer);
   hud.setLobbyMode(true);
   const observations = new ObservationLog();
@@ -362,6 +365,11 @@ async function boot(): Promise<void> {
     shiver,
     {
       onEnterRoom: (room, visits) => {
+        contextMemory.observe(
+          world,
+          { roomId: room.id, ...playerTile(session.player, room) },
+          cycle.number,
+        );
         world.visited.add(room.id);
         const mood = world.population?.roomMoods[room.id];
         // The second visit is the one that is worse, so that is when the room says so.
@@ -372,6 +380,17 @@ async function boot(): Promise<void> {
         if (line) hud.whisper(line, 4);
       },
       onRefused: (doorId) => observations.noteRefusal(doorId),
+      onWorldAction: (event) => {
+        for (const episode of episodesForWorldEvent(event, {
+          rooms: Object.fromEntries(
+            world.rooms.map((room) => [room.id, room.name]),
+          ),
+          figures: Object.fromEntries(
+            world.figures.map((figure) => [figure.id, figure.name]),
+          ),
+        }))
+          mindMemory.episodes.add(episode);
+      },
       whisper: (text) => hud.whisper(text, 4),
       cycleNumber: () => cycle.number,
       knownClueIds: () => wordNotebook.observedIds,
@@ -437,6 +456,15 @@ async function boot(): Promise<void> {
   const mind = createMind(
     world,
     {
+      observe: () =>
+        contextMemory.observe(
+          world,
+          {
+            roomId: world.currentRoomId,
+            ...playerTile(session.player, currentRoom(world)),
+          },
+          cycle.number,
+        ),
       cycleNumber: () => cycle.number,
       journal: () => journal.all().map((entry) => entry.text),
       playerPose: () => {
@@ -1320,6 +1348,8 @@ async function boot(): Promise<void> {
       for (const room of world.rooms) rooms.invalidate(room.id);
       session.restart();
       cycle.restart();
+      contextMemory.resetTracking();
+      mindMemory.rumors.reset();
       session.noteCycleReset();
       hud.whisper(t("ui.whisper_cycle_restart"), 5);
     } finally {
@@ -1376,6 +1406,7 @@ async function boot(): Promise<void> {
     wordNotebook.restore(saved.notebook);
     mind.restoreFigures(saved.conversations);
     mind.restoreActions(saved.commands);
+    contextMemory.resetTracking();
     for (const room of world.rooms) rooms.invalidate(room.id);
     session.restore(saved.session);
     populationInstalled = true;
@@ -1395,13 +1426,17 @@ async function boot(): Promise<void> {
       );
     // Expiry may have been saved immediately before the async cycle exit began.
     if (cycle.expired && !saved.ending) void restartCycle();
-  } else if (loadedRun.unavailable) {
-    hud.whisper(
-      getLocale() === "ru"
-        ? "Сохранение недоступно или относится к другой версии сна."
-        : "The save is unavailable or belongs to a different version of this dream.",
-      8,
-    );
+  } else {
+    // A missing checkpoint means a new descent, even if old meta-progress remains.
+    mindMemory.newRun();
+    contextMemory.resetTracking();
+    if (loadedRun.unavailable)
+      hud.whisper(
+        getLocale() === "ru"
+          ? "Сохранение недоступно или относится к другой версии сна."
+          : "The save is unavailable or belongs to a different version of this dream.",
+        8,
+      );
   }
   window.setInterval(saveNow, 1000);
   window.addEventListener("pagehide", saveNow);
@@ -1452,6 +1487,7 @@ async function boot(): Promise<void> {
   };
 
   let prompt: string | null = null;
+  let contextElapsed = 1;
   app.ticker.add((ticker) => {
     const delta = Math.min(ticker.deltaMS, 100) / 1000;
     finaleFrenzy.update(delta);
@@ -1539,6 +1575,35 @@ async function boot(): Promise<void> {
         },
       );
       npcQueue.tick(world, (envelope) => session.dispatchWorldAction(envelope));
+      contextElapsed += delta;
+      const playerPose = {
+        roomId: room.id,
+        ...playerTile(session.player, room),
+      };
+      mindMemory.refreshFigureLives(world.fateHistory);
+      if (contextElapsed >= 1) {
+        contextElapsed = 0;
+        contextMemory.observe(world, playerPose, cycle.number);
+      }
+      const rumor = mindMemory.rumors.tick(
+        world,
+        playerPose,
+        cycle.number,
+        delta,
+        held || !session.canSave,
+      );
+      if (rumor?.heardByPlayer) {
+        const speaker = world.figures.find(
+          (figure) => figure.id === rumor.speakerId,
+        );
+        hud.whisper(rumor.text, 6);
+        journal.addPerson(
+          cycle.number,
+          rumor.speakerId,
+          speaker?.name ?? rumor.speakerId,
+          rumor.text,
+        );
+      }
     }
 
     // A street map is one country: follow the walker. A single-room dream still

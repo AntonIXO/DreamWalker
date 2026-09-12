@@ -80,7 +80,8 @@ export function createWorldMutator(seed: WorldMutatorSeed): WorldMutator {
     y: number,
     ignoreObjectId?: string,
   ): boolean => {
-    if (!seed.isWalkableTile(roomId, x, y)) return false;
+    if (!seed.isWalkableTile(roomId, Math.floor(x), Math.floor(y)))
+      return false;
     return !solidObjectCovers(objects, roomId, x, y, ignoreObjectId);
   };
 

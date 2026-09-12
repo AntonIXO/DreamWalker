@@ -337,7 +337,7 @@ export class SnapshotSandbox implements WorldMutator {
 
   isWalkableTile(roomId: string, x: number, y: number): boolean {
     const grid = this.geometry[roomId];
-    return !!grid && isWalkableCell(cellAt(grid, x, y));
+    return !!grid && isWalkableCell(cellAt(grid, Math.floor(x), Math.floor(y)));
   }
 
   canPassDoor(doorId: string): boolean {

@@ -33,4 +33,46 @@ describe("MindMemory", () => {
       tells: [{ cycle: 2, figureId: "figure1", quoted: "снова" }],
     });
   });
+
+  test("episodic experience survives reload and cycle changes but not a new run", () => {
+    const memory = new MindMemory("episode-save");
+    memory.episodes.add({
+      id: "bottle",
+      cycle: 1,
+      kind: "action",
+      text: "Санитар забрал бутылку во дворе.",
+      roomIds: ["courtyard"],
+      entityIds: ["bottle"],
+      observerIds: ["figure1", "player", "sleeper"],
+    });
+    memory.replaceSleeperSummary("Помнит бутылку.");
+    const snapshot = memory.snapshot();
+    const reloaded = new MindMemory("episode-save");
+    expect(reloaded.episodes.forObserver("figure1", 1)).toHaveLength(1);
+    expect(reloaded.episodes.forObserver("figure1", 2)).toEqual([]);
+    expect(reloaded.episodes.forObserver("sleeper", 2)).toHaveLength(1);
+    reloaded.restore(JSON.parse(JSON.stringify(snapshot)));
+    expect(reloaded.runId).toBe(memory.runId);
+    reloaded.newRun();
+    expect(reloaded.runId).not.toBe(memory.runId);
+    expect(reloaded.episodes.snapshot().episodes).toEqual([]);
+    expect(reloaded.sleeper.summary).toBe("");
+  });
+
+  test("an older checkpoint without episodic state does not resurrect newer memories", () => {
+    const memory = new MindMemory("old-checkpoint");
+    const saved = memory.snapshot();
+    delete saved.episodes;
+    memory.episodes.add({
+      id: "future",
+      cycle: 1,
+      kind: "dialogue",
+      text: "future",
+      roomIds: [],
+      entityIds: [],
+      observerIds: ["player"],
+    });
+    memory.restore(saved);
+    expect(memory.episodes.snapshot().episodes).toEqual([]);
+  });
 });

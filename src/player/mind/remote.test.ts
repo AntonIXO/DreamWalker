@@ -7,6 +7,7 @@ import { MindMemory } from "./memory";
 import { ObservationLog } from "./observation";
 import { RemoteMind, snapshot } from "./remote";
 import { ScriptedMind } from "./scripted";
+import { ContextMemory } from "./context-memory";
 
 function setup() {
   const world = createWorld(validateDreamArtifact(structuredClone(fixture)));
@@ -22,6 +23,86 @@ function setup() {
 }
 
 describe("remote snapshot identity and fate masking", () => {
+  test("spoken memories follow their witnesses across rooms and outlive the recent transcript", async () => {
+    const { world, memory, fallback } = setup();
+    const speaker = world.figures[0]!;
+    speaker.x = 5;
+    speaker.y = 4;
+    world.figures.push({ ...speaker, id: "nearby", name: "Сосед", x: 6 });
+    world.figures.push({
+      ...speaker,
+      id: "elsewhere",
+      name: "Другой",
+      roomId: "b",
+    });
+    const mind = new RemoteMind(
+      world,
+      memory,
+      {
+        cycleNumber: () => 1,
+        journal: () => [],
+        playerPose: () => ({ roomId: "a", x: 4, y: 4 }),
+      },
+      fallback,
+    );
+    const fetchSpy = spyOn(globalThis, "fetch").mockImplementation((async (
+      url: RequestInfo | URL,
+      init?: RequestInit,
+    ) => {
+      void url;
+      void init;
+      return new Response(
+        JSON.stringify({
+          type: "result",
+          value: {
+            reply: "Я тебя услышал.",
+            figureMemorySummary: "Помнит беседу.",
+            residueDelta: [],
+            tell: null,
+            yieldedShardId: null,
+          },
+        }) + "\n",
+      );
+    }) as typeof fetch);
+    try {
+      await mind.turn({
+        figureId: speaker.id,
+        utterance: "Первый разговор о потерянной бутылке.",
+      });
+      for (let i = 0; i < 41; i++)
+        await mind.turn({
+          figureId: speaker.id,
+          utterance: `Другая реплика ${i}`,
+        });
+      expect(
+        mind
+          .conversation(speaker.id)
+          .some((line) => line.text.includes("потерянной бутылке")),
+      ).toBe(false);
+      speaker.roomId = "b";
+      expect(
+        memory.episodes
+          .forObserver(speaker.id, 1)
+          .some((entry) => entry.text.includes("потерянной бутылке")),
+      ).toBe(true);
+      expect(
+        memory.episodes
+          .forObserver("nearby", 1)
+          .some((entry) => entry.text.includes("потерянной бутылке")),
+      ).toBe(true);
+      expect(memory.episodes.forObserver("elsewhere", 1)).toEqual([]);
+      mind.forgetFigures();
+      expect(memory.episodes.forObserver(speaker.id, 2)).toEqual([]);
+      expect(
+        memory.episodes
+          .forObserver("sleeper", 2)
+          .some((entry) => entry.text.includes("потерянной бутылке")),
+      ).toBe(true);
+    } finally {
+      mind.abort();
+      fetchSpy.mockRestore();
+    }
+  });
   test("Kirill remains a physical actor without exposing his past death", () => {
     const { world } = setup();
     world.figures[0]!.id = "kirill";
@@ -44,6 +125,88 @@ describe("remote snapshot identity and fate masking", () => {
     }
     expect(snapshot(world, "upper-dynamic", "glaz").fateHistory).toHaveLength(
       1,
+    );
+  });
+});
+
+describe("returning figure memory lifetimes", () => {
+  function returningFigure() {
+    const state = setup();
+    state.world.figures[0]!.id = "kirill";
+    const returnToLife = () => {
+      state.world.fateHistory.push({
+        figureId: "kirill",
+        fate: "dead",
+        cycle: 1,
+        roomId: "a",
+        by: "kill",
+        quoted: null,
+        remains: null,
+      });
+      state.memory.refreshFigureLives(state.world.fateHistory);
+    };
+    const reload = () => {
+      const restoredMemory = new MindMemory(`reload-${crypto.randomUUID()}`);
+      restoredMemory.restore(state.memory.snapshot());
+      const restored = new RemoteMind(
+        state.world,
+        restoredMemory,
+        { cycleNumber: () => 1, journal: () => [] },
+        new ScriptedMind(state.world, restoredMemory),
+      );
+      restored.restoreFigures(state.mind.snapshotFigures());
+      return restored;
+    };
+    return { ...state, returnToLife, reload };
+  }
+
+  test("opening a returned figure's conversation hides the old transcript before another turn", () => {
+    const { mind, returnToLife } = returningFigure();
+    mind.noteReaction("kirill", "OLD_LIFE_LINE");
+    expect(mind.conversation("kirill")).toHaveLength(1);
+    returnToLife();
+    expect(mind.conversation("kirill")).toEqual([]);
+  });
+
+  test("a new-life reaction survives a full memory and transcript reload", () => {
+    const { mind, returnToLife, reload } = returningFigure();
+    mind.noteReaction("kirill", "OLD_LIFE_LINE");
+    returnToLife();
+    mind.noteReaction("kirill", "NEW_LIFE_LINE");
+    expect(mind.conversation("kirill")).toEqual([
+      { speaker: "figure", text: "NEW_LIFE_LINE" },
+    ]);
+    expect(reload().conversation("kirill")).toEqual([
+      { speaker: "figure", text: "NEW_LIFE_LINE" },
+    ]);
+  });
+
+  test("refreshing the conversation preserves observations already collected in the new life", () => {
+    const { world, memory, mind, returnToLife } = returningFigure();
+    mind.noteReaction("kirill", "OLD_LIFE_LINE");
+    returnToLife();
+    new ContextMemory(memory).observe(world, { roomId: "a", x: 3, y: 3 }, 1);
+    const fresh = memory.episodes.forObserver("kirill", 1);
+    expect(fresh.some((entry) => entry.kind === "observation")).toBe(true);
+    expect(mind.conversation("kirill")).toEqual([]);
+    expect(memory.episodes.forObserver("kirill", 1)).toEqual(fresh);
+  });
+
+  test("execution feedback that creates a new-life memory survives reload", () => {
+    const { mind, returnToLife, reload } = returningFigure();
+    returnToLife();
+    const feedback = [
+      {
+        action: { type: "take" as const, objectId: "cup" },
+        ok: false,
+        refusal: "out of reach",
+        events: [],
+        worldRevision: 1,
+      },
+    ];
+    mind.noteExecution("kirill", feedback);
+    expect(reload().snapshotFigures().get("kirill")?.execution).toEqual(
+      feedback,
     );
   });
 });
@@ -89,6 +252,7 @@ describe("remote request cancellation", () => {
       expect(await rejected).toMatchObject({ name: "AbortError" });
       expect(signal?.aborted).toBe(true);
       expect(mind.conversation(world.figures[0]!.id)).toEqual([]);
+      expect(memory.episodes.snapshot().episodes).toEqual([]);
       expect(memory.memory(offered.id)).not.toBeNull();
       expect(mind.failureCount).toBe(0);
     } finally {
