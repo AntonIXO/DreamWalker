@@ -1,4 +1,6 @@
 /** A live view of carried things and nearby targets, with one command at a time. */
+import type { WorldAction } from "../../shared/world-action";
+
 export interface InventoryItem {
   id: string;
   name: string;
@@ -7,6 +9,7 @@ export interface InventoryItem {
   canExamine?: boolean;
   canDrop?: boolean;
   containerId?: string | null;
+  actions?: Array<{ label: string; action: WorldAction }>;
 }
 
 export interface InventoryModel {
@@ -27,6 +30,9 @@ export interface InventoryCallbacks {
     objectId: string,
   ): void | { reply?: string } | Promise<void | { reply?: string }>;
   onCancel?(): void;
+  onPhysicalAction?(
+    action: WorldAction,
+  ): void | { reply?: string } | Promise<void | { reply?: string }>;
 }
 
 const COPY = {
@@ -46,13 +52,12 @@ const COPY = {
     command: "Что сделать?",
     placeholder: "Например: отдай её Турышеву",
     submit: "Сделать",
-    examples: ["Передай это человеку рядом", "Положи это в открытую сумку"],
+    examples: ["Надень это", "Ляг внутрь", "Покажи это человеку рядом"],
     waiting: "Действие выполняется…",
     cancelled: "Действие отменено.",
     done: "Готово.",
     failed: "Не удалось выполнить действие. Попробуйте ещё раз.",
     inside: "внутри",
-    record: "ЗАПИСЬ",
   },
   en: {
     title: "Things",
@@ -70,13 +75,12 @@ const COPY = {
     command: "What do you want to do?",
     placeholder: "For example: give it to Turyshev",
     submit: "Do it",
-    examples: ["Give this to the person nearby", "Put this into the open bag"],
+    examples: ["Put this on", "Lie down inside", "Show this to someone nearby"],
     waiting: "Carrying out the action…",
     cancelled: "Action cancelled.",
     done: "Done.",
     failed: "The action could not be completed. Try again.",
     inside: "inside",
-    record: "NOTE",
   },
 };
 
@@ -123,7 +127,7 @@ export class InventoryPanel {
       <div class="inventory-selection">
         <span class="system-label inventory-selection-label"></span>
         <strong class="inventory-selected-name"></strong><p class="inventory-selected-status dim"></p>
-        <div class="inventory-quick"><button class="ghost inventory-examine" type="button"></button><button class="ghost inventory-drop" type="button"></button></div>
+        <div class="inventory-quick"><button class="ghost inventory-examine" type="button"></button><button class="ghost inventory-drop" type="button"></button><span class="inventory-physical-actions"></span></div>
       </div>
       <form class="inventory-form">
         <label class="inventory-command-label"><span></span><input class="inventory-command" type="text" maxlength="600" autocomplete="off" spellcheck="false"></label>
@@ -284,6 +288,19 @@ export class InventoryPanel {
     const selected = this.selectedItem();
     this.selectedName.textContent = selected?.name ?? copy.noSelection;
     this.selectedStatus.textContent = selected?.status ?? "";
+    const physical = this.root.querySelector(".inventory-physical-actions")!;
+    physical.replaceChildren();
+    for (const option of selected?.actions ?? []) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "ghost inventory-physical-action";
+      button.textContent = option.label;
+      button.addEventListener("click", () => {
+        if (this.busy || !this.callbacks.onPhysicalAction) return;
+        void this.run(() => this.callbacks.onPhysicalAction!(option.action));
+      });
+      physical.appendChild(button);
+    }
     this.examples.replaceChildren();
     for (const example of copy.examples) {
       const button = document.createElement("button");
@@ -377,14 +394,14 @@ export class InventoryPanel {
     this.examineButton.disabled = this.busy || !selected?.canExamine;
     this.dropButton.disabled = this.busy || !selected?.canDrop;
     for (const button of this.root.querySelectorAll<HTMLButtonElement>(
-      ".inventory-item, .inventory-example",
+      ".inventory-item, .inventory-example, .inventory-physical-action",
     ))
       button.disabled = this.busy;
   }
 
   private setReply(text: string, failed = false): void {
     this.reply.hidden = !text;
-    this.reply.textContent = text ? `${this.copy.record} — ${text}` : "";
+    this.reply.textContent = text;
     this.reply.dataset.error = String(failed);
   }
 

@@ -95,6 +95,7 @@ function snapshotObjectOf(object: WorldObjectState): WorldSnapshotObject {
     clueId: object.clueId,
     holdsShardId: object.holdsShardId,
     tags: [...object.tags],
+    profile: object.profile ? structuredClone(object.profile) : undefined,
   };
 }
 
@@ -131,6 +132,14 @@ export function snapshot(
     }));
 
   return {
+    roleRecognition:
+      forFigureId === null
+        ? structuredClone(world.roleRecognition ?? {})
+        : {
+            [forFigureId]: structuredClone(
+              world.roleRecognition?.[forFigureId] ?? [],
+            ),
+          },
     worldMind:
       forFigureId === null
         ? structuredClone(world.worldMind.events)
@@ -138,7 +147,12 @@ export function snapshot(
     geometry: Object.fromEntries(
       world.rooms.map((room) => [
         room.id,
-        { width: room.width, height: room.height, cells: [...room.cells] },
+        {
+          width: room.width,
+          height: room.height,
+          cells: [...room.cells],
+          tileSize: room.tileSize,
+        },
       ]),
     ),
     keysHeld: [...world.keysHeld],

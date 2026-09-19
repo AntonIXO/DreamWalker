@@ -94,7 +94,8 @@ describe("son is playable", () => {
     // room is still entered on foot, so no arrangement can strand the player.
     for (const room of artifact.rooms) {
       for (const door of room.doors) {
-        if (door.threshold !== "rift") continue;
+        if (door.threshold !== "rift" || (door.hidden && door.revealBy))
+          continue;
         expect(room.id).toMatch(/^m\d+-/);
         expect(artifact.rooms.some((other) => other.id === door.toRoomId)).toBe(
           true,

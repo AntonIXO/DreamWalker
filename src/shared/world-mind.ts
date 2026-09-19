@@ -14,6 +14,12 @@ import type {
   WorldMutator,
   WorldObjectState,
 } from "./world-object";
+import {
+  actorIsConcealed,
+  getActorEquipment,
+  getActorOccupancy,
+  isActorRef,
+} from "./world-object";
 
 export const MAX_WORLD_MIND_EVENTS = 128;
 export const WORLD_MIND_WITNESS_RADIUS = 8;
@@ -72,6 +78,7 @@ export interface WorldMindState {
 }
 
 export interface WorldMindCapture {
+  actorConcealed?: boolean;
   state: WorldMindActionState;
   figures: Array<{ id: string; pose: ActorPose }>;
   objectPoses: Record<string, ActorPose | null>;
@@ -98,7 +105,10 @@ function objectPose(
     const location = current.location;
     if (location.kind === "room")
       return { roomId: location.roomId, x: location.x, y: location.y };
-    if (location.kind === "held") return actorPose(world, location.actor);
+    if (location.kind === "held")
+      return actorIsConcealed(world.objects, location.actor)
+        ? null
+        : actorPose(world, location.actor);
     if (location.kind !== "inside") return null;
     current = world.objectById.get(location.objectId);
     if (!current || current.state.open !== true) return null;
@@ -113,7 +123,21 @@ export function captureWorldAction(
 ): WorldMindCapture {
   const action = envelope.action;
   const objectIds = new Set(additionalObjectIds);
-  if ("objectId" in action) objectIds.add(action.objectId);
+  if ("objectId" in action && action.objectId) objectIds.add(action.objectId);
+  if (action.type === "leave" && isActorRef(envelope.actor)) {
+    const occupied = getActorOccupancy(world.objects, envelope.actor);
+    if (occupied) objectIds.add(occupied.id);
+  }
+  if (action.type === "requestRole" && isActorRef(envelope.actor))
+    for (const equipment of getActorEquipment(world.objects, envelope.actor))
+      objectIds.add(equipment.id);
+  if (action.type === "empty")
+    for (const child of world.objects)
+      if (
+        child.location.kind === "inside" &&
+        child.location.objectId === action.objectId
+      )
+        objectIds.add(child.id);
   if ("targetId" in action && action.targetId) objectIds.add(action.targetId);
   if ("intoObjectId" in action) objectIds.add(action.intoObjectId);
   const doorId =
@@ -131,12 +155,15 @@ export function captureWorldAction(
       id,
       name: object.name,
       location: structuredClone(object.location),
-      state: { ...object.state },
+      state: structuredClone(object.state),
     });
     objectPoses[id] = objectPose(world, object);
   }
   const door = doorId ? world.getDoor(doorId) : null;
   return {
+    actorConcealed:
+      isActorRef(envelope.actor) &&
+      actorIsConcealed(world.objects, envelope.actor),
     state: {
       actor: actorPose(world, envelope.actor),
       objects,
@@ -153,10 +180,14 @@ export function captureWorldAction(
           }
         : null,
     },
-    figures: [...world.figurePoses].map(([id, pose]) => ({
-      id,
-      pose: { ...pose },
-    })),
+    figures: [...world.figurePoses]
+      .filter(
+        ([id]) => !actorIsConcealed(world.objects, { kind: "figure", id }),
+      )
+      .map(([id, pose]) => ({
+        id,
+        pose: { ...pose },
+      })),
     objectPoses,
   };
 }
@@ -197,6 +228,7 @@ function visibility(
   const door = capture.state.door;
   return {
     actor:
+      !capture.actorConcealed &&
       capture.state.actor !== null &&
       canObserveWorldPose(world, observer, capture.state.actor),
     objectIds: capture.state.objects
@@ -276,9 +308,21 @@ function visibleState(
 ): WorldMindActionState {
   return {
     actor: view.actor ? state.actor : null,
-    objects: state.objects.filter((object) =>
-      view.objectIds.includes(object.id),
-    ),
+    objects: state.objects
+      .filter((object) => view.objectIds.includes(object.id))
+      .map((object) => {
+        if (
+          !object.state.occupancy ||
+          (object.state.open !== false &&
+            object.state.occupancy.pose !== "hidden")
+        )
+          return object;
+        // Seeing a closed receptacle does not reveal the identity or return pose
+        // of an unseen body inside it. An earlier witnessed entry remains memory.
+        const { occupancy, ...visible } = object.state;
+        void occupancy;
+        return { ...object, state: visible };
+      }),
     door: view.door ? state.door : null,
   };
 }
@@ -293,6 +337,18 @@ function visibleEvent(event: WorldEvent, view: WorldMindWitnessView): boolean {
     view.before.door ||
     view.after.door;
   switch (event.type) {
+    case "actor.requested":
+      return (
+        (view.before.actor || view.after.actor) &&
+        (event.objectId === null ||
+          before(event.objectId) ||
+          after(event.objectId))
+      );
+    case "object.emptied":
+      return (
+        (before(event.objectId) || after(event.objectId)) &&
+        event.objectIds.every(after)
+      );
     case "door.traversed":
       return view.before.actor && view.after.actor;
     case "actor.moved":
@@ -303,6 +359,7 @@ function visibleEvent(event: WorldEvent, view: WorldMindWitnessView): boolean {
       );
     case "door.opened":
     case "door.closed":
+    case "door.revealed":
       return view.before.door || view.after.door;
     case "object.taken":
     case "object.given":

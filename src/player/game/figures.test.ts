@@ -15,6 +15,64 @@ const YARD = "19-dvor-i-oranzhevye-lavochki";
 const STREET = "path-1-2-e";
 
 describe("a led figure", () => {
+  test("a seated or lying figure is not dragged out by ambient movement or the next agenda phase", () => {
+    const world = createWorld(artifact);
+    const figure = world.figures[0]!;
+    const object = world.objects[0]!;
+    object.state.occupancy = {
+      actor: { kind: "figure", id: figure.id },
+      pose: "lying",
+      returnPose: { roomId: figure.roomId, x: figure.x, y: figure.y },
+    };
+    figure.targetX = figure.x + 1;
+    figure.targetY = figure.y;
+    figure.walking = true;
+    const before = {
+      x: figure.x,
+      y: figure.y,
+      roomId: figure.roomId,
+      phase: figure.agendaPhase,
+    };
+    for (let i = 0; i < 60; i++)
+      updateFigures(world, 0.95, 1 / 30, null, world.currentRoomId);
+    expect({
+      x: figure.x,
+      y: figure.y,
+      roomId: figure.roomId,
+      phase: figure.agendaPhase,
+    }).toEqual(before);
+    expect(figure.walking).toBe(false);
+    expect(figure.targetX).toBeNull();
+  });
+  test("a director-controlled figure keeps its current path instead of ambient walking or reseating", () => {
+    const world = createWorld(artifact);
+    const figure = world.figures[0]!;
+    const before = {
+      x: figure.x,
+      y: figure.y,
+      roomId: figure.roomId,
+      phase: figure.agendaPhase,
+    };
+    figure.targetX = figure.x + 1;
+    figure.targetY = figure.y;
+    for (let i = 0; i < 30; i++)
+      updateFigures(
+        world,
+        0.9,
+        1 / 30,
+        null,
+        world.currentRoomId,
+        null,
+        new Set([figure.id]),
+      );
+    expect({
+      x: figure.x,
+      y: figure.y,
+      roomId: figure.roomId,
+      phase: figure.agendaPhase,
+    }).toEqual(before);
+    expect(figure.targetX).toBe(before.x + 1);
+  });
   test("cannot be escorted into a meta-space", () => {
     const world = createWorld(artifact);
     const figure = world.figures.find((entry) => entry.id === "mama")!;

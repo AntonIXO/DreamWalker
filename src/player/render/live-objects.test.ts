@@ -104,7 +104,7 @@ describe("live object sprites", () => {
       16,
     );
     expect(spriteOf(layer)?.texture).toBe(clueArt);
-    expect(spriteOf(layer)?.x).toBeCloseTo(2 * 16 + 8 + 16 * 0.15);
+    expect(spriteOf(layer)?.x).toBeCloseTo(2 * 16 + 8);
     layer.destroy();
   });
 

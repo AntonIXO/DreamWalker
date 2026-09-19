@@ -41,7 +41,8 @@ export function solidRectsFor(world: WorldState, roomId: string): SolidRect[] {
 
   for (const prop of room.props) {
     if (!prop.solid) continue;
-    if (objectIds.has(prop.id)) continue;
+    if (objectIds.has(prop.id) || objectIds.has(`${roomId}:${prop.id}`))
+      continue;
     rects.push(prop);
   }
 

@@ -3,6 +3,12 @@ import { createWorldMind, type WorldMindState } from "../../shared/world-mind";
 import { migrateWorldObjects } from "./object-migration";
 import type { DreamArtifact } from "../../shared/dream";
 import type { PlayerActionLine } from "../../shared/ai";
+import type { DirectorSnapshot } from "../../shared/director";
+import {
+  LEGACY_SON_PACK_FINGERPRINTS,
+  SON_LIVING_PACK_FINGERPRINT,
+} from "../../shared/legacy-dream-packs";
+import { cloneObject } from "../../shared/world-object";
 import type { Cycle, JournalEntry } from "./cycle";
 import type { DreamSession } from "./session";
 import type { WordNotebook } from "./wordNotebook";
@@ -38,6 +44,8 @@ export interface RunSave {
   notebook: ReturnType<WordNotebook["snapshot"]>;
   conversations: ReturnType<RemoteMind["snapshotFigures"]>;
   commands?: PlayerActionLine[];
+  director?: DirectorSnapshot;
+  mode?: "live" | "training";
   ending: ReturnType<FinalePanel["snapshotEnding"]>;
 }
 
@@ -163,6 +171,7 @@ export function restoreWorld(world: WorldState, state: SavedWorld): void {
     if (object.state.open === undefined)
       object.state.open = authored.state.open;
   }
+  world.roleRecognition ??= {};
   Object.assign(world, buildDoorIndexes(world.rooms));
   rebuildObjectIndex(world);
 }
@@ -193,6 +202,116 @@ function fingerprint(text: string): string {
   return (hash >>> 0).toString(16);
 }
 
+const LIVING_NEW_OBJECT_IDS = new Set([
+  "riukzak-folded-cloth",
+  "riukzak-fruit",
+  "riukzak-vodka",
+  "outfit-hudozhnik",
+  "outfit-lysyi",
+  "outfit-ded-slava",
+  "school-pear-case",
+  "hackathon-glass-case",
+  "guard-belt-anchor",
+  "cruiser-microphone-stand",
+]);
+const LIVING_NEW_DOOR_IDS = new Set([
+  "10-komnata-s-grobami--secret-tkan-s-kodami",
+  "05-shesterochka--secret-polka-dlia-veschei",
+  "15-osennii-les-s-grobom--secret-grob",
+  "m9-shkaf--secret-shkaf",
+]);
+
+/** Only reached after exact source/target and checksum validation. No old object is respawned. */
+function migrateLivingSave(save: RunSave, artifact: DreamArtifact): void {
+  const authoredObjects = migrateWorldObjects(artifact.rooms);
+  const byId = new Map(authoredObjects.map((object) => [object.id, object]));
+  const originRooms = structuredClone(artifact.rooms);
+  for (const room of originRooms)
+    for (const prop of room.props) delete prop.inside;
+  const origins = new Map(
+    migrateWorldObjects(originRooms).map((object) => [
+      object.id,
+      object.location,
+    ]),
+  );
+  for (const list of [save.world.objects, save.world.baseObjects]) {
+    for (const object of list) {
+      const authored = byId.get(object.id);
+      if (!authored?.profile) continue;
+      const origin = origins.get(object.id);
+      const atOrigin =
+        object.location.kind === "room" &&
+        origin?.kind === "room" &&
+        object.location.roomId === origin.roomId &&
+        object.location.x === origin.x &&
+        object.location.y === origin.y;
+      const priorAttachment = object.state.attachedTo;
+      object.profile = structuredClone(authored.profile);
+      object.mobility = authored.mobility;
+      object.affordances = [...authored.affordances];
+      object.tags = [...new Set([...object.tags, ...authored.tags])];
+      object.state = { ...structuredClone(authored.state), ...object.state };
+      if (
+        !atOrigin &&
+        authored.profile.attachment &&
+        priorAttachment === undefined
+      )
+        object.state.attachedTo = null;
+      if (atOrigin && authored.location.kind === "inside")
+        object.location = { ...authored.location };
+      object.visual = { ...object.visual, ...authored.visual };
+      if (object.interaction)
+        object.interaction.refusal = authored.interaction?.refusal ?? null;
+    }
+    const present = new Set(list.map((object) => object.id));
+    for (const object of authoredObjects) {
+      if (!LIVING_NEW_OBJECT_IDS.has(object.id) || present.has(object.id))
+        continue;
+      // A removed container remains removed; do not introduce orphaned contents.
+      if (object.location.kind === "inside") {
+        const parentId = object.location.objectId;
+        const parent = list.find((candidate) => candidate.id === parentId);
+        if (!parent || parent.location.kind === "removed") continue;
+      }
+      list.push(cloneObject(object));
+      present.add(object.id);
+    }
+  }
+  const authoredRooms = new Map(artifact.rooms.map((room) => [room.id, room]));
+  for (const room of save.world.rooms) {
+    const authored = authoredRooms.get(room.id);
+    if (!authored) continue;
+    for (const prop of room.props) {
+      const next = authored.props.find((candidate) => candidate.id === prop.id);
+      if (next?.profile) prop.profile = structuredClone(next.profile);
+      if (next?.openImage) prop.openImage = next.openImage;
+    }
+    const props = new Set(room.props.map((prop) => prop.id));
+    for (const prop of authored.props)
+      if (LIVING_NEW_OBJECT_IDS.has(prop.id) && !props.has(prop.id))
+        room.props.push(structuredClone(prop));
+    const hotspots = new Set(room.hotspots.map((hotspot) => hotspot.id));
+    for (const hotspot of authored.hotspots) {
+      const previous = room.hotspots.find(
+        (candidate) => candidate.id === hotspot.id,
+      );
+      if (previous && hotspot.profile)
+        previous.profile = structuredClone(hotspot.profile);
+      if (previous) previous.refusal = hotspot.refusal;
+      if (
+        LIVING_NEW_OBJECT_IDS.has(hotspot.propId ?? hotspot.id) &&
+        !hotspots.has(hotspot.id)
+      )
+        room.hotspots.push(structuredClone(hotspot));
+    }
+    const doors = new Set(room.doors.map((door) => door.id));
+    for (const door of authored.doors)
+      if (LIVING_NEW_DOOR_IDS.has(door.id) && !doors.has(door.id))
+        room.doors.push(structuredClone(door));
+  }
+  save.world.roleRecognition ??= {};
+}
+
 export class RunStore {
   readonly key: string;
   private readonly pack: string;
@@ -200,7 +319,7 @@ export class RunStore {
 
   // Use the unlocalized artifact so switching language does not invalidate a run.
   constructor(
-    artifact: DreamArtifact,
+    private readonly artifact: DreamArtifact,
     private readonly storage: () => Pick<Storage, "getItem" | "setItem"> = () =>
       localStorage,
   ) {
@@ -220,10 +339,15 @@ export class RunStore {
       const raw = this.storage().getItem(this.key);
       if (!raw) return { save: null, unavailable: false };
       const envelope = JSON.parse(raw);
+      const livingMigration =
+        this.artifact.slug === "son" &&
+        this.pack === SON_LIVING_PACK_FINGERPRINT &&
+        LEGACY_SON_PACK_FINGERPRINTS.some((value) => value === envelope.pack);
       if (
         envelope.version !== 1 ||
         (envelope.pack !== this.pack &&
-          envelope.pack !== this.priorContainerPack) ||
+          envelope.pack !== this.priorContainerPack &&
+          !livingMigration) ||
         typeof envelope.payload !== "string" ||
         fingerprint(envelope.payload) !== envelope.checksum
       ) {
@@ -258,6 +382,7 @@ export class RunStore {
       ) {
         return { save: null, unavailable: true };
       }
+      if (livingMigration) migrateLivingSave(save, this.artifact);
       return { save, unavailable: false };
     } catch {
       return { save: null, unavailable: true };

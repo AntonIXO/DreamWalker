@@ -180,7 +180,7 @@ describe("executeWorldAction", () => {
     const dropped = executeWorldAction(world, {
       actor: PLAYER,
       source: "player",
-      action: { type: "drop", objectId: "bottle" },
+      action: { type: "drop", objectId: "bottle", x: 4, y: 4 },
     });
     expect(dropped.ok).toBe(true);
     expect(bottle.location.kind).toBe("room");
@@ -1063,7 +1063,7 @@ describe("drop placement boundaries", () => {
         action: { type: "drop", objectId: "box" },
       }).ok,
     ).toBe(true);
-    expect(box.location).toEqual({ kind: "room", roomId: "a", x: 9, y: 5 });
+    expect(box.location).toEqual({ kind: "room", roomId: "a", x: 9, y: 6 });
   });
 
   test("automatic drops do not move an item across an impassable corner", () => {

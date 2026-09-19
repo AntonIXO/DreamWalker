@@ -262,11 +262,14 @@ export class RoomScene {
    */
   hideDynamicProps(ids: Iterable<string>): void {
     this.dynamicPropIds = new Set(ids);
-    for (const entry of this.built.values()) {
+    for (const [roomId, entry] of this.built) {
       for (const child of entry.props.children) {
         const label = child.label ?? "";
         if (!label.startsWith("prop:")) continue;
-        child.visible = !this.dynamicPropIds.has(label.slice("prop:".length));
+        const id = label.slice("prop:".length);
+        child.visible =
+          !this.dynamicPropIds.has(id) &&
+          !this.dynamicPropIds.has(`${roomId}:${id}`);
       }
     }
   }
@@ -525,6 +528,7 @@ export class RoomScene {
     // was the one threshold the player could not see. §4.1: the створ is always visible;
     // it is the destination that lies.
     for (const door of room.doors) {
+      if (door.hidden) continue;
       if (door.threshold !== "rift") continue;
       const marks = this.atlas.roles.get("warp");
       for (let y = door.y; y < door.y + door.h; y++) {
@@ -555,6 +559,7 @@ export class RoomScene {
     }
     if (room.tags.includes("route")) return layer;
     for (const door of room.doors) {
+      if (door.hidden) continue;
       if (door.threshold === "rift") continue;
       // Open street doorways are holes in the wall, not beige tiles pasted on the
       // painting. Locked and lift doors still need a mark.
@@ -651,7 +656,11 @@ export class RoomScene {
     if (hidePropSprites(room)) return layer;
 
     for (const prop of room.props) {
-      if (this.dynamicPropIds.has(prop.id)) continue;
+      if (
+        this.dynamicPropIds.has(prop.id) ||
+        this.dynamicPropIds.has(`${room.id}:${prop.id}`)
+      )
+        continue;
       const objectTexture = this.objects.get(`${room.id}:${prop.id}`);
       if (!objectTexture) continue;
       const node = new Container({

@@ -124,6 +124,13 @@
   flex-wrap: wrap;
   margin-top: 0.25rem;
 }
+.inventory-physical-actions {
+  display: contents;
+}
+.inventory-panel .inventory-physical-action {
+  min-height: 2.75rem;
+  touch-action: manipulation;
+}
 .inventory-form {
   display: flex;
   flex-direction: column;

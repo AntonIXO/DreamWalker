@@ -14,6 +14,7 @@ import {
 } from "../../shared/street";
 import { applyPatch } from "./patch";
 import { WALK_SPEED } from "../../shared/roomWalk";
+import { getActorOccupancy } from "../../shared/world-object";
 import { whoIsLed } from "./fates";
 import { solidRectsFor } from "./object-collision";
 import type { FigureState, RoomState, WorldState } from "./world";
@@ -346,10 +347,19 @@ export function updateFigures(
    * these are world tiles so a doorway onto a route is just another step.
    */
   follower: { x: number; y: number } | null = null,
+  controlledFigures: ReadonlySet<string> = new Set(),
 ): void {
   const phase = phaseAt(cycleProgress);
   const led = whoIsLed(world);
   for (const figure of world.figures) {
+    // A confirmed director intention owns this body's path until completion/refusal.
+    if (controlledFigures.has(figure.id)) continue;
+    if (getActorOccupancy(world.objects, { kind: "figure", id: figure.id })) {
+      figure.walking = false;
+      figure.targetX = null;
+      figure.targetY = null;
+      continue;
+    }
     const following = figure.id === led && follower !== null;
     // An agenda is a life. Being led is not one, so a led figure has no schedule.
     if (!following) scheduleFigure(world, figure, phase, visibleRoomId);

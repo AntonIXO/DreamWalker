@@ -8,9 +8,12 @@ import { setLiveObjects } from "./object-collision";
 import {
   findGridPath,
   NpcActionQueue,
+  planNpcRoute,
   replayWorldActions,
 } from "./npc-action-queue";
 import { createWorld } from "./world";
+import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
+import { executeWorldAction } from "../../shared/world-action-engine";
 
 function tiny() {
   const artifact = validateDreamArtifact(
@@ -64,6 +67,61 @@ describe("findGridPath", () => {
 });
 
 describe("NpcActionQueue", () => {
+  test("a long intention walks to a real threshold, traverses it, then finishes in the destination room", () => {
+    const world = tiny();
+    const figure = world.figures[0]!;
+    figure.roomId = "a";
+    figure.x = 1;
+    figure.y = 5;
+    const actions = planNpcRoute(world, figure.id, { roomId: "b", x: 3, y: 5 });
+    expect(actions?.some((action) => action.type === "traverseDoor")).toBe(
+      true,
+    );
+    const queue = new NpcActionQueue();
+    let success = false;
+    queue.enqueue(figure.id, actions!, (result) => {
+      success = result.ok;
+    });
+    const events: string[] = [];
+    for (let i = 0; i < 300; i++)
+      queue.tick(
+        world,
+        (envelope) => {
+          const result = executeWorldAction(
+            bindWorldMutator(world, staticPlayerPose(null)),
+            envelope,
+          );
+          events.push(...result.events.map((event) => event.type));
+          return result;
+        },
+        0.1,
+      );
+    expect(success).toBe(true);
+    expect(figure.roomId).toBe("b");
+    expect(figure.x).toBe(3);
+    expect(figure.y).toBe(5);
+    expect(events).toContain("door.traversed");
+  });
+
+  test("routing never borrows the player's key to unlock an NPC's path", () => {
+    const world = tiny();
+    const figure = world.figures[0]!;
+    figure.roomId = "a";
+    world.doorById.get("a--stair-up")!.type = "sealed";
+    const key = bottle();
+    key.keyId = "key1";
+    key.location = { kind: "held", actor: { kind: "player" } };
+    setLiveObjects(world, [key]);
+    world.keysHeld.add("key1");
+    expect(
+      planNpcRoute(world, figure.id, { roomId: "b", x: 3, y: 5 }),
+    ).toBeNull();
+    key.location = { kind: "held", actor: { kind: "figure", id: figure.id } };
+    expect(
+      planNpcRoute(world, figure.id, { roomId: "b", x: 3, y: 5 }),
+    ).not.toBeNull();
+  });
+
   test("moveTo walks the figure, then take is executed", () => {
     const world = tiny();
     const figure = world.figures[0]!;
@@ -84,7 +142,8 @@ describe("NpcActionQueue", () => {
         return ok();
       });
     }
-    expect(Math.round(figure.x)).toBe(5);
+    // The goal names the bottle's occupied tile; the body stops beside it to take it.
+    expect(Math.round(figure.x)).toBe(4);
     expect(Math.round(figure.y)).toBe(5);
     expect(executed).toEqual(["moveTo", "take"]);
     expect(queue.isBusy(figure.id)).toBe(false);
@@ -113,6 +172,40 @@ describe("NpcActionQueue", () => {
       };
     });
     expect(executed).toEqual(["open"]);
+    expect(queue.isBusy(figure.id)).toBe(false);
+  });
+
+  test("movement is paced by elapsed time and never jumps a tile in one frame", () => {
+    const world = tiny();
+    const figure = world.figures[0]!;
+    figure.roomId = "a";
+    figure.x = 1;
+    figure.y = 5;
+    const queue = new NpcActionQueue();
+    queue.enqueue(figure.id, [{ type: "moveTo", x: 5, y: 5 }]);
+    queue.tick(world, () => ok(), 1 / 60);
+    expect(figure.x).toBeGreaterThan(1);
+    expect(figure.x).toBeLessThan(1.1);
+    expect(queue.isBusy(figure.id)).toBe(true);
+    expect(queue.remaining(figure.id)).toHaveLength(1);
+  });
+
+  test("an actor removed mid-intention cannot execute the remaining physical command", () => {
+    const world = tiny();
+    const figure = world.figures[0]!;
+    const queue = new NpcActionQueue();
+    let completed = false;
+    queue.enqueue(figure.id, [{ type: "open", targetId: "box" }], (result) => {
+      completed = !result.ok;
+    });
+    world.figures.splice(world.figures.indexOf(figure), 1);
+    let executed = false;
+    queue.tick(world, () => {
+      executed = true;
+      return ok();
+    });
+    expect(executed).toBe(false);
+    expect(completed).toBe(true);
     expect(queue.isBusy(figure.id)).toBe(false);
   });
 });

@@ -14,6 +14,12 @@ import { WALK_STRIDE } from "../../shared/roomWalk";
 import type { AtlasTextures } from "./atlasTextures";
 import { originX, originY } from "../../shared/street";
 import { actorKey, type WorldObjectState } from "../../shared/world-object";
+import {
+  actorIsConcealed,
+  getActorEquipment,
+  getActorOccupancy,
+} from "../../shared/world-object";
+import { effectiveWear } from "../../shared/object-profile";
 import type { FigureState, InterestState, WorldState } from "../game/world";
 
 export type { Direction };
@@ -104,8 +110,8 @@ export class WalkerSprite {
 
   constructor(
     private readonly atlas: AtlasTextures,
-    private readonly prefix: string,
-    private readonly authored: AuthoredWalk | null = null,
+    private prefix: string,
+    private authored: AuthoredWalk | null = null,
   ) {
     const first = this.authored?.south[0] ?? this.textureFor("s", 0);
     this.sprite = new Sprite({
@@ -116,6 +122,37 @@ export class WalkerSprite {
       eventMode: "none",
     });
     if (this.authored) this.applyAuthoredScale(false);
+  }
+
+  /** Reuse the walker and shared textures when its visible identity changes. */
+  setAppearance(prefix: string, authored: AuthoredWalk | null = null): void {
+    if (prefix === this.prefix && authored === this.authored) return;
+    this.prefix = prefix;
+    this.authored = authored;
+    this.currentName = "";
+    this.lastX = Number.NaN;
+    this.sprite.anchor.set(0.5, authored?.anchorY ?? 0.9);
+    this.sprite.scale.set(1);
+  }
+
+  /** Applied after update so animation cannot overwrite the embodied pose. */
+  setPosture(
+    pose: "standing" | "lying" | "sitting" | "hidden",
+    concealed = false,
+  ): void {
+    const flip = this.lastDir === "w" && !this.authored?.west?.length;
+    if (this.authored) this.applyAuthoredScale(flip);
+    else this.sprite.scale.set(1);
+    this.sprite.rotation = pose === "lying" ? -Math.PI / 2 : 0;
+    this.sprite.anchor.set(
+      0.5,
+      pose === "lying" ? 0.5 : (this.authored?.anchorY ?? 0.9),
+    );
+    if (pose === "lying") {
+      this.sprite.scale.x *= 0.72;
+      this.sprite.scale.y *= 0.72;
+    } else if (pose === "sitting") this.sprite.scale.y *= 0.72;
+    this.sprite.alpha = concealed || pose === "hidden" ? 0 : 1;
   }
 
   private textureFor(dir: Direction, frame: number): Texture {
@@ -258,6 +295,12 @@ export function liveObjectPlacements(
   const out: LiveObjectPlacement[] = [];
   for (const object of objects) {
     if (object.mobility === "fixed") continue;
+    if (object.state.wornBy && object.profile?.wear?.appearanceFigureId)
+      continue;
+    const image =
+      object.state.open && object.visual.openImage
+        ? object.visual.openImage
+        : object.visual.image;
     if (object.location.kind === "room") {
       out.push({
         id: object.id,
@@ -265,13 +308,14 @@ export function liveObjectPlacements(
         x: object.location.x,
         y: object.location.y,
         held: false,
-        image: object.visual.image,
+        image,
         role: object.visual.role,
         clueId: object.clueId,
       });
       continue;
     }
     if (object.location.kind !== "held") continue;
+    if (actorIsConcealed(objects, object.location.actor)) continue;
     const pose = holders.get(actorKey(object.location.actor));
     if (!pose) continue;
     out.push({
@@ -280,7 +324,7 @@ export function liveObjectPlacements(
       x: pose.x,
       y: pose.y,
       held: true,
-      image: object.visual.image,
+      image,
       role: object.visual.role,
       clueId: object.clueId,
     });
@@ -329,10 +373,22 @@ export class ActorLayer {
       const oy = room ? originY(room) : 0;
       const x = (ox + figure.x) * tileSize + tileSize / 2;
       const y = (oy + figure.y) * tileSize + tileSize;
-      const authoredWalk = this.figureWalks.get(figure.id);
+      const worn = world
+        ? getActorEquipment(world.objects, { kind: "figure", id: figure.id })
+        : [];
+      const appearanceId = worn.find(
+        (object) => object.profile?.wear?.appearanceFigureId,
+      )?.profile?.wear?.appearanceFigureId;
+      const visibleFigure = appearanceId
+        ? world?.baseFigures.find((candidate) => candidate.id === appearanceId)
+        : figure;
+      const authoredWalk = this.figureWalks.get(appearanceId ?? figure.id);
       const painting = authoredWalk
         ? undefined
-        : this.figureTextures.get(figure.id);
+        : this.figureTextures.get(appearanceId ?? figure.id);
+      const occupied = world
+        ? getActorOccupancy(world.objects, { kind: "figure", id: figure.id })
+        : null;
       if (painting) {
         const walker = this.figures.get(figure.id);
         if (walker) {
@@ -355,11 +411,24 @@ export class ActorLayer {
           FIGURE_ART_HEIGHT / Math.max(1, painting.height),
           FIGURE_ART_WIDTH / Math.max(1, painting.width),
         );
+        sprite.texture = painting;
         sprite.scale.set(scale);
+        const pose = occupied?.state.occupancy?.pose;
+        sprite.rotation = pose === "lying" ? -Math.PI / 2 : 0;
+        sprite.anchor.set(0.5, pose === "lying" ? 0.5 : 0.9);
+        if (pose === "lying") sprite.scale.set(scale * 0.72);
+        else if (pose === "sitting") sprite.scale.y *= 0.72;
+        sprite.alpha =
+          occupied?.state.open === false || pose === "hidden" ? 0 : 1;
         sprite.x = Math.round(x);
         sprite.y = Math.round(y);
         sprite.zIndex = Math.round(y);
         continue;
+      }
+      const oldPainting = this.paintings.get(figure.id);
+      if (oldPainting) {
+        oldPainting.destroy();
+        this.paintings.delete(figure.id);
       }
       let walker = this.figures.get(figure.id);
       if (!walker) {
@@ -371,6 +440,10 @@ export class ActorLayer {
         this.figures.set(figure.id, walker);
         this.root.addChild(walker.sprite);
       }
+      walker.setAppearance(
+        `figure_${visibleFigure?.archetypeId ?? figure.archetypeId}`,
+        authoredWalk ?? null,
+      );
       walker.update(
         x,
         y,
@@ -378,6 +451,10 @@ export class ActorLayer {
         figure.walking ? Math.floor(figure.walkTime * 5) : 0,
         figure.walking,
         figure.walkTime * WALK_STRIDE * 4,
+      );
+      walker.setPosture(
+        occupied?.state.occupancy?.pose ?? "standing",
+        occupied?.state.open === false,
       );
     }
 
@@ -449,25 +526,48 @@ export class ActorLayer {
       if (!sprite) {
         sprite = new Sprite({
           texture,
-          anchor: { x: 0.5, y: 0.9 },
+          anchor: { x: 0.5, y: 1 },
           roundPixels: true,
           eventMode: "none",
           label: `live-object:${placement.id}`,
         });
-        const box = tileSize;
-        sprite.setSize(box, box);
         this.objects.set(placement.id, sprite);
         this.root.addChild(sprite);
       } else if (sprite.texture !== texture) {
         sprite.texture = texture;
-        sprite.setSize(tileSize, tileSize);
       }
       const ox = room ? originX(room) : 0;
       const oy = room ? originY(room) : 0;
-      const heldNudge = placement.held ? tileSize * 0.15 : 0;
-      sprite.x = (ox + placement.x) * tileSize + tileSize / 2 + heldNudge;
-      sprite.y = (oy + placement.y) * tileSize + tileSize;
+      const object = world?.objectById.get(placement.id);
+      const equipped = object?.state.wornBy
+        ? effectiveWear(object.profile)?.slot
+        : null;
+      const width = placement.held
+        ? equipped
+          ? 0.65
+          : 0.8
+        : (object?.body?.w ?? 1);
+      const height = placement.held
+        ? equipped
+          ? 0.8
+          : 0.8
+        : (object?.body?.h ?? 1);
+      sprite.setSize(tileSize * width, tileSize * height);
+      const heldNudge = placement.held && !equipped ? tileSize * 0.5 : 0;
+      sprite.x =
+        (ox + placement.x + (placement.held ? 0 : width / 2)) * tileSize +
+        heldNudge;
+      sprite.y = (oy + placement.y + (placement.held ? 0 : height)) * tileSize;
+      if (equipped === "head") sprite.y -= 24;
+      else if (equipped === "back") sprite.y -= 9;
+      else if (equipped === "body") sprite.y -= 2;
       sprite.zIndex = Math.round(sprite.y);
+      if (object?.state.occupancy && object.state.open !== false) {
+        const slotY = object.profile?.occupancy?.y ?? (object.body?.h ?? 1) / 2;
+        sprite.zIndex = Math.round((oy + placement.y + slotY) * tileSize) - 1;
+      }
+      if (equipped)
+        sprite.zIndex = Math.round((oy + placement.y) * tileSize) + 1;
     }
     for (const [id, sprite] of this.objects) {
       if (seen.has(id)) continue;
@@ -487,8 +587,14 @@ export class ActorLayer {
       if (cached) return cached;
       for (const room of world?.artifact.rooms ?? []) {
         for (const prop of room.props) {
-          if (prop.image !== placement.image) continue;
-          const texture = this.objectTextures.get(`${room.id}:${prop.id}`);
+          if (
+            prop.image !== placement.image &&
+            prop.openImage !== placement.image
+          )
+            continue;
+          const texture = this.objectTextures.get(
+            `${room.id}:${prop.id}${prop.openImage === placement.image ? ":open" : ""}`,
+          );
           if (!texture) continue;
           this.texturesByImage.set(placement.image, texture);
           return texture;

@@ -90,6 +90,16 @@ import {
   playerActionInstructions,
   playerActionPlanSchema,
 } from "./player-actions";
+import {
+  directorPlanSchema,
+  type DirectorPlan,
+  type DirectorRequest,
+} from "../shared/director";
+import {
+  directorInput,
+  directorInstructions,
+  sanitiseDirectorPlan,
+} from "./director";
 
 const MAX_PATCHES = 8;
 const MAX_NPC_DECISION_STEPS = MAX_WORLD_ACTIONS_PER_TURN + 4;
@@ -153,6 +163,24 @@ const worldActionSchema = z.discriminatedUnion("type", [
     targetId: z.string().max(120).optional(),
   }),
   z.object({ type: z.literal("traverseDoor"), doorId: z.string().max(120) }),
+  z.object({ type: z.literal("approach"), objectId: z.string().max(120) }),
+  z.object({ type: z.literal("occupy"), objectId: z.string().max(120) }),
+  z.object({ type: z.literal("leave") }),
+  z.object({ type: z.literal("wear"), objectId: z.string().max(120) }),
+  z.object({ type: z.literal("removeWear"), objectId: z.string().max(120) }),
+  z.object({ type: z.literal("detach"), objectId: z.string().max(120) }),
+  z.object({ type: z.literal("empty"), objectId: z.string().max(120) }),
+  z.object({
+    type: z.literal("moveObject"),
+    objectId: z.string().max(120),
+    x: z.number(),
+    y: z.number(),
+  }),
+  z.object({
+    type: z.literal("requestRole"),
+    intent: z.enum(["gather", "inspect", "helpMove"]),
+    objectId: z.string().max(120).optional(),
+  }),
 ]);
 
 const worldActionEnvelopeSchema = z.object({
@@ -706,7 +734,9 @@ function unobservablePreview(
   const figures = new Set(scene.figures.map((figure) => figure.id));
   for (const [index, action] of actions.entries()) {
     if (
-      ("objectId" in action && !objects.has(action.objectId)) ||
+      ("objectId" in action &&
+        action.objectId !== undefined &&
+        !objects.has(action.objectId)) ||
       ("intoObjectId" in action && !objects.has(action.intoObjectId)) ||
       ("targetId" in action &&
         action.targetId &&
@@ -859,6 +889,66 @@ export function npcDialogueTools(
       inputSchema: z.object({ doorId: z.string() }),
       execute: run("traverse"),
     }),
+    approach: tool({
+      description:
+        "Approach a visible object along a short valid path, without crossing a room threshold.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("approach"),
+    }),
+    occupy: tool({
+      description:
+        "Sit, lie down or hide in a nearby support with that authored capability.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("occupy"),
+    }),
+    leave: tool({
+      description:
+        "Leave the support your body currently occupies, returning to a safe nearby place.",
+      inputSchema: z.object({}),
+      execute: run("leave"),
+    }),
+    wear: tool({
+      description:
+        "Wear an available costume in a compatible equipment slot. Your real identity stays the same.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("wear"),
+    }),
+    remove_wear: tool({
+      description: "Remove an item you currently wear.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("remove_wear"),
+    }),
+    detach: tool({
+      description:
+        "Detach a nearby object only when its authored fastening permits it.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("detach"),
+    }),
+    move_object: tool({
+      description:
+        "Move a nearby movable object to a clear reachable tile. Never move an occupied support or an attached fixture.",
+      inputSchema: z.object({
+        objectId: z.string(),
+        x: z.number(),
+        y: z.number(),
+      }),
+      execute: run("move_object"),
+    }),
+    empty: tool({
+      description:
+        "Empty an open container onto available nearby floor, preserving its actual contents.",
+      inputSchema: z.object({ objectId: z.string() }),
+      execute: run("empty"),
+    }),
+    request_role: tool({
+      description:
+        "Ask for role-based cooperation supported by your currently worn costume. A request is not guaranteed obedience.",
+      inputSchema: z.object({
+        intent: z.enum(["gather", "inspect", "helpMove"]),
+        objectId: z.string().optional(),
+      }),
+      execute: run("request_role"),
+    }),
   };
 }
 
@@ -878,6 +968,7 @@ export class AgentRuntime {
   private model: LanguageModel | null = null;
   private disposeModel: (() => void) | null = null;
   private busy = false;
+  private directorController: AbortController | null = null;
   private readonly populations = new Map<string, DreamPopulation>();
 
   constructor(
@@ -1111,6 +1202,8 @@ export class AgentRuntime {
   }
 
   private acquire(): void {
+    // Player-facing turns always preempt speculation. Background work never owns busy.
+    this.cancelDirector();
     if (this.busy) {
       throw new AgentRuntimeError(
         "busy",
@@ -1123,6 +1216,71 @@ export class AgentRuntime {
 
   private release(): void {
     this.busy = false;
+  }
+
+  cancelDirector(): void {
+    this.directorController?.abort(
+      new DOMException("Foreground request", "AbortError"),
+    );
+    this.directorController = null;
+  }
+
+  /** A separate low-priority channel: it cannot block a foreground request. */
+  async direct(
+    request: DirectorRequest,
+    signal: AbortSignal,
+  ): Promise<DirectorPlan> {
+    assertSlug(this.artifact, request.slug);
+    this.assertRunId(request.runId);
+    if (this.busy || this.directorController) return { situations: [] };
+    if (
+      !Number.isInteger(request.cycleNumber) ||
+      request.cycleNumber < 1 ||
+      !request.world ||
+      !Array.isArray(request.signals) ||
+      request.signals.length > 24 ||
+      !Array.isArray(request.activeSituations) ||
+      request.activeSituations.length > 2
+    ) {
+      throw new AgentRuntimeError(
+        "invalid_request",
+        "Invalid director context",
+        false,
+      );
+    }
+    const controller = new AbortController();
+    this.directorController = controller;
+    const combined = AbortSignal.any([signal, controller.signal]);
+    try {
+      combined.throwIfAborted();
+      const memories = await recallContext(
+        request.memories,
+        "sleeper",
+        request.cycleNumber,
+        `${request.signals.join(" ")} ${request.sleeperSummary ?? ""}`,
+        combined,
+      );
+      const result = await this.generate(
+        directorPlanSchema,
+        directorInstructions(request.locale),
+        directorInput(this.artifact, request, memories),
+        combined,
+        3000,
+      );
+      combined.throwIfAborted();
+      return sanitiseDirectorPlan(result, this.artifact, request);
+    } catch (error) {
+      if (combined.aborted)
+        throw new AgentRuntimeError(
+          "aborted",
+          "Director yielded to the player",
+          true,
+        );
+      throw classify(error);
+    } finally {
+      if (this.directorController === controller)
+        this.directorController = null;
+    }
   }
 
   private activePopulation(runId?: string): DreamPopulation {
@@ -1979,6 +2137,15 @@ export class AgentRuntime {
     return patches
       .filter((patch) => {
         switch (patch.kind) {
+          case "revealDoor":
+            return this.artifact.rooms.some((room) =>
+              room.doors.some(
+                (door) =>
+                  door.id === patch.doorId &&
+                  door.hidden === true &&
+                  door.revealBy !== undefined,
+              ),
+            );
           case "sealDoor":
           case "openDoor":
           case "retypeDoor":
@@ -2076,6 +2243,7 @@ export class AgentRuntime {
   }
 
   dispose(): void {
+    this.cancelDirector();
     this.disposeModel?.();
     this.disposeModel = null;
     this.model = null;

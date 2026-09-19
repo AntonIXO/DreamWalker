@@ -47,4 +47,44 @@ describe("authored figure sheets", () => {
       /expected 96x192/,
     );
   });
+
+  test("changing clothes invalidates cached frames without changing position or disposing shared art", () => {
+    const first = authoredWalkFromSheet(
+      new Texture({ source: new TextureSource({ width: 96, height: 192 }) }),
+      ref,
+      34,
+    );
+    const other = authoredWalkFromSheet(
+      new Texture({ source: new TextureSource({ width: 96, height: 192 }) }),
+      ref,
+      36,
+    );
+    const walker = new WalkerSprite({} as AtlasTextures, "player", first);
+    for (const dir of ["s", "w", "n", "e"] as const) {
+      walker.setAppearance("player", first);
+      walker.update(12, 24, dir, 0);
+      walker.setAppearance("figure_role", other);
+      walker.update(12, 24, dir, 0);
+      const texture =
+        dir === "s"
+          ? other.south[0]
+          : dir === "n"
+            ? other.north![0]
+            : dir === "e"
+              ? other.east[0]
+              : other.west![0];
+      expect(walker.sprite.texture).toBe(texture!);
+      expect(walker.sprite.x).toBe(12);
+      expect(walker.sprite.y).toBe(24);
+    }
+    walker.setPosture("lying");
+    expect(walker.sprite.rotation).not.toBe(0);
+    walker.setPosture("lying", true);
+    expect(walker.sprite.alpha).toBe(0);
+    walker.setPosture("standing");
+    expect(walker.sprite.rotation).toBe(0);
+    expect(walker.sprite.alpha).toBe(1);
+    walker.destroy();
+    expect(other.south[0]!.destroyed).toBe(false);
+  });
 });

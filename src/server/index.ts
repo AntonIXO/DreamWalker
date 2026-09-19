@@ -13,6 +13,7 @@ import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
 import { resolveAiBackend } from "./config";
 import { warmSemanticMemory } from "./semantic-memory";
+import type { DirectorPlan, DirectorRequest } from "../shared/director";
 
 const root = process.cwd();
 const port = Number(process.env.DREAMWALKER_API_PORT ?? 8080);
@@ -227,6 +228,7 @@ async function api(
   }
 
   if (pathname === "/api/ai/action" && request.method === "POST") {
+    agents.cancelDirector();
     return aiRoute<
       ActionRequestPayload,
       Awaited<ReturnType<typeof agents.act>>
@@ -234,6 +236,7 @@ async function api(
   }
 
   if (pathname === "/api/ai/dialogue" && request.method === "POST") {
+    agents.cancelDirector();
     return aiRoute<
       DialogueRequestPayload,
       Awaited<ReturnType<typeof agents.dialogue>>
@@ -247,6 +250,12 @@ async function api(
       InhabitRequestPayload,
       Awaited<ReturnType<typeof agents.inhabit>>
     >(request, (payload, signal) => agents.inhabit(payload, signal));
+  }
+
+  if (pathname === "/api/ai/director" && request.method === "POST") {
+    return aiRoute<DirectorRequest, DirectorPlan>(request, (payload, signal) =>
+      agents.direct(payload, signal),
+    );
   }
 
   if (pathname === "/api/ai/examine" && request.method === "POST") {
@@ -264,6 +273,7 @@ async function api(
   }
 
   if (pathname === "/api/ai/finale" && request.method === "POST") {
+    agents.cancelDirector();
     return aiRoute<
       FinaleRequestPayload,
       Awaited<ReturnType<typeof agents.judge>>

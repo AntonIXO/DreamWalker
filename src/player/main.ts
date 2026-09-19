@@ -22,7 +22,13 @@ import {
   validateDreamArtifact,
   type DreamArtifact,
 } from "../shared/dream";
-import { isStreetWorld, worldBounds } from "../shared/street";
+import {
+  isStreetWorld,
+  worldBounds,
+  toLocalPixels,
+  toWorldPixels,
+} from "../shared/street";
+import { facingFor } from "../shared/roomWalk";
 import {
   getLocale,
   onLocaleChange,
@@ -63,6 +69,7 @@ import {
 } from "./game/patch";
 import { playerTile, walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
+import { PlayerActionRunner } from "./game/player-action-runner";
 import { RunStore, snapshotWorld, restoreWorld } from "./game/save";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
@@ -71,8 +78,7 @@ import { MEMORY_EXHAUSTION } from "./game/exhaustion";
 import { addExhaustion } from "./game/world";
 import { learnLeverage, leverageOn } from "./game/fates";
 import { liveObjects } from "./game/object-collision";
-import { NpcActionQueue } from "./game/npc-action-queue";
-import { replayNpcActions, replayPlayerActions } from "./mind/action-feedback";
+import { replayNpcActions } from "./mind/action-feedback";
 import {
   carriedInventoryObjects,
   nearbyInventoryObjects,
@@ -83,12 +89,21 @@ import { worldMindForFigure } from "../shared/world-mind";
 import { actionRingRowsFor, primaryObjectAction } from "./game/interact";
 import type { WorldAction } from "../shared/world-action";
 import type { ActorRef, WorldObjectState } from "../shared/world-object";
+import { getActorEquipment, getActorOccupancy } from "../shared/world-object";
+import {
+  actionLabel,
+  actionRefusalText,
+  actionSuccessText,
+} from "../shared/action-text";
+import { recordRoleWitnesses, recordRoleReport } from "../shared/social-roles";
 import { Heartbeat } from "./mind/heartbeat";
+import { WorldDirector, requestDirector } from "./mind/director";
+import { localDirectorPlan } from "./mind/director-local";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
 import { ContextMemory } from "./mind/context-memory";
 import { episodesForWorldEvent } from "../shared/episodic-memory";
-import { inhabitDream } from "./mind/remote";
+import { inhabitDream, snapshot as snapshotMindWorld } from "./mind/remote";
 import { fallbackPopulation } from "../shared/population";
 import { rollWallet } from "../shared/wallet";
 import { clueIdForShard } from "../shared/yield";
@@ -250,14 +265,20 @@ async function boot(): Promise<void> {
   const objectTextures = await loadExternalTextures(
     DREAM_URL,
     artifact.rooms.flatMap((room) =>
-      room.props.flatMap((prop) =>
-        prop.image ? [{ id: `${room.id}:${prop.id}`, path: prop.image }] : [],
-      ),
+      room.props.flatMap((prop) => [
+        ...(prop.image
+          ? [{ id: `${room.id}:${prop.id}`, path: prop.image }]
+          : []),
+        ...(prop.openImage
+          ? [{ id: `${room.id}:${prop.id}:open`, path: prop.openImage }]
+          : []),
+      ]),
     ),
     { concurrency: 4, scaleMode: "nearest" },
   );
 
   const world = createWorld(artifact);
+  let trainingRun = false;
   const background =
     artifact.palette.colors[artifact.palette.roles.background] ?? "#000000";
 
@@ -382,6 +403,7 @@ async function boot(): Promise<void> {
   const hud = new Hud(uiLayer);
   hud.setLobbyMode(true);
   const observations = new ObservationLog();
+  const directorRef: { current?: WorldDirector } = {};
   world.exhaustion = mindMemory.exhaustion;
 
   /**
@@ -397,6 +419,10 @@ async function boot(): Promise<void> {
     shiver,
     {
       onEnterRoom: (room, visits) => {
+        if (!room.tags.includes("route"))
+          directorRef.current?.noteProgress(
+            `Entered ${room.id}, visit ${visits}`,
+          );
         contextMemory.observe(
           world,
           { roomId: room.id, ...playerTile(session.player, room) },
@@ -413,6 +439,12 @@ async function boot(): Promise<void> {
       },
       onRefused: (doorId) => observations.noteRefusal(doorId),
       onWorldAction: (event) => {
+        recordRoleWitnesses(
+          (world.roleRecognition ??= {}),
+          world.objects,
+          event,
+        );
+        directorRef.current?.noteEvent(event);
         for (const episode of episodesForWorldEvent(event, {
           rooms: Object.fromEntries(
             world.rooms.map((room) => [room.id, room.name]),
@@ -431,6 +463,39 @@ async function boot(): Promise<void> {
     transition,
     sonPack.scripts,
   );
+
+  const currentPlayerPose = () => {
+    const room = currentRoom(world);
+    const local = toLocalPixels(room, session.player.x, session.player.y);
+    return {
+      roomId: room.id,
+      x: local.x / room.tileSize,
+      y: local.y / room.tileSize,
+    };
+  };
+  const playerActions = new PlayerActionRunner(world, {
+    playerPose: currentPlayerPose,
+    move: (pose, moving, distance) => {
+      const room = world.roomById.get(pose.roomId);
+      if (!room || room.id !== world.currentRoomId) return;
+      const point = toWorldPixels(
+        room,
+        pose.x * room.tileSize,
+        pose.y * room.tileSize,
+      );
+      session.player.facing = facingFor(
+        point.x - session.player.x,
+        point.y - session.player.y,
+        session.player.facing,
+      );
+      session.player.x = point.x;
+      session.player.y = point.y;
+      session.player.moving = moving;
+      session.player.travelled += distance;
+    },
+    execute: (envelope) => session.dispatchWorldAction(envelope),
+    revision: () => world.revision,
+  });
 
   const figuresHere = (): typeof world.figures =>
     world.figures.filter(
@@ -459,7 +524,7 @@ async function boot(): Promise<void> {
         .map((object) => object.id),
     );
     const holders = new Map<string, { roomId: string; x: number; y: number }>();
-    const tile = playerTile(session.player, room);
+    const tile = currentPlayerPose();
     holders.set("player", {
       roomId: world.currentRoomId,
       x: tile.x,
@@ -500,8 +565,7 @@ async function boot(): Promise<void> {
       cycleNumber: () => cycle.number,
       journal: () => journal.all().map((entry) => entry.text),
       playerPose: () => {
-        const tile = playerTile(session.player, currentRoom(world));
-        return { roomId: world.currentRoomId, x: tile.x, y: tile.y };
+        return currentPlayerPose();
       },
     },
     mindMemory,
@@ -538,7 +602,6 @@ async function boot(): Promise<void> {
     }
   };
 
-  const npcQueue = new NpcActionQueue();
   const runWorldAction = (
     action: WorldAction,
     actor: ActorRef = { kind: "player" },
@@ -549,6 +612,50 @@ async function boot(): Promise<void> {
       action,
     });
 
+  const director = new WorldDirector(world, {
+    context: () => ({
+      runId: mindMemory.runId,
+      cycleNumber: cycle.number,
+      world: snapshotMindWorld(world, "upper-dynamic", null, {
+        playerPose: currentPlayerPose(),
+      }),
+      memories: mindMemory.episodes.forObserver("sleeper", cycle.number),
+      sleeperSummary: mindMemory.sleeper.summary,
+      locale: getLocale(),
+    }),
+    playerPose: currentPlayerPose,
+    viewport: () => ({
+      roomId: world.currentRoomId,
+      rect: camera.visibleTiles(),
+    }),
+    trySpendCall: () => trainingRun || heartbeat.trySpendBackgroundCall(),
+    request: async (payload, signal) => {
+      if (trainingRun) return localDirectorPlan(payload, payload.signals);
+      try {
+        return await requestDirector(payload, signal);
+      } catch (error) {
+        if (signal.aborted) throw error;
+        return localDirectorPlan(payload, payload.signals);
+      }
+    },
+    execute: (envelope) => session.dispatchWorldAction(envelope),
+    onPatch: (_patch, result) => {
+      if (!result.ok) return;
+      for (const roomId of result.affectedRooms) rooms.invalidate(roomId);
+      session.enterRoomImmediate(false);
+      shiver.trigger(0.2);
+    },
+    onSpeech: (figureId, text) => {
+      const figure = world.figures.find((entry) => entry.id === figureId);
+      if (!figure) return;
+      mind.noteReaction(figureId, text);
+      journal.addPerson(cycle.number, figureId, figure.name, text);
+      hud.whisper(`${figure.name}: ${text}`, 6);
+    },
+    onChange: () => queueMicrotask(() => saveNow()),
+  });
+  directorRef.current = director;
+
   const dialogue = new DialoguePanel(
     uiLayer,
     mind,
@@ -557,6 +664,8 @@ async function boot(): Promise<void> {
     atlas,
     {
       onOpen: (figure) => {
+        director?.cancelRequest();
+        director?.npcQueue.cancel(figure.id, "conversation began");
         input.setCaptured(true);
         observations.noteApproach(figure.id);
         const roomName =
@@ -702,7 +811,7 @@ async function boot(): Promise<void> {
             clueInspect.open(clue, result.reply);
           }
         } else {
-          hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
+          hud.whisper(result.reply, 5);
         }
         if (result.yieldedShardId) noteShard(result.yieldedShardId);
       })
@@ -725,7 +834,8 @@ async function boot(): Promise<void> {
           return;
         }
         const result = runWorldAction(row.payload.action);
-        if (!result.ok && result.refusal) hud.whisper(result.refusal, 4);
+        if (!result.ok && result.refusal)
+          hud.whisper(actionRefusalText(result.refusal, getLocale()), 4);
         return;
       }
       if (subject.kind !== "figure") return;
@@ -883,10 +993,7 @@ async function boot(): Promise<void> {
   let itemCommandGeneration = 0;
   const inventoryMutator = () =>
     bindWorldMutator(world, {
-      get: () => ({
-        roomId: world.currentRoomId,
-        ...playerTile(session.player, currentRoom(world)),
-      }),
+      get: currentPlayerPose,
       set: () => undefined,
     });
   const itemView = (
@@ -896,6 +1003,10 @@ async function boot(): Promise<void> {
   ): InventoryItem => {
     const ru = getLocale() === "ru";
     const flags: string[] = [];
+    if (object.state.wornBy?.kind === "player")
+      flags.push(ru ? "надето" : "worn");
+    if (object.state.occupancy?.actor.kind === "player")
+      flags.push(ru ? "ты внутри" : "you are inside");
     if (object.state.broken) flags.push(ru ? "разбито" : "broken");
     if (object.state.wet !== undefined)
       flags.push(
@@ -960,6 +1071,18 @@ async function boot(): Promise<void> {
       canDrop: options.some(
         (option) => option.action.type === "drop" && !option.refusal,
       ),
+      actions: options.flatMap((option) =>
+        !option.refusal &&
+        option.action.type !== "examine" &&
+        option.action.type !== "drop"
+          ? [
+              {
+                label: actionLabel(option.action, getLocale()),
+                action: option.action,
+              },
+            ]
+          : [],
+      ),
     };
   };
   let inventoryVersion = "";
@@ -982,25 +1105,36 @@ async function boot(): Promise<void> {
     });
   };
   const refusedAction = (refusal: string | null): string => {
-    if (getLocale() === "en")
-      return refusal
-        ? `The action failed: ${refusal}.`
-        : "The world changed; the action could not be completed.";
-    if (refusal?.includes("reach") || refusal?.includes("path"))
-      return "Слишком далеко или путь к вещи закрыт. Подойди ближе.";
-    if (refusal?.includes("held")) return "Эта вещь сейчас не у тебя.";
-    if (refusal?.includes("space")) return "Здесь не хватает места.";
-    if (refusal?.includes("locked") || refusal?.includes("sealed"))
-      return "Закрыто. Сначала нужно открыть.";
-    return "Мир изменился. Действие не удалось завершить.";
+    return actionRefusalText(refusal, getLocale());
   };
   const inventory = new InventoryPanel(uiLayer, {
+    onPhysicalAction: async (action) => {
+      director?.cancelRequest();
+      const requestedCycle = cycle.number;
+      const result = await playerActions.run(
+        [{ actor: { kind: "player" }, source: "player", action }],
+        () =>
+          inventory.isOpen &&
+          !restarting &&
+          cycle.number === requestedCycle &&
+          !finale.isOpen,
+      );
+      refreshInventory();
+      queueMicrotask(saveNow);
+      return {
+        reply: result.ok
+          ? actionSuccessText(action, getLocale())
+          : refusedAction(result.refusal),
+      };
+    },
     onClose: () => input.setCaptured(false),
     onCancel: () => {
       itemCommandGeneration++;
       mind.abort();
+      playerActions.cancel();
     },
     onCommand: async (utterance, selectedObjectId) => {
+      director?.cancelRequest();
       const generation = ++itemCommandGeneration;
       const requestedCycle = cycle.number;
       const planned = await thinking.run(
@@ -1018,10 +1152,14 @@ async function boot(): Promise<void> {
       )
         throw new DOMException("Cancelled", "AbortError");
       const firstEvent = world.worldMind.nextSequence;
-      const actual = replayPlayerActions(
+      const actual = await playerActions.run(
         planned.worldActions,
-        (envelope) => session.dispatchWorldAction(envelope),
-        () => world.revision,
+        () =>
+          generation === itemCommandGeneration &&
+          inventory.isOpen &&
+          !restarting &&
+          cycle.number === requestedCycle &&
+          !finale.isOpen,
       );
       let reply = actual.ok ? planned.reply : refusedAction(actual.refusal);
       if (actual.ok) {
@@ -1152,6 +1290,7 @@ async function boot(): Promise<void> {
   const enterDream = async (mode: "live" | "training"): Promise<void> => {
     if (phase !== "lobby" || populationLoading) return;
     populationLoading = true;
+    trainingRun = mode === "training";
     phase = "enteringDream";
     input.setCaptured(true);
     soundtrack.setBed("game");
@@ -1344,6 +1483,8 @@ async function boot(): Promise<void> {
   const restartCycle = async (): Promise<void> => {
     if (restarting) return;
     restarting = true;
+    playerActions.cancel();
+    director?.resetCycle();
     try {
       // A panel retains the old FigureState while resetWorld installs fresh figures.
       // Close it before planning so no reply or action can commit to the next cycle.
@@ -1408,6 +1549,8 @@ async function boot(): Promise<void> {
       cycle: cycle.snapshot(),
       observations: observations.snapshot(world),
       heartbeatCalls: heartbeat.snapshot(),
+      director: director?.snapshot(),
+      mode: trainingRun ? "training" : "live",
       memory: mindMemory.snapshot(),
       journal: journal.all(),
       notebook: wordNotebook.snapshot(),
@@ -1429,10 +1572,12 @@ async function boot(): Promise<void> {
   const loadedRun = runStore.load(artifact);
   if (loadedRun.save) {
     const saved = loadedRun.save;
+    trainingRun = saved.mode === "training";
     restoreWorld(world, saved.world);
     cycle.restore(saved.cycle);
     observations.restore(saved.observations);
     heartbeat.restore(saved.heartbeatCalls);
+    director?.restore(saved.director);
     mindMemory.restore(saved.memory);
     journal.restore(saved.journal);
     wordNotebook.restore(saved.notebook);
@@ -1482,6 +1627,8 @@ async function boot(): Promise<void> {
     app,
     world,
     heartbeat,
+    director,
+    playerActions,
     observations,
     input,
     camera,
@@ -1580,6 +1727,8 @@ async function boot(): Promise<void> {
     // latency, a cycle transition, or the finale owns the simulation.
     const simulationPaused =
       mind.waiting || inventory.isWaiting || restarting || finale.isOpen;
+    if (!restarting && !finale.isOpen && session.canSave)
+      playerActions.tick(delta);
     inventoryToggle.disabled =
       restarting || (!inventory.isOpen && (held || simulationPaused));
     if (inventory.isOpen) refreshInventory();
@@ -1605,8 +1754,8 @@ async function boot(): Promise<void> {
           x: session.player.x / room.tileSize,
           y: session.player.y / room.tileSize,
         },
+        director?.npcQueue.busyFigureIds,
       );
-      npcQueue.tick(world, (envelope) => session.dispatchWorldAction(envelope));
       contextElapsed += delta;
       const playerPose = {
         roomId: room.id,
@@ -1636,7 +1785,14 @@ async function boot(): Promise<void> {
           rumor.text,
         );
       }
+      if (rumor) recordRoleReport((world.roleRecognition ??= {}), rumor);
     }
+    director?.tick(delta, {
+      paused: simulationPaused || !session.canSave,
+      foregroundBusy:
+        mind.waiting || inventory.isWaiting || restarting || finale.isOpen,
+      presentationHeld: held,
+    });
 
     // A street map is one country: follow the walker. A single-room dream still
     // frames the authored scene.
@@ -1756,7 +1912,8 @@ async function boot(): Promise<void> {
         const pick = primaryObjectAction(target.actions);
         if (pick && pick.action.type !== "examine") {
           const result = runWorldAction(pick.action);
-          if (!result.ok && result.refusal) hud.whisper(result.refusal, 4);
+          if (!result.ok && result.refusal)
+            hud.whisper(actionRefusalText(result.refusal, getLocale()), 4);
         } else if (target.object.interaction?.refusal) {
           hud.whisper(target.object.interaction.refusal, 4);
         } else {
@@ -1799,7 +1956,7 @@ async function boot(): Promise<void> {
                   clueInspect.open(clue, result.reply);
                 }
               } else {
-                hud.whisper(`ЗАПИСЬ — ${result.reply}`, 5);
+                hud.whisper(result.reply, 5);
               }
               if (result.yieldedShardId) noteShard(result.yieldedShardId);
             })
@@ -1831,6 +1988,19 @@ async function boot(): Promise<void> {
 
     // --- draw
     const walker = session.player;
+    const worn = getActorEquipment(world.objects, { kind: "player" });
+    const appearanceId = worn.find(
+      (object) => object.profile?.wear?.appearanceFigureId,
+    )?.profile?.wear?.appearanceFigureId;
+    const appearance = appearanceId
+      ? world.baseFigures.find((figure) => figure.id === appearanceId)
+      : null;
+    playerSprite.setAppearance(
+      appearance ? `figure_${appearance.archetypeId}` : "player",
+      appearanceId
+        ? (figureWalks.get(appearanceId) ?? sanitarWalk)
+        : sanitarWalk,
+    );
     playerSprite.update(
       walker.x,
       walker.y,
@@ -1838,6 +2008,11 @@ async function boot(): Promise<void> {
       walkFrame(walker),
       walker.moving,
       walker.travelled,
+    );
+    const occupied = getActorOccupancy(world.objects, { kind: "player" });
+    playerSprite.setPosture(
+      occupied?.state.occupancy?.pose ?? "standing",
+      occupied?.state.open === false,
     );
     actors.syncFigures(figuresHere(), room.tileSize, world);
     actors.syncInterests(interestsHere(), room.tileSize, world);

@@ -53,6 +53,31 @@ function fakeMind(patches: MapPatch[]): DreamMind {
 const CONFIG = { callBudgetPerCycle: 4, maxPatchesPerBeat: 8 };
 
 describe("Heartbeat viewport guard", () => {
+  test("background and debug share a budget but reserve the last call for cycle exit", async () => {
+    const world = makeWorld();
+    let calls = 0;
+    const mind = fakeMind([]);
+    mind.mutate = async () => {
+      calls++;
+      return { patches: [], sleeperSummary: "" };
+    };
+    const heartbeat = new Heartbeat(
+      world,
+      mind,
+      new ObservationLog(),
+      CONFIG,
+      () => ({ roomId: "a", rect: { x: 0, y: 0, w: 1, h: 1 } }),
+    );
+    expect(heartbeat.trySpendBackgroundCall()).toBe(true);
+    expect(heartbeat.trySpendBackgroundCall()).toBe(true);
+    expect(heartbeat.trySpendBackgroundCall()).toBe(true);
+    expect(heartbeat.trySpendBackgroundCall()).toBe(false);
+    await heartbeat.force();
+    expect(calls).toBe(0);
+    await heartbeat.planCycleExit();
+    expect(calls).toBe(1);
+    expect(heartbeat.budgetRemaining).toBe(0);
+  });
   test("a late forced beat cannot apply to a new cycle or unlock its pending beat", async () => {
     const world = makeWorld();
     const pending: Array<(value: CycleExitResult) => void> = [];

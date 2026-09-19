@@ -30,6 +30,8 @@ import { makeRng } from "../../shared/rng";
 import type { DoorTypeName } from "../../shared/tilecodes";
 import { cloneObject } from "../../shared/world-object";
 import { migrateWorldObjects } from "./object-migration";
+import { passageIsUncovered } from "./secret-passages";
+import { setCellMark } from "../../shared/roomGrid";
 import {
   buildDoorIndexes,
   cloneFigureState,
@@ -698,6 +700,28 @@ export interface ApplyPatchOptions {
   source?: WorldActionSource;
 }
 
+function revealDoor(world: WorldState, doorId: string): PatchResult {
+  const door = world.doorById.get(doorId);
+  const roomId = world.roomIdByDoorId.get(doorId);
+  const room = roomId ? world.roomById.get(roomId) : null;
+  if (!door || !room) return refuse(`no door ${doorId}`);
+  if (!door.hidden) return refuse("already revealed");
+  if (!passageIsUncovered(world, door))
+    return refuse("the passage is still covered");
+  door.hidden = false;
+  for (let y = door.y; y < door.y + door.h; y++) {
+    for (let x = door.x; x < door.x + door.w; x++) {
+      room.cells = setCellMark(room.cells, x, y, "_");
+    }
+  }
+  world.revision++;
+  return {
+    ok: true,
+    affectedRooms: [room.id],
+    note: "За вещью открылся проход.",
+  };
+}
+
 /**
  * Embodied equivalents of MapPatch kinds. The rest stay as sleeper/admin writers:
  * shiftWalls, retargetDoor, markFigure, reviveFigure, relocateShard, retypeDoor,
@@ -751,6 +775,8 @@ export function applyPatch(
   const embodied = tryEmbodied(world, patch, options);
   if (embodied) return embodied;
   switch (patch.kind) {
+    case "revealDoor":
+      return revealDoor(world, patch.doorId);
     case "sealDoor":
       return sealDoor(world, patch.doorId);
     case "openDoor":
@@ -837,6 +863,7 @@ function slotScopes(world: WorldState, roomId: string): PatchScope[] {
 
 export function patchTouches(patch: MapPatch, world: WorldState): PatchScope[] {
   switch (patch.kind) {
+    case "revealDoor":
     case "sealDoor":
     case "openDoor":
     case "retypeDoor":

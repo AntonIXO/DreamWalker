@@ -53,6 +53,15 @@ export const NPC_WORLD_TOOL_NAMES = [
   "activate",
   "use",
   "traverse",
+  "approach",
+  "occupy",
+  "leave",
+  "wear",
+  "remove_wear",
+  "detach",
+  "move_object",
+  "empty",
+  "request_role",
 ] as const;
 
 export type NpcWorldToolName = (typeof NPC_WORLD_TOOL_NAMES)[number];
@@ -124,15 +133,16 @@ function asString(value: unknown, fallback = ""): string {
 
 function objectFromSnapshot(raw: WorldSnapshotObject): WorldObjectState {
   return {
+    ...(raw.profile ? { profile: structuredClone(raw.profile) } : {}),
     id: raw.id,
     name: raw.name,
-    location: { ...raw.location } as ObjectLocation,
+    location: structuredClone(raw.location),
     mobility: raw.mobility,
     affordances: [...raw.affordances],
     body: raw.body ? { ...raw.body } : null,
     visual: { role: null, image: null },
     interaction: raw.interaction ? { ...raw.interaction } : null,
-    state: { ...raw.state },
+    state: structuredClone(raw.state),
     tags: [...raw.tags],
     clueId: raw.clueId,
     holdsShardId: raw.holdsShardId,
@@ -149,13 +159,14 @@ function snapshotObjectFromState(
   object: WorldObjectState,
 ): WorldSnapshotObject {
   return {
+    ...(object.profile ? { profile: structuredClone(object.profile) } : {}),
     interaction: object.interaction ? { ...object.interaction } : null,
     id: object.id,
     name: object.name,
-    location: { ...object.location } as ObjectLocation,
+    location: structuredClone(object.location),
     mobility: object.mobility,
     affordances: [...object.affordances],
-    state: { ...object.state },
+    state: structuredClone(object.state),
     keyId: object.keyId,
     body: object.body ? { ...object.body } : null,
     clueId: object.clueId,
@@ -230,6 +241,7 @@ export class SnapshotSandbox implements WorldMutator {
     }
     const doors = new Map<string, WorldDoorView>();
     for (const door of snapshot.doors) {
+      if (door.hidden) continue;
       doors.set(door.id, {
         id: door.id,
         type: door.type,
@@ -305,6 +317,10 @@ export class SnapshotSandbox implements WorldMutator {
 
   getPlayerPose(): ActorPose | null {
     return this.player ? clonePose(this.player) : null;
+  }
+
+  roomTileSize(roomId: string): number {
+    return this.geometry[roomId]?.tileSize ?? 16;
   }
 
   setPlayerPose(pose: ActorPose): void {
@@ -516,6 +532,33 @@ export function worldActionFromTool(
   input: Record<string, unknown>,
 ): WorldAction | null {
   switch (name) {
+    case "approach":
+    case "occupy":
+    case "wear":
+    case "detach":
+    case "empty":
+      return { type: name, objectId: asString(input.objectId) };
+    case "leave":
+      return { type: "leave" };
+    case "remove_wear":
+      return { type: "removeWear", objectId: asString(input.objectId) };
+    case "move_object":
+      return {
+        type: "moveObject",
+        objectId: asString(input.objectId),
+        x: asNumber(input.x),
+        y: asNumber(input.y),
+      };
+    case "request_role":
+      if (!["gather", "inspect", "helpMove"].includes(asString(input.intent)))
+        return null;
+      return {
+        type: "requestRole",
+        intent: input.intent as "gather" | "inspect" | "helpMove",
+        ...(typeof input.objectId === "string"
+          ? { objectId: input.objectId }
+          : {}),
+      };
     case "move_to":
       return { type: "moveTo", x: asNumber(input.x), y: asNumber(input.y) };
     case "take":

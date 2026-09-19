@@ -13,11 +13,8 @@ import { findHotspot } from "../../shared/roomGrid";
 import { toLocalPixels } from "../../shared/street";
 import type { RoomHotspot } from "../../shared/room";
 import { availableVerbs, type Verb, type VerbOption } from "../../shared/verbs";
-import {
-  t,
-  type SupportedLocale,
-  type TranslationKey,
-} from "../../shared/i18n";
+import { t, getLocale, type SupportedLocale } from "../../shared/i18n";
+import { actionLabel, actionRefusalText } from "../../shared/action-text";
 import type { ActionOption } from "../../shared/world-action";
 import { availableActions } from "../../shared/world-action-engine";
 import type {
@@ -328,6 +325,10 @@ export function findTarget(
 export function primaryObjectAction(
   actions: readonly ActionOption[],
 ): ActionOption | null {
+  const leave = actions.find(
+    (option) => option.action.type === "leave" && !option.refusal,
+  );
+  if (leave) return leave;
   const take = actions.find(
     (option) => option.action.type === "take" && !option.refusal,
   );
@@ -340,12 +341,11 @@ export function primaryObjectAction(
 }
 
 function labelForAction(option: ActionOption): string {
-  if (option.label) return option.label;
-  const key =
-    option.affordance === "move"
-      ? "actions.traverse"
-      : (`actions.${option.affordance}` as TranslationKey);
-  return t(key);
+  const label = actionLabel(option.action, getLocale());
+  return (option.action.type === "give" || option.action.type === "put") &&
+    option.label
+    ? `${label}: ${option.label}`
+    : label;
 }
 
 /**
@@ -379,7 +379,9 @@ export function actionRingRowsFor(input: {
     }
     rows.push({
       label: labelForAction(option),
-      refusal: option.refusal,
+      refusal: option.refusal
+        ? actionRefusalText(option.refusal, getLocale())
+        : null,
       confirm: false,
       payload: { kind: "world", action: option.action },
     });

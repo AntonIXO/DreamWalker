@@ -47,6 +47,7 @@ export function bindWorldMutator(
 
   const doorById = new Map<string, WorldDoorView>();
   for (const id of world.doorById.keys()) {
+    if (world.doorById.get(id)?.hidden) continue;
     doorById.set(id, viewOfDoor(world, id));
   }
 
@@ -78,7 +79,8 @@ export function bindWorldMutator(
     get doorById() {
       doorById.clear();
       for (const id of world.doorById.keys())
-        doorById.set(id, viewOfDoor(world, id));
+        if (!world.doorById.get(id)?.hidden)
+          doorById.set(id, viewOfDoor(world, id));
       return doorById;
     },
     getPlayerPose: () => {
@@ -113,7 +115,7 @@ export function bindWorldMutator(
     },
     getDoor: (doorId) => {
       const live = world.doorById.get(doorId);
-      if (!live) return null;
+      if (!live || live.hidden) return null;
       const view = viewOfDoor(world, doorId);
       doorById.set(doorId, view);
       return { ...view };
@@ -135,6 +137,7 @@ export function bindWorldMutator(
       if (!room) return false;
       return isWalkableCell(cellAt(room, Math.floor(x), Math.floor(y)));
     },
+    roomTileSize: (roomId) => world.roomById.get(roomId)?.tileSize ?? 16,
     canPassDoor: (doorId) => {
       const door = world.doorById.get(doorId);
       if (!door) return false;

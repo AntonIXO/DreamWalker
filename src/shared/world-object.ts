@@ -9,6 +9,8 @@
  */
 
 import { rectContainsPoint } from "./rect";
+import type { OccupantPose, PhysicalProfile } from "./object-profile";
+import { effectiveWear } from "./object-profile";
 
 export type ActorRef = { kind: "player" } | { kind: "figure"; id: string };
 
@@ -41,6 +43,13 @@ export const OBJECT_AFFORDANCES = [
   "activate",
   "use",
   "traverse",
+  "wear",
+  "removeWear",
+  "occupy",
+  "leave",
+  "detach",
+  "moveObject",
+  "empty",
 ] as const;
 export type ObjectAffordance = (typeof OBJECT_AFFORDANCES)[number];
 
@@ -49,6 +58,13 @@ export const MAX_OBJECT_INSCRIPTION_LENGTH = 240;
 
 /** Persistent physical facts. Identity, collision, and lock policy live elsewhere. */
 export interface WorldObjectPhysicalState {
+  wornBy?: ActorRef | null;
+  occupancy?: {
+    actor: ActorRef;
+    pose: OccupantPose;
+    returnPose: ActorPose;
+  } | null;
+  attachedTo?: string | null;
   open?: boolean;
   active?: boolean;
   broken?: boolean;
@@ -67,13 +83,14 @@ export interface WorldObjectAlteration {
 }
 
 export interface WorldObjectState {
+  profile?: PhysicalProfile;
   id: string;
   name: string;
   location: ObjectLocation;
   mobility: ObjectMobility;
   affordances: ObjectAffordance[];
   body: { w: number; h: number; solid: boolean } | null;
-  visual: { role: string | null; image: string | null };
+  visual: { role: string | null; image: string | null; openImage?: string };
   interaction: {
     reach: number;
     prompt: string;
@@ -102,6 +119,7 @@ export interface ActorPose {
 }
 
 export interface WorldDoorView {
+  hidden?: boolean;
   closed?: boolean;
   /** Resolved lever/puzzle policy at snapshot time. */
   passable?: boolean;
@@ -139,6 +157,8 @@ export interface WorldMutator {
   getDoor(doorId: string): WorldDoorView | null;
   setDoorType(doorId: string, type: string): void;
   setDoorClosed(doorId: string, closed: boolean): void;
+  /** Pixel size of a logical tile, for the same body footprint as live walking. */
+  roomTileSize(roomId: string): number;
   /** Authored walk mask only (no objects). */
   isWalkableTile(roomId: string, x: number, y: number): boolean;
   /**
@@ -166,14 +186,55 @@ export interface WorldMutator {
 export function cloneObject(object: WorldObjectState): WorldObjectState {
   return {
     ...object,
-    location: { ...object.location },
+    location: structuredClone(object.location),
+    ...(object.profile ? { profile: structuredClone(object.profile) } : {}),
     affordances: [...object.affordances],
     body: object.body ? { ...object.body } : null,
     visual: { ...object.visual },
     interaction: object.interaction ? { ...object.interaction } : null,
-    state: { ...object.state },
+    state: structuredClone(object.state),
     tags: [...object.tags],
   };
+}
+
+export function getActorEquipment(
+  objects: readonly WorldObjectState[],
+  actor: ActorRef,
+): WorldObjectState[] {
+  return objects.filter(
+    (object) =>
+      object.state.wornBy &&
+      actorsEqual(object.state.wornBy, actor) &&
+      isHeldBy(object, actor),
+  );
+}
+
+export function getActorOccupancy(
+  objects: readonly WorldObjectState[],
+  actor: ActorRef,
+): WorldObjectState | null {
+  return (
+    objects.find(
+      (object) =>
+        object.state.occupancy &&
+        actorsEqual(object.state.occupancy.actor, actor),
+    ) ?? null
+  );
+}
+
+export function actorIsConcealed(
+  objects: readonly WorldObjectState[],
+  actor: ActorRef,
+): boolean {
+  const object = getActorOccupancy(objects, actor);
+  return (
+    !!object &&
+    (object.state.occupancy?.pose === "hidden" || object.state.open === false)
+  );
+}
+
+export function actorWearSlot(object: WorldObjectState) {
+  return effectiveWear(object.profile)?.slot;
 }
 
 export function isHeldBy(object: WorldObjectState, actor: ActorRef): boolean {

@@ -22,6 +22,7 @@ import type { FigureFate } from "./verbs";
  * `swapRooms` is gone with the card-dealing it served: a room is where it is now.
  */
 export type MapPatch =
+  | { kind: "revealDoor"; doorId: string; reason: string }
   | { kind: "sealDoor"; doorId: string; reason: string }
   | { kind: "openDoor"; doorId: string; reason: string }
   | { kind: "retypeDoor"; doorId: string; to: DoorTypeName; reason: string }
@@ -118,6 +119,7 @@ export type MapPatch =
     };
 
 export const PATCH_KINDS = [
+  "revealDoor",
   "sealDoor",
   "openDoor",
   "retypeDoor",

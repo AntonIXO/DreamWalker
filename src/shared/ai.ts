@@ -3,6 +3,8 @@ import type {
   WorldObjectState,
 } from "./world-object";
 import type { WorldMindEvent } from "./world-mind";
+import type { PhysicalProfile } from "./object-profile";
+import type { RoleRecognitionState } from "./social-roles";
 import type { MemoryEpisode } from "./episodic-memory";
 import type { MapPatch } from "./map-patch";
 import type { PortraitState } from "./content";
@@ -177,6 +179,7 @@ export interface NpcExecutionFeedback {
 
 /** A physical object as the sleeper/NPC sees it. Ownership is `location`. */
 export interface WorldSnapshotObject {
+  profile?: PhysicalProfile;
   interaction?: WorldObjectState["interaction"];
   id: string;
   name: string;
@@ -192,9 +195,13 @@ export interface WorldSnapshotObject {
 }
 
 export interface WorldSnapshot {
+  roleRecognition?: RoleRecognitionState;
   /** Observed facts, already scoped to the recipient; full ledger only for the sleeper. */
   worldMind?: WorldMindEvent[];
-  geometry?: Record<string, { width: number; height: number; cells: string[] }>;
+  geometry?: Record<
+    string,
+    { width: number; height: number; cells: string[]; tileSize?: number }
+  >;
   keysHeld?: string[];
   rooms: Array<{
     id: string;
@@ -210,6 +217,7 @@ export interface WorldSnapshot {
     tags: string[];
   }>;
   doors: Array<{
+    hidden?: boolean;
     id: string;
     type: string;
     fromRoomId: string;

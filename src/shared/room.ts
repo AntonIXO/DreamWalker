@@ -20,6 +20,7 @@
 
 import type { CellGrid, Direction, SolidRect } from "./roomGrid";
 import type { DoorTypeName } from "./tilecodes";
+import type { PhysicalProfile } from "./object-profile";
 
 /**
  * A place, or one of the four gaps between places.
@@ -41,6 +42,7 @@ export type HotspotKind =
   | "ui";
 
 export interface RoomHotspot {
+  profile?: PhysicalProfile;
   id: string;
   kind: HotspotKind;
   /** Tile coordinates, fractional. Where the sanitar must stand near. */
@@ -91,6 +93,9 @@ export interface RoomHotspot {
  * and the rect is what the walker and the figures actually bump into.
  */
 export interface RoomProp extends SolidRect {
+  profile?: PhysicalProfile;
+  /** Initial contents; resolves to a prop id in the same authored room. */
+  inside?: string;
   id: string;
   /** Explicit receptacle metadata; names never decide physical capabilities. */
   container?: "open" | "closed";
@@ -98,6 +103,8 @@ export interface RoomProp extends SolidRect {
   role: string | null;
   /** A loose PNG under `assets/`, for props too big or too specific for the atlas. */
   image: string | null;
+  /** Authored open-lid variant; shares the same body and footprint. */
+  openImage?: string;
 }
 
 /** Somewhere a walker can arrive. Every room needs at least one. */
@@ -146,6 +153,10 @@ export const THRESHOLD_KINDS = ["door", "stair", "lift", "rift"] as const;
  * carrying — that lives in `canPassDoor`, not in the geometry.
  */
 export interface RoomDoor {
+  /** An authored secret threshold exists physically, but is not yet observable. */
+  hidden?: boolean;
+  /** The local prop that conceals this threshold until a real action uncovers it. */
+  revealBy?: { objectId: string; when: "moved" | "opened" };
   /** Physical leaf state; walking into an unlocked door opens it. */
   closed?: boolean;
   id: string;

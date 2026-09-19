@@ -185,7 +185,7 @@ describe("actionRingRowsFor", () => {
           to: { kind: "figure", id: figure.id },
         },
         affordance: "give",
-        label: "отдать",
+        label: "бутылка",
       }),
     ];
     const rows = actionRingRowsFor({
@@ -203,7 +203,7 @@ describe("actionRingRowsFor", () => {
       "надавить",
       "увести",
       "убить",
-      "отдать",
+      "Передать: бутылка",
     ]);
     expect(rows.filter((row) => row.refusal).map((row) => row.refusal)).toEqual(
       ["Надавить нечем.", "Здесь нечем."],

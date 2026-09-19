@@ -33,6 +33,7 @@ import type { ScriptFlag } from "../../shared/pack";
 import { cloneObject, type WorldObjectState } from "../../shared/world-object";
 import { migrateWorldObjects } from "./object-migration";
 import { createWorldMind, type WorldMindState } from "../../shared/world-mind";
+import type { RoleRecognitionState } from "../../shared/social-roles";
 
 export interface FigureState extends FigurePlacement {
   facing: Direction;
@@ -86,6 +87,7 @@ export interface RoomState extends DreamRoom {
 
 export interface WorldState {
   readonly artifact: DreamArtifact;
+  roleRecognition?: RoleRecognitionState;
 
   readonly rooms: RoomState[];
   readonly roomById: Map<string, RoomState>;
@@ -218,6 +220,7 @@ export function createWorld(artifact: DreamArtifact): WorldState {
 
   return {
     artifact,
+    roleRecognition: {},
     rooms,
     roomById,
     currentRoomId: artifact.spawn.roomId,
@@ -324,6 +327,7 @@ export function resetWorld(world: WorldState, cycle = 1): void {
   world.objectById = indexObjects(world.objects);
   world.revision = 0;
   world.worldMind = createWorldMind();
+  world.roleRecognition = {};
   // The rebuild above resurrects everybody. This puts back what was done to them.
   applyFateLedger(world, cycle);
   for (const interest of world.interests) {
@@ -448,6 +452,7 @@ function indexObjects(
  * geometry: it depends on what you are carrying, and a rect does not know that.
  */
 export function canPassDoor(world: WorldState, door: RoomDoor): boolean {
+  if (door.hidden) return false;
   switch (door.type) {
     case "open":
       return true;
@@ -492,6 +497,7 @@ export function doorAtTile(
   ty: number,
 ): RoomDoor | null {
   for (const door of room.doors) {
+    if (door.hidden) continue;
     if (
       tx >= door.x &&
       tx < door.x + door.w &&

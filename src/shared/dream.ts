@@ -22,6 +22,7 @@ import type { StyleProfile } from "./art/style";
 import type { DreamContent } from "./content";
 import type { SupportedLocale } from "./i18n";
 import { assertMuralObjectArt } from "./object-art";
+import { validatePhysicalProfile } from "./object-profile";
 import { THRESHOLD_KINDS, type DreamRoom, type DreamSpawn } from "./room";
 import { DOOR_TYPES, type DoorTypeName } from "./tilecodes";
 
@@ -503,6 +504,25 @@ function validateRoomShape(
     bool(prop.solid, `${path}.props[${i}].solid`);
     optionalStr(prop.role, `${path}.props[${i}].role`);
     optionalStr(prop.image, `${path}.props[${i}].image`);
+    if (prop.openImage !== undefined)
+      str(prop.openImage, `${path}.props[${i}].openImage`);
+    if (prop.profile !== undefined) {
+      for (const error of validatePhysicalProfile(prop.profile))
+        fail(`${path}.props[${i}].profile`, error);
+    }
+    if (prop.inside !== undefined) {
+      const containerId = str(prop.inside, `${path}.props[${i}].inside`);
+      if (
+        containerId === prop.id ||
+        !(room.props as { id: string }[]).some(
+          (candidate) => candidate.id === containerId,
+        )
+      )
+        fail(
+          `${path}.props[${i}].inside`,
+          "expected a different prop in this room",
+        );
+    }
     if (
       prop.container !== undefined &&
       prop.container !== "open" &&
@@ -512,9 +532,46 @@ function validateRoomShape(
     }
   });
 
+  const props = room.props as unknown as DreamRoom["props"];
+  const propById = new Map(props.map((prop) => [prop.id, prop]));
+  if (propById.size !== props.length)
+    fail(`${path}.props`, "duplicate prop id");
+  for (const prop of props) {
+    if (prop.inside) {
+      const container = propById.get(prop.inside)!;
+      if (
+        !container.container &&
+        !container.profile?.container &&
+        container.profile?.kind !== "bag"
+      )
+        fail(`${path}.props.${prop.id}.inside`, "target is not a container");
+      const seen = new Set([prop.id]);
+      let ancestor: typeof prop | undefined = container;
+      while (ancestor) {
+        if (seen.has(ancestor.id))
+          fail(`${path}.props.${prop.id}.inside`, "container cycle");
+        seen.add(ancestor.id);
+        ancestor = ancestor.inside ? propById.get(ancestor.inside) : undefined;
+      }
+    }
+    if (
+      prop.profile?.occupancy &&
+      ((prop.profile.occupancy.x ?? prop.w / 2) >= prop.w ||
+        (prop.profile.occupancy.y ?? prop.h / 2) >= prop.h)
+    )
+      fail(
+        `${path}.props.${prop.id}.profile.occupancy`,
+        "occupant must fit inside the object",
+      );
+  }
+
   const hotspotIds = new Set<string>();
   arr(room.hotspots, `${path}.hotspots`).forEach((value, i) => {
     const hotspot = obj(value, `${path}.hotspots[${i}]`);
+    if (hotspot.profile !== undefined) {
+      for (const error of validatePhysicalProfile(hotspot.profile))
+        fail(`${path}.hotspots[${i}].profile`, error);
+    }
     const id = str(hotspot.id, `${path}.hotspots[${i}].id`);
     if (hotspotIds.has(id))
       fail(`${path}.hotspots[${i}].id`, `duplicate hotspot ${id}`);
@@ -543,6 +600,29 @@ function validateRoomShape(
   const doorIds = new Set<string>();
   arr(room.doors, `${path}.doors`).forEach((value, i) => {
     const door = obj(value, `${path}.doors[${i}]`);
+    if (door.hidden !== undefined)
+      bool(door.hidden, `${path}.doors[${i}].hidden`);
+    if (door.revealBy !== undefined) {
+      const reveal = obj(door.revealBy, `${path}.doors[${i}].revealBy`);
+      const objectId = str(
+        reveal.objectId,
+        `${path}.doors[${i}].revealBy.objectId`,
+      );
+      if (
+        !(room.props as { id: string }[]).some((prop) => prop.id === objectId)
+      )
+        fail(
+          `${path}.doors[${i}].revealBy.objectId`,
+          "no covering prop in this room",
+        );
+      if (reveal.when !== "moved" && reveal.when !== "opened")
+        fail(`${path}.doors[${i}].revealBy.when`, "expected moved or opened");
+    }
+    if (door.hidden === true && door.revealBy === undefined)
+      fail(
+        `${path}.doors[${i}].hidden`,
+        "a hidden passage needs an authored reveal condition",
+      );
     const id = str(door.id, `${path}.doors[${i}].id`);
     if (doorIds.has(id)) fail(`${path}.doors[${i}].id`, `duplicate door ${id}`);
     doorIds.add(id);
@@ -848,6 +928,14 @@ export function validateDreamArtifact(value: unknown): DreamArtifact {
   const doorTargets = new Set<string>();
   shaped.forEach((room, i) => {
     const path = `dream.rooms[${i}]`;
+    for (const prop of room.props as unknown as DreamRoom["props"]) {
+      const appearance = prop.profile?.wear?.appearanceFigureId;
+      if (appearance && !figureIds.has(appearance))
+        fail(
+          `${path}.props.${prop.id}.profile.wear.appearanceFigureId`,
+          `no figure ${appearance}`,
+        );
+    }
     (room.doors as unknown[]).forEach((value, j) => {
       const door = value as {
         id: string;

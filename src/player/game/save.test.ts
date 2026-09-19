@@ -15,6 +15,10 @@ import type { WorldActionEnvelope } from "../../shared/world-action";
 import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { ObservationLog } from "../mind/observation";
 import { sonArtifact } from "../../../dreams/son/pack";
+import {
+  LEGACY_SON_PACK_FINGERPRINTS,
+  SON_LIVING_PACK_FINGERPRINT,
+} from "../../shared/legacy-dream-packs";
 
 function setup() {
   const artifact = validateDreamArtifact(structuredClone(fixture));
@@ -79,6 +83,123 @@ function setup() {
 }
 
 describe("run checkpoints", () => {
+  test("the exact previous son checkpoint gains physical capabilities without resurrecting or duplicating old objects", () => {
+    const artifact = sonArtifact();
+    const world = createWorld(artifact);
+    const data = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => data.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        data.set(key, value);
+      },
+    };
+    const store = new RunStore(artifact, () => storage);
+    const { snapshot } = setup();
+    const saved = structuredClone(snapshot());
+    saved.world = structuredClone(snapshotWorld(world));
+    saved.session.player = createPlayer(
+      world.roomById.get(world.currentRoomId)!,
+      artifact.spawn.entryId,
+    );
+    saved.session.meta = null;
+    const added = new Set([
+      "riukzak-folded-cloth",
+      "riukzak-fruit",
+      "riukzak-vodka",
+      "outfit-hudozhnik",
+      "outfit-lysyi",
+      "outfit-ded-slava",
+      "school-pear-case",
+      "hackathon-glass-case",
+      "guard-belt-anchor",
+      "cruiser-microphone-stand",
+    ]);
+    for (const key of ["objects", "baseObjects"] as const) {
+      saved.world[key] = saved.world[key].filter(
+        (object) => !added.has(object.id),
+      );
+      for (const object of saved.world[key]) {
+        delete object.profile;
+        object.mobility = "fixed";
+        object.affordances = ["examine"];
+      }
+    }
+    for (const room of saved.world.rooms) {
+      room.props = room.props.filter((prop) => !added.has(prop.id));
+      room.hotspots = room.hotspots.filter(
+        (hotspot) => !added.has(hotspot.propId ?? hotspot.id),
+      );
+      room.doors = room.doors.filter((door) => !door.id.includes("--secret-"));
+    }
+    const bag = saved.world.objects.find((object) => object.id === "riukzak")!;
+    bag.location = { kind: "held", actor: { kind: "player" } };
+    bag.state.inscription = "мой";
+    const erased = saved.world.objects.find(
+      (object) => object.id === "telefon-kamera-otkryvaetsia-sem-sekund",
+    )!.id;
+    saved.world.objects = saved.world.objects.filter(
+      (object) => object.id !== erased,
+    );
+    const existingDoor = saved.world.rooms.flatMap((room) => room.doors)[0]!;
+    existingDoor.closed = true;
+    const removedBag = saved.world.objects.find(
+      (object) => object.id === "riukzak-s-fruktami-i-vodkoi",
+    )!;
+    removedBag.location = { kind: "removed" };
+    expect(store.write(saved)).toBe(true);
+    const envelope = JSON.parse(data.get(store.key)!);
+    expect(envelope.pack).toBe(SON_LIVING_PACK_FINGERPRINT);
+    envelope.pack = LEGACY_SON_PACK_FINGERPRINTS[0];
+    data.set(store.key, JSON.stringify(envelope));
+    const loaded = store.load(artifact);
+    expect(loaded.unavailable).toBe(false);
+    const next = loaded.save!;
+    expect(
+      next.world.objects.find((object) => object.id === "riukzak"),
+    ).toMatchObject({
+      mobility: "carryable",
+      location: bag.location,
+      state: { inscription: "мой" },
+      profile: { kind: "bag" },
+    });
+    expect(next.world.objects.some((object) => object.id === erased)).toBe(
+      false,
+    );
+    expect(
+      next.world.objects.some((object) => object.id === "riukzak-fruit"),
+    ).toBe(false);
+    expect(
+      next.world.objects.filter((object) => object.id === "outfit-hudozhnik"),
+    ).toHaveLength(1);
+    expect(
+      next.world.rooms
+        .flatMap((room) => room.doors)
+        .find((door) => door.id === existingDoor.id)?.closed,
+    ).toBe(true);
+    expect(
+      next.world.rooms
+        .flatMap((room) => room.doors)
+        .filter((door) => door.id.includes("--secret-")),
+    ).toHaveLength(4);
+    expect(next.notebook.words).toEqual(saved.notebook.words);
+    expect(next.journal).toEqual(saved.journal);
+    expect(store.write(next)).toBe(true);
+    expect(
+      store
+        .load(artifact)
+        .save!.world.objects.filter(
+          (object) => object.id === "outfit-hudozhnik",
+        ),
+    ).toHaveLength(1);
+    const changed = structuredClone(artifact);
+    changed.title += "changed";
+    envelope.pack = LEGACY_SON_PACK_FINGERPRINTS[0];
+    data.set(store.key, JSON.stringify(envelope));
+    expect(new RunStore(changed, () => storage).load(changed).unavailable).toBe(
+      true,
+    );
+  });
+
   test("repairs a figure stranded in a meta-space by an older checkpoint", () => {
     const artifact = sonArtifact();
     const world = createWorld(artifact);

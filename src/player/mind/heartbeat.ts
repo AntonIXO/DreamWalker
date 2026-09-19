@@ -74,6 +74,13 @@ export class Heartbeat {
     return Math.max(0, this.config.callBudgetPerCycle - this.callsThisCycle);
   }
 
+  /** Background direction shares the existing budget, reserving the final call for exit. */
+  trySpendBackgroundCall(): boolean {
+    if (this.running || this.budgetRemaining <= 1) return false;
+    this.callsThisCycle++;
+    return true;
+  }
+
   /** Ask the sleeper what the freshly reset next cycle should look like. */
   async planCycleExit(): Promise<CycleExitResult> {
     if (this.running || this.budgetRemaining <= 0) return EMPTY_PLAN;
@@ -98,7 +105,7 @@ export class Heartbeat {
 
   /** Debug-only live beat. It still refuses patches touching the visible viewport. */
   async force(): Promise<BeatOutcome> {
-    if (this.running || this.budgetRemaining <= 0) {
+    if (this.running || this.budgetRemaining <= 1) {
       return { entries: [], affectedRooms: [], notes: [] };
     }
     this.running = true;
@@ -188,7 +195,7 @@ export class Heartbeat {
   }
 }
 
-function scopeIsOnScreen(
+export function scopeIsOnScreen(
   scope: PatchScope,
   view: { roomId: string; rect: TileRect },
   world: WorldState,

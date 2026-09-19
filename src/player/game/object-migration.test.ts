@@ -195,20 +195,25 @@ describe("migrateWorldObjects", () => {
     );
   });
 
-  test("a once look-prop of handheld size is carryable, furniture is not", () => {
+  test("physical profiles decide portability independently of once and drawing size", () => {
     const objects = migrateWorldObjects([
       {
         id: "yard",
         props: [
-          prop({ id: "bottle", w: 1, h: 1 }),
-          prop({ id: "intercom", w: 1, h: 2 }),
-          prop({ id: "urn", w: 1, h: 1 }),
+          prop({ id: "bottle", w: 2, h: 2, profile: { kind: "portable" } }),
+          prop({ id: "intercom", w: 1, h: 1, profile: { kind: "mechanism" } }),
+          prop({
+            id: "urn",
+            w: 1,
+            h: 1,
+            profile: { kind: "furniture", mobility: "fixed" },
+          }),
         ],
         hotspots: [
           hotspot({
             id: "bottle-look",
             propId: "bottle",
-            once: true,
+            once: false,
             prompt: "бутылка",
           }),
           hotspot({
@@ -272,7 +277,7 @@ describe("authored containers", () => {
     )!;
     expect(urn.tags).toContain("container");
     expect(urn.state.open).toBe(true);
-    expect(urn.mobility).toBe("fixed");
+    expect(urn.mobility).toBe("movable");
     bottle.location = { kind: "held", actor: { kind: "player" } };
     const mutator = bindWorldMutator(
       world,

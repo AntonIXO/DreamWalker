@@ -19,6 +19,7 @@
  */
 
 import type { DreamRoom, RoomHotspot } from "../../../src/shared/room";
+import { importPhysicalProfile } from "./objectProfiles";
 
 export interface ParsedRoom {
   id: string;
@@ -398,6 +399,7 @@ export function toRoomCards(parsed: readonly ParsedRoom[]): ConversionReport {
       }
       return {
         id: objectId,
+        profile: importPhysicalProfile(label),
         kind: "look",
         x: 3 + (index % 6) * 2.5,
         y: 4 + Math.floor(index / 6) * 2,

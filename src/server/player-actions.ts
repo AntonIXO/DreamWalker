@@ -20,6 +20,7 @@ import {
   worldMindForFigure,
 } from "../shared/world-mind";
 import type { PlayerWorldSession } from "../shared/world-sandbox";
+import { PHYSICAL_KINDS } from "../shared/object-profile";
 import { dialogueWorldContext, limitDialogueReply } from "./dialogue-messages";
 
 const id = z.string().min(1).max(120);
@@ -28,8 +29,50 @@ const recipient = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("figure"), id }),
 ]);
 
-/** Player commands cannot author actors, locks, movement, scripts, or map patches. */
+/** Intentions use embodied operations; actor identity and map authority stay bound. */
 export const playerActionSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("approach"), objectId: id }),
+  z.object({ type: z.literal("occupy"), objectId: id }),
+  z.object({ type: z.literal("leave") }),
+  z.object({ type: z.literal("wear"), objectId: id }),
+  z.object({ type: z.literal("removeWear"), objectId: id }),
+  z.object({ type: z.literal("detach"), objectId: id }),
+  z.object({ type: z.literal("empty"), objectId: id }),
+  z.object({
+    type: z.literal("refineProfile"),
+    objectId: id,
+    profile: z
+      .object({
+        kind: z.enum(PHYSICAL_KINDS),
+        mobility: z.enum(["fixed", "movable", "carryable"]).optional(),
+        material: z.string().max(80).optional(),
+        container: z.enum(["open", "closed"]).optional(),
+        wear: z
+          .object({ slot: z.enum(["body", "head", "back"]) })
+          .strict()
+          .optional(),
+        occupancy: z
+          .object({
+            pose: z.enum(["lying", "sitting", "hidden"]),
+            x: z.number().min(0).max(16).optional(),
+            y: z.number().min(0).max(16).optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict(),
+  }),
+  z.object({
+    type: z.literal("requestRole"),
+    intent: z.enum(["gather", "inspect", "helpMove"]),
+    objectId: id.optional(),
+  }),
+  z.object({
+    type: z.literal("moveObject"),
+    objectId: id,
+    x: z.number().finite(),
+    y: z.number().finite(),
+  }),
   z.object({ type: z.literal("take"), objectId: id }),
   z.object({
     type: z.literal("drop"),
@@ -80,7 +123,10 @@ export type PlayerActionPlan = z.infer<typeof playerActionPlanSchema>;
 export function playerActionInstructions(locale: "ru" | "en" = "ru"): string {
   const rules = `Interpret a player's free-form command inside a dream. This is a physical action planner, not a keyword parser or NPC dialogue.
 Resolve pronouns and ellipsis from selectedObject, the inventory, visible scene, and the small conversation history. Use only supplied object and figure IDs. The player is the actor of every action; never control NPCs or invent a script, room, object, clue, key, wallet, or mnemonic word. Never reveal or infer a secret.
-Plan up to eight concrete actions in order. If a reachable object must first be taken to give, put, or use it, include take. A held thing belongs to its actual carrier, not automatically to the player. Respect fixed objects, locked things, reach, and closed containers. Do not teleport, move the player, traverse doors, or claim another person's reaction as a player action.
+Plan the complete intention in up to eight concrete actions in order. For a nearby visible object use approach if needed; this walks a validated short path in the same room. Prepare the action: detach a REAL removable attachment, open a closed unlocked container, take a portable thing before wearing/giving it. A held thing belongs to its actual carrier, not automatically to the player. Never invent an attachment, a lock or excessive weight to explain a legacy default. once, look hotspots, collision and image size do not determine physical capabilities. Do not teleport, traverse doors, or claim another person's reaction as a player action.
+Physical profiles describe the ordinary meaning of things. A bag is portable, can contain objects and can be worn on the back. occupy lies/sits/hides in an object's body slot; use it for trying out a coffin, lying on a bed or sitting on a sofa. Open a closed unlocked coffin before occupy. leave exits the occupied object, including from under a closed lid. wear and removeWear change actual equipment in body/head/back slots; remove another garment in the same slot first. Clothing may carry a visible role; this never replaces the real player identity or grants another person's memories. empty opens no locks and places actual contents around the actor; moveObject pushes movable furniture to a reachable free floor position, not into inventory. Don't downgrade an ordinary supported physical intention to gesture. Do not add destructive preparations unless the player intended them.
+requestRole is an observable social request using a worn role: gather as hudozhnik, inspect as lysyi, helpMove as ded-slava. objectId optionally names the object of the request. It asks existing people to take part; their later acceptance and physical actions are separate outcomes. Describe only announcing the viewing, requesting an inspection or asking for help, never pretend they already complied.
+If profile is absent on a legacy object, refineProfile may establish its ordinary supported properties once, using its existing description. It cannot override an authored profile, invent contents, attachments, locks, a character's identity or change building geometry. Refinement itself is not a successful physical result: follow it with the intended actual action.
 alter changes only physical state of objectId: broken:true, wet, dirty, inscription. targetId, if present, is another accessible participant, not a second modified object. Never use alter to unlock something, change identity, create a word/clue/key, erase an existing fact about a person, or invent physics beyond these fields. Break only a non-fixed item. Choose an alteration only when it really corresponds to the command and the visible materials support it; painting a name is inscription, wiping a dirty item can set dirty:false. Do not treat unsupported effects as successful alterations.
 gesture is an observable attempt with NO physical effect. Use it for touching, pointing, posing, or an unsupported attempt; never disguise a refused break, theft, or teleport as a successful gesture. If the command is ambiguous, or cannot be mapped honestly, return actions:[] with refusalReply asking one short practical clarification or explaining the limitation. Do not claim an empty plan succeeded.
 For a pure information request such as reading an inscription or asking what a visible object looks like now, return actions:[] and put a direct factual answer in refusalReply. That field also carries non-action answers; do not manufacture a gesture, unnecessary clarification, mutation, or NPC reaction. Use the object's current visible state and inscription literally, not remembered or invented text.
@@ -96,7 +142,8 @@ function visibleAction(
 ): boolean {
   const objects = new Set(scene.objects.map((object) => object.id));
   const doors = new Set(scene.doors.map((door) => door.id));
-  if ("objectId" in action && !objects.has(action.objectId)) return false;
+  if ("objectId" in action && action.objectId && !objects.has(action.objectId))
+    return false;
   if ("intoObjectId" in action && !objects.has(action.intoObjectId))
     return false;
   if (

@@ -106,7 +106,13 @@ export class ActionRing {
       row.className = option.refusal ? "verb refused" : "verb";
       const label =
         this.confirming === index ? t("actionRing.confirm") : option.label;
-      row.textContent = `${index + 1} — ${label}`;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "ghost verb-action";
+      button.textContent = `${index + 1} — ${label}`;
+      button.disabled = !!option.refusal;
+      button.addEventListener("click", () => this.choose(index));
+      row.appendChild(button);
       if (option.refusal) {
         const why = document.createElement("span");
         why.className = "dim";
@@ -128,9 +134,13 @@ export class ActionRing {
       return;
     }
     event.preventDefault();
+    this.choose(index);
+  }
+
+  private choose(index: number): void {
     const option = this.options[index]!;
     const subject = this.subject;
-    if (!subject || option.refusal) return;
+    if (!subject || !option || option.refusal) return;
 
     if (option.confirm && this.confirming !== index) {
       this.confirming = index;

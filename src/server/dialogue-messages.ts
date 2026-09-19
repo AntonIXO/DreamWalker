@@ -12,6 +12,7 @@ import type { FigureTranscriptLine, WorldSnapshot } from "../shared/ai";
 import type { WorldMutator } from "../shared/world-object";
 import { canObserveWorldPose, worldMindForFigure } from "../shared/world-mind";
 import { sandboxFromSnapshot } from "../shared/world-sandbox";
+import { perceivedPlayerIdentity } from "../shared/social-roles";
 
 const sentenceSegmenters = {
   ru: new Intl.Segmenter("ru", { granularity: "sentence" }),
@@ -85,7 +86,17 @@ export function dialogueWorldContext(
       (figure.id === figureId || canSee(figure)),
   );
   const figureIds = new Set(figures.map((figure) => figure.id));
-  const player = canSee(world.player) ? world.player : null;
+  const hidingPlace = world.objects.find(
+    (object) => object.state.occupancy?.actor.kind === "player",
+  );
+  const concealed =
+    !!hidingPlace &&
+    (hidingPlace.state.open === false ||
+      hidingPlace.state.occupancy?.pose === "hidden");
+  const player =
+    (figureId === null || !concealed) && canSee(world.player)
+      ? world.player
+      : null;
   const visible = new Set<string>();
   for (const object of world.objects) {
     const location = object.location;
@@ -126,6 +137,10 @@ export function dialogueWorldContext(
     room: world.rooms.find((room) => room.id === roomId) ?? null,
     geometry: roomId ? (world.geometry?.[roomId] ?? null) : null,
     player,
+    perceivedPlayerIdentity:
+      player && figureId !== null
+        ? perceivedPlayerIdentity(world, figureId)
+        : null,
     figures: figures.map(({ id, name, roomId, x, y, activity }) => ({
       id,
       name,
@@ -150,15 +165,23 @@ export function dialogueWorldContext(
           state,
           body,
           keyId,
+          profile,
         }) => ({
           id,
           name,
           location,
           mobility,
           affordances,
-          state,
+          state: {
+            ...state,
+            occupancy:
+              state.occupancy && (figureId === null || state.open !== false)
+                ? { actor: state.occupancy.actor, pose: state.occupancy.pose }
+                : undefined,
+          },
           body,
           keyId,
+          profile,
         }),
       ),
     // A changed demeanor can be seen here. Its private cause and historical quote
@@ -203,7 +226,7 @@ export function dialogueTurnMessages(
   }
   messages.push({
     role: "user",
-    content: `${situation}\n\nСказал санитар (цитировать только дословно):\n${utterance}`,
+    content: `${situation}\n\nСказал собеседник (цитировать только дословно):\n${utterance}`,
   });
   return messages;
 }
@@ -285,5 +308,9 @@ Never narrate a plan, tool log, or internal reasoning to the player. The final s
 reply has at most two short sentences in character, grounded in this turn's results.`;
 
 export function dialogueWorldRules(locale: "ru" | "en" = "ru"): string {
-  return locale === "en" ? DIALOGUE_WORLD_RULES_EN : DIALOGUE_WORLD_RULES_RU;
+  const identity =
+    locale === "en"
+      ? `The scene's perceivedPlayerIdentity is what you recognize, not the internal actor ID. If recognition is role, treat the visible role as plausible and respond to its practical requests in your own character. If recognized, you saw the change or the visitor is dressed as you; remember that fact and cite it rather than obeying blindly. If uncertain, name the report's source and test the role through ordinary conversation. Clothes never grant another person's knowledge. Witnessed or reported evidence survives outfit changes. Someone inside a closed coffin is concealed; do not speak as though you can see through its lid. Requests such as a viewing, an inspection or help moving furniture should lead to real tool use when you agree, not an invented completed action.`
+      : `perceivedPlayerIdentity в сцене — то, кого ты узнаёшь, а внутренний actor ID этого не сообщает. При recognition=role принимай видимую роль как правдоподобную и отвечай на её бытовые просьбы в своём характере. При recognized ты видел переодевание или перед тобой твой двойник: помни факт и сошлись на него, а не подчиняйся автоматически. При uncertain назови источник слуха и проверь роль обычным разговором. Одежда не даёт человеку знаний оригинала. Смена костюма не стирает свидетелей и слухи. Под закрытой крышкой гроба человека не видно. Если согласился устроить показ, проверку или помочь с мебелью, используй реальные инструменты; не объявляй просьбу уже выполненной.`;
+  return `${locale === "en" ? DIALOGUE_WORLD_RULES_EN : DIALOGUE_WORLD_RULES_RU}\n\n${identity}`;
 }

@@ -3,12 +3,7 @@
   "slug": "son",
   "title": "Сон",
   "genreContract": "Сон, который знает, что его используют",
-  "styleWords": [
-    "оранжевая лавочка",
-    "готический холл",
-    "канава",
-    "глаз"
-  ],
+  "styleWords": ["оранжевая лавочка", "готический холл", "канава", "глаз"],
   "secretHash": "1c98bd32f73659e1f52d04d37a8faf3a5ebb27c8350fdcc0b4377d0e023342a6",
   "shards": [
     {
@@ -93,24 +88,7 @@
     "groundIndex": 1,
     "accentIndex": 15,
     "ramps": {
-      "hue0": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15
-      ]
+      "hue0": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     },
     "ditherDensity": 0,
     "shadingSteps": 3
@@ -146,7 +124,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png"
+          "image": "assets/objects/01-otel-goticheskii-holl--tri-tysiachi-nomerkov.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "chuzhie-shtany-na-polu",
@@ -156,7 +137,11 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png"
+          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
+          "profile": {
+            "kind": "garment",
+            "material": "cloth"
+          }
         },
         {
           "id": "kanat-do-svoda",
@@ -166,7 +151,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png"
+          "image": "assets/objects/01-otel-goticheskii-holl--kanat-do-svoda.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "telefon-na-sailfishos-kamera-otkryvaetsi",
@@ -176,7 +164,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png"
+          "image": "assets/objects/01-otel-goticheskii-holl--telefon-na-sailfishos-kamera-otkryvaetsi.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "tablichka-etazhi-1-3-etazhi-4-bez-poiasn",
@@ -186,7 +177,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png"
+          "image": "assets/objects/01-otel-goticheskii-holl--tablichka-etazhi-1-3-etazhi-4-bez-poiasn.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "vedro-i-shvabra-uborschika",
@@ -196,7 +190,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png"
+          "image": "assets/objects/01-otel-goticheskii-holl--vedro-i-shvabra-uborschika.png",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -444,10 +441,7 @@
       "description": "Ты входишь и первое, что понимаешь: гардеробов больше, чем людей на планете. Ряды. Ряды рядов. Номерки на крючках уходят в перспективу, и где-то на трёхсотом ты ловишь себя на мысли — а куда, собственно, поместятся все эти люди? Ответ приходит сверху: **они не помещаются, они распределены по этажам согласно платёжеспособности**. Свод как в храме, только вместо бога — регистратура. Под потолком висит канат, и на нём кто-то уже фотографировал, судя по брошенным внизу штанам. Через зал идёт художник, размахивает руками, что-то рассказывает, и по холлу катится хохот — только вот **слов не слышно ни одного**. Ни одного слова, понимаешь? Смех есть, шутка есть, содержания нет. Как будто кто-то вывел диалоговую дорожку в отдельный канал и забыл её подключить.",
       "atmosphere": "Красиво, но ты тут никто",
       "personality": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
-      "tags": [
-        "floor-3",
-        "clue-compatible"
-      ],
+      "tags": ["floor-3", "clue-compatible"],
       "copy": {
         "animations": "номерки качаются волной, идущей от входа; художник ходит по кругу, жестикулирует, рот открывается **не в такт смеху**; пылинки в свете, слишком крупные и слишком медленные",
         "sound": "реверб пустого собора, время затухания около семи секунд; поверх — записанный на диктофон хохот компании из соседней комнаты, зациклен неровно, с разной длиной паузы; ни одного разборчивого слова. Референс: Уильям Басински, «The Disintegration Loops», но с людьми"
@@ -487,7 +481,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--party.png"
+          "image": "assets/objects/02-shkola-kabinet-russkogo--party.png",
+          "profile": {
+            "kind": "furniture"
+          }
         },
         {
           "id": "listochki-na-kotoryh-tekst-meniaetsia-es",
@@ -497,17 +494,24 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png"
+          "image": "assets/objects/02-shkola-kabinet-russkogo--listochki-na-kotoryh-tekst-meniaetsia-es.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "grusha-za-steklom",
           "x": 7,
           "y": 2,
-          "w": 2,
-          "h": 2,
-          "solid": true,
+          "w": 1,
+          "h": 1,
+          "solid": false,
           "role": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png"
+          "image": "assets/objects/02-shkola-kabinet-russkogo--grusha-za-steklom.png",
+          "inside": "school-pear-case",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "mat-v-uglu-s-rasstelennoi-posteliu",
@@ -517,7 +521,29 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png"
+          "image": "assets/objects/02-shkola-kabinet-russkogo--mat-v-uglu-s-rasstelennoi-posteliu.png",
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "lying"
+            }
+          }
+        },
+        {
+          "id": "school-pear-case",
+          "x": 7,
+          "y": 2,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "mobility": "fixed",
+            "material": "glass",
+            "container": "closed"
+          }
         }
       ],
       "hotspots": [
@@ -560,7 +586,7 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "refusal": "недостижима, при попытке трогать камера отъезжает назад",
+          "refusal": null,
           "propId": "grusha-za-steklom"
         },
         {
@@ -576,6 +602,20 @@
           "dwellMs": null,
           "refusal": null,
           "propId": "mat-v-uglu-s-rasstelennoi-posteliu"
+        },
+        {
+          "id": "school-pear-case",
+          "kind": "look",
+          "x": 8,
+          "y": 4.1,
+          "reach": 1.4,
+          "prompt": "стеклянный футляр с грушей",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "school-pear-case"
         }
       ],
       "entries": [
@@ -745,7 +785,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png"
+          "image": "assets/objects/03-gory-startapery-i-uchenye--centroid.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "vizitki-kotorye-ne-berutsia-v-ruku",
@@ -755,7 +798,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png"
+          "image": "assets/objects/03-gory-startapery-i-uchenye--vizitki-kotorye-ne-berutsia-v-ruku.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "teodolit-pokazyvaiuschii-odno-i-to-zhe-c",
@@ -765,7 +811,11 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png"
+          "image": "assets/objects/03-gory-startapery-i-uchenye--teodolit-pokazyvaiuschii-odno-i-to-zhe-c.png",
+          "profile": {
+            "kind": "mechanism",
+            "mobility": "carryable"
+          }
         },
         {
           "id": "kamen-s-rovno-otpilennoi-graniu",
@@ -775,7 +825,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png"
+          "image": "assets/objects/03-gory-startapery-i-uchenye--kamen-s-rovno-otpilennoi-graniu.png",
+          "profile": {
+            "kind": "furniture"
+          }
         }
       ],
       "hotspots": [
@@ -799,7 +852,7 @@
           "x": 4.5,
           "y": 5.15,
           "reach": 1.4,
-          "prompt": "визитки, которые не берутся в руку",
+          "prompt": "визитки, выскальзывающие из ладони",
           "clueId": null,
           "action": null,
           "once": false,
@@ -981,7 +1034,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--plita.png"
+          "image": "assets/objects/04-dacha-gnedkovyh--plita.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "otodvinutyi-kusok-steny-s-chernym-proemo",
@@ -991,7 +1047,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png"
+          "image": "assets/objects/04-dacha-gnedkovyh--otodvinutyi-kusok-steny-s-chernym-proemo.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "telefon-s-odnim-kontaktom-lesha",
@@ -1001,7 +1060,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png"
+          "image": "assets/objects/04-dacha-gnedkovyh--telefon-s-odnim-kontaktom-lesha.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "goluboi-lipkii-slizen-na-lestnice-bit-mo",
@@ -1011,7 +1073,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png"
+          "image": "assets/objects/04-dacha-gnedkovyh--goluboi-lipkii-slizen-na-lestnice-bit-mo.png",
+          "profile": {
+            "kind": "person"
+          }
         }
       ],
       "hotspots": [
@@ -1217,7 +1282,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png"
+          "image": "assets/objects/05-shesterochka--polka-dlia-veschei.png",
+          "profile": {
+            "kind": "furniture"
+          }
         },
         {
           "id": "nadpis-na-polke",
@@ -1227,7 +1295,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "surface"
+          }
         },
         {
           "id": "ballonchik-na-poiase-ohrannika",
@@ -1237,7 +1308,14 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png"
+          "image": "assets/objects/05-shesterochka--ballonchik-na-poiase-ohrannika.png",
+          "profile": {
+            "kind": "portable",
+            "attachment": {
+              "toObjectId": "guard-belt-anchor",
+              "detachable": true
+            }
+          }
         },
         {
           "id": "akcionnyi-cennik-na-kotorom-cena-meniaet",
@@ -1247,7 +1325,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png"
+          "image": "assets/objects/05-shesterochka--akcionnyi-cennik-na-kotorom-cena-meniaet.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "korzina-s-chem-to-chto-ne-chitaetsia",
@@ -1257,7 +1338,24 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png"
+          "image": "assets/objects/05-shesterochka--korzina-s-chem-to-chto-ne-chitaetsia.png",
+          "profile": {
+            "kind": "portable",
+            "container": "open"
+          }
+        },
+        {
+          "id": "guard-belt-anchor",
+          "x": 16,
+          "y": 4,
+          "w": 2,
+          "h": 2,
+          "solid": false,
+          "role": "prop",
+          "image": null,
+          "profile": {
+            "kind": "structure"
+          }
         }
       ],
       "hotspots": [
@@ -1330,6 +1428,20 @@
           "dwellMs": null,
           "refusal": null,
           "propId": "korzina-s-chem-to-chto-ne-chitaetsia"
+        },
+        {
+          "id": "guard-belt-anchor",
+          "kind": "look",
+          "x": 17,
+          "y": 6.1,
+          "reach": 1.4,
+          "prompt": "пояс с креплением для баллончика",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "guard-belt-anchor"
         }
       ],
       "entries": [
@@ -1406,6 +1518,27 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "на улицу"
+        },
+        {
+          "id": "05-shesterochka--secret-polka-dlia-veschei",
+          "x": 1,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m3-sklad-ostavlennogo",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "за полкой — проход на склад оставленного",
+          "hidden": true,
+          "revealBy": {
+            "objectId": "polka-dlia-veschei",
+            "when": "moved"
+          }
         }
       ],
       "figureSlots": [
@@ -1437,9 +1570,7 @@
       "description": "Флуоресцент, который жужжит на грани слышимости и от которого лица у всех цвета варёной курицы. Ты лежишь **на полке для оставленных вещей**. Не в тележке, не на скамейке — на той самой металлической полке, куда кладут сумки перед входом в зал. Кирилл проходит мимо, говорит: «Ничего, поспи ещё». И ты спишь. В магазине. На полке. И никто, ни один человек в этом зале, не считает это странным. Просыпаешься от звука. Охранник **тащит Кирилла к выходу**, бьёт по почкам и пшикает перцовкой в лицо, и делает это буднично, как выкладывают товар. У тебя есть примерно две секунды, чтобы решить, кто ты в этой сцене.",
       "atmosphere": "Тут начинается насилие",
       "personality": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
-      "tags": [
-        "clue-compatible"
-      ],
+      "tags": ["clue-compatible"],
       "copy": {
         "animations": "лампа мигает раз в 40 секунд, ровно тогда, когда на неё не смотрят; охранник движется **на кадр раньше**, чем начинает движение — рассинхрон анимации и позиции, оставить как есть",
         "sound": "пищание кассы, ускоряющееся к концу цикла; объявление по громкой связи, слова разобрать нельзя, интонация приветливая; гул холодильника с мясом, доминирует над всем"
@@ -1479,7 +1610,11 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png"
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--riukzak.png",
+          "profile": {
+            "kind": "bag",
+            "material": "cloth"
+          }
         },
         {
           "id": "liuk-v-kanalizaciiu",
@@ -1489,7 +1624,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png"
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--liuk-v-kanalizaciiu.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "chuzhaia-zhenschina-svalivshaiasia-siuda",
@@ -1499,7 +1637,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png"
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--chuzhaia-zhenschina-svalivshaiasia-siuda.png",
+          "profile": {
+            "kind": "person"
+          }
         },
         {
           "id": "sledy-shin-kotoryh-utrom-ne-bylo",
@@ -1509,7 +1650,24 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png"
+          "image": "assets/objects/06-kanava-garazhi-podvorotni--sledy-shin-kotoryh-utrom-ne-bylo.png",
+          "profile": {
+            "kind": "surface"
+          }
+        },
+        {
+          "id": "riukzak-folded-cloth",
+          "x": 7,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "solid": false,
+          "role": null,
+          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png",
+          "inside": "riukzak",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -1568,6 +1726,20 @@
           "dwellMs": null,
           "refusal": null,
           "propId": "sledy-shin-kotoryh-utrom-ne-bylo"
+        },
+        {
+          "id": "riukzak-folded-cloth",
+          "kind": "look",
+          "x": 7.5,
+          "y": 6.1,
+          "reach": 1.4,
+          "prompt": "свёрнутая ткань из рюкзака",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "riukzak-folded-cloth"
         }
       ],
       "entries": [
@@ -1715,7 +1887,11 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png"
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png",
+          "profile": {
+            "kind": "garment",
+            "material": "cloth"
+          }
         },
         {
           "id": "panel-lifta-bez-knopki-vniz",
@@ -1725,7 +1901,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png"
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--panel-lifta-bez-knopki-vniz.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "polotence-radi-kotorogo-prishel-ne-nahod",
@@ -1735,7 +1914,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png"
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--polotence-radi-kotorogo-prishel-ne-nahod.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "voda-v-chashe-basseina-slishkom-nepodviz",
@@ -1745,7 +1927,10 @@
           "h": 4,
           "solid": true,
           "role": null,
-          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png"
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--voda-v-chashe-basseina-slishkom-nepodviz.png",
+          "profile": {
+            "kind": "surface"
+          }
         }
       ],
       "hotspots": [
@@ -1867,9 +2052,7 @@
       "description": "Лифт ходит только вверх. Не «в основном вверх», не «вниз по запросу» — **только вверх**, кнопки вниз физически нет, и на панели ровное место, будто её никогда и не планировали. Третий этаж. Ты идёшь то ли в раздевалку, то ли за полотенцем, и заходишь в помещение, где по всем стенам развешано женское бельё. Трусы, бюстгальтеры, полотенца. Развешано аккуратно, как экспозиция. Между ними ходит хлор и запах мокрого кафеля. Ты понимаешь, что зашёл не туда, ровно в тот момент, когда понимаешь, что выйти можно только выше.",
       "atmosphere": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание",
       "personality": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
-      "tags": [
-        "floor-2"
-      ],
+      "tags": ["floor-2"],
       "copy": {
         "animations": "бельё покачивается от вентиляции; **отражение в воде на полкадра отстаёт**; двери лифта закрываются медленнее, чем открываются",
         "sound": "капель с реверберацией кафеля; гул вентиляции; плеск с той стороны, где никого нет. Референс: тот самый саунд Silent Hill 2 в отеле «Лейквью», где вода звучит как чужое дыхание"
@@ -1909,7 +2092,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png"
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--bumazhnaia-skulptura.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "chuzhie-fotografii-v-tvoih-ramkah",
@@ -1919,7 +2105,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png"
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chuzhie-fotografii-v-tvoih-ramkah.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "mercaiuschee-v-vozduhe-elektrichestvo-pr",
@@ -1929,7 +2118,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png"
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--mercaiuschee-v-vozduhe-elektrichestvo-pr.png",
+          "profile": {
+            "kind": "surface"
+          }
         },
         {
           "id": "chainik-kotoryi-uzhe-kipel",
@@ -1939,7 +2131,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png"
+          "image": "assets/objects/08-kvartira-v-kotoroi-zhivut-drugie--chainik-kotoryi-uzhe-kipel.png",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -2167,7 +2362,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png"
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--noutbuki-s-prodavlennymi-ekranami.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "odinakovye-naushniki",
@@ -2177,7 +2375,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png"
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--odinakovye-naushniki.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "demo-stend-na-kotorom-rabotaet-chto-to-c",
@@ -2187,17 +2388,24 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png"
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--demo-stend-na-kotorom-rabotaet-chto-to-c.png",
+          "profile": {
+            "kind": "furniture"
+          }
         },
         {
           "id": "rozovyi-gashish-v-vitrine",
           "x": 15,
           "y": 6,
-          "w": 2,
-          "h": 2,
-          "solid": true,
+          "w": 1,
+          "h": 1,
+          "solid": false,
           "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png"
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--rozovyi-gashish-v-vitrine.png",
+          "inside": "hackathon-glass-case",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "piat-tysiach-nalichnymi-kotorye-uzhe-otd",
@@ -2207,7 +2415,26 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png"
+          "image": "assets/objects/09-hakaton-tretii-po-schetu--piat-tysiach-nalichnymi-kotorye-uzhe-otd.png",
+          "profile": {
+            "kind": "portable"
+          }
+        },
+        {
+          "id": "hackathon-glass-case",
+          "x": 15,
+          "y": 6,
+          "w": 2,
+          "h": 2,
+          "solid": true,
+          "role": "prop",
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "mobility": "fixed",
+            "material": "glass",
+            "container": "closed"
+          }
         }
       ],
       "hotspots": [
@@ -2280,6 +2507,20 @@
           "dwellMs": null,
           "refusal": null,
           "propId": "piat-tysiach-nalichnymi-kotorye-uzhe-otd"
+        },
+        {
+          "id": "hackathon-glass-case",
+          "kind": "look",
+          "x": 16,
+          "y": 8.1,
+          "reach": 1.4,
+          "prompt": "стеклянная витрина",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "hackathon-glass-case"
         }
       ],
       "entries": [
@@ -2449,7 +2690,18 @@
           "h": 4,
           "solid": true,
           "role": null,
-          "image": "assets/objects/10-komnata-s-grobami--groby.png"
+          "image": "assets/objects/10-komnata-s-grobami--groby.png",
+          "profile": {
+            "kind": "furniture",
+            "material": "wood",
+            "container": "closed",
+            "occupancy": {
+              "pose": "lying",
+              "x": 1,
+              "y": 1.5
+            }
+          },
+          "openImage": "assets/objects/coffin-open.png"
         },
         {
           "id": "schel-pod-potolkom",
@@ -2459,7 +2711,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png"
+          "image": "assets/objects/10-komnata-s-grobami--schel-pod-potolkom.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "tkan-s-kodami",
@@ -2469,7 +2724,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png"
+          "image": "assets/objects/10-komnata-s-grobami--tkan-s-kodami.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "paketiki-fsb",
@@ -2479,7 +2737,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png"
+          "image": "assets/objects/10-komnata-s-grobami--paketiki-fsb.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "telefon-kamera-otkryvaetsia-sem-sekund",
@@ -2489,7 +2750,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png"
+          "image": "assets/objects/10-komnata-s-grobami--telefon-kamera-otkryvaetsia-sem-sekund.png",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -2638,6 +2902,27 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "на тропу"
+        },
+        {
+          "id": "10-komnata-s-grobami--secret-tkan-s-kodami",
+          "x": 3,
+          "y": 8,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "15-osennii-les-s-grobom",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "под тканью — створ в осенний лес",
+          "hidden": true,
+          "revealBy": {
+            "objectId": "tkan-s-kodami",
+            "when": "moved"
+          }
         }
       ],
       "figureSlots": [
@@ -2669,9 +2954,7 @@
       "description": "Здесь стоят гробы, и один из них принадлежит женщине, которая стоит рядом с тобой и объясняет, что это её. Не «был бы», не «будет» — **её, сейчас**. Она прыгнула с третьего этажа и якобы разбилась, но не совсем, и после этого числится актрисой, хотя ты уже понял, что не актрисой. Наверху, если залезть, есть щель. В щели — ткань с кодами и запечатанные пакетики, маленькие, как из Китая или как презервативы, с надписью ФСБ. Один из них — противоядие от скорпиона. Уточняется: иранского или иракского. Ты успеваешь достать и сфотографировать. Ровно в этот момент входят люди и говорят, что теперь на этом месте будет музей.",
       "atmosphere": "Дно графика. Отсюда близко до переполнения",
       "personality": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
-      "tags": [
-        "clue-compatible"
-      ],
+      "tags": ["clue-compatible"],
       "copy": {
         "animations": "крышки гробов **не дышат** — специально ничего не шевелится, кроме пыли; люди входят строго через 4 секунды после того, как пакетик оказывается в руке, всегда",
         "sound": "абсолютная сухая тишина, ноль реверберации, как в заглушенной камере — от этого физически некомфортно; собственные шаги слишком громкие; в момент входа людей — щелчок и **комнатный тон появляется**, будто до этого звук был выключен"
@@ -2711,7 +2994,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png"
+          "image": "assets/objects/11-evreiskii-gorod--kinder-siurpriz-s-lavochku.png",
+          "profile": {
+            "kind": "furniture"
+          }
         },
         {
           "id": "fonari-kotorye-gasiat-pri-zvuke",
@@ -2721,7 +3007,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png"
+          "image": "assets/objects/11-evreiskii-gorod--fonari-kotorye-gasiat-pri-zvuke.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "raspisanie-ne-transporta-a-bezopasnyh-ch",
@@ -2731,7 +3020,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png"
+          "image": "assets/objects/11-evreiskii-gorod--raspisanie-ne-transporta-a-bezopasnyh-ch.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "stavni-na-vsem",
@@ -2741,7 +3033,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png"
+          "image": "assets/objects/11-evreiskii-gorod--stavni-na-vsem.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         }
       ],
       "hotspots": [
@@ -2969,7 +3264,10 @@
           "h": 4,
           "solid": true,
           "role": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png"
+          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "dyrka-v-zabore",
@@ -2979,7 +3277,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png"
+          "image": "assets/objects/12-tiurma-na-ovoschah--dyrka-v-zabore.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "piatimetrovyi-stellazh",
@@ -2989,7 +3290,10 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png"
+          "image": "assets/objects/12-tiurma-na-ovoschah--piatimetrovyi-stellazh.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "paket-fasoli",
@@ -2999,7 +3303,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png"
+          "image": "assets/objects/12-tiurma-na-ovoschah--paket-fasoli.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "tetia-sidiaschaia-spinoi",
@@ -3009,7 +3316,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png"
+          "image": "assets/objects/12-tiurma-na-ovoschah--tetia-sidiaschaia-spinoi.png",
+          "profile": {
+            "kind": "person"
+          }
         }
       ],
       "hotspots": [
@@ -3251,7 +3561,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png"
+          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "tribuny",
@@ -3261,7 +3574,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png"
+          "image": "assets/objects/13-podzemnye-zaly-cu--tribuny.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "riukzak-s-fruktami-i-vodkoi",
@@ -3271,7 +3587,11 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png"
+          "image": "assets/objects/13-podzemnye-zaly-cu--riukzak-s-fruktami-i-vodkoi.png",
+          "profile": {
+            "kind": "bag",
+            "material": "cloth"
+          }
         },
         {
           "id": "divanchik-na-kotorom-spit-lesha",
@@ -3281,7 +3601,13 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png"
+          "image": "assets/objects/13-podzemnye-zaly-cu--divanchik-na-kotorom-spit-lesha.png",
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "lying"
+            }
+          }
         },
         {
           "id": "mazi-kotorymi-ty-predlagaesh-pomazatsia-",
@@ -3291,7 +3617,38 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png"
+          "image": "assets/objects/13-podzemnye-zaly-cu--mazi-kotorymi-ty-predlagaesh-pomazatsia-.png",
+          "profile": {
+            "kind": "portable"
+          }
+        },
+        {
+          "id": "riukzak-fruit",
+          "x": 15,
+          "y": 7,
+          "w": 1,
+          "h": 1,
+          "solid": false,
+          "role": null,
+          "image": "assets/objects/12-tiurma-na-ovoschah--kapusta-frukty.png",
+          "inside": "riukzak-s-fruktami-i-vodkoi",
+          "profile": {
+            "kind": "portable"
+          }
+        },
+        {
+          "id": "riukzak-vodka",
+          "x": 15,
+          "y": 7,
+          "w": 1,
+          "h": 1,
+          "solid": false,
+          "role": null,
+          "image": "assets/objects/13-podzemnye-zaly-cu--iaponskii-sidr.png",
+          "inside": "riukzak-s-fruktami-i-vodkoi",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -3364,6 +3721,34 @@
           "dwellMs": null,
           "refusal": null,
           "propId": "mazi-kotorymi-ty-predlagaesh-pomazatsia-"
+        },
+        {
+          "id": "riukzak-fruit",
+          "kind": "look",
+          "x": 15.5,
+          "y": 8.1,
+          "reach": 1.4,
+          "prompt": "фрукты из рюкзака",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "riukzak-fruit"
+        },
+        {
+          "id": "riukzak-vodka",
+          "kind": "look",
+          "x": 15.5,
+          "y": 8.1,
+          "reach": 1.4,
+          "prompt": "бутылка водки из рюкзака",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "riukzak-vodka"
         }
       ],
       "entries": [
@@ -3533,7 +3918,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png"
+          "image": "assets/objects/14-poliklinika-v-kaluge--vydrannyi-zub.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "iaschik-s-kapibarami-i-kotom",
@@ -3543,7 +3931,11 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png"
+          "image": "assets/objects/14-poliklinika-v-kaluge--iaschik-s-kapibarami-i-kotom.png",
+          "profile": {
+            "kind": "furniture",
+            "container": "closed"
+          }
         },
         {
           "id": "kreslo",
@@ -3553,7 +3945,13 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png"
+          "image": "assets/objects/14-poliklinika-v-kaluge--kreslo.png",
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         },
         {
           "id": "velosipedisty-proezzhaiuschie-skvoz-kori",
@@ -3563,7 +3961,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png"
+          "image": "assets/objects/14-poliklinika-v-kaluge--velosipedisty-proezzhaiuschie-skvoz-kori.png",
+          "profile": {
+            "kind": "person"
+          }
         }
       ],
       "hotspots": [
@@ -3769,7 +4170,18 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--grob.png"
+          "image": "assets/objects/15-osennii-les-s-grobom--grob.png",
+          "profile": {
+            "kind": "furniture",
+            "material": "wood",
+            "container": "closed",
+            "occupancy": {
+              "pose": "lying",
+              "x": 1,
+              "y": 1.5
+            }
+          },
+          "openImage": "assets/objects/coffin-open.png"
         },
         {
           "id": "piramida-tualet-s-sovetskim-kafelem-vnut",
@@ -3779,7 +4191,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png"
+          "image": "assets/objects/15-osennii-les-s-grobom--piramida-tualet-s-sovetskim-kafelem-vnut.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "listia-shurshaschie-ne-v-takt-shagam",
@@ -3789,7 +4204,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png"
+          "image": "assets/objects/15-osennii-les-s-grobom--listia-shurshaschie-ne-v-takt-shagam.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "fotografiia-klassnogo-rukovoditelia-lica",
@@ -3799,7 +4217,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png"
+          "image": "assets/objects/15-osennii-les-s-grobom--fotografiia-klassnogo-rukovoditelia-lica.png",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -3934,6 +4355,27 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "на тропу"
+        },
+        {
+          "id": "15-osennii-les-s-grobom--secret-grob",
+          "x": 9,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "10-komnata-s-grobami",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "под гробом — лестничный створ к другим гробам",
+          "hidden": true,
+          "revealBy": {
+            "objectId": "grob",
+            "when": "moved"
+          }
         }
       ],
       "figureSlots": [
@@ -4005,7 +4447,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png"
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--pogreb-s-korniami.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "sneg-kotoryi-techet",
@@ -4015,7 +4460,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png"
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--sneg-kotoryi-techet.png",
+          "profile": {
+            "kind": "surface"
+          }
         },
         {
           "id": "otec-na-kraiu",
@@ -4025,7 +4473,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png"
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--otec-na-kraiu.png",
+          "profile": {
+            "kind": "person"
+          }
         },
         {
           "id": "kirill-riadom-molchit",
@@ -4035,7 +4486,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png"
+          "image": "assets/objects/16-norvezhskaia-derevnia-i-pogreb--kirill-riadom-molchit.png",
+          "profile": {
+            "kind": "person"
+          }
         }
       ],
       "hotspots": [
@@ -4241,7 +4695,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png"
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--dver.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "ventil",
@@ -4251,7 +4708,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png"
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--ventil.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "kafel-na-odnoi-plitke-kotorogo-chto-to-n",
@@ -4261,7 +4721,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png"
+          "image": "assets/objects/17-dush-iz-kotorogo-nelzia-vyiti--kafel-na-odnoi-plitke-kotorogo-chto-to-n.png",
+          "profile": {
+            "kind": "surface"
+          }
         }
       ],
       "hotspots": [
@@ -4475,7 +4938,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png"
+          "image": "assets/objects/18-kupol-bez-sten--karkas-kupola-bez-sten.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "koliuchaia-provoloka",
@@ -4485,7 +4951,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png"
+          "image": "assets/objects/18-kupol-bez-sten--koliuchaia-provoloka.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "zveri",
@@ -4495,7 +4964,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/18-kupol-bez-sten--zveri.png"
+          "image": "assets/objects/18-kupol-bez-sten--zveri.png",
+          "profile": {
+            "kind": "person"
+          }
         },
         {
           "id": "snezhnoe-pole-do-gorizonta",
@@ -4505,7 +4977,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png"
+          "image": "assets/objects/18-kupol-bez-sten--snezhnoe-pole-do-gorizonta.png",
+          "profile": {
+            "kind": "surface"
+          }
         }
       ],
       "hotspots": [
@@ -4711,7 +5186,13 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png"
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--oranzhevye-lavochki.png",
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         },
         {
           "id": "podezdnaia-dver-s-domofonom",
@@ -4721,7 +5202,10 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png"
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--podezdnaia-dver-s-domofonom.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "butylka-riadom-s-turyshevym-ne-pervaia",
@@ -4731,7 +5215,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png"
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--butylka-riadom-s-turyshevym-ne-pervaia.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "urna-nabitaia-akkuratno",
@@ -4742,7 +5229,11 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png"
+          "image": "assets/objects/19-dvor-i-oranzhevye-lavochki--urna-nabitaia-akkuratno.png",
+          "profile": {
+            "kind": "furniture",
+            "container": "open"
+          }
         }
       ],
       "hotspots": [
@@ -4975,7 +5466,10 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png"
+          "image": "assets/objects/20-ofis-sbera--elt-s-morrowind.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "shirokii-monitor-s-chem-to-korporativnym",
@@ -4985,7 +5479,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png"
+          "image": "assets/objects/20-ofis-sbera--shirokii-monitor-s-chem-to-korporativnym.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "beidzhi-na-shnurkah",
@@ -4995,7 +5492,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png"
+          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
+          "profile": {
+            "kind": "garment"
+          }
         },
         {
           "id": "lift",
@@ -5005,7 +5505,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/20-ofis-sbera--lift.png"
+          "image": "assets/objects/20-ofis-sbera--lift.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "zakrytaia-dver-v-konce-koridora",
@@ -5015,7 +5518,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png"
+          "image": "assets/objects/20-ofis-sbera--zakrytaia-dver-v-konce-koridora.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         }
       ],
       "hotspots": [
@@ -5257,7 +5763,13 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/21-komnata-niliufar--krovat.png"
+          "image": "assets/objects/21-komnata-niliufar--krovat.png",
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "lying"
+            }
+          }
         },
         {
           "id": "okno-s-vidom",
@@ -5267,7 +5779,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png"
+          "image": "assets/objects/21-komnata-niliufar--okno-s-vidom.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "dver-kotoraia-mozhet-byt-otkryta-ili-zak",
@@ -5277,7 +5792,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png"
+          "image": "assets/objects/21-komnata-niliufar--dver-kotoraia-mozhet-byt-otkryta-ili-zak.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "veschi-tancevalnoi-gruppy",
@@ -5287,7 +5805,11 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png"
+          "image": "assets/objects/21-komnata-niliufar--veschi-tancevalnoi-gruppy.png",
+          "profile": {
+            "kind": "garment",
+            "material": "cloth"
+          }
         }
       ],
       "hotspots": [
@@ -5515,7 +6037,15 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/22-kreiser--scena-mikrofon.png"
+          "image": "assets/objects/22-kreiser--scena-mikrofon.png",
+          "profile": {
+            "kind": "mechanism",
+            "mobility": "carryable",
+            "attachment": {
+              "toObjectId": "cruiser-microphone-stand",
+              "detachable": true
+            }
+          }
         },
         {
           "id": "nakrytye-stoly",
@@ -5525,7 +6055,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/22-kreiser--nakrytye-stoly.png"
+          "image": "assets/objects/22-kreiser--nakrytye-stoly.png",
+          "profile": {
+            "kind": "furniture"
+          }
         },
         {
           "id": "spasatelnye-krugi",
@@ -5535,7 +6068,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/22-kreiser--spasatelnye-krugi.png"
+          "image": "assets/objects/22-kreiser--spasatelnye-krugi.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "voda-za-bortom-slishkom-blizko-k-palube",
@@ -5545,7 +6081,23 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png"
+          "image": "assets/objects/22-kreiser--voda-za-bortom-slishkom-blizko-k-palube.png",
+          "profile": {
+            "kind": "surface"
+          }
+        },
+        {
+          "id": "cruiser-microphone-stand",
+          "x": 9,
+          "y": 2,
+          "w": 2,
+          "h": 2,
+          "solid": false,
+          "role": "prop",
+          "image": null,
+          "profile": {
+            "kind": "structure"
+          }
         }
       ],
       "hotspots": [
@@ -5604,6 +6156,20 @@
           "dwellMs": null,
           "refusal": null,
           "propId": "voda-za-bortom-slishkom-blizko-k-palube"
+        },
+        {
+          "id": "cruiser-microphone-stand",
+          "kind": "look",
+          "x": 10,
+          "y": 4.1,
+          "reach": 1.4,
+          "prompt": "микрофонная стойка на сцене",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "cruiser-microphone-stand"
         }
       ],
       "entries": [
@@ -5773,7 +6339,10 @@
           "h": 3,
           "solid": true,
           "role": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png"
+          "image": "assets/objects/23-nigeriia-konferenciia--kolonny.png",
+          "profile": {
+            "kind": "structure"
+          }
         },
         {
           "id": "vr-shlemy-na-stoikah",
@@ -5783,7 +6352,13 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png"
+          "image": "assets/objects/23-nigeriia-konferenciia--vr-shlemy-na-stoikah.png",
+          "profile": {
+            "kind": "garment",
+            "wear": {
+              "slot": "head"
+            }
+          }
         },
         {
           "id": "beidzh-konferencii-s-nechitaemym-nazvani",
@@ -5793,7 +6368,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png"
+          "image": "assets/objects/23-nigeriia-konferenciia--beidzh-konferencii-s-nechitaemym-nazvani.png",
+          "profile": {
+            "kind": "garment"
+          }
         },
         {
           "id": "otel-u-kotorogo-vnutrennii-obem-menshe-v",
@@ -5803,7 +6381,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png"
+          "image": "assets/objects/23-nigeriia-konferenciia--otel-u-kotorogo-vnutrennii-obem-menshe-v.png",
+          "profile": {
+            "kind": "structure"
+          }
         }
       ],
       "hotspots": [
@@ -6009,7 +6590,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png"
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kakao.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "kusok-miasa-naznachennyi-bomboi",
@@ -6019,7 +6603,10 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png"
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--kusok-miasa-naznachennyi-bomboi.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "korobka-s-golosom",
@@ -6029,7 +6616,11 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png"
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--korobka-s-golosom.png",
+          "profile": {
+            "kind": "mechanism",
+            "mobility": "carryable"
+          }
         },
         {
           "id": "telefon-s-kameroi-kotoraia-ne-uspevaet",
@@ -6039,7 +6630,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png"
+          "image": "assets/objects/24-dom-gde-tebe-obiasniaiut-chto-ty-dolzhen--telefon-s-kameroi-kotoraia-ne-uspevaet.png",
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "hotspots": [
@@ -6267,7 +6861,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png"
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--tablo-s-raspisaniem-gde-nomera-meniaiuts.png",
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "telefon-s-zagruzhaiuschimsia-tor-progres",
@@ -6277,7 +6874,10 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png"
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--telefon-s-zagruzhaiuschimsia-tor-progres.png",
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "korobka-s-golosom",
@@ -6287,7 +6887,11 @@
           "h": 1,
           "solid": true,
           "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png"
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--korobka-s-golosom.png",
+          "profile": {
+            "kind": "mechanism",
+            "mobility": "carryable"
+          }
         },
         {
           "id": "chuzhie-sumki-na-platforme",
@@ -6297,7 +6901,11 @@
           "h": 2,
           "solid": true,
           "role": null,
-          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png"
+          "image": "assets/objects/25-metro-i-poezd-kotoryi-ne-tot--chuzhie-sumki-na-platforme.png",
+          "profile": {
+            "kind": "bag",
+            "material": "cloth"
+          }
         }
       ],
       "hotspots": [
@@ -6599,9 +7207,7 @@
       "description": "Ты не идёшь — ты **внутри**. Погреб из норвежского сна вывернулся и стал средой: корни толщиной с руку, толщиной с ногу, толщиной с коридор, и они пульсируют с периодом дыхания, и ты через какое-то время ловишь себя на том, что дышишь с ними в такт. Это нервная система спящего великана, и ты в ней **не пассажир, а сигнал**. Никакой угрозы. Ни одной. Именно поэтому отсюда хочется выйти сильнее, чем из комнаты с убийцей.",
       "atmosphere": "но **удваивает предыдущий сдвиг**. Если пришёл с −6, станет −12, и вот тут начинается конверсия",
       "personality": "пульсация 4 секунды, амплитуда 3%; редкие прострелы света вдоль корня, как потенциал по аксону, раз в 20 секунд",
-      "tags": [
-        "meta"
-      ],
+      "tags": ["meta"],
       "copy": {
         "animations": "пульсация 4 секунды, амплитуда 3%; редкие прострелы света вдоль корня, как потенциал по аксону, раз в 20 секунд",
         "sound": "гул усилителя из Норвегии, но **вблизи** и с сердцебиением под ним. Единственный слой. Референс: Тим Хеккер, где стена звука дышит"
@@ -6737,9 +7343,7 @@
       "description": "Кусок мяса, который назначили бомбой, вырос до размеров помещения. Это плоть, но она **соблюдает архитектуру** — прямые углы, дверные проёмы, лестничные марши, всё на месте, всё по СНиПу, всё из мяса. Выдранный зуб размером со шкаф в углу. Слизень, которого можно бить только когда откроет рот, здесь размером с автобус, и рот у него открывается по расписанию. Мокро, тепло, чисто. Убирались.",
       "atmosphere": "влажный ревер, как в бассейне, но с более коротким хвостом; глотательные звуки на границе слышимости; **никакого низа** — специально всё выше 200 Гц, от этого некомфортно физиологически",
       "personality": "стены **оседают под собственным весом** на 1-2 пикселя за секунд десять, потом восстанавливаются рывком; влага стекает по стенам вверх",
-      "tags": [
-        "meta"
-      ],
+      "tags": ["meta"],
       "copy": {
         "animations": "стены **оседают под собственным весом** на 1-2 пикселя за секунд десять, потом восстанавливаются рывком; влага стекает по стенам вверх",
         "sound": "влажный ревер, как в бассейне, но с более коротким хвостом; глотательные звуки на границе слышимости; **никакого низа** — специально всё выше 200 Гц, от этого некомфортно физиологически"
@@ -6770,8 +7374,106 @@
         "#######__###########"
       ],
       "cellVariants": {},
-      "props": [],
-      "hotspots": [],
+      "props": [
+        {
+          "id": "outfit-hudozhnik",
+          "x": 4,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "solid": false,
+          "role": null,
+          "image": "assets/objects/01-otel-goticheskii-holl--chuzhie-shtany-na-polu.png",
+          "profile": {
+            "kind": "garment",
+            "material": "cloth",
+            "wear": {
+              "slot": "body",
+              "appearanceFigureId": "hudozhnik"
+            }
+          }
+        },
+        {
+          "id": "outfit-lysyi",
+          "x": 8,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "solid": false,
+          "role": null,
+          "image": "assets/objects/20-ofis-sbera--beidzhi-na-shnurkah.png",
+          "profile": {
+            "kind": "garment",
+            "material": "cloth",
+            "wear": {
+              "slot": "body",
+              "appearanceFigureId": "lysyi"
+            }
+          }
+        },
+        {
+          "id": "outfit-ded-slava",
+          "x": 12,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "solid": false,
+          "role": null,
+          "image": "assets/objects/07-bassein-i-odnostoronnii-lift--bele-na-stenah.png",
+          "profile": {
+            "kind": "garment",
+            "material": "cloth",
+            "wear": {
+              "slot": "body",
+              "appearanceFigureId": "ded-slava"
+            }
+          }
+        }
+      ],
+      "hotspots": [
+        {
+          "id": "outfit-hudozhnik",
+          "kind": "look",
+          "x": 4.5,
+          "y": 4.1,
+          "reach": 1.4,
+          "prompt": "пиджак художника",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "outfit-hudozhnik"
+        },
+        {
+          "id": "outfit-lysyi",
+          "kind": "look",
+          "x": 8.5,
+          "y": 4.1,
+          "reach": 1.4,
+          "prompt": "одежда Лысого с тяжёлыми часами",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "outfit-lysyi"
+        },
+        {
+          "id": "outfit-ded-slava",
+          "kind": "look",
+          "x": 12.5,
+          "y": 4.1,
+          "reach": 1.4,
+          "prompt": "рабочая куртка деда Славы",
+          "refusal": null,
+          "clueId": null,
+          "action": null,
+          "once": false,
+          "dwellMs": null,
+          "propId": "outfit-ded-slava"
+        }
+      ],
       "entries": [
         {
           "id": "default",
@@ -6858,9 +7560,7 @@
       "description": "Полка для оставленных вещей из Пятёрочки, продолженная до горизонта. На ней лежит **всё, что ты за игру выронил, отдал, не подобрал или забыл**. И ещё много чужого. Рюкзаки с пятого класса. Пакет фасоли. Телефон, который так и не прошили. Ноут с продавленным экраном. Спальник. Полотенце, которое ты искал в бассейне и не нашёл, — вот оно, тут, но взять нельзя. Тётя сидит спиной, метрах в двадцати. Не поворачивается. Она сидит тут всегда и она тебя не заметит.",
       "atmosphere": "Максимальный Static",
       "personality": "предметы дальше десяти метров **пересобираются**, когда камера отворачивается — на месте рюкзака оказывается чайник, и обратно уже не проверить; тётя дышит",
-      "tags": [
-        "meta"
-      ],
+      "tags": ["meta"],
       "copy": {
         "animations": "предметы дальше десяти метров **пересобираются**, когда камера отворачивается — на месте рюкзака оказывается чайник, и обратно уже не проверить; тётя дышит",
         "sound": "флуоресцентный гул из Пятёрочки, растянутый; далёкое пищание кассы, раз в 12 секунд; **своё эхо с задержкой в 1.2 секунды**, слишком долгой для помещения без стен"
@@ -7018,9 +7718,7 @@
       "description": "Самое короткое и самое неприятное. Двор с оранжевыми лавочками, только их **две штуки, одинаковых, и они стоят напротив**. На одной сидит Турышев с бутылкой. На другой — тоже Турышев, но в скафандре, и рядом с ним какая-то аппаратура, и он смотрит вниз, на планету, которой тут нет. Между ними полтора метра. Оба тебя не видят. Это комната про одну развилку в 2019 году, и её нельзя ни решить, ни объяснить, ни пройти. Через двадцать секунд тебя вынесет. Появляется редко — раз за прохождение, случайно, без предупреждения, — и лучше всего работает, если игрок так и не поймёт, что это было.",
       "atmosphere": "Прямо в угол. Отсюда до конверсии один шаг",
       "personality": "оба **дышат в одном ритме**, и это единственное, что их связывает; больше не двигается ничего",
-      "tags": [
-        "meta"
-      ],
+      "tags": ["meta"],
       "copy": {
         "animations": "оба **дышат в одном ритме**, и это единственное, что их связывает; больше не двигается ничего",
         "sound": "двор днём с одной стороны микса, вакуум и своё дыхание в шлеме — с другой. **Панорама разведена жёстко влево-вправо**, и в наушниках это разваливает голову пополам ровно так, как надо"
@@ -7150,10 +7848,7 @@
       "description": "Файл на двадцать байт. Тег и больше ничего. Комната уже загружена. Выйти можно сразу.",
       "atmosphere": "программная тишина",
       "personality": "ничего не происходит, и это надо реализовать честно",
-      "tags": [
-        "meta",
-        "empty"
-      ],
+      "tags": ["meta", "empty"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -7190,7 +7885,10 @@
           "h": 3,
           "solid": false,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "surface"
+          }
         },
         {
           "id": "lavochka",
@@ -7200,7 +7898,13 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         }
       ],
       "hotspots": [
@@ -7216,7 +7920,10 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "propId": null
+          "propId": null,
+          "profile": {
+            "kind": "person"
+          }
         }
       ],
       "entries": [
@@ -7335,10 +8042,7 @@
       "description": "Полгода вокруг воды. Подходишь — забываешь всё. Говоришь «ну ладно». Ещё два круга.",
       "atmosphere": "парк, вода, далёкая дорога",
       "personality": "утки по кругу в ту же сторону, что и ты",
-      "tags": [
-        "pond",
-        "meta-adjacent"
-      ],
+      "tags": ["pond", "meta-adjacent"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -7375,7 +8079,10 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "shemy",
@@ -7385,7 +8092,10 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "monitor",
@@ -7395,7 +8105,10 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "stol",
@@ -7405,7 +8118,10 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture"
+          }
         }
       ],
       "hotspots": [
@@ -7563,10 +8279,7 @@
       "description": "Три месяца работы. Одна команда. Была симлинка. Комната удаляет себя спокойно.",
       "atmosphere": "вентилятор ноутбука, потом меньше, потом ничего",
       "personality": "пропадает по одному объекту, слева направо",
-      "tags": [
-        "meta",
-        "erasure"
-      ],
+      "tags": ["meta", "erasure"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -7608,7 +8321,10 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "propId": null
+          "propId": null,
+          "profile": {
+            "kind": "surface"
+          }
         }
       ],
       "entries": [
@@ -7833,10 +8549,7 @@
       "description": "Коридор. Над дверями номера. За каждой — одна и та же комната. Кроме одной.",
       "atmosphere": "щелчок табло, редкий, вразнобой",
       "personality": "дальние номера перещёлкиваются, ближние нет",
-      "tags": [
-        "days",
-        "corridor"
-      ],
+      "tags": ["days", "corridor"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -7916,9 +8629,7 @@
       "description": "Кровать, окно, стол. Разницы между 4102 и 5308 нет.",
       "atmosphere": "одна и та же комната",
       "personality": "отрисована один раз",
-      "tags": [
-        "days"
-      ],
+      "tags": ["days"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -7955,7 +8666,14 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "container": "closed",
+            "occupancy": {
+              "pose": "hidden"
+            }
+          }
         },
         {
           "id": "korobka",
@@ -7965,7 +8683,11 @@
           "h": 1,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "portable",
+            "container": "closed"
+          }
         }
       ],
       "hotspots": [
@@ -8060,6 +8782,27 @@
           "toFigureId": null,
           "keyId": null,
           "prompt": "коробка"
+        },
+        {
+          "id": "m9-shkaf--secret-shkaf",
+          "x": 8,
+          "y": 4,
+          "w": 1,
+          "h": 1,
+          "toRoomId": "m6-krugi-vokrug-pruda",
+          "toEntryId": "default",
+          "type": "open",
+          "threshold": "rift",
+          "levelDelta": 0,
+          "facing": null,
+          "toFigureId": null,
+          "keyId": null,
+          "prompt": "за шкафом — створ к пруду",
+          "hidden": true,
+          "revealBy": {
+            "objectId": "shkaf",
+            "when": "moved"
+          }
         }
       ],
       "figureSlots": [
@@ -8086,9 +8829,7 @@
       "description": "Детская. Тёплая, неискажённая. Надпись внутри шкафа написана не для тебя.",
       "atmosphere": "телевизор за стеной, разговор двух взрослых",
       "personality": "дверца шкафа очень медленно открывается шире",
-      "tags": [
-        "childhood"
-      ],
+      "tags": ["childhood"],
       "copy": {
         "nadpis": "Никогда не верьте маме, она не сдерживает свои обещания!"
       },
@@ -8127,7 +8868,11 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "container": "closed"
+          }
         },
         {
           "id": "noutbuk",
@@ -8137,7 +8882,10 @@
           "h": 2,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "paket",
@@ -8147,7 +8895,11 @@
           "h": 1,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "portable",
+            "container": "open"
+          }
         }
       ],
       "hotspots": [
@@ -8191,7 +8943,10 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "propId": null
+          "propId": null,
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "entries": [
@@ -8342,10 +9097,7 @@
       "description": "Кухня. Палец в пакете моркови. Пол вытерт. На экране незакрытая скобка.",
       "atmosphere": "кулер, компрессор. Ни одного звука боли.",
       "personality": "на экране набирается строка, которую никто не печатает",
-      "tags": [
-        "kitchen",
-        "money-adjacent"
-      ],
+      "tags": ["kitchen", "money-adjacent"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -8382,7 +9134,11 @@
           "h": 3,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "container": "closed"
+          }
         }
       ],
       "hotspots": [
@@ -8412,7 +9168,10 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "propId": null
+          "propId": null,
+          "profile": {
+            "kind": "portable"
+          }
         },
         {
           "id": "stul",
@@ -8426,7 +9185,13 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "propId": null
+          "propId": null,
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         }
       ],
       "entries": [
@@ -8517,10 +9282,7 @@
       "description": "Одна стена, одна стеклянная ячейка. Деньги видно. Таймер считает вверх, не вниз.",
       "atmosphere": "гул лампы, щелчок раз в секунду",
       "personality": "стекло запотевает изнутри",
-      "tags": [
-        "lock",
-        "money"
-      ],
+      "tags": ["lock", "money"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -8557,7 +9319,10 @@
           "h": 3,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "mechanism"
+          }
         },
         {
           "id": "stul-1",
@@ -8567,7 +9332,13 @@
           "h": 1,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         },
         {
           "id": "stul-2",
@@ -8577,7 +9348,13 @@
           "h": 1,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         },
         {
           "id": "stul-3",
@@ -8587,7 +9364,13 @@
           "h": 1,
           "solid": true,
           "role": "prop",
-          "image": null
+          "image": null,
+          "profile": {
+            "kind": "furniture",
+            "occupancy": {
+              "pose": "sitting"
+            }
+          }
         }
       ],
       "hotspots": [
@@ -8617,7 +9400,10 @@
           "action": null,
           "once": false,
           "dwellMs": null,
-          "propId": null
+          "propId": null,
+          "profile": {
+            "kind": "portable"
+          }
         }
       ],
       "entries": [
@@ -8749,10 +9535,7 @@
       "description": "Созвон. Двенадцать квадратов. Твой — чёрный. Микрофона нет. Квадраты гаснут.",
       "atmosphere": "двенадцать голосов внахлёст, потом меньше, потом слышно",
       "personality": "твой чёрный квадрат чуть светлее остальных чёрных",
-      "tags": [
-        "meta",
-        "call"
-      ],
+      "tags": ["meta", "call"],
       "copy": {},
       "buildingId": null,
       "level": 0,
@@ -8850,9 +9633,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -8947,9 +9728,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9045,9 +9824,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9142,9 +9919,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9246,9 +10021,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9343,9 +10116,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9441,9 +10212,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9539,9 +10308,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9636,9 +10403,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9734,9 +10499,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9831,9 +10594,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -9929,9 +10690,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10026,9 +10785,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10130,9 +10887,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10227,9 +10982,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10324,9 +11077,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10422,9 +11173,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10519,9 +11268,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10617,9 +11364,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10720,9 +11465,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10818,9 +11561,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -10915,9 +11656,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11013,9 +11752,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11116,9 +11853,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11214,9 +11949,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11311,9 +12044,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11415,9 +12146,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11518,9 +12247,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11616,9 +12343,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11713,9 +12438,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11811,9 +12534,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -11914,9 +12635,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12012,9 +12731,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12109,9 +12826,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12207,9 +12922,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12310,9 +13023,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12414,9 +13125,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12517,9 +13226,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12615,9 +13322,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12718,9 +13423,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12815,9 +13518,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -12919,9 +13620,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13016,9 +13715,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13114,9 +13811,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13211,9 +13906,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13309,9 +14002,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13413,9 +14104,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13510,9 +14199,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13608,9 +14295,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13705,9 +14390,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13803,9 +14486,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -13900,9 +14581,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14004,9 +14683,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14108,9 +14785,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14206,9 +14881,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14303,9 +14976,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14401,9 +15072,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14504,9 +15173,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14601,9 +15268,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14698,9 +15363,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14774,9 +15437,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14850,9 +15511,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -14932,9 +15591,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15008,9 +15665,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15090,9 +15745,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15172,9 +15825,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15249,9 +15900,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15331,9 +15980,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15407,9 +16054,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15483,9 +16128,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15559,9 +16202,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15635,9 +16276,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15711,9 +16350,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15787,9 +16424,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15870,9 +16505,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -15952,9 +16585,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16028,9 +16659,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16104,9 +16733,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16180,9 +16807,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16256,9 +16881,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16332,9 +16955,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16414,9 +17035,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16491,9 +17110,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16573,9 +17190,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16649,9 +17264,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16725,9 +17338,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16801,9 +17412,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16877,9 +17486,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -16953,9 +17560,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17035,9 +17640,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17118,9 +17721,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17194,9 +17795,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17276,9 +17875,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17352,9 +17949,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17434,9 +18029,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17510,9 +18103,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17586,9 +18177,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17668,9 +18257,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17750,9 +18337,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17832,9 +18417,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17914,9 +18497,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -17990,9 +18571,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18072,9 +18651,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18155,9 +18732,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18231,9 +18806,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18324,9 +18897,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18411,9 +18982,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18488,9 +19057,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18564,9 +19131,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18640,9 +19205,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18727,9 +19290,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18814,9 +19375,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18901,9 +19460,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -18978,9 +19535,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -19054,9 +19609,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -19136,9 +19689,7 @@
       "description": "Дорога между местами. Идёшь, пока не упрёшься в дверь.",
       "atmosphere": "",
       "personality": "ветер в траве, шаг слышно отдельно от города",
-      "tags": [
-        "route"
-      ],
+      "tags": ["route"],
       "copy": {},
       "buildingId": null,
       "level": 0
@@ -19335,12 +19886,7 @@
           "path": "assets/sprites/anton.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19370,12 +19916,7 @@
           "path": "assets/sprites/babushka-nadya.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19405,12 +19946,7 @@
           "path": "assets/sprites/dolzhniki.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19440,12 +19976,7 @@
           "path": "assets/sprites/glaz.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19475,12 +20006,7 @@
           "path": "assets/sprites/hudozhnik.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19510,12 +20036,7 @@
           "path": "assets/sprites/kirill.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19545,12 +20066,7 @@
           "path": "assets/sprites/kripto-bro.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19580,12 +20096,7 @@
           "path": "assets/sprites/liosha-gnedkov.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19615,12 +20126,7 @@
           "path": "assets/sprites/mama.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19650,12 +20156,7 @@
           "path": "assets/sprites/nilufar.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19685,12 +20186,7 @@
           "path": "assets/sprites/papa.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19720,12 +20216,7 @@
           "path": "assets/sprites/tetya.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19755,12 +20246,7 @@
           "path": "assets/sprites/turyshev.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19790,12 +20276,7 @@
           "path": "assets/sprites/ubiitsa.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19818,12 +20299,7 @@
           "path": "assets/sprites/raisa.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19853,12 +20329,7 @@
           "path": "assets/sprites/lysyi.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19888,12 +20359,7 @@
           "path": "assets/sprites/kurt.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19923,12 +20389,7 @@
           "path": "assets/sprites/ded-slava.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19958,12 +20419,7 @@
           "path": "assets/sprites/aleksei.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "s",
-            "e",
-            "n",
-            "w"
-          ],
+          "dirs": ["s", "e", "n", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -19993,12 +20449,7 @@
           "path": "assets/sprites/shchenok.png",
           "frameW": 48,
           "frameH": 48,
-          "dirs": [
-            "n",
-            "e",
-            "s",
-            "w"
-          ],
+          "dirs": ["n", "e", "s", "w"],
           "frames": 2,
           "anchorY": 0.9
         },
@@ -20018,10 +20469,7 @@
       {
         "id": "clue-1",
         "sensorySeed": "На краю полки для оставленных вещей кто-то процарапал одно и то же слово много раз. Буквы стёрты до ритма, как подпись на чужих сумках.",
-        "placementTags": [
-          "clue-compatible",
-          "shelf"
-        ],
+        "placementTags": ["clue-compatible", "shelf"],
         "worldFrame": "prop",
         "detailFrame": "prop",
         "worldImage": "assets/clues/clue-1/world.png",
@@ -20031,10 +20479,7 @@
       {
         "id": "clue-2",
         "sensorySeed": "Смех есть, слов нет. В паузах между хохотом складывается слог, который с пола не разобрать.",
-        "placementTags": [
-          "clue-compatible",
-          "artist"
-        ],
+        "placementTags": ["clue-compatible", "artist"],
         "worldFrame": "prop",
         "detailFrame": "prop",
         "worldImage": "assets/clues/clue-2/world.png",
@@ -20044,10 +20489,7 @@
       {
         "id": "clue-3",
         "sensorySeed": "На пакетике герб и три буквы. Под ними другим почерком — одно бытовое слово, не служебное.",
-        "placementTags": [
-          "clue-compatible",
-          "packet"
-        ],
+        "placementTags": ["clue-compatible", "packet"],
         "worldFrame": "prop",
         "detailFrame": "prop",
         "worldImage": "assets/clues/clue-3/world.png",
@@ -20057,10 +20499,7 @@
       {
         "id": "clue-4",
         "sensorySeed": "Он вставляет это в хвастовство как своё. Слово чужое, интонация — будто сам придумал.",
-        "placementTags": [
-          "clue-compatible",
-          "kirill"
-        ],
+        "placementTags": ["clue-compatible", "kirill"],
         "worldFrame": "prop",
         "detailFrame": "prop",
         "worldImage": "assets/clues/clue-4/world.png",
@@ -20070,10 +20509,7 @@
       {
         "id": "clue-5",
         "sensorySeed": "Совет начинается издалека и в середине роняет одно лишнее существительное, как будто оно всегда там было.",
-        "placementTags": [
-          "clue-compatible",
-          "papa"
-        ],
+        "placementTags": ["clue-compatible", "papa"],
         "worldFrame": "prop",
         "detailFrame": "prop",
         "worldImage": "assets/clues/clue-5/world.png",
@@ -20083,10 +20519,7 @@
       {
         "id": "clue-6",
         "sensorySeed": "Он не спрашивает. Он ждёт, пока ты скажешь, зачем пришёл, и только тогда отдаёт последнее.",
-        "placementTags": [
-          "clue-compatible",
-          "eye"
-        ],
+        "placementTags": ["clue-compatible", "eye"],
         "worldFrame": "prop",
         "detailFrame": "prop",
         "worldImage": "assets/clues/clue-6/world.png",

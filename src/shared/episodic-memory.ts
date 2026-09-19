@@ -356,11 +356,40 @@ function episodeForView(
     );
 
   const addEvent = (event: WorldEvent): void => {
-    if ("objectId" in event && objects.has(event.objectId))
+    if ("objectId" in event && event.objectId && objects.has(event.objectId))
       entities.add(event.objectId);
     if ("doorId" in event) entities.add(event.doorId);
-    const object = "objectId" in event ? `«${objectName(event.objectId)}»` : "";
+    const object =
+      "objectId" in event && event.objectId
+        ? `«${objectName(event.objectId)}»`
+        : "";
     switch (event.type) {
+      case "actor.occupied":
+        facts.push(`${who} занял место в ${object}.`);
+        break;
+      case "actor.left":
+        facts.push(`${who} выбрался из ${object}.`);
+        break;
+      case "object.worn":
+        facts.push(`${who} надел ${object}.`);
+        break;
+      case "object.unworn":
+        facts.push(`${who} снял ${object}.`);
+        break;
+      case "object.detached":
+        facts.push(`${who} отсоединил ${object}.`);
+        break;
+      case "object.relocated":
+        facts.push(`${who} передвинул ${object}.`);
+        break;
+      case "object.emptied":
+        facts.push(`${who} высыпал содержимое ${object}.`);
+        break;
+      case "actor.requested":
+        facts.push(
+          `${who} в роли ${event.roleId} обратился с просьбой ${event.intent}${object ? ` у ${object}` : ""}. Это просьба, а не выполненное действие других людей.`,
+        );
+        break;
       case "object.taken":
         facts.push(`${who} взял ${object}.`);
         break;

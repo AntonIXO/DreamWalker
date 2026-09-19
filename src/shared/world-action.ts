@@ -11,10 +11,25 @@ import type {
   WorldObjectAlteration,
   WorldObjectPhysicalState,
 } from "./world-object";
+import type { PhysicalProfile } from "./object-profile";
 
 export type WorldActionSource = "player" | "npc" | "script" | "sleeper";
 
 export type WorldAction =
+  | { type: "approach"; objectId: string }
+  | { type: "occupy"; objectId: string }
+  | { type: "leave" }
+  | { type: "wear"; objectId: string }
+  | { type: "removeWear"; objectId: string }
+  | { type: "detach"; objectId: string }
+  | { type: "empty"; objectId: string }
+  | { type: "moveObject"; objectId: string; x: number; y: number }
+  | { type: "refineProfile"; objectId: string; profile: PhysicalProfile }
+  | {
+      type: "requestRole";
+      intent: "gather" | "inspect" | "helpMove";
+      objectId?: string;
+    }
   | { type: "moveTo"; x: number; y: number; roomId?: string }
   | { type: "take"; objectId: string }
   | { type: "drop"; objectId: string; x?: number; y?: number }
@@ -46,6 +61,39 @@ export interface WorldActionEnvelope {
 }
 
 export type WorldEvent =
+  | { type: "door.revealed"; actor: AnyActor; doorId: string }
+  | { type: "actor.occupied"; actor: ActorRef; objectId: string }
+  | { type: "actor.left"; actor: ActorRef; objectId: string }
+  | { type: "object.worn"; actor: ActorRef; objectId: string }
+  | { type: "object.unworn"; actor: ActorRef; objectId: string }
+  | {
+      type: "object.detached";
+      actor: ActorRef;
+      objectId: string;
+      fromObjectId: string;
+    }
+  | {
+      type: "object.relocated";
+      actor: ActorRef;
+      objectId: string;
+      roomId: string;
+      x: number;
+      y: number;
+    }
+  | {
+      type: "object.emptied";
+      actor: ActorRef;
+      objectId: string;
+      objectIds: string[];
+    }
+  | { type: "object.profiled"; actor: ActorRef; objectId: string }
+  | {
+      type: "actor.requested";
+      actor: ActorRef;
+      intent: "gather" | "inspect" | "helpMove";
+      objectId: string | null;
+      roleId: string;
+    }
   | {
       type: "object.taken";
       objectId: string;
@@ -169,6 +217,15 @@ export const NPC_ACTION_TYPES: ReadonlySet<WorldAction["type"]> = new Set<
   "activate",
   "use",
   "traverseDoor",
+  "approach",
+  "occupy",
+  "leave",
+  "wear",
+  "removeWear",
+  "detach",
+  "moveObject",
+  "empty",
+  "requestRole",
 ]);
 
 export const MAX_WORLD_ACTIONS_PER_TURN = 8;
@@ -185,4 +242,14 @@ export const PLAYER_ACTION_TYPES: ReadonlySet<WorldAction["type"]> = new Set([
   "use",
   "alter",
   "gesture",
+  "approach",
+  "occupy",
+  "leave",
+  "wear",
+  "removeWear",
+  "detach",
+  "moveObject",
+  "empty",
+  "refineProfile",
+  "requestRole",
 ]);

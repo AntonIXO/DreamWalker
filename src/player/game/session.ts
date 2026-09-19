@@ -19,6 +19,7 @@ import {
   MAX_WORLD_ACTIONS_PER_TURN,
 } from "../../shared/world-action";
 import { executeWorldAction } from "../../shared/world-action-engine";
+import { getActorOccupancy } from "../../shared/world-object";
 import {
   captureWorldAction,
   recordWorldAction,
@@ -34,6 +35,7 @@ import {
   roomContainingPlayer,
   streetRoomsToShow,
   toLocalPixels,
+  toWorldPixels,
   worldBounds,
 } from "../../shared/street";
 import { findHotspot } from "../../shared/roomGrid";
@@ -41,10 +43,10 @@ import { findTarget, reachableHotspots, type InteractTarget } from "./interact";
 import { escortFigure } from "./figures";
 import { whoIsLed } from "./fates";
 import { applyPatch } from "./patch";
+import { uncoveredPassagePatches } from "./secret-passages";
 import {
   createPlayer,
   placeAtEntry,
-  playerTile,
   updatePlayer,
   type PlayerState,
 } from "./player";
@@ -146,6 +148,16 @@ export class DreamSession {
   update(axis: { x: number; y: number }, deltaSeconds: number): void {
     if (this.transitioning) return;
     const room = this.room;
+
+    if (getActorOccupancy(this.world.objects, { kind: "player" })) {
+      this.player.moving = false;
+      this.player.enteredDoorId = null;
+      this.player.refusedDoorId = null;
+      this.tickDwell(room, deltaSeconds);
+      this.tickMeta(deltaSeconds);
+      this.runScripts("update", deltaSeconds);
+      return;
+    }
 
     updatePlayer(this.player, room, this.world, axis, deltaSeconds);
 
@@ -301,6 +313,17 @@ export class DreamSession {
     const room = this.world.roomById.get(roomId);
     if (!room || this.transitioning) return;
 
+    // Timed meta exits and authored transitions must not leave a body registered in
+    // an object in the previous room. The ordinary exit reserves a safe floor point.
+    if (getActorOccupancy(this.world.objects, { kind: "player" })) {
+      const release = this.dispatchWorldAction({
+        actor: { kind: "player" },
+        source: "player",
+        action: { type: "leave" },
+      });
+      if (!release.ok) return;
+    }
+
     this.transitioning = true;
     const generation = this.transitionGeneration;
     try {
@@ -357,8 +380,8 @@ export class DreamSession {
    * Used when something outside the session invalidated the scene — the population being
    * installed, a window resize, the dream being entered from the lobby.
    */
-  enterRoomImmediate(): void {
-    this.showRoom(currentRoom(this.world));
+  enterRoomImmediate(cutCamera = true): void {
+    this.showRoom(currentRoom(this.world), cutCamera);
   }
 
   private showRoom(room: RoomState, cutCamera = true): void {
@@ -483,11 +506,38 @@ export class DreamSession {
     this.reactionDepth++;
     try {
       const mutator = bindWorldMutator(this.world, {
-        get: () => ({
-          roomId: this.world.currentRoomId,
-          ...playerTile(this.player, this.room),
-        }),
-        set: () => undefined,
+        get: () => {
+          const local = toLocalPixels(this.room, this.player.x, this.player.y);
+          return {
+            roomId: this.world.currentRoomId,
+            x: local.x / this.room.tileSize,
+            y: local.y / this.room.tileSize,
+          };
+        },
+        set: (pose) => {
+          const destination = this.world.roomById.get(pose.roomId);
+          if (!destination) return;
+          const previousRoomId = this.world.currentRoomId;
+          this.world.currentRoomId = pose.roomId;
+          const point = toWorldPixels(
+            destination,
+            pose.x * destination.tileSize,
+            pose.y * destination.tileSize,
+          );
+          this.player.x = point.x;
+          this.player.y = point.y;
+          this.player.moving = false;
+          this.player.enteredDoorId = null;
+          this.player.refusedDoorId = null;
+          if (previousRoomId !== pose.roomId) {
+            this.dwellMs.clear();
+            this.showRoom(destination);
+            this.leadAlong(pose.roomId, previousRoomId);
+            const visits = noteVisit(this.world, pose.roomId);
+            this.callbacks.onEnterRoom(destination, visits);
+            this.runScripts("enter");
+          }
+        },
       });
       const before = captureWorldAction(mutator, envelope);
       const result = executeWorldAction(mutator, envelope);
@@ -501,6 +551,46 @@ export class DreamSession {
           this.callbacks.cycleNumber?.() ?? 1,
         );
         if (event) this.callbacks.onWorldAction?.(event);
+        for (const patch of uncoveredPassagePatches(this.world)) {
+          if (patch.kind !== "revealDoor") continue;
+          const revealEnvelope: WorldActionEnvelope = {
+            actor: envelope.actor,
+            source: envelope.source,
+            action: { type: "open", targetId: patch.doorId },
+          };
+          const beforeReveal = captureWorldAction(mutator, revealEnvelope);
+          const revealed = applyPatch(
+            this.world,
+            patch,
+            this.callbacks.cycleNumber?.() ?? 1,
+          );
+          if (!revealed.ok) continue;
+          for (const roomId of revealed.affectedRooms)
+            this.scene.invalidate(roomId);
+          const revealResult: WorldActionResult = {
+            ok: true,
+            refusal: null,
+            affectedRooms: revealed.affectedRooms,
+            affectedObjects: [],
+            events: [
+              {
+                type: "door.revealed",
+                doorId: patch.doorId,
+                actor: envelope.actor,
+              },
+            ],
+          };
+          const revealedEvent = recordWorldAction(
+            this.world.worldMind,
+            mutator,
+            revealEnvelope,
+            revealResult,
+            beforeReveal,
+            this.callbacks.cycleNumber?.() ?? 1,
+          );
+          if (revealedEvent) this.callbacks.onWorldAction?.(revealedEvent);
+          runReactions(this.host(), revealResult.events, this.scripts);
+        }
         runReactions(this.host(), result.events, this.scripts);
         this.showRoom(this.room, false);
       }

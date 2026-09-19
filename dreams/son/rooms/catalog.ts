@@ -10,6 +10,11 @@ import { M9 } from "./m9-shkaf";
 import { M10 } from "./m10-morkovka";
 import { M11 } from "./m11-zamok";
 import { M12 } from "./m12-nedoliudi";
+import {
+  addLivingObjects,
+  addPreparedPassages,
+  authorPhysicalProfiles,
+} from "../objects";
 
 const NEW_ROOMS: DreamRoom[] = [M5, M6, M7, M8, M8_DEN, M9, M10, M11, M12];
 
@@ -25,9 +30,13 @@ function patchExisting(rooms: DreamRoom[]): DreamRoom[] {
 /** The hand-drawn catalogue, before streets fill the gaps. */
 export function authoredRooms(): DreamRoom[] {
   const existing = EXISTING_ROOMS.map(cloneRoom);
-  return [...patchExisting(existing), ...NEW_ROOMS.map(cloneRoom)];
+  const rooms = [...patchExisting(existing), ...NEW_ROOMS.map(cloneRoom)];
+  addLivingObjects(rooms);
+  return authorPhysicalProfiles(rooms);
 }
 
 export function allRooms(): DreamRoom[] {
-  return applyStreetMap(authoredRooms());
+  const rooms = applyStreetMap(authoredRooms());
+  addPreparedPassages(rooms);
+  return rooms;
 }

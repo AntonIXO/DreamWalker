@@ -6,6 +6,10 @@
  */
 
 import type { RoomHotspot, RoomProp } from "../../shared/room";
+import {
+  compilePhysicalProfile,
+  type PhysicalProfile,
+} from "../../shared/object-profile";
 import type {
   ObjectAffordance,
   ObjectMobility,
@@ -49,6 +53,7 @@ export function migrateWorldObjects(
   const seen = new Set<string>();
 
   for (const room of rooms) {
+    const firstObject = objects.length;
     const propById = new Map(room.props.map((prop) => [prop.id, prop]));
     const paired = new Set<string>();
 
@@ -70,6 +75,29 @@ export function migrateWorldObjects(
       if (paired.has(prop.id)) continue;
       objects.push(takeId(seen, fromUnpairedProp(room.id, prop)));
     }
+    const local = objects.slice(firstObject);
+    const resolveLocal = (id: string) =>
+      local.find(
+        (object) => object.id === id || object.id === `${room.id}:${id}`,
+      );
+    for (const prop of room.props) {
+      const object = resolveLocal(prop.id);
+      if (!object) continue;
+      const inside = (prop as RoomProp & { inside?: string }).inside;
+      if (inside) {
+        const container = resolveLocal(inside);
+        if (!container || container.id === object.id)
+          throw new Error(`invalid container ${inside} for ${object.id}`);
+        object.location = { kind: "inside", objectId: container.id };
+      }
+      if (object.state.attachedTo) {
+        const anchor = resolveLocal(object.state.attachedTo);
+        if (!anchor || anchor.id === object.id)
+          throw new Error(`invalid attachment for ${object.id}`);
+        object.state.attachedTo = anchor.id;
+        object.profile!.attachment!.toObjectId = anchor.id;
+      }
+    }
   }
 
   for (const interest of interests) {
@@ -88,19 +116,10 @@ function takeId(seen: Set<string>, object: WorldObjectState): WorldObjectState {
   return id === object.id ? object : { ...object, id };
 }
 
-function isCarryableHotspot(
-  hotspot: RoomHotspot,
-  prop: RoomProp | null,
-): boolean {
+function isCarryableHotspot(hotspot: RoomHotspot): boolean {
   if (hotspot.refusal) return false;
-  if (hotspot.kind === "clue") return true;
-  // Authored "once" look-props of handheld size — Turyshev's bottle.
-  // Intercom/urn/stove stay fixed: they are not once, or they are larger.
-  if (hotspot.kind === "look" && hotspot.once) {
-    if (!prop) return true;
-    return prop.w <= 1 && prop.h <= 1;
-  }
-  return false;
+  // Compatibility for old clue artifacts; all ordinary objects use profiles.
+  return hotspot.kind === "clue";
 }
 
 function fromHotspotAndProp(
@@ -109,8 +128,9 @@ function fromHotspotAndProp(
   prop: RoomProp,
 ): WorldObjectState {
   const ui = hotspot.kind === "ui";
-  const carryable = isCarryableHotspot(hotspot, prop);
+  const carryable = isCarryableHotspot(hotspot);
   return finish({
+    profile: prop.profile ?? hotspot.profile,
     id: prop.id,
     name: hotspot.prompt || prop.id,
     roomId,
@@ -125,7 +145,11 @@ function fromHotspotAndProp(
     body: ui
       ? { w: prop.w, h: prop.h, solid: false }
       : { w: prop.w, h: prop.h, solid: prop.solid },
-    visual: { role: prop.role, image: prop.image },
+    visual: {
+      role: prop.role,
+      image: prop.image,
+      ...(prop.openImage ? { openImage: prop.openImage } : {}),
+    },
     container: prop.container,
     hotspot,
   });
@@ -136,8 +160,9 @@ function fromFreeHotspot(
   hotspot: RoomHotspot,
 ): WorldObjectState {
   const ui = hotspot.kind === "ui";
-  const carryable = isCarryableHotspot(hotspot, null);
+  const carryable = isCarryableHotspot(hotspot);
   return finish({
+    profile: hotspot.profile,
     id: hotspot.id,
     name: hotspot.prompt || hotspot.id,
     roomId,
@@ -157,6 +182,7 @@ function fromFreeHotspot(
 
 function fromUnpairedProp(roomId: string, prop: RoomProp): WorldObjectState {
   return finish({
+    profile: prop.profile,
     id: prop.id,
     name: prop.id,
     roomId,
@@ -165,7 +191,11 @@ function fromUnpairedProp(roomId: string, prop: RoomProp): WorldObjectState {
     mobility: "fixed",
     affordances: LOOK_AFFORDANCES,
     body: { w: prop.w, h: prop.h, solid: prop.solid },
-    visual: { role: prop.role, image: prop.image },
+    visual: {
+      role: prop.role,
+      image: prop.image,
+      ...(prop.openImage ? { openImage: prop.openImage } : {}),
+    },
     container: prop.container,
     hotspot: null,
   });
@@ -173,6 +203,7 @@ function fromUnpairedProp(roomId: string, prop: RoomProp): WorldObjectState {
 
 function fromInterest(interest: MigratableInterest): WorldObjectState {
   return finish({
+    profile: { kind: "portable" },
     id: interest.id,
     name: interest.name,
     roomId: interest.roomId,
@@ -190,6 +221,7 @@ function fromInterest(interest: MigratableInterest): WorldObjectState {
 }
 
 function finish(input: {
+  profile?: PhysicalProfile;
   id: string;
   name: string;
   roomId: string;
@@ -206,11 +238,14 @@ function finish(input: {
   sensorySeed?: string | null;
 }): WorldObjectState {
   const hotspot = input.hotspot;
-  const affordances = [...input.affordances];
-  if (input.container) affordances.push("open", "close");
+  const compiled = input.profile ? compilePhysicalProfile(input.profile) : null;
+  const affordances = [...(compiled?.affordances ?? input.affordances)];
+  if (input.container) affordances.push("open", "close", "empty");
   const tags = hotspot?.kind === "clue" ? ["clue"] : [];
   if (input.container) tags.push("container");
+  if (compiled) tags.push(...compiled.tags);
   return {
+    ...(input.profile ? { profile: structuredClone(input.profile) } : {}),
     id: input.id,
     name: input.name,
     location: {
@@ -219,7 +254,7 @@ function finish(input: {
       x: input.x,
       y: input.y,
     },
-    mobility: input.mobility,
+    mobility: compiled?.mobility ?? input.mobility,
     affordances: [...new Set(affordances)],
     body: input.body,
     visual: { ...input.visual },
@@ -230,8 +265,11 @@ function finish(input: {
           refusal: hotspot.refusal,
         }
       : null,
-    state: input.container ? { open: input.container === "open" } : {},
-    tags,
+    state: {
+      ...(input.container ? { open: input.container === "open" } : {}),
+      ...compiled?.state,
+    },
+    tags: [...new Set(tags)],
     clueId: input.clueId ?? hotspot?.clueId ?? null,
     holdsShardId: input.holdsShardId ?? null,
     sensorySeed: input.sensorySeed ?? null,

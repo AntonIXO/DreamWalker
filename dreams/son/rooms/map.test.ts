@@ -46,10 +46,10 @@ describe("the street map", () => {
   const byId = new Map(rooms.map((room) => [room.id, room]));
   const spawn = "19-dvor-i-oranzhevye-lavochki";
 
-  test("rifts come out of the meta-spaces and land on real rooms", () => {
+  test("uncovered rifts come out of the meta-spaces and land on real rooms", () => {
     const rifts = rooms.flatMap((room) =>
       room.doors
-        .filter((door) => door.threshold === "rift")
+        .filter((door) => door.threshold === "rift" && !door.hidden)
         .map((door) => ({ room, door })),
     );
     expect(rifts.length).toBeGreaterThan(0);
@@ -65,7 +65,7 @@ describe("the street map", () => {
   test("a rift never sits on a street doorway or a solid thing", () => {
     for (const room of rooms) {
       for (const door of room.doors) {
-        if (door.threshold !== "rift") continue;
+        if (door.threshold !== "rift" || door.hidden) continue;
         const others = room.doors.filter((other) => other.id !== door.id);
         expect(others.some((other) => rectsOverlap(door, other))).toBe(false);
         for (let y = door.y; y < door.y + door.h; y++) {

@@ -439,7 +439,7 @@ describe("NPC dialogue context and execution", () => {
       doGenerate: async ({ prompt }) => {
         const text = JSON.stringify(prompt);
         // The real model has no way to guess these IDs or poses from a name alone.
-        expect(text.includes("cup")).toBe(step > 0);
+        expect(/\bcup\b/.test(text)).toBe(step > 0);
         expect(text).toContain('\\"id\\": \\"arch\\"');
         expect(text).toContain('\\"x\\": 2');
         step++;

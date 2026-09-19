@@ -16,8 +16,9 @@ import type {
   WorldActionSource,
 } from "../../shared/world-action";
 import type { ActorRef } from "../../shared/world-object";
+import { getActorOccupancy } from "../../shared/world-object";
 import { tileBlockedBySolids } from "./object-collision";
-import type { WorldState } from "./world";
+import { canPassDoor, doorDestination, type WorldState } from "./world";
 
 export interface GridPoint {
   x: number;
@@ -128,42 +129,155 @@ export function replayWorldActions(
 interface FigureWork {
   actions: WorldAction[];
   path: GridPoint[] | null;
+  onComplete?: (result: ReplayOutcome) => void;
+  executed: number;
+  waitSeconds: number;
+}
+
+export const NPC_TASK_SPEED = 3;
+
+/** Resolve a room-to-room intention through real doors, never moveTo across rooms. */
+export function planNpcRoute(
+  world: WorldState,
+  figureId: string,
+  destination: { roomId: string; x: number; y: number },
+): WorldAction[] | null {
+  const figure = world.figures.find((entry) => entry.id === figureId);
+  const destRoom = world.roomById.get(destination.roomId);
+  if (!figure || !destRoom || destRoom.kind === "meta") return null;
+  const rooms = [figure.roomId];
+  const visited = new Set(rooms);
+  const parents = new Map<string, { from: string; doorId: string }>();
+  for (let index = 0; index < rooms.length; index++) {
+    const roomId = rooms[index]!;
+    if (roomId === destination.roomId) break;
+    for (const door of world.roomById.get(roomId)?.doors ?? []) {
+      if (door.hidden) continue;
+      if (door.type === "keyLock") {
+        if (
+          !world.objects.some(
+            (object) =>
+              object.keyId === door.keyId &&
+              object.location.kind === "held" &&
+              object.location.actor.kind === "figure" &&
+              object.location.actor.id === figureId,
+          )
+        )
+          continue;
+      } else if (!canPassDoor(world, door)) continue;
+      const next = doorDestination(world, door).roomId;
+      if (visited.has(next) || world.roomById.get(next)?.kind === "meta")
+        continue;
+      visited.add(next);
+      parents.set(next, { from: roomId, doorId: door.id });
+      rooms.push(next);
+    }
+  }
+  if (!visited.has(destination.roomId)) return null;
+  const doors: string[] = [];
+  let cursor = destination.roomId;
+  while (cursor !== figure.roomId) {
+    const parent = parents.get(cursor);
+    if (!parent) return null;
+    doors.unshift(parent.doorId);
+    cursor = parent.from;
+  }
+  const actions: WorldAction[] = [];
+  for (const doorId of doors) {
+    const door = world.doorById.get(doorId)!;
+    const roomId = world.roomIdByDoorId.get(doorId)!;
+    actions.push(
+      { type: "moveTo", roomId, x: door.x, y: door.y },
+      { type: "traverseDoor", doorId },
+    );
+  }
+  actions.push({ type: "moveTo", ...destination });
+  return actions;
 }
 
 export class NpcActionQueue {
   private readonly work = new Map<string, FigureWork>();
 
-  enqueue(figureId: string, actions: readonly WorldAction[]): void {
-    this.work.set(figureId, { actions: [...actions], path: null });
+  enqueue(
+    figureId: string,
+    actions: readonly WorldAction[],
+    onComplete?: (result: ReplayOutcome) => void,
+  ): void {
+    this.cancel(figureId, "replaced");
+    this.work.set(figureId, {
+      actions: structuredClone([...actions]),
+      path: null,
+      onComplete,
+      executed: 0,
+      waitSeconds: 0,
+    });
+  }
+
+  get busyFigureIds(): ReadonlySet<string> {
+    return new Set(this.work.keys());
+  }
+
+  remaining(figureId: string): WorldAction[] | null {
+    const job = this.work.get(figureId);
+    return job ? structuredClone(job.actions) : null;
+  }
+
+  cancel(figureId: string, reason = "cancelled"): void {
+    const job = this.work.get(figureId);
+    if (!job) return;
+    this.work.delete(figureId);
+    job.onComplete?.({ ok: false, executed: job.executed, refusal: reason });
+  }
+
+  clear(): void {
+    for (const id of [...this.work.keys()]) this.cancel(id);
   }
 
   isBusy(figureId: string): boolean {
-    const job = this.work.get(figureId);
-    return !!job && job.actions.length > 0;
+    return this.work.has(figureId);
   }
 
   tick(
     world: WorldState,
     execute: (envelope: WorldActionEnvelope) => WorldActionResult,
+    deltaSeconds = 0.1,
   ): void {
     for (const [figureId, job] of this.work) {
+      if (!world.figures.some((figure) => figure.id === figureId)) {
+        this.cancel(figureId, "actor does not exist");
+        continue;
+      }
       if (job.actions.length === 0) {
         this.work.delete(figureId);
+        job.onComplete?.({ ok: true, executed: job.executed, refusal: null });
+        continue;
+      }
+      if (job.waitSeconds > 0) {
+        job.waitSeconds -= Math.max(0, Math.min(deltaSeconds, 0.1));
         continue;
       }
       const head = job.actions[0]!;
       if (head.type === "moveTo") {
-        const done = this.stepMove(world, figureId, job, head);
+        if (
+          getActorOccupancy(world.objects, { kind: "figure", id: figureId })
+        ) {
+          this.cancel(figureId, "leave the occupied support first");
+          continue;
+        }
+        const done = this.stepMove(world, figureId, job, head, deltaSeconds);
+        if (!this.work.has(figureId)) continue;
         if (!done) continue;
-        const result = this.dispatch(execute, figureId, head);
-        job.actions.shift();
-        job.path = null;
-        if (!result.ok) this.work.delete(figureId);
-        continue;
       }
       const result = this.dispatch(execute, figureId, head);
       job.actions.shift();
-      if (!result.ok) this.work.delete(figureId);
+      job.path = null;
+      job.executed++;
+      job.waitSeconds = 0.25;
+      if (!result.ok) this.cancel(figureId, result.refusal ?? "action refused");
+      else if (job.actions.length === 0) {
+        this.work.delete(figureId);
+        job.onComplete?.({ ok: true, executed: job.executed, refusal: null });
+      }
     }
   }
 
@@ -194,51 +308,89 @@ export class NpcActionQueue {
     figureId: string,
     job: FigureWork,
     action: Extract<WorldAction, { type: "moveTo" }>,
+    deltaSeconds: number,
   ): boolean {
     const figure = world.figures.find((entry) => entry.id === figureId);
     if (!figure) {
-      job.actions.length = 0;
+      this.cancel(figureId, "actor does not exist");
       return false;
     }
     const roomId = action.roomId ?? figure.roomId;
     if (figure.roomId !== roomId) {
-      // A room change is traverseDoor's job. Drop this moveTo.
-      return true;
-    }
-    const here = { x: Math.round(figure.x), y: Math.round(figure.y) };
-    const goal = { x: Math.round(action.x), y: Math.round(action.y) };
-    if (here.x === goal.x && here.y === goal.y) return true;
-
-    if (!job.path || job.path.length === 0) {
-      job.path = findGridPath(world, roomId, here, goal);
-    }
-    if (!job.path || job.path.length === 0) {
-      job.actions.length = 0;
+      this.cancel(figureId, "room changed before movement");
       return false;
     }
-    // path[0] is the current tile; step to the next.
-    if (job.path.length === 1) {
-      figure.x = goal.x;
-      figure.y = goal.y;
+    const here = { x: Math.round(figure.x), y: Math.round(figure.y) };
+    if (!job.path) {
+      const original = { x: Math.round(action.x), y: Math.round(action.y) };
+      // A threshold may be set in a solid wall, or a destination may name a solid prop.
+      // Stop beside it, close enough for the following engine-validated interaction.
+      const candidates = [
+        original,
+        ...STEPS.map((step) => ({
+          x: original.x + step.x,
+          y: original.y + step.y,
+        })).sort(
+          (a, b) =>
+            Math.hypot(a.x - figure.x, a.y - figure.y) -
+            Math.hypot(b.x - figure.x, b.y - figure.y),
+        ),
+      ];
+      for (const goal of candidates) {
+        const room = world.roomById.get(roomId)!;
+        if (
+          isSolidCell(cellAt(room, goal.x, goal.y)) ||
+          tileBlockedBySolids(world, roomId, goal.x, goal.y)
+        )
+          continue;
+        const path = findGridPath(world, roomId, here, goal);
+        if (!path) continue;
+        action.x = goal.x;
+        action.y = goal.y;
+        job.path = path.slice(1);
+        break;
+      }
+      if (!job.path) {
+        this.cancel(figureId, "no path");
+        return false;
+      }
+    }
+    if (job.path.length === 0) {
+      figure.walking = false;
       figure.targetX = null;
       figure.targetY = null;
-      figure.walking = false;
       return true;
     }
-    job.path.shift();
     const next = job.path[0]!;
-    figure.x = next.x;
-    figure.y = next.y;
-    figure.facing =
-      next.x > here.x
-        ? "e"
-        : next.x < here.x
-          ? "w"
-          : next.y > here.y
-            ? "s"
-            : "n";
-    figure.walking = true;
-    figure.revision++;
-    return next.x === goal.x && next.y === goal.y;
+    const room = world.roomById.get(roomId)!;
+    if (
+      isSolidCell(cellAt(room, next.x, next.y)) ||
+      tileBlockedBySolids(world, roomId, next.x, next.y)
+    ) {
+      // Replan from the live position next frame. No stale path crosses a new obstacle.
+      job.path = null;
+      return false;
+    }
+    const dx = next.x - figure.x;
+    const dy = next.y - figure.y;
+    const distance = Math.hypot(dx, dy);
+    const step = Math.min(
+      distance,
+      NPC_TASK_SPEED * Math.max(0, Math.min(deltaSeconds, 0.1)),
+    );
+    if (distance > 0) {
+      figure.x += (dx / distance) * step;
+      figure.y += (dy / distance) * step;
+      figure.facing =
+        Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "e" : "w") : dy > 0 ? "s" : "n";
+      figure.walkTime += Math.max(0, deltaSeconds);
+      figure.revision++;
+      world.revision++;
+    }
+    figure.targetX = null;
+    figure.targetY = null;
+    figure.walking = step > 0;
+    if (step >= distance) job.path.shift();
+    return job.path.length === 0;
   }
 }

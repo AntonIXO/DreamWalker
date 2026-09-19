@@ -19,6 +19,8 @@ import {
 import {
   actorsEqual,
   cloneObject,
+  getActorEquipment,
+  getActorOccupancy,
   findChebyshevPath,
   isActorRef,
   isHeldBy,
@@ -34,6 +36,12 @@ import {
   type WorldMutator,
   type WorldObjectState,
 } from "./world-object";
+import {
+  compilePhysicalProfile,
+  effectiveWear,
+  validatePhysicalProfile,
+} from "./object-profile";
+import { BODY_HEIGHT, BODY_WIDTH } from "./roomGrid";
 
 const DEFAULT_REACH = 1.5;
 
@@ -55,6 +63,7 @@ export interface WorldMutatorSeed {
   figurePoses?: Iterable<[string, ActorPose]>;
   doors?: WorldDoorView[];
   isWalkableTile: (roomId: string, x: number, y: number) => boolean;
+  roomTileSize?: (roomId: string) => number;
   canPassDoor?: (doorId: string) => boolean;
 }
 
@@ -69,6 +78,7 @@ export function createWorldMutator(seed: WorldMutatorSeed): WorldMutator {
   }
   const doorById = new Map<string, WorldDoorView>();
   for (const door of seed.doors ?? []) {
+    if (door.hidden) continue;
     doorById.set(door.id, { ...door });
   }
   let playerPose = seed.playerPose ? { ...seed.playerPose } : null;
@@ -121,6 +131,7 @@ export function createWorldMutator(seed: WorldMutatorSeed): WorldMutator {
       if (door) door.closed = closed;
     },
     isWalkableTile: seed.isWalkableTile,
+    roomTileSize: seed.roomTileSize ?? (() => 16),
     canPassDoor: (doorId) => {
       const door = doorById.get(doorId);
       if (!door) return false;
@@ -170,6 +181,7 @@ export function cloneWorldMutator(world: WorldMutator): WorldMutator {
       return door ? [{ ...door }] : [];
     }),
     isWalkableTile: (roomId, x, y) => world.isWalkableTile(roomId, x, y),
+    roomTileSize: (roomId) => world.roomTileSize(roomId),
     canPassDoor: (doorId) => passable.get(doorId) ?? false,
   });
 }
@@ -202,7 +214,33 @@ export function executeWorldAction(
     return execAsSystem(world, actor, pose, action);
   }
 
+  if (
+    getActorOccupancy(world.objects, actor) &&
+    ["moveTo", "approach", "traverseDoor"].includes(action.type)
+  )
+    return refused("leave the occupied object first");
+
   switch (action.type) {
+    case "approach":
+      return execApproach(world, actor, pose, action.objectId);
+    case "occupy":
+      return execOccupy(world, actor, pose, action.objectId);
+    case "leave":
+      return execLeave(world, actor, pose);
+    case "wear":
+      return execWear(world, actor, pose, action.objectId, true);
+    case "removeWear":
+      return execWear(world, actor, pose, action.objectId, false);
+    case "detach":
+      return execDetach(world, actor, pose, action.objectId);
+    case "empty":
+      return execEmpty(world, actor, pose, action.objectId);
+    case "moveObject":
+      return execMoveObject(world, actor, pose, action);
+    case "refineProfile":
+      return execRefineProfile(world, actor, pose, action);
+    case "requestRole":
+      return execRequestRole(world, actor, pose, action);
     case "moveTo":
       return execMoveTo(world, actor, pose, action);
     case "take":
@@ -250,13 +288,60 @@ export function availableActions(
     const access =
       requireObjectAccess(world, actor, pose, object)?.refusal ?? null;
     const options: ActionOption[] = [];
+    if (access === "out of reach" || access === "no path") {
+      const approach = planApproach(world, actor, object.id);
+      const size = world.roomTileSize(pose.roomId);
+      const pathFits =
+        actor.kind !== "player" ||
+        approach.path.every((at) => {
+          const minX = Math.floor(at.x - BODY_WIDTH / (2 * size));
+          const maxX = Math.floor(at.x + (BODY_WIDTH / 2 - 0.001) / size);
+          const minY = Math.floor(at.y - BODY_HEIGHT / (2 * size));
+          const maxY = Math.floor(at.y + (BODY_HEIGHT / 2 - 0.001) / size);
+          for (let y = minY; y <= maxY; y++)
+            for (let x = minX; x <= maxX; x++)
+              if (!world.canWalk(at.roomId, x, y)) return false;
+          return true;
+        });
+      if (!approach.refusal && approach.path.length > 0 && pathFits)
+        options.push({
+          action: { type: "approach", objectId: object.id },
+          affordance: "move",
+          label: "approach",
+          refusal: null,
+        });
+    }
     for (const affordance of object.affordances) {
       // Give chooses a recipient; put chooses a container. Neither has a
       // meaningful self-target in this object's menu.
       if (affordance === "give" || affordance === "put") continue;
       if (affordance === "drop" && !held) continue;
       if (affordance === "take" && held) continue;
+      if (affordance === "moveObject") continue; // A destination is selected in words.
+      if (affordance === "wear" && (!held || object.state.wornBy)) continue;
+      if (
+        affordance === "removeWear" &&
+        (!object.state.wornBy || !actorsEqual(object.state.wornBy, actor))
+      )
+        continue;
+      if (
+        affordance === "leave" &&
+        (!object.state.occupancy ||
+          !actorsEqual(object.state.occupancy.actor, actor))
+      )
+        continue;
+      if (affordance === "occupy" && object.state.occupancy) continue;
+      if (affordance === "detach" && !object.state.attachedTo) continue;
       let refusal = access;
+      if (
+        (affordance === "take" || affordance === "wear") &&
+        object.state.attachedTo
+      )
+        refusal = "detach the object first";
+      if (affordance === "occupy" && object.state.open === false)
+        refusal = "container is closed";
+      if (["drop", "give", "put"].includes(affordance) && object.state.wornBy)
+        refusal = "remove the worn object first";
       if (affordance === "take" && object.location.kind === "held") {
         refusal = "already held";
       } else if (affordance === "take" && object.mobility !== "carryable") {
@@ -285,6 +370,27 @@ export function availableActions(
         label: object.interaction?.prompt || object.name,
         refusal,
       });
+    }
+    if (object.profile && !access) {
+      const outfit = getActorEquipment(world.objects, actor).find(
+        (item) => effectiveWear(item.profile)?.slot === "body",
+      );
+      const roleId = effectiveWear(outfit?.profile)?.appearanceFigureId;
+      const intent =
+        roleId === "hudozhnik"
+          ? "gather"
+          : roleId === "lysyi"
+            ? "inspect"
+            : roleId === "ded-slava"
+              ? "helpMove"
+              : null;
+      if (intent)
+        options.push({
+          action: { type: "requestRole", intent, objectId: object.id },
+          affordance: "use",
+          label: intent,
+          refusal: null,
+        });
     }
     if (isContainer(object)) {
       for (const item of world.objects) {
@@ -396,9 +502,397 @@ function actionForAffordance(
       return { type: "use", objectId: object.id };
     case "traverse":
       return { type: "traverseDoor", doorId: object.id };
+    case "leave":
+      return { type: "leave" };
+    case "wear":
+    case "removeWear":
+    case "occupy":
+    case "detach":
+    case "empty":
+      return { type: affordance, objectId: object.id };
     default:
       return { type: "use", objectId: object.id };
   }
+}
+
+/** A bounded, same-room approach. Returned poses exclude the starting tile. */
+export function planApproach(
+  world: WorldMutator,
+  actor: ActorRef,
+  objectId: string,
+): { path: ActorPose[]; refusal: string | null } {
+  const pose = poseOf(world, actor);
+  const object = world.objectById.get(objectId);
+  if (!pose || !object) return { path: [], refusal: "no such object" };
+  if (getActorOccupancy(world.objects, actor))
+    return { path: [], refusal: "leave the occupied object first" };
+  if (!requireObjectAccess(world, actor, pose, object))
+    return { path: [], refusal: null };
+  if (object.location.kind !== "room" || object.location.roomId !== pose.roomId)
+    return { path: [], refusal: "different room" };
+  const candidates: Array<{ x: number; y: number }> = [];
+  for (
+    let y = Math.floor(object.location.y) - 2;
+    y <= object.location.y + (object.body?.h ?? 1) + 2;
+    y++
+  ) {
+    for (
+      let x = Math.floor(object.location.x) - 2;
+      x <= object.location.x + (object.body?.w ?? 1) + 2;
+      x++
+    ) {
+      if (
+        Math.max(Math.abs(x - pose.x), Math.abs(y - pose.y)) <= 8 &&
+        world.canWalk(pose.roomId, x, y) &&
+        inReachOfObject({ ...pose, x, y }, object)
+      )
+        candidates.push({ x, y });
+    }
+  }
+  let best: Array<{ x: number; y: number }> | null = null;
+  for (const destination of candidates) {
+    const path = findChebyshevPath(pose, destination, (x, y) =>
+      world.canWalk(pose.roomId, x, y),
+    );
+    if (path && path.length <= 8 && (!best || path.length < best.length))
+      best = path;
+  }
+  return best
+    ? {
+        path: best.map((at) => ({ ...at, roomId: pose.roomId })),
+        refusal: null,
+      }
+    : { path: [], refusal: "no nearby path" };
+}
+
+function execApproach(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  objectId: string,
+): WorldActionResult {
+  const plan = planApproach(world, actor, objectId);
+  if (plan.refusal) return refused(plan.refusal);
+  const end = plan.path.at(-1) ?? pose;
+  setPose(world, actor, end);
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [],
+    events: [{ type: "actor.moved", actor, ...end }],
+  });
+}
+
+function execOccupy(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  objectId: string,
+): WorldActionResult {
+  const object = world.objectById.get(objectId);
+  if (!object) return refused("no such object");
+  const block =
+    requireAffordance(object, "occupy") ??
+    requireObjectAccess(world, actor, pose, object);
+  if (block) return block;
+  if (!object.profile?.occupancy || object.location.kind !== "room")
+    return refused("no supported place for a body");
+  if (object.state.open === false) return refused("container is closed");
+  if (object.state.occupancy || getActorOccupancy(world.objects, actor))
+    return refused("already occupied");
+  const slot = object.profile.occupancy;
+  if (
+    (slot.x !== undefined && slot.x > (object.body?.w ?? 1)) ||
+    (slot.y !== undefined && slot.y > (object.body?.h ?? 1))
+  )
+    return refused("occupancy slot is outside object");
+  const x = object.location.x + (slot.x ?? (object.body?.w ?? 1) / 2);
+  const y = object.location.y + (slot.y ?? (object.body?.h ?? 1) / 2);
+  if (!world.canWalk(pose.roomId, x, y, object.id)) return refused("blocked");
+  object.state.occupancy = {
+    actor: { ...actor },
+    pose: slot.pose,
+    returnPose: { ...pose },
+  };
+  setPose(world, actor, { roomId: pose.roomId, x, y });
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [object.id],
+    events: [{ type: "actor.occupied", actor, objectId }],
+  });
+}
+
+function execLeave(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+): WorldActionResult {
+  const object = getActorOccupancy(world.objects, actor);
+  if (!object?.state.occupancy || object.location.kind !== "room")
+    return refused("not occupying an object");
+  const original = object.state.occupancy.returnPose;
+  const candidates: ActorPose[] =
+    original.roomId === pose.roomId ? [{ ...original }] : [];
+  const left = Math.floor(object.location.x),
+    top = Math.floor(object.location.y);
+  for (let y = top - 1; y <= top + (object.body?.h ?? 1); y++)
+    for (let x = left - 1; x <= left + (object.body?.w ?? 1); x++)
+      candidates.push({ roomId: pose.roomId, x, y });
+  const exit = candidates.find(
+    (at) =>
+      world.canWalk(at.roomId, at.x, at.y) &&
+      world.hasPath(pose.roomId, pose, at, object.id),
+  );
+  if (!exit) return refused("no space to leave");
+  const events: WorldEvent[] = [];
+  // Occupancy is never a lock trap: opening from inside is part of leaving.
+  if (object.state.open === false) {
+    object.state.open = true;
+    events.push({ type: "object.opened", objectId: object.id, actor });
+  }
+  object.state.occupancy = null;
+  setPose(world, actor, exit);
+  events.push({ type: "actor.left", actor, objectId: object.id });
+  return succeed(world, { rooms: [pose.roomId], objects: [object.id], events });
+}
+
+function execWear(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  objectId: string,
+  wear: boolean,
+): WorldActionResult {
+  const object = world.objectById.get(objectId);
+  if (!object) return refused("no such object");
+  const blocked = requireAffordance(object, wear ? "wear" : "removeWear");
+  if (blocked) return blocked;
+  if (!isHeldBy(object, actor)) return refused("not held");
+  const slot = effectiveWear(object.profile)?.slot;
+  if (!slot) return refused("not wearable");
+  if (wear) {
+    if (object.state.attachedTo) return refused("detach the object first");
+    if (
+      getActorEquipment(world.objects, actor).some(
+        (item) => effectiveWear(item.profile)?.slot === slot,
+      )
+    )
+      return refused("wear slot occupied");
+    object.state.wornBy = { ...actor };
+  } else {
+    if (!object.state.wornBy || !actorsEqual(object.state.wornBy, actor))
+      return refused("not worn");
+    object.state.wornBy = null;
+  }
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [object.id],
+    events: [{ type: wear ? "object.worn" : "object.unworn", objectId, actor }],
+  });
+}
+
+function execDetach(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  objectId: string,
+): WorldActionResult {
+  const object = world.objectById.get(objectId);
+  if (!object) return refused("no such object");
+  const blocked =
+    requireAffordance(object, "detach") ??
+    requireObjectAccess(world, actor, pose, object);
+  if (blocked) return blocked;
+  if (!object.profile?.attachment?.detachable || !object.state.attachedTo)
+    return refused("no detachable attachment");
+  const fromObjectId = object.state.attachedTo;
+  object.state.attachedTo = null;
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [objectId],
+    events: [{ type: "object.detached", objectId, fromObjectId, actor }],
+  });
+}
+
+function execMoveObject(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  action: Extract<WorldAction, { type: "moveObject" }>,
+): WorldActionResult {
+  const object = world.objectById.get(action.objectId);
+  if (!object) return refused("no such object");
+  const block =
+    requireAffordance(object, "moveObject") ??
+    requireObjectAccess(world, actor, pose, object);
+  if (block) return block;
+  if (object.mobility !== "movable" || object.location.kind !== "room")
+    return refused("not movable furniture");
+  if (object.state.attachedTo) return refused("detach the object first");
+  if (object.state.occupancy) return refused("object is occupied");
+  const x = Math.round(action.x),
+    y = Math.round(action.y);
+  if (
+    !Number.isFinite(x) ||
+    !Number.isFinite(y) ||
+    Math.max(Math.abs(x - object.location.x), Math.abs(y - object.location.y)) >
+      4
+  )
+    return refused("move is too far");
+  if (x === object.location.x && y === object.location.y)
+    return refused("already there");
+  if (actorBlocksPlacement(world, pose.roomId, object, x, y))
+    return refused("actor blocks destination");
+  const path = findChebyshevPath(
+    object.location,
+    { x, y },
+    (px, py) =>
+      canPlaceObject(world, pose.roomId, object, px, py) &&
+      !actorBlocksPlacement(world, pose.roomId, object, px, py),
+  );
+  if (!path || path.length > 4) return refused("no path");
+  object.location = { kind: "room", roomId: pose.roomId, x, y };
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [object.id],
+    events: [
+      {
+        type: "object.relocated",
+        objectId: object.id,
+        actor,
+        roomId: pose.roomId,
+        x,
+        y,
+      },
+    ],
+  });
+}
+
+function execEmpty(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  objectId: string,
+): WorldActionResult {
+  const object = world.objectById.get(objectId);
+  if (!object) return refused("no such object");
+  const blocked =
+    requireAffordance(object, "empty") ??
+    requireObjectAccess(world, actor, pose, object);
+  if (blocked) return blocked;
+  if (object.state.open !== true) return refused("container is closed");
+  const children = world.objects.filter(
+    (item) =>
+      item.location.kind === "inside" && item.location.objectId === objectId,
+  );
+  if (!children.length) return refused("container is empty");
+  if (children.length > 16)
+    return refused("too many objects to empty together");
+  const staged = cloneWorldMutator(world);
+  const events: WorldEvent[] = [];
+  for (const child of children) {
+    const copy = staged.objectById.get(child.id)!;
+    if (copy.state.attachedTo || copy.state.occupancy)
+      return refused("contents are attached or occupied");
+    const target = dropAtFeet(staged, pose, copy);
+    if (!target) return refused("no space");
+    copy.location = { kind: "room", roomId: pose.roomId, ...target };
+    events.push({
+      type: "object.dropped",
+      objectId: copy.id,
+      actor,
+      roomId: pose.roomId,
+      ...target,
+    });
+  }
+  for (const child of children) {
+    child.location = { ...staged.objectById.get(child.id)!.location };
+    syncKeyPossession(world, child);
+  }
+  events.push({
+    type: "object.emptied",
+    objectId,
+    objectIds: children.map((child) => child.id),
+    actor,
+  });
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [objectId, ...children.map((child) => child.id)],
+    events,
+  });
+}
+
+function execRefineProfile(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  action: Extract<WorldAction, { type: "refineProfile" }>,
+): WorldActionResult {
+  const object = world.objectById.get(action.objectId);
+  if (!object) return refused("no such object");
+  const inaccessible = requireObjectAccess(world, actor, pose, object);
+  if (inaccessible) return inaccessible;
+  if (object.profile || object.interaction?.refusal)
+    return refused("authored profile cannot be overridden");
+  if (
+    validatePhysicalProfile(action.profile).length ||
+    action.profile.attachment ||
+    action.profile.wear?.appearanceFigureId
+  )
+    return refused("invalid profile refinement");
+  const compiled = compilePhysicalProfile(action.profile);
+  object.profile = structuredClone(action.profile);
+  object.mobility = compiled.mobility;
+  object.affordances = [
+    ...new Set([...object.affordances, ...compiled.affordances]),
+  ];
+  object.tags = [...new Set([...object.tags, ...compiled.tags])];
+  object.state = { ...compiled.state, ...object.state };
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: [object.id],
+    events: [{ type: "object.profiled", actor, objectId: object.id }],
+  });
+}
+
+function execRequestRole(
+  world: WorldMutator,
+  actor: ActorRef,
+  pose: ActorPose,
+  action: Extract<WorldAction, { type: "requestRole" }>,
+): WorldActionResult {
+  const outfit = getActorEquipment(world.objects, actor).find(
+    (item) => effectiveWear(item.profile)?.slot === "body",
+  );
+  const roleId = effectiveWear(outfit?.profile)?.appearanceFigureId;
+  const expected =
+    roleId === "hudozhnik"
+      ? "gather"
+      : roleId === "lysyi"
+        ? "inspect"
+        : roleId === "ded-slava"
+          ? "helpMove"
+          : null;
+  if (!expected || expected !== action.intent)
+    return refused("this role does not grant that request");
+  if (action.objectId) {
+    const object = world.objectById.get(action.objectId);
+    if (!object) return refused("no such object");
+    const blocked = requireObjectAccess(world, actor, pose, object);
+    if (blocked) return blocked;
+  }
+  return succeed(world, {
+    rooms: [pose.roomId],
+    objects: action.objectId ? [action.objectId] : [],
+    events: [
+      {
+        type: "actor.requested",
+        actor,
+        intent: action.intent,
+        objectId: action.objectId ?? null,
+        roleId: roleId!,
+      },
+    ],
+  });
 }
 
 function execMoveTo(
@@ -442,6 +936,8 @@ function execTake(
 ): WorldActionResult {
   const object = world.objectById.get(objectId);
   if (!object) return refused("no such object");
+  if (object.state.attachedTo) return refused("detach the object first");
+  if (object.state.occupancy) return refused("object is occupied");
   if (isHeldBy(object, actor)) return refused("already held");
   if (object.location.kind === "held") return refused("already held");
   const blocked = requireAffordance(object, "take");
@@ -475,6 +971,8 @@ function execDrop(
   pose: ActorPose,
   action: { objectId: string; x?: number; y?: number },
 ): WorldActionResult {
+  if (world.objectById.get(action.objectId)?.state.wornBy)
+    return refused("remove the worn object first");
   const object = world.objectById.get(action.objectId);
   if (!object) return refused("no such object");
   if (!isHeldBy(object, actor)) return refused("not held");
@@ -527,6 +1025,8 @@ function execGive(
   pose: ActorPose,
   action: { objectId: string; to: ActorRef },
 ): WorldActionResult {
+  if (world.objectById.get(action.objectId)?.state.wornBy)
+    return refused("remove the worn object first");
   const object = world.objectById.get(action.objectId);
   if (!object) return refused("no such object");
   if (!isHeldBy(object, actor)) return refused("not held");
@@ -557,6 +1057,8 @@ function execPut(
   pose: ActorPose,
   action: { objectId: string; intoObjectId: string },
 ): WorldActionResult {
+  if (world.objectById.get(action.objectId)?.state.wornBy)
+    return refused("remove the worn object first");
   const object = world.objectById.get(action.objectId);
   if (!object) return refused("no such object");
   const container = world.objectById.get(action.intoObjectId);
@@ -962,6 +1464,7 @@ function execSystemTake(
 ): WorldActionResult {
   const object = world.objectById.get(objectId);
   if (!object) return refused("no such object");
+  if (object.state.occupancy) return refused("object is occupied");
   if (object.location.kind === "removed") return refused("already gone");
   const fromRoomId =
     object.location.kind === "room" ? object.location.roomId : pose.roomId;
@@ -1190,12 +1693,60 @@ function canPlaceObject(
 ): boolean {
   const width = object.body?.w ?? 1;
   const height = object.body?.h ?? 1;
+  if (object.body?.solid && actorBlocksPlacement(world, roomId, object, x, y))
+    return false;
+  if (
+    object.body?.solid &&
+    world.objects.some((item) => {
+      const exit = item.state.occupancy?.returnPose;
+      return (
+        exit?.roomId === roomId &&
+        exit.x >= x &&
+        exit.x < x + width &&
+        exit.y >= y &&
+        exit.y < y + height
+      );
+    })
+  )
+    return false;
   for (let dy = 0; dy < height; dy += 1) {
     for (let dx = 0; dx < width; dx += 1) {
       if (!world.canWalk(roomId, x + dx, y + dy, object.id)) return false;
     }
   }
   return true;
+}
+
+/** Solid items cannot be put beneath a body, nor furniture swept through one. */
+function actorBlocksPlacement(
+  world: WorldMutator,
+  roomId: string,
+  object: WorldObjectState,
+  x: number,
+  y: number,
+): boolean {
+  const player = world.getPlayerPose();
+  const actors = [...world.figurePoses.values()];
+  if (player?.roomId === roomId) {
+    const size = world.roomTileSize(roomId);
+    const halfWidth = BODY_WIDTH / (2 * size);
+    const halfHeight = BODY_HEIGHT / (2 * size);
+    if (
+      player.x + halfWidth > x &&
+      player.x - halfWidth < x + (object.body?.w ?? 1) &&
+      player.y + halfHeight > y &&
+      player.y - halfHeight < y + (object.body?.h ?? 1)
+    )
+      return true;
+  }
+  return actors.some(
+    (at) =>
+      at.roomId === roomId &&
+      at.x >= x &&
+      at.x < x + (object.body?.w ?? 1) &&
+      at.y >= y &&
+      at.y < y + (object.body?.h ?? 1),
+  );
 }
 
 function dropAtFeet(
