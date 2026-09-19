@@ -17,7 +17,9 @@ import { decodePng } from "./reference";
 import {
   anchorReport,
   guessDirections,
+  pickIdleAndStride,
   pickTwoFrames,
+  reduceWalkSheetToTwoFrames,
   readWalkSheet,
 } from "./walkSheet";
 
@@ -82,6 +84,21 @@ describe("pickTwoFrames", () => {
       // §7.2 — a walk is two frames. Below about a fifth they read as a stutter.
       expect(pick.difference).toBeGreaterThan(0.2);
       expect(pick.indices[0]).not.toBe(pick.indices[1]);
+    }
+  });
+});
+
+describe("reduceWalkSheetToTwoFrames", () => {
+  test("keeps idle in column zero and one distinct stride per direction", () => {
+    const sheet = readWalkSheet(idleImage, 48);
+    const reduced = reduceWalkSheetToTwoFrames(sheet);
+    expect(reduced.image.width).toBe(96);
+    expect(reduced.image.height).toBe(192);
+    for (const [row, pick] of reduced.picks.entries()) {
+      expect(pick.indices[0]).toBe(0);
+      expect(pick.indices[1]).toBeGreaterThan(0);
+      expect(pick.difference).toBeGreaterThan(0.2);
+      expect(pick).toEqual(pickIdleAndStride(sheet.frames[row]!));
     }
   });
 });

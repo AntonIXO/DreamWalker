@@ -45,6 +45,7 @@ bun run lord import <slug>   # pull rooms/characters from dream-walker-anton/
 bun run lord rooms <slug>    # list / --rebind bible links / --check walkability
 bun run lord art <slug>      # 4 tilesets per role, press 1-4
 bun run lord figures <slug>  # place figures, assign hooks
+bun run lord characters <slug> # generate 4-direction, 2-frame figure sheets
 bun run lord backdrops <slug> # room paintings (Retro Diffusion at author time)
 bun run lord clues <slug>    # six wordless objects
 bun run lord build <slug>    # validate + publish to public/dream/

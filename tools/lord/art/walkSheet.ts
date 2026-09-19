@@ -261,6 +261,58 @@ export function pickTwoFrames(row: readonly DecodedImage[]): {
   return { indices: best, difference: bestDifference };
 }
 
+/**
+ * Keep the generator's idle pose and the stride that differs from it most.
+ *
+ * The four-angle walk+idle model deliberately puts the neutral pose first. The game
+ * still speaks its original two-frame visual language, so the useful reduction is not
+ * "the two most different frames" (which can discard idle) but idle plus one legible
+ * contact pose.
+ */
+export function pickIdleAndStride(row: readonly DecodedImage[]): {
+  indices: [number, number];
+  difference: number;
+} {
+  if (row.length < 2) return { indices: [0, 0], difference: 0 };
+  let stride = 1;
+  let bestDifference = -1;
+  for (let index = 1; index < row.length; index++) {
+    const difference = frameDifference(row[0]!, row[index]!);
+    if (difference > bestDifference) {
+      bestDifference = difference;
+      stride = index;
+    }
+  }
+  return { indices: [0, stride], difference: bestDifference };
+}
+
+/** Pack a generated four-frame sheet back into the dream's two-frame cadence. */
+export function reduceWalkSheetToTwoFrames(sheet: WalkSheet): {
+  image: DecodedImage;
+  picks: Array<{ indices: [number, number]; difference: number }>;
+} {
+  const width = sheet.frameW * 2;
+  const height = sheet.frameH * sheet.rows;
+  const data = new Uint8Array(width * height * 4);
+  const picks = sheet.frames.map(pickIdleAndStride);
+
+  for (let row = 0; row < sheet.rows; row++) {
+    const sourceRow = sheet.frames[row]!;
+    const pick = picks[row]!;
+    for (let column = 0; column < 2; column++) {
+      const frame = sourceRow[pick.indices[column]]!;
+      for (let y = 0; y < sheet.frameH; y++) {
+        const from = y * sheet.frameW * 4;
+        const to =
+          ((row * sheet.frameH + y) * width + column * sheet.frameW) * 4;
+        data.set(frame.data.subarray(from, from + sheet.frameW * 4), to);
+      }
+    }
+  }
+
+  return { image: { width, height, data }, picks };
+}
+
 function frameDifference(a: DecodedImage, b: DecodedImage): number {
   let counted = 0;
   let different = 0;

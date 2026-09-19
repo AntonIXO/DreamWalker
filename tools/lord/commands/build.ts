@@ -106,6 +106,21 @@ export async function buildCommand(
         );
       }
     }
+    const sheet = character.spriteSheet;
+    if (sheet) {
+      if (!sheet.path.startsWith("assets/") || sheet.path.includes("..")) {
+        throw new Error(
+          `character ${character.id} sprite sheet must be inside published assets/`,
+        );
+      }
+      try {
+        await access(join(dir, "content", sheet.path));
+      } catch {
+        throw new Error(
+          `character ${character.id} sprite sheet is missing: content/${sheet.path}`,
+        );
+      }
+    }
   }
   for (const clue of draft.content.clues) {
     for (const frame of [clue.worldFrame, clue.detailFrame]) {

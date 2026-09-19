@@ -8257,7 +8257,19 @@
           "knows": "figure_orderly_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/anton.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/anton.md",
         "suspicionMonotone": true,
         "leverageId": "anton:v-sleduiuschii-raz"
@@ -8280,7 +8292,19 @@
           "knows": "figure_visitor_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/babushka-nadya.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/babushka-nadya.md",
         "suspicionMonotone": true,
         "leverageId": "babushka-nadya:prichiny-zapretov"
@@ -8303,7 +8327,19 @@
           "knows": "figure_child_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/dolzhniki.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/dolzhniki.md",
         "suspicionMonotone": true,
         "leverageId": "dolzhniki:naznachenie"
@@ -8326,7 +8362,19 @@
           "knows": "figure_watcher_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/glaz.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/glaz.md",
         "suspicionMonotone": false,
         "leverageId": null
@@ -8349,7 +8397,19 @@
           "knows": "figure_orderly_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/hudozhnik.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/hudozhnik.md",
         "suspicionMonotone": true,
         "leverageId": "hudozhnik:pereskaz"
@@ -8372,7 +8432,19 @@
           "knows": "figure_visitor_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/kirill.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/kirill.md",
         "suspicionMonotone": true,
         "leverageId": "kirill:chuzhaia-zasluga"
@@ -8395,7 +8467,19 @@
           "knows": "figure_child_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/kripto-bro.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/kripto-bro.md",
         "suspicionMonotone": true,
         "leverageId": "kripto-bro:vsio-krome-summ"
@@ -8418,7 +8502,19 @@
           "knows": "figure_watcher_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/liosha-gnedkov.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/liosha-gnedkov.md",
         "suspicionMonotone": true,
         "leverageId": null
@@ -8441,7 +8537,19 @@
           "knows": "figure_orderly_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/mama.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/mama.md",
         "suspicionMonotone": true,
         "leverageId": "mama:masshtab-problemy"
@@ -8464,7 +8572,19 @@
           "knows": "figure_visitor_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/nilufar.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/nilufar.md",
         "suspicionMonotone": true,
         "leverageId": null
@@ -8487,7 +8607,19 @@
           "knows": "figure_child_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/papa.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/papa.md",
         "suspicionMonotone": true,
         "leverageId": null
@@ -8510,7 +8642,19 @@
           "knows": "figure_watcher_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/tetya.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/tetya.md",
         "suspicionMonotone": true,
         "leverageId": null
@@ -8533,7 +8677,19 @@
           "knows": "figure_orderly_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/turyshev.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/turyshev.md",
         "suspicionMonotone": true,
         "leverageId": "turyshev:vsio-normalno"
@@ -8556,7 +8712,19 @@
           "knows": "figure_visitor_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/ubiitsa.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "soulPath": "souls/ubiitsa.md",
         "suspicionMonotone": true,
         "leverageId": null
@@ -8572,7 +8740,19 @@
           "knows": "figure_watcher_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/raisa.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "personality": "Учительница подготовки. Говорит о пациенте точно, без любви и без обиды.",
         "role": "свидетель",
         "voice": "медленно, законченными предложениями, на «вы»",
@@ -8595,7 +8775,19 @@
           "knows": "figure_visitor_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/lysyi.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "personality": "Делает с санитаром то, что санитар делает с остальными: выясняет, тот ли ты.",
         "role": "ненастоящий мент",
         "voice": "ровный, негромкий, пауз больше, чем слов",
@@ -8618,7 +8810,19 @@
           "knows": "figure_child_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/kurt.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "personality": "Виртуальный друг. Знает, что выдуман, и это его устраивает. Приходит, когда кончается.",
         "role": "гость",
         "voice": "тихо, с паузами, чуть невпопад, по-русски",
@@ -8641,7 +8845,19 @@
           "knows": "figure_watcher_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/ded-slava.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "personality": "Умер, пока внук доигрывал серию. Вернулся без следа, потому что так устроен пациент.",
         "role": "дедушка",
         "voice": "коротко, бытово, как будто его не хоронили",
@@ -8664,7 +8880,19 @@
           "knows": "figure_orderly_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/aleksei.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "s",
+            "e",
+            "n",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "personality": "Тот, кого не успели. В холле он ещё здесь и ещё можно успеть.",
         "role": "друг, которого не догнали",
         "voice": "спокойно, уже всё решил насчёт твоей смерти и просто держит в курсе",
@@ -8687,7 +8915,19 @@
           "knows": "figure_child_s_0"
         },
         "portraitImages": null,
-        "spriteSheet": null,
+        "spriteSheet": {
+          "path": "assets/sprites/shchenok.png",
+          "frameW": 48,
+          "frameH": 48,
+          "dirs": [
+            "n",
+            "e",
+            "s",
+            "w"
+          ],
+          "frames": 2,
+          "anchorY": 0.9
+        },
         "personality": "Маленькая собака. Не призрак. Ждёт, когда игру продолжат. Не обвиняет.",
         "role": "слой 3",
         "voice": "три-пять слов, настоящее время, хорошее настроение",

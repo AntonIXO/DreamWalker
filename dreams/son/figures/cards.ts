@@ -15,6 +15,7 @@ import papa from "../content/characters/papa.json";
 import tetya from "../content/characters/tetya.json";
 import turyshev from "../content/characters/turyshev.json";
 import ubiitsa from "../content/characters/ubiitsa.json";
+import spriteSheets from "../content/assets/sprites/manifest.json";
 
 function extra(
   id: string,
@@ -36,9 +37,20 @@ function extra(
     archetypeId,
     portraits: fallbackPortraits(archetypeId),
     portraitImages: null,
-    spriteSheet: null,
+    spriteSheet: spriteSheet(id),
     ...fields,
   };
+}
+
+function spriteSheet(id: string): CharacterDefinition["spriteSheet"] {
+  return (
+    (
+      spriteSheets as Record<
+        string,
+        NonNullable<CharacterDefinition["spriteSheet"]>
+      >
+    )[id] ?? null
+  );
 }
 
 const NEW_CARDS: CharacterDefinition[] = [
@@ -140,5 +152,8 @@ export function allCharacters(): CharacterDefinition[] {
     turyshev,
     ubiitsa,
   ] as CharacterDefinition[];
-  return [...existing, ...NEW_CARDS];
+  return [...existing, ...NEW_CARDS].map((character) => ({
+    ...character,
+    spriteSheet: spriteSheet(character.id),
+  }));
 }

@@ -1,0 +1,262 @@
+{
+  "aleksei": {
+    "path": "assets/sprites/aleksei.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "anton": {
+    "path": "assets/sprites/anton.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "babushka-nadya": {
+    "path": "assets/sprites/babushka-nadya.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "ded-slava": {
+    "path": "assets/sprites/ded-slava.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "dolzhniki": {
+    "path": "assets/sprites/dolzhniki.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "glaz": {
+    "path": "assets/sprites/glaz.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "hudozhnik": {
+    "path": "assets/sprites/hudozhnik.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "kirill": {
+    "path": "assets/sprites/kirill.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "kripto-bro": {
+    "path": "assets/sprites/kripto-bro.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "kurt": {
+    "path": "assets/sprites/kurt.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "liosha-gnedkov": {
+    "path": "assets/sprites/liosha-gnedkov.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "lysyi": {
+    "path": "assets/sprites/lysyi.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "mama": {
+    "path": "assets/sprites/mama.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "nilufar": {
+    "path": "assets/sprites/nilufar.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "papa": {
+    "path": "assets/sprites/papa.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "raisa": {
+    "path": "assets/sprites/raisa.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "shchenok": {
+    "path": "assets/sprites/shchenok.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "n",
+      "e",
+      "s",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "tetya": {
+    "path": "assets/sprites/tetya.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "turyshev": {
+    "path": "assets/sprites/turyshev.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  },
+  "ubiitsa": {
+    "path": "assets/sprites/ubiitsa.png",
+    "frameW": 48,
+    "frameH": 48,
+    "dirs": [
+      "s",
+      "e",
+      "n",
+      "w"
+    ],
+    "frames": 2,
+    "anchorY": 0.9
+  }
+}

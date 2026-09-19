@@ -76,6 +76,7 @@ function usage(): void {
   ${color.bold("rooms")}   <slug>   list and check the authored rooms
   ${color.bold("art")}     <slug>   pick one of four candidates per tile, bake the atlas
   ${color.bold("figures")} <slug>   place the figures of the dream and hand them hooks
+  ${color.bold("characters")} <slug> generate Retro Diffusion figure walk sheets
   ${color.bold("content")} <slug>   scaffold editable room graphics and character personalities
   ${color.bold("mnemonic")} <slug>  create a safe 12-word phrase with six hidden slots
   ${color.bold("clues")}   <slug>   estimate or generate six Retro Diffusion clue objects
@@ -189,6 +190,10 @@ async function main(): Promise<void> {
     case "figures": {
       const { figuresCommand } = await import("./commands/figures");
       return figuresCommand(target ?? null, flags);
+    }
+    case "characters": {
+      const { charactersCommand } = await import("./commands/characters");
+      return charactersCommand(target ?? null, flags);
     }
     case "content": {
       const { contentCommand } = await import("./commands/content");

@@ -15,6 +15,15 @@ function socksHop(): { host: string; port: number } | null {
   return { host: match[1]!, port: Number(match[2]) };
 }
 
+/**
+ * Optional escape hatch for split-DNS setups that return a VPN-only synthetic address.
+ * Curl still verifies TLS for api.retrodiffusion.ai; only the TCP destination changes.
+ */
+function resolvedApiIp(): string | null {
+  const raw = process.env.DREAMWALKER_RD_RESOLVE_IP?.trim() ?? "";
+  return /^[0-9a-f:.]+$/i.test(raw) ? raw : null;
+}
+
 async function rdFetch(
   url: string,
   init: RequestInit = {},
@@ -25,7 +34,8 @@ async function rdFetch(
   json: () => Promise<unknown>;
 }> {
   const hop = socksHop();
-  if (!hop) {
+  const resolvedIp = resolvedApiIp();
+  if (!hop && !resolvedIp) {
     const response = await fetch(url, init);
     return {
       ok: response.ok,
@@ -36,18 +46,12 @@ async function rdFetch(
   }
 
   const headers = new Headers(init.headers);
-  const args = [
-    "curl",
-    "-sS",
-    "--max-time",
-    "180",
-    "--socks5-hostname",
-    `${hop.host}:${hop.port}`,
-    "-w",
-    "\n__RD_HTTP__%{http_code}",
-    "-X",
-    init.method ?? "GET",
-  ];
+  const args = ["curl", "-sS", "--max-time", "180"];
+  if (hop) args.push("--socks5-hostname", `${hop.host}:${hop.port}`);
+  if (resolvedIp) {
+    args.push("--resolve", `api.retrodiffusion.ai:443:${resolvedIp}`);
+  }
+  args.push("-w", "\n__RD_HTTP__%{http_code}", "-X", init.method ?? "GET");
   for (const [name, value] of headers) {
     args.push("-H", `${name}: ${value}`);
   }
@@ -98,19 +102,17 @@ async function rdFetch(
 
 async function rdDownload(url: string): Promise<ArrayBuffer> {
   const hop = socksHop();
-  if (!hop) return (await fetch(url)).arrayBuffer();
-  const proc = Bun.spawn(
-    [
-      "curl",
-      "-sS",
-      "--max-time",
-      "180",
-      "--socks5-hostname",
-      `${hop.host}:${hop.port}`,
-      url,
-    ],
-    { stdout: "pipe", stderr: "pipe" },
-  );
+  const resolvedIp = resolvedApiIp();
+  const host = new URL(url).hostname;
+  const resolveApi = resolvedIp && host === "api.retrodiffusion.ai";
+  if (!hop && !resolveApi) return (await fetch(url)).arrayBuffer();
+  const route = hop
+    ? ["--socks5-hostname", `${hop.host}:${hop.port}`]
+    : ["--resolve", `${host}:443:${resolvedIp}`];
+  const proc = Bun.spawn(["curl", "-sS", "--max-time", "180", ...route, url], {
+    stdout: "pipe",
+    stderr: "pipe",
+  });
   const [bytes, stderr, exitCode] = await Promise.all([
     new Response(proc.stdout).arrayBuffer(),
     new Response(proc.stderr).text(),
@@ -471,7 +473,7 @@ export class RetroDiffusionClient {
           ...request,
           check_cost: false,
           async: true,
-          upload_outputs: true,
+          upload_outputs: request.upload_outputs ?? true,
         }),
       },
       1,

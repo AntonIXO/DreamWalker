@@ -46,6 +46,7 @@ import { Shiver } from "./render/shiver";
 import { FinaleFrenzy } from "./render/finaleFrenzy";
 import {
   ActorLayer,
+  authoredWalkFromSheet,
   liveObjectPlacements,
   WalkerSprite,
   type AuthoredWalk,
@@ -135,41 +136,71 @@ function loadArtifact(): DreamArtifact {
 const SANITAR_WORLD_HEIGHT = 40;
 
 async function loadSanitarWalk(): Promise<AuthoredWalk | null> {
-  const southUrls = [0, 1].map(
-    (i) =>
-      new URL(`../../assets/figures/sanitar/s-${i}.png`, import.meta.url).href,
+  const texture = await loadOptionalTexture(
+    new URL("../../assets/figures/sanitar/sheet.png", import.meta.url).href,
+    "sanitar-sheet",
   );
-  const eastUrls = [0, 1, 2, 3, 4, 5].map(
-    (i) =>
-      new URL(`../../assets/figures/sanitar/e-${i}.png`, import.meta.url).href,
+  if (!texture) return null;
+  return authoredWalkFromSheet(
+    texture,
+    {
+      path: "sanitar/sheet.png",
+      frameW: 48,
+      frameH: 48,
+      dirs: ["n", "e", "s", "w"],
+      frames: 4,
+      anchorY: 0.92,
+    },
+    SANITAR_WORLD_HEIGHT,
   );
-  const northUrls = [0, 1, 2, 3, 4, 5].map(
-    (i) =>
-      new URL(`../../assets/figures/sanitar/n-${i}.png`, import.meta.url).href,
+}
+
+function figureWorldHeight(id: string, archetypeId: string): number {
+  if (id === "shchenok") return 18;
+  if (id === "glaz") return 42;
+  if (id === "dolzhniki" || id === "ubiitsa") return 36;
+  return archetypeId === "child" ? 28 : 34;
+}
+
+async function loadFigureWalks(
+  artifact: DreamArtifact,
+): Promise<Map<string, AuthoredWalk>> {
+  const referenced = artifact.content.characters.filter(
+    (character) => character.spriteSheet,
   );
-  const south = await Promise.all(
-    southUrls.map((url, i) => loadOptionalTexture(url, `sanitar-s-${i}`)),
+  const sheets = await loadExternalTextures(
+    DREAM_URL,
+    referenced.map((character) => ({
+      id: character.id,
+      path: character.spriteSheet!.path,
+    })),
+    { concurrency: 4, scaleMode: "nearest" },
   );
-  const east = await Promise.all(
-    eastUrls.map((url, i) => loadOptionalTexture(url, `sanitar-e-${i}`)),
-  );
-  const north = await Promise.all(
-    northUrls.map((url, i) => loadOptionalTexture(url, `sanitar-n-${i}`)),
-  );
-  if (south.some((texture) => !texture) || east.some((texture) => !texture)) {
-    return null;
+  const walks = new Map<string, AuthoredWalk>();
+  for (const character of referenced) {
+    const ref = character.spriteSheet!;
+    const sheet = sheets.get(character.id);
+    if (!sheet) continue;
+    try {
+      walks.set(
+        character.id,
+        authoredWalkFromSheet(
+          sheet,
+          ref,
+          figureWorldHeight(character.id, character.archetypeId),
+        ),
+      );
+    } catch (error) {
+      console.warn(`[dream] invalid figure sheet ${character.id}`, error);
+    }
   }
-  return {
-    south: south as Texture[],
-    east: east as Texture[],
-    north: north.every((texture) => texture) ? (north as Texture[]) : [],
-    worldHeight: SANITAR_WORLD_HEIGHT,
-  };
+  return walks;
 }
 
 async function boot(): Promise<void> {
   const artifact = loadArtifact();
   const atlas = await loadAtlas(DREAM_URL);
+  const figureWalks = await loadFigureWalks(artifact);
   const skyPaintings = await loadSkyPaintings();
   // Cut-out originals: same pixels as the PNG, background already punched.
   const figureArt: Array<{ id: string; url: string }> = [
@@ -300,6 +331,7 @@ async function boot(): Promise<void> {
     clueTextures,
     figureTextures,
     objectTextures,
+    figureWalks,
   );
   worldRoot.addChild(actors.root);
 

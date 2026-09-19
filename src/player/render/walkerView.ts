@@ -6,8 +6,9 @@
  * lower in the room in front, which is the whole of depth in a top-down view.
  */
 
-import { Container, Sprite, type Texture } from "pixi.js";
+import { Container, Rectangle, Sprite, Texture } from "pixi.js";
 
+import type { SpriteSheetRef } from "../../shared/content";
 import type { Direction } from "../../shared/roomGrid";
 import { WALK_STRIDE } from "../../shared/roomWalk";
 import type { AtlasTextures } from "./atlasTextures";
@@ -23,10 +24,68 @@ export interface AuthoredWalk {
   south: readonly Texture[];
   /** Profile walk, facing east. West is this set flipped. */
   east: readonly Texture[];
+  /** West can be authored independently; otherwise east is mirrored. */
+  west?: readonly Texture[];
   /** Back idle at [0], then back walk frames. */
   north?: readonly Texture[];
   /** Sprite height in world pixels. Texture is scaled to this. */
   worldHeight: number;
+  /** Normalized foot line measured from the generated sheet. */
+  anchorY?: number;
+}
+
+/** Slice one generated sheet into lightweight textures sharing the same GPU source. */
+export function authoredWalkFromSheet(
+  sheet: Texture,
+  ref: SpriteSheetRef,
+  worldHeight: number,
+): AuthoredWalk {
+  const expectedWidth = ref.frameW * ref.frames;
+  const expectedHeight = ref.frameH * ref.dirs.length;
+  if (
+    sheet.source.width !== expectedWidth ||
+    sheet.source.height !== expectedHeight
+  ) {
+    throw new Error(
+      `sprite sheet ${sheet.source.width}x${sheet.source.height}, expected ${expectedWidth}x${expectedHeight}`,
+    );
+  }
+  const byDirection = new Map<Direction, Texture[]>();
+  ref.dirs.forEach((rawDirection, row) => {
+    if (!["n", "e", "s", "w"].includes(rawDirection)) {
+      throw new Error(`sprite sheet has unknown direction ${rawDirection}`);
+    }
+    const direction = rawDirection as Direction;
+    const frames = Array.from(
+      { length: ref.frames },
+      (_, column) =>
+        new Texture({
+          source: sheet.source,
+          frame: new Rectangle(
+            column * ref.frameW,
+            row * ref.frameH,
+            ref.frameW,
+            ref.frameH,
+          ),
+          label: `${sheet.label ?? "figure-sheet"}:${direction}:${column}`,
+        }),
+    );
+    byDirection.set(direction, frames);
+  });
+
+  const south = byDirection.get("s") ?? [];
+  const east = byDirection.get("e") ?? [];
+  if (south.length === 0 || east.length === 0) {
+    throw new Error("sprite sheet needs south and east rows");
+  }
+  return {
+    south,
+    east,
+    north: byDirection.get("n"),
+    west: byDirection.get("w"),
+    worldHeight,
+    anchorY: ref.anchorY,
+  };
 }
 
 function frameName(prefix: string, dir: Direction, frame: number): string {
@@ -52,7 +111,7 @@ export class WalkerSprite {
     this.sprite = new Sprite({
       texture: first,
       // Feet at the position, not the middle of the body.
-      anchor: { x: 0.5, y: 0.9 },
+      anchor: { x: 0.5, y: this.authored?.anchorY ?? 0.9 },
       roundPixels: true,
       eventMode: "none",
     });
@@ -81,17 +140,25 @@ export class WalkerSprite {
   ): Texture {
     const walk = this.authored;
     if (!walk) return this.textureFor(dir, 0);
-    const front = walk.south[0];
-    const back = walk.north?.[0];
-    if (!front) return this.textureFor(dir, 0);
-    const idle = dir === "n" && back ? back : front;
+    const directional =
+      dir === "n"
+        ? walk.north
+        : dir === "e"
+          ? walk.east
+          : dir === "w"
+            ? (walk.west ?? walk.east)
+            : walk.south;
+    const idle = directional?.[0] ?? walk.south[0];
+    if (!idle) return this.textureFor(dir, 0);
     if (!moving) return idle;
     const north = walk.north ?? [];
     const sheet =
       dir === "e" || dir === "w"
-        ? walk.east.length > 0
-          ? walk.east
-          : walk.south
+        ? (dir === "w" ? walk.west : walk.east)?.length
+          ? (dir === "w" ? walk.west : walk.east)!
+          : walk.east.length > 0
+            ? walk.east
+            : walk.south
         : dir === "n" && north.length > 0
           ? north
           : walk.south;
@@ -134,7 +201,7 @@ export class WalkerSprite {
     if (this.authored) {
       const texture = this.authoredTexture(dir, moving, travelled);
       if (this.sprite.texture !== texture) this.sprite.texture = texture;
-      this.applyAuthoredScale(moving && dir === "w");
+      this.applyAuthoredScale(dir === "w" && !this.authored.west?.length);
       return;
     }
 
@@ -240,6 +307,7 @@ export class ActorLayer {
     private readonly clueTextures: ReadonlyMap<string, Texture> = new Map(),
     private readonly figureTextures: ReadonlyMap<string, Texture> = new Map(),
     private readonly objectTextures: ReadonlyMap<string, Texture> = new Map(),
+    private readonly figureWalks: ReadonlyMap<string, AuthoredWalk> = new Map(),
   ) {}
 
   add(walker: WalkerSprite): void {
@@ -261,7 +329,10 @@ export class ActorLayer {
       const oy = room ? originY(room) : 0;
       const x = (ox + figure.x) * tileSize + tileSize / 2;
       const y = (oy + figure.y) * tileSize + tileSize;
-      const painting = this.figureTextures.get(figure.id);
+      const authoredWalk = this.figureWalks.get(figure.id);
+      const painting = authoredWalk
+        ? undefined
+        : this.figureTextures.get(figure.id);
       if (painting) {
         const walker = this.figures.get(figure.id);
         if (walker) {
@@ -292,7 +363,11 @@ export class ActorLayer {
       }
       let walker = this.figures.get(figure.id);
       if (!walker) {
-        walker = new WalkerSprite(this.atlas, `figure_${figure.archetypeId}`);
+        walker = new WalkerSprite(
+          this.atlas,
+          `figure_${figure.archetypeId}`,
+          authoredWalk,
+        );
         this.figures.set(figure.id, walker);
         this.root.addChild(walker.sprite);
       }
@@ -301,6 +376,8 @@ export class ActorLayer {
         y,
         figure.facing,
         figure.walking ? Math.floor(figure.walkTime * 5) : 0,
+        figure.walking,
+        figure.walkTime * WALK_STRIDE * 4,
       );
     }
 
