@@ -3,8 +3,8 @@
  *
  * §8: one server, one dream. This app fetches exactly one artifact from /dream/ and
  * plays it. It generates nothing — the world was authored by a person with the `lord`
- * CLI. The only thing that changes it at runtime is the heartbeat, and everything the
- * heartbeat does goes through `game/patch.ts`.
+ * CLI. Physical actions share the validated action engine; structural changes from
+ * the sleeper go through `game/patch.ts`. Jev chooses event-driven NPC tasks.
  */
 
 import "pixi.js/prepare";
@@ -70,6 +70,8 @@ import {
 import { playerTile, walkFrame } from "./game/player";
 import { DreamSession } from "./game/session";
 import { PlayerActionRunner } from "./game/player-action-runner";
+import { NpcTaskCoordinator } from "./game/npc-task-coordinator";
+import { NpcRoutines } from "./game/npc-routines";
 import { RunStore, snapshotWorld, restoreWorld } from "./game/save";
 import { createWorld, currentRoom, resetWorld, visitCount } from "./game/world";
 import { computePressure, type DreamPressure } from "./game/pressure";
@@ -87,7 +89,7 @@ import { bindWorldMutator } from "./game/world-mutator";
 import { availableActions } from "../shared/world-action-engine";
 import { worldMindForFigure } from "../shared/world-mind";
 import { actionRingRowsFor, primaryObjectAction } from "./game/interact";
-import type { WorldAction } from "../shared/world-action";
+import { createActionCause, type WorldAction } from "../shared/world-action";
 import type { ActorRef, WorldObjectState } from "../shared/world-object";
 import { getActorEquipment, getActorOccupancy } from "../shared/world-object";
 import {
@@ -99,6 +101,7 @@ import { recordRoleWitnesses, recordRoleReport } from "../shared/social-roles";
 import { Heartbeat } from "./mind/heartbeat";
 import { WorldDirector, requestDirector } from "./mind/director";
 import { localDirectorPlan } from "./mind/director-local";
+import { NpcAutonomy } from "./mind/npc-autonomy";
 import { ObservationLog } from "./mind/observation";
 import { createMind, forgetCycle } from "./mind";
 import { ContextMemory } from "./mind/context-memory";
@@ -108,7 +111,7 @@ import { fallbackPopulation } from "../shared/population";
 import { rollWallet } from "../shared/wallet";
 import { clueIdForShard } from "../shared/yield";
 import { MindMemory } from "./mind/memory";
-import { loadMindSettings } from "./mind/settings";
+import { loadMindSettings, loadNpcDecisionSettings } from "./mind/settings";
 import { LobbySession } from "./lobby/session";
 import { EnterTransition } from "./lobby/transition";
 import { ConnectPanel } from "./ui/connect";
@@ -287,6 +290,8 @@ async function boot(): Promise<void> {
     { concurrency: 2, scaleMode: "linear" },
   );
   let trainingRun = false;
+  let npcDecisionAvailable = false;
+  const useNpcAutonomy = (): boolean => npcDecisionAvailable && !trainingRun;
   const background =
     artifact.palette.colors[artifact.palette.roles.background] ?? "#000000";
 
@@ -414,6 +419,7 @@ async function boot(): Promise<void> {
   hud.setLobbyMode(true);
   const observations = new ObservationLog();
   const directorRef: { current?: WorldDirector } = {};
+  const autonomyRef: { current?: NpcAutonomy } = {};
   world.exhaustion = mindMemory.exhaustion;
 
   /**
@@ -429,7 +435,7 @@ async function boot(): Promise<void> {
     shiver,
     {
       onEnterRoom: (room, visits) => {
-        if (!room.tags.includes("route"))
+        if (!useNpcAutonomy() && !room.tags.includes("route"))
           directorRef.current?.noteProgress(
             `Entered ${room.id}, visit ${visits}`,
           );
@@ -464,6 +470,9 @@ async function boot(): Promise<void> {
           ),
         }))
           mindMemory.episodes.add(episode);
+      },
+      onWorldActionBatch: (events) => {
+        if (useNpcAutonomy()) autonomyRef.current?.noteEvents(events);
       },
       whisper: (text) => hud.whisper(text, 4),
       cycleNumber: () => cycle.number,
@@ -567,7 +576,11 @@ async function boot(): Promise<void> {
   };
 
   const thinking = new ModelThinkingIndicator(uiLayer);
-  const mindSettings = await loadMindSettings();
+  const [mindSettings, npcDecisionSettings] = await Promise.all([
+    loadMindSettings(),
+    loadNpcDecisionSettings(),
+  ]);
+  npcDecisionAvailable = npcDecisionSettings.enabled;
   const mind = createMind(
     world,
     {
@@ -630,49 +643,82 @@ async function boot(): Promise<void> {
       action,
     });
 
-  const director = new WorldDirector(world, {
-    context: () => ({
+  const npcTasks = new NpcTaskCoordinator(
+    world,
+    (envelope) => session.dispatchWorldAction(envelope),
+    {
+      dryWallet: () =>
+        rollWallet(artifact.slug, mindMemory.runId).wallet === "dry",
+    },
+  );
+  const npcRoutines = new NpcRoutines(world, npcTasks, {
+    dryWallet: () =>
+      rollWallet(artifact.slug, mindMemory.runId).wallet === "dry",
+  });
+  const director = new WorldDirector(
+    world,
+    {
+      context: () => ({
+        runId: mindMemory.runId,
+        cycleNumber: cycle.number,
+        world: snapshotMindWorld(world, "upper-dynamic", null, {
+          playerPose: currentPlayerPose(),
+        }),
+        memories: mindMemory.episodes.forObserver("sleeper", cycle.number),
+        sleeperSummary: mindMemory.sleeper.summary,
+        locale: getLocale(),
+      }),
+      playerPose: currentPlayerPose,
+      viewport: () => ({
+        roomId: world.currentRoomId,
+        rect: camera.visibleTiles(),
+      }),
+      trySpendCall: () => trainingRun || heartbeat.trySpendBackgroundCall(),
+      request: async (payload, signal) => {
+        if (trainingRun) return localDirectorPlan(payload, payload.signals);
+        try {
+          return await requestDirector(payload, signal);
+        } catch (error) {
+          if (signal.aborted) throw error;
+          return localDirectorPlan(payload, payload.signals);
+        }
+      },
+      execute: (envelope) => session.dispatchWorldAction(envelope),
+      onPatch: (_patch, result) => {
+        if (!result.ok) return;
+        for (const roomId of result.affectedRooms) rooms.invalidate(roomId);
+        session.enterRoomImmediate(false);
+        shiver.trigger(0.2);
+      },
+      onSpeech: (figureId, text) => {
+        const figure = world.figures.find((entry) => entry.id === figureId);
+        if (!figure) return;
+        mind.noteReaction(figureId, text);
+        journal.addPerson(cycle.number, figureId, figure.name, text);
+        hud.whisper(`${figure.name}: ${text}`, 6);
+      },
+      onChange: () => queueMicrotask(() => saveNow()),
+      onGuidanceChange: (guidance) => {
+        if (useNpcAutonomy()) autonomyRef.current?.noteGuidance(guidance);
+      },
+    },
+    { coordinator: npcTasks, eventDriven: useNpcAutonomy },
+  );
+  directorRef.current = director;
+  const npcAutonomy = new NpcAutonomy(world, {
+    coordinator: npcTasks,
+    context: (figureId) => ({
+      slug: artifact.slug,
       runId: mindMemory.runId,
       cycleNumber: cycle.number,
-      world: snapshotMindWorld(world, "upper-dynamic", null, {
+      world: snapshotMindWorld(world, "upper-dynamic", figureId, {
         playerPose: currentPlayerPose(),
       }),
-      memories: mindMemory.episodes.forObserver("sleeper", cycle.number),
-      sleeperSummary: mindMemory.sleeper.summary,
-      locale: getLocale(),
+      memories: mindMemory.episodes.forObserver(figureId, cycle.number),
     }),
-    playerPose: currentPlayerPose,
-    viewport: () => ({
-      roomId: world.currentRoomId,
-      rect: camera.visibleTiles(),
-    }),
-    trySpendCall: () => trainingRun || heartbeat.trySpendBackgroundCall(),
-    request: async (payload, signal) => {
-      if (trainingRun) return localDirectorPlan(payload, payload.signals);
-      try {
-        return await requestDirector(payload, signal);
-      } catch (error) {
-        if (signal.aborted) throw error;
-        return localDirectorPlan(payload, payload.signals);
-      }
-    },
-    execute: (envelope) => session.dispatchWorldAction(envelope),
-    onPatch: (_patch, result) => {
-      if (!result.ok) return;
-      for (const roomId of result.affectedRooms) rooms.invalidate(roomId);
-      session.enterRoomImmediate(false);
-      shiver.trigger(0.2);
-    },
-    onSpeech: (figureId, text) => {
-      const figure = world.figures.find((entry) => entry.id === figureId);
-      if (!figure) return;
-      mind.noteReaction(figureId, text);
-      journal.addPerson(cycle.number, figureId, figure.name, text);
-      hud.whisper(`${figure.name}: ${text}`, 6);
-    },
     onChange: () => queueMicrotask(() => saveNow()),
   });
-  directorRef.current = director;
+  autonomyRef.current = npcAutonomy;
 
   const dialogue = new DialoguePanel(
     uiLayer,
@@ -683,7 +729,8 @@ async function boot(): Promise<void> {
     {
       onOpen: (figure) => {
         director?.cancelRequest();
-        director?.npcQueue.cancel(figure.id, "conversation began");
+        npcAutonomy.cancelRequest();
+        npcTasks.cancelFigure(figure.id, "conversation began");
         input.setCaptured(true);
         observations.noteApproach(figure.id);
         const roomName =
@@ -772,11 +819,15 @@ async function boot(): Promise<void> {
       },
       exhaustion: () => world.exhaustion,
       onWorldActions: (figure, actions) => {
-        const outcome = replayNpcActions(
-          figure.id,
-          actions,
-          (envelope) => session.dispatchWorldAction(envelope),
-          () => world.revision,
+        const outcome = session.withActionCause(
+          createActionCause("dialogue"),
+          () =>
+            replayNpcActions(
+              figure.id,
+              actions,
+              (envelope) => session.dispatchWorldAction(envelope),
+              () => world.revision,
+            ),
         );
         mind.noteExecution(figure.id, outcome.execution);
         if (!outcome.ok)
@@ -876,6 +927,7 @@ async function boot(): Promise<void> {
         cycle.number,
       );
       if (!result.ok) return;
+      npcTasks.cancelFigure(figure.id, `figure ${verb}`);
       observations.noteFate(figure.id, verb);
       if (verb === "kill") {
         soundtrack.play("kill");
@@ -911,6 +963,30 @@ async function boot(): Promise<void> {
     pressureNow,
     () => dreamFx.debugState,
     () => camera.visibleTiles(),
+    () => {
+      const info = npcAutonomy.diagnostics;
+      const rows: Array<[string, string]> = [
+        [
+          "Jev",
+          useNpcAutonomy() ? npcDecisionSettings.model : "disabled / training",
+        ],
+        ["NPC tasks", `${info.active} active · ${info.pending} pending`],
+        [
+          "Jev requests",
+          `${info.decisions} · ${info.waiting ? "in flight" : "idle"}`,
+        ],
+        [
+          "Jev usage",
+          `${info.inputTokens} in · ${info.outputTokens} out · $${info.costUsd.toFixed(5)}`,
+        ],
+      ];
+      for (const entry of info.records.slice(-3))
+        rows.push([
+          `${entry.source}: ${entry.figureId}`,
+          `${entry.status} · ${entry.task ?? entry.reason ?? entry.rootId}${entry.latencyMs === undefined ? "" : ` · ${Math.round(entry.latencyMs)} ms`}`,
+        ]);
+      return rows;
+    },
   );
   const input = new Input();
   input.attach();
@@ -1502,7 +1578,10 @@ async function boot(): Promise<void> {
     if (restarting) return;
     restarting = true;
     playerActions.cancel();
+    npcAutonomy.resetCycle();
+    npcRoutines.clear();
     director?.resetCycle();
+    npcTasks.clear();
     try {
       // A panel retains the old FigureState while resetWorld installs fresh figures.
       // Close it before planning so no reply or action can commit to the next cycle.
@@ -1568,6 +1647,8 @@ async function boot(): Promise<void> {
       observations: observations.snapshot(world),
       heartbeatCalls: heartbeat.snapshot(),
       director: director?.snapshot(),
+      npcAutonomy: useNpcAutonomy() ? npcAutonomy.snapshot() : undefined,
+      npcRoutines: useNpcAutonomy() ? npcRoutines.snapshot() : undefined,
       mode: trainingRun ? "training" : "live",
       memory: mindMemory.snapshot(),
       journal: journal.all(),
@@ -1595,8 +1676,8 @@ async function boot(): Promise<void> {
     cycle.restore(saved.cycle);
     observations.restore(saved.observations);
     heartbeat.restore(saved.heartbeatCalls);
-    director?.restore(saved.director);
     mindMemory.restore(saved.memory);
+    director?.restore(saved.director);
     journal.restore(saved.journal);
     wordNotebook.restore(saved.notebook);
     mind.restoreFigures(saved.conversations);
@@ -1604,6 +1685,11 @@ async function boot(): Promise<void> {
     contextMemory.resetTracking();
     for (const room of world.rooms) rooms.invalidate(room.id);
     session.restore(saved.session);
+    if (useNpcAutonomy()) {
+      npcAutonomy.restore(saved.npcAutonomy);
+      npcRoutines.restore(saved.npcRoutines);
+      npcAutonomy.noteGuidance(director.activeGuidance);
+    }
     populationInstalled = true;
     lobby.teardown();
     worldRoot.visible = true;
@@ -1646,6 +1732,12 @@ async function boot(): Promise<void> {
     world,
     heartbeat,
     director,
+    npcAutonomy,
+    npcTasks,
+    npcRoutines,
+    get npcAutonomyEnabled(): boolean {
+      return useNpcAutonomy();
+    },
     playerActions,
     observations,
     input,
@@ -1772,7 +1864,8 @@ async function boot(): Promise<void> {
           x: session.player.x / room.tileSize,
           y: session.player.y / room.tileSize,
         },
-        director?.npcQueue.busyFigureIds,
+        npcTasks.busyFigureIds,
+        { skipSchedule: useNpcAutonomy() },
       );
       contextElapsed += delta;
       const playerPose = {
@@ -1803,7 +1896,10 @@ async function boot(): Promise<void> {
           rumor.text,
         );
       }
-      if (rumor) recordRoleReport((world.roleRecognition ??= {}), rumor);
+      if (rumor) {
+        recordRoleReport((world.roleRecognition ??= {}), rumor);
+        if (useNpcAutonomy()) npcAutonomy.noteRumor(rumor);
+      }
     }
     director?.tick(delta, {
       paused: simulationPaused || !session.canSave,
@@ -1811,6 +1907,18 @@ async function boot(): Promise<void> {
         mind.waiting || inventory.isWaiting || restarting || finale.isOpen,
       presentationHeld: held,
     });
+    if (useNpcAutonomy())
+      npcAutonomy.tick(delta, {
+        paused: simulationPaused || !session.canSave,
+        foregroundBusy:
+          mind.waiting || inventory.isWaiting || restarting || finale.isOpen,
+        presentationHeld: held,
+      });
+    if (!simulationPaused && !held && session.canSave) {
+      if (useNpcAutonomy())
+        npcRoutines.tick(cycle.progress, dialogue.currentFigureId, delta);
+      npcTasks.tick(delta);
+    }
 
     // A street map is one country: follow the walker. A single-room dream still
     // frames the authored scene.

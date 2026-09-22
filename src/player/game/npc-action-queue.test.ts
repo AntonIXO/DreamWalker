@@ -264,3 +264,37 @@ describe("replayWorldActions", () => {
     expect(result.executed).toBe(1);
   });
 });
+
+test("queued approach animates before committing its single physical receipt", () => {
+  const world = tiny();
+  const figure = world.figures[0]!;
+  figure.roomId = "a";
+  figure.x = 1;
+  figure.y = 5;
+  const object = bottle();
+  setLiveObjects(world, [object]);
+  world.objectById.set(object.id, object);
+  const queue = new NpcActionQueue();
+  const executed: string[] = [];
+  queue.enqueue(figure.id, [
+    { type: "approach", objectId: "bottle" },
+    { type: "take", objectId: "bottle" },
+  ]);
+  const execute = (envelope: Parameters<typeof executeWorldAction>[1]) => {
+    executed.push(envelope.action.type);
+    return executeWorldAction(
+      bindWorldMutator(world, staticPlayerPose(null)),
+      envelope,
+    );
+  };
+  queue.tick(world, execute, 0.1);
+  expect(Math.hypot(figure.x - 1, figure.y - 5)).toBeGreaterThan(0);
+  expect(Math.hypot(figure.x - 1, figure.y - 5)).toBeLessThan(1);
+  expect(executed).toHaveLength(0);
+  for (let index = 0; index < 100; index++) queue.tick(world, execute, 0.1);
+  expect(executed).toEqual(["approach", "take"]);
+  expect(world.objectById.get("bottle")!.location).toEqual({
+    kind: "held",
+    actor: { kind: "figure", id: figure.id },
+  });
+});

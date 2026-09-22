@@ -21,6 +21,37 @@ export const DEFAULT_OPENAI_BASE_URL = "https://api.closerouter.dev/v1";
 /** Default chat model on CloseRouter. */
 export const DEFAULT_OPENAI_MODEL = "openai/gpt-5.6-luna";
 
+export const DEFAULT_JEV_MODEL = "~typesafe/jev-latest";
+
+export interface JevConfig {
+  enabled: boolean;
+  apiKey: string | null;
+  model: string;
+  /** Conservative reservation rate; output is currently free. */
+  inputUsdPerMillion: number;
+}
+
+/** Jev is an independent decision service, never the narrative provider. */
+export function resolveJevConfig(
+  env: NodeJS.Dict<string> = process.env,
+): JevConfig {
+  const apiKey = env.OPENROUTER_KEY?.trim() || null;
+  const setting = env.JEV_ENABLED?.trim().toLowerCase();
+  if (setting && !["1", "0", "true", "false"].includes(setting)) {
+    throw new Error("JEV_ENABLED must be true, false, 1, or 0.");
+  }
+  const rate = Number(env.JEV_INPUT_USD_PER_MILLION ?? "0.042");
+  if (!Number.isFinite(rate) || rate <= 0) {
+    throw new Error("JEV_INPUT_USD_PER_MILLION must be positive.");
+  }
+  return {
+    enabled: Boolean(apiKey) && setting !== "false" && setting !== "0",
+    apiKey,
+    model: env.JEV_MODEL?.trim() || DEFAULT_JEV_MODEL,
+    inputUsdPerMillion: rate,
+  };
+}
+
 export interface AnthropicBackend {
   baseURL: string;
   authToken: string;

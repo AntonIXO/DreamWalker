@@ -56,7 +56,7 @@ An active dream resumes automatically when the same browser opens the same site 
 A local checkpoint is written every second, on page hide, and after entering the dream,
 a cycle reset or an ending. It includes the player position, live world and inventory,
 cycle timer, NPC conversations, notebook and memory. Closed-browser time does not count
-against the cycle timer. In-flight model calls and room transitions keep the last complete
+against the cycle timer. Foreground model calls and room transitions keep the last complete
 checkpoint until they finish.
 
 This first version has one local slot per dream, with no account or cross-device sync.
@@ -143,6 +143,45 @@ Goals guide the next conversation; they do not schedule hidden background action
 The archive, intents and feedback survive a reload. A new cycle clears ordinary NPC
 recall, intents and feedback, while the sleeper retains the run archive and its summary.
 Starting a new run clears the archive; it is not shared between separate playthroughs.
+
+### Event-driven NPC autonomy with Jev
+
+Live games enable autonomous NPC decisions when the server's `.env` contains
+`OPENROUTER_KEY`. The default model is `~typesafe/jev-latest`; set `JEV_ENABLED=0`
+to use the previous runtime, or `JEV_MODEL` to select another compatible Jev model.
+Training never calls Jev. The narrative provider remains responsible for dialogue,
+free-text player commands, inhabiting the dream and the sleeper's plans.
+
+The sleeper can assign a bounded personal goal. Jev chooses a complete task from
+engine-built choices after a meaningful witnessed event, a new goal or a newly learned
+fact. The queue handles walking, doors and physical steps locally. Ordinary movement,
+waiting, successful task steps and time passing never poll the model. The sleeper's
+periodic idle request is also disabled in this mode; local agendas walk through real
+thresholds instead of reseating figures offscreen.
+
+Each NPC receives only its own perceptions and attributed memories. One causal root
+survives a command, its scripted consequences and retellings; at most two decisions are
+allowed for the whole chain. The shared executor gives director tasks priority over
+Jev, and Jev priority over routines. Conversation and scripted presentation keep the
+existing pauses. Eye and pinned-home restrictions remain enforced at execution time.
+
+The separate JSON endpoint `/api/ai/npc-decision` calls OpenRouter's
+`/api/alpha/decisions`. It does not consume the heartbeat quota or acquire the dialogue
+lock. The server permits one in-flight call, ten attempts per rolling minute and at
+most $1 of accounted/reserved spend per rolling hour across runs and tabs. These are
+ceilings, not a polling cadence. There are no automatic provider retries or fallback
+model calls. Missing usage retains a conservative reservation. Accounting persists in
+the ignored `.dreamwalker/jev-ledger.json`; credentials never enter the client or ledger.
+
+Check **F1** for causes, chosen tasks, latency, tokens and cost, or inspect
+`window.dreamWalker.npcAutonomy.diagnostics`. `npcTasks` exposes the common executor.
+Checkpoints preserve pending causes, task suffixes and dependency waits; paths are
+rebuilt after reload and confirmed actions are not replayed. Old saves without these
+fields remain readable. A cycle reset discards old goals and in-flight decisions.
+
+The native choice API and its three decision primitives are described in the
+[TypeSafe documentation](https://docs.typesafe.ai/primitives/choice) and the
+[OpenRouter example](https://github.com/openrouterteam/docs/blob/main/cookbook/building-agents/gate-tool-calls-with-jev.mdx).
 
 ## The heartbeat
 

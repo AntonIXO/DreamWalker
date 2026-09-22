@@ -11,7 +11,8 @@ import type {
 } from "../shared/ai";
 import { AgentRuntime, AgentRuntimeError } from "./agent-runtime";
 import { CodexAccountProcess } from "./codex-account";
-import { resolveAiBackend } from "./config";
+import { resolveAiBackend, resolveJevConfig } from "./config";
+import { JevService, npcDecisionResponse } from "./jev";
 import { warmSemanticMemory } from "./semantic-memory";
 import type { DirectorPlan, DirectorRequest } from "../shared/director";
 
@@ -39,6 +40,10 @@ const agents = new AgentRuntime(account, {
   anthropic: backend.anthropic,
   openai: backend.openai,
   verbose: process.env.DREAMWALKER_AI_VERBOSE === "1",
+});
+const jev = new JevService({
+  artifact: agents.artifact,
+  config: resolveJevConfig(),
 });
 
 if (agents.providerMode === "codex") {
@@ -168,7 +173,15 @@ async function api(
       ok: true,
       dream: agents.artifact.slug,
       provider: agents.providerMode,
+      npcDecision: jev.status(),
     });
+  }
+
+  if (pathname === "/api/ai/npc-decision/status" && request.method === "GET") {
+    return json(jev.status());
+  }
+  if (pathname === "/api/ai/npc-decision" && request.method === "POST") {
+    return npcDecisionResponse(request, jev);
   }
 
   if (pathname === "/api/codex/account" && request.method === "GET") {

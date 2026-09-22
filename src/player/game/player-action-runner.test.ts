@@ -131,6 +131,27 @@ describe("player action runner", () => {
     expect(scene.bag.state.wornBy).toEqual(PLAYER);
     expect(scene.moving).toBe(false);
     expect(scene.positions.length).toBeGreaterThan(20);
+    const roots = scene.receipts.map((receipt) => receipt.cause?.rootId);
+    expect(roots[0]).toBeTruthy();
+    expect(new Set(roots).size).toBe(1);
+  });
+
+  test("keeps a command cause across async physical steps and replay", async () => {
+    const scene = setup();
+    const command = envelopes(
+      { type: "approach", objectId: "bag" },
+      { type: "take", objectId: "bag" },
+      { type: "wear", objectId: "bag" },
+    );
+    command[0]!.cause = { rootId: "command-1" };
+    const completion = scene.runner.run(command);
+    finish(scene.runner);
+    expect((await completion).ok).toBe(true);
+    expect(scene.receipts.map((receipt) => receipt.cause)).toEqual([
+      { rootId: "command-1" },
+      { rootId: "command-1" },
+      { rootId: "command-1" },
+    ]);
   });
 
   test("validates the whole envelope list before applying a valid prefix", async () => {

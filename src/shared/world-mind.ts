@@ -1,5 +1,6 @@
 /** Factual, cycle-local receipts. A figure remembers only what it did or witnessed. */
 import type {
+  ActionCause,
   WorldAction,
   WorldActionEnvelope,
   WorldActionResult,
@@ -62,6 +63,8 @@ export interface WorldMindEvent {
   actionType: WorldAction["type"] | null;
   /** Only the actor receives the complete command; witnesses receive observed facts. */
   action: WorldAction | null;
+  /** Optional for older saves; shared by nested scripted consequences. */
+  cause?: ActionCause;
   events: WorldEvent[];
   roomIds: string[];
   witnessIds: string[];
@@ -139,6 +142,31 @@ export function captureWorldAction(
       )
         objectIds.add(child.id);
   if ("targetId" in action && action.targetId) objectIds.add(action.targetId);
+  if (action.type === "open") {
+    // Capture both sides using their actual state: a closed container contributes
+    // no contents before opening. An open nested container exposes its children;
+    // a closed nested container exposes only its own exterior, never its contents.
+    const inspected = new Set<string>();
+    const containers = [action.targetId];
+    for (let index = 0; index < containers.length; index++) {
+      const containerId = containers[index]!;
+      if (
+        inspected.has(containerId) ||
+        world.objectById.get(containerId)?.state.open !== true
+      )
+        continue;
+      inspected.add(containerId);
+      for (const child of world.objects) {
+        if (
+          child.location.kind !== "inside" ||
+          child.location.objectId !== containerId
+        )
+          continue;
+        objectIds.add(child.id);
+        containers.push(child.id);
+      }
+    }
+  }
   if ("intoObjectId" in action) objectIds.add(action.intoObjectId);
   const doorId =
     "doorId" in action
@@ -288,6 +316,7 @@ export function recordWorldAction(
     source: envelope.source,
     actionType: envelope.action.type,
     action: envelope.action,
+    ...(envelope.cause ? { cause: envelope.cause } : {}),
     events: result.events,
     roomIds: result.affectedRooms,
     witnessIds: Object.keys(witnessRooms),

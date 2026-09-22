@@ -3,6 +3,7 @@ import type { NpcExecutionFeedback } from "../../shared/ai";
 import { BODY_HEIGHT, BODY_WIDTH, blockedInRoom } from "../../shared/roomGrid";
 import { WALK_SPEED } from "../../shared/roomWalk";
 import {
+  createActionCause,
   MAX_WORLD_ACTIONS_PER_TURN,
   PLAYER_ACTION_TYPES,
   type WorldActionEnvelope,
@@ -85,9 +86,14 @@ export class PlayerActionRunner {
         execution: [],
       });
     }
+    const cause =
+      envelopes.find((entry) => entry.cause)?.cause ??
+      createActionCause("player-command");
     const promise = new Promise<PlayerActionRunOutcome>((resolve, reject) => {
       this.active = {
-        envelopes: structuredClone(envelopes) as WorldActionEnvelope[],
+        envelopes: structuredClone(
+          envelopes.map((entry) => ({ ...entry, cause })),
+        ),
         index: 0,
         executed: 0,
         execution: [],

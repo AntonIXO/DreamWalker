@@ -14,6 +14,8 @@ import type { RoomHotspot } from "../../shared/room";
 import type { DreamScript, ScriptHost } from "../../shared/pack";
 import { makeRng } from "../../shared/rng";
 import {
+  createActionCause,
+  type ActionCause,
   type WorldActionEnvelope,
   type WorldActionResult,
   MAX_WORLD_ACTIONS_PER_TURN,
@@ -68,6 +70,8 @@ export type ArrivalStyle = "door" | "rift" | "meta-exit" | "cut";
 
 export interface SessionCallbacks {
   onWorldAction?(event: WorldMindEvent): void;
+  /** Delivered after all synchronous script reactions and side receipts drain. */
+  onWorldActionBatch?(events: readonly WorldMindEvent[]): void;
   onEnterRoom(room: RoomState, visits: number): void;
   onRefused(doorId: string, text: string): void;
   whisper?(text: string): void;
@@ -90,6 +94,9 @@ export class DreamSession {
   private transitioning = false;
   private transitionGeneration = 0;
   private reactionDepth = 0;
+  private actionTransaction = false;
+  private actionCause: ActionCause | null = null;
+  private actionBatch: WorldMindEvent[] = [];
 
   constructor(
     private readonly world: WorldState,
@@ -234,24 +241,26 @@ export class DreamSession {
 
   /** The player pressed E on something. True when a pack script consumed it. */
   use(hotspot: RoomHotspot): boolean {
-    const host = this.host();
-    const scripts = this.scriptsFor(this.room.id);
-    for (const script of scripts) {
-      if (script.onUse?.(host, hotspot)) return true;
-    }
-    runReactions(
-      host,
-      [
-        {
-          type: "object.used",
-          objectId: hotspot.id,
-          targetId: null,
-          actor: { kind: "player" },
-        },
-      ],
-      scripts,
-    );
-    return false;
+    return this.withActionCause(undefined, () => {
+      const host = this.host();
+      const scripts = this.scriptsFor(this.room.id);
+      for (const script of scripts) {
+        if (script.onUse?.(host, hotspot)) return true;
+      }
+      runReactions(
+        host,
+        [
+          {
+            type: "object.used",
+            objectId: hotspot.id,
+            targetId: null,
+            actor: { kind: "player" },
+          },
+        ],
+        scripts,
+      );
+      return false;
+    });
   }
 
   /**
@@ -273,11 +282,13 @@ export class DreamSession {
 
   /** Pack scripts may refuse talk. */
   mayTalk(figureId: string): boolean {
-    const host = this.host();
-    for (const script of this.scriptsFor(this.room.id)) {
-      if (script.onApproach?.(host, figureId) === false) return false;
-    }
-    return true;
+    return this.withActionCause(undefined, () => {
+      const host = this.host();
+      for (const script of this.scriptsFor(this.room.id)) {
+        if (script.onApproach?.(host, figureId) === false) return false;
+      }
+      return true;
+    });
   }
 
   noteMemorySpent(): void {
@@ -479,21 +490,58 @@ export class DreamSession {
     hook: "enter" | "update" | "memory" | "cycle",
     dt = 0,
   ): void {
-    const host = this.host();
-    const list =
-      hook === "memory" || hook === "cycle"
-        ? this.scripts
-        : this.scriptsFor(this.world.currentRoomId);
-    for (const script of list) {
-      if (hook === "enter") script.onEnter?.(host);
-      if (hook === "update") script.onUpdate?.(host, dt);
-      if (hook === "memory") script.onMemorySpent?.(host);
-      if (hook === "cycle") script.onCycleReset?.(host);
+    this.withActionCause(undefined, () => {
+      const host = this.host();
+      const list =
+        hook === "memory" || hook === "cycle"
+          ? this.scripts
+          : this.scriptsFor(this.world.currentRoomId);
+      for (const script of list) {
+        if (hook === "enter") script.onEnter?.(host);
+        if (hook === "update") script.onUpdate?.(host, dt);
+        if (hook === "memory") script.onMemorySpent?.(host);
+        if (hook === "cycle") script.onCycleReset?.(host);
+      }
+    });
+  }
+
+  /** Group synchronous effects only; async task steps must carry their own cause. */
+  withActionCause<T>(cause: ActionCause | undefined, operation: () => T): T {
+    if (this.actionTransaction) {
+      this.actionCause ??= cause ?? null;
+      return operation();
     }
+    this.actionTransaction = true;
+    // Empty script-update hooks should not allocate roots on every animation frame.
+    this.actionCause = cause ?? null;
+    this.actionBatch = [];
+    try {
+      return operation();
+    } finally {
+      const batch = this.actionBatch;
+      this.actionTransaction = false;
+      this.actionCause = null;
+      this.actionBatch = [];
+      if (batch.length) this.callbacks.onWorldActionBatch?.(batch);
+    }
+  }
+
+  private publishWorldAction(event: WorldMindEvent): void {
+    this.actionBatch.push(event);
+    this.callbacks.onWorldAction?.(event);
   }
 
   /** Every embodied action delivers its events before the next action runs. */
   dispatchWorldAction(envelope: WorldActionEnvelope): WorldActionResult {
+    return this.withActionCause(envelope.cause, () =>
+      this.executeAction({
+        ...envelope,
+        cause: (this.actionCause ??= createActionCause()),
+      }),
+    );
+  }
+
+  private executeAction(envelope: WorldActionEnvelope): WorldActionResult {
     if (this.reactionDepth >= MAX_WORLD_ACTIONS_PER_TURN) {
       return {
         ok: false,
@@ -550,13 +598,14 @@ export class DreamSession {
           before,
           this.callbacks.cycleNumber?.() ?? 1,
         );
-        if (event) this.callbacks.onWorldAction?.(event);
+        if (event) this.publishWorldAction(event);
         for (const patch of uncoveredPassagePatches(this.world)) {
           if (patch.kind !== "revealDoor") continue;
           const revealEnvelope: WorldActionEnvelope = {
             actor: envelope.actor,
             source: envelope.source,
             action: { type: "open", targetId: patch.doorId },
+            cause: envelope.cause,
           };
           const beforeReveal = captureWorldAction(mutator, revealEnvelope);
           const revealed = applyPatch(
@@ -588,7 +637,7 @@ export class DreamSession {
             beforeReveal,
             this.callbacks.cycleNumber?.() ?? 1,
           );
-          if (revealedEvent) this.callbacks.onWorldAction?.(revealedEvent);
+          if (revealedEvent) this.publishWorldAction(revealedEvent);
           runReactions(this.host(), revealResult.events, this.scripts);
         }
         runReactions(this.host(), result.events, this.scripts);

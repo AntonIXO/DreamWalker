@@ -5,6 +5,8 @@ import { migrateArchitectureSave } from "./save-art-migration";
 import type { DreamArtifact } from "../../shared/dream";
 import type { PlayerActionLine } from "../../shared/ai";
 import type { DirectorSnapshot } from "../../shared/director";
+import type { NpcAutonomySnapshot } from "../mind/npc-autonomy";
+import type { NpcRoutinesSnapshot } from "./npc-routines";
 import {
   LEGACY_SON_PACK_FINGERPRINTS,
   SON_LIVING_PACK_FINGERPRINT,
@@ -48,6 +50,8 @@ export interface RunSave {
   conversations: ReturnType<RemoteMind["snapshotFigures"]>;
   commands?: PlayerActionLine[];
   director?: DirectorSnapshot;
+  npcAutonomy?: NpcAutonomySnapshot;
+  npcRoutines?: NpcRoutinesSnapshot;
   mode?: "live" | "training";
   ending: ReturnType<FinalePanel["snapshotEnding"]>;
 }

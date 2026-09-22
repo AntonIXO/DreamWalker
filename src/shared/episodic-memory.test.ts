@@ -274,6 +274,37 @@ describe("run episodic memory", () => {
     );
   });
 
+  test("causes survive reload as bounded copies while old and malformed causes remain optional", () => {
+    const cause = { rootId: "command-1", taskId: "task-1" };
+    const store = new EpisodicMemory();
+    store.add(memory({ cause }));
+    cause.rootId = "changed";
+    expect(store.snapshot().episodes[0]?.cause).toEqual({
+      rootId: "command-1",
+      taskId: "task-1",
+    });
+    const restored = new EpisodicMemory();
+    restored.restore(store.snapshot());
+    expect(restored.snapshot()).toEqual(store.snapshot());
+    const malformed = [
+      undefined,
+      null,
+      { rootId: "" },
+      { rootId: "x".repeat(161) },
+      { rootId: "valid-root", taskId: 2 },
+    ];
+    restored.restore({
+      episodes: malformed.map((value, index) => ({
+        ...memory({ id: `legacy-${index}` }),
+        cause: value,
+      })),
+    });
+    expect(restored.snapshot().episodes).toHaveLength(malformed.length);
+    expect(
+      restored.snapshot().episodes.every((episode) => !episode.cause),
+    ).toBe(true);
+  });
+
   test("malformed provenance is bounded and never promotes a fact to a rumor", () => {
     const store = new EpisodicMemory();
     const provenance = {
@@ -357,6 +388,76 @@ describe("run episodic memory", () => {
 });
 
 describe("episodic memories from observed world receipts", () => {
+  test("witnessed container contents remain known after closing and reload without hidden descendants", () => {
+    const objects = [
+      object({ id: "box", name: "ящик", state: { open: false } }),
+      object({
+        id: "open-bag",
+        name: "открытый мешок",
+        state: { open: true },
+        location: { kind: "inside", objectId: "box" },
+      }),
+      object({
+        id: "visible-note",
+        name: "видимая записка",
+        location: { kind: "inside", objectId: "open-bag" },
+      }),
+      object({
+        id: "closed-bag",
+        name: "закрытый мешок",
+        state: { open: false },
+        location: { kind: "inside", objectId: "box" },
+      }),
+      object({
+        id: "secret-gem",
+        name: "СЕКРЕТНЫЙ КАМЕНЬ",
+        location: { kind: "inside", objectId: "closed-bag" },
+      }),
+    ];
+    const world = createWorldMutator({
+      objects,
+      playerPose: { roomId: "courtyard", x: 1, y: 2 },
+      figurePoses: [
+        ["witness", { roomId: "courtyard", x: 1, y: 3 }],
+        ["behind-wall", { roomId: "courtyard", x: 5, y: 2 }],
+        ["elsewhere", { roomId: "hotel", x: 1, y: 3 }],
+      ],
+      isWalkableTile: (_room, x) => x !== 4,
+    });
+    const cause = { rootId: "discover-box" };
+    const opened = perform(world, {
+      actor: { kind: "player" },
+      source: "player",
+      action: { type: "open", targetId: "box" },
+      cause,
+    });
+    const store = new EpisodicMemory();
+    for (const episode of episodesForWorldEvent(opened, names))
+      store.add(episode);
+    expect(
+      executeWorldAction(world, {
+        actor: { kind: "player" },
+        source: "player",
+        action: { type: "close", targetId: "box" },
+        cause,
+      }).ok,
+    ).toBe(true);
+    const restored = new EpisodicMemory();
+    restored.restore(JSON.parse(JSON.stringify(store.snapshot())));
+    const remembered = restored.forObserver("witness", 2);
+    expect(remembered).toHaveLength(1);
+    expect(remembered[0]!.cause).toEqual(cause);
+    expect(remembered[0]!.text).toContain("видимая записка");
+    expect(remembered[0]!.text).toContain("внутри «открытый мешок»");
+    expect(remembered[0]!.entityIds).toContain("visible-note");
+    expect(JSON.stringify(restored.snapshot())).not.toContain("secret-gem");
+    expect(JSON.stringify(restored.snapshot())).not.toContain(
+      "СЕКРЕТНЫЙ КАМЕНЬ",
+    );
+    expect(restored.forObserver("behind-wall", 2)).toEqual([]);
+    expect(restored.forObserver("elsewhere", 2)).toEqual([]);
+  });
+
   test("the player's real item change is shared with nearby witnesses and keeps its physical state", () => {
     const world = createWorldMutator({
       objects: [object()],
@@ -429,6 +530,7 @@ describe("episodic memories from observed world receipts", () => {
       const envelope: WorldActionEnvelope = {
         actor: { kind: "player" },
         source: "player",
+        cause: { rootId: `external:${i}` },
         action:
           i === 0
             ? { type: "take", objectId: "cup" }
@@ -460,6 +562,14 @@ describe("episodic memories from observed world receipts", () => {
       .find((episode) => episode.originId === "world:2:1")!;
     expect(witnessed.text).not.toContain("Свидетели:");
     expect(witnessed.observerIds).toEqual(["witness"]);
+    expect(witnessed.cause).toEqual({ rootId: "external:0" });
+    const restored = new EpisodicMemory();
+    restored.restore(store.snapshot());
+    expect(
+      restored
+        .forObserver("witness", 2)
+        .find((entry) => entry.originId === witnessed.originId)?.cause,
+    ).toEqual(witnessed.cause);
   });
 
   test("a room crossing remembers only the endpoint each witness could see", () => {

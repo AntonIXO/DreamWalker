@@ -3,9 +3,11 @@ import { describe, expect, test } from "bun:test";
 import {
   DEFAULT_OPENAI_BASE_URL,
   DEFAULT_OPENAI_MODEL,
+  DEFAULT_JEV_MODEL,
   normaliseAnthropicBaseURL,
   normaliseOpenAIBaseURL,
   resolveAiBackend,
+  resolveJevConfig,
 } from "./config";
 
 describe("normaliseAnthropicBaseURL", () => {
@@ -19,6 +21,44 @@ describe("normaliseAnthropicBaseURL", () => {
     expect(normaliseAnthropicBaseURL("http://proxy.test/anthropic/v1/")).toBe(
       "http://proxy.test/anthropic/v1",
     );
+  });
+});
+
+describe("resolveJevConfig", () => {
+  test("only the server OpenRouter key enables NPC decisions", () => {
+    expect(resolveJevConfig({}).enabled).toBe(false);
+    expect(resolveJevConfig({ OPENAI_KEY: "other" }).enabled).toBe(false);
+    expect(resolveJevConfig({ OPENROUTER_KEY: "  test  " })).toEqual({
+      enabled: true,
+      apiKey: "test",
+      model: DEFAULT_JEV_MODEL,
+      inputUsdPerMillion: 0.042,
+    });
+  });
+
+  test.each(["0", "false"])("explicit %s disables decisions", (value) => {
+    expect(
+      resolveJevConfig({ OPENROUTER_KEY: "test", JEV_ENABLED: value }).enabled,
+    ).toBe(false);
+  });
+
+  test("accepts a model and reservation rate override, rejects invalid rates", () => {
+    expect(
+      resolveJevConfig({
+        JEV_MODEL: "typesafe/jev-1.13",
+        JEV_INPUT_USD_PER_MILLION: "0.1",
+      }),
+    ).toMatchObject({
+      model: "typesafe/jev-1.13",
+      inputUsdPerMillion: 0.1,
+    });
+    expect(() =>
+      resolveJevConfig({ JEV_INPUT_USD_PER_MILLION: "NaN" }),
+    ).toThrow();
+    expect(() =>
+      resolveJevConfig({ JEV_INPUT_USD_PER_MILLION: "-1" }),
+    ).toThrow();
+    expect(() => resolveJevConfig({ JEV_ENABLED: "maybe" })).toThrow();
   });
 });
 

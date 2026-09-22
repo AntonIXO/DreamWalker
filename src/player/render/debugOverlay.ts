@@ -40,6 +40,8 @@ export class DebugOverlay {
     private readonly fxAt?: () => { preset: string; phase: string },
     /** The tile rect the heartbeat treats as off limits — `camera.visibleTiles()`. */
     private readonly viewAt?: () => TileRect,
+    /** Event-driven NPC decisions; technical diagnostics stay behind F1. */
+    private readonly npcAt?: () => Array<[string, string]>,
   ) {
     this.root = document.createElement("div");
     this.root.className = "debug";
@@ -226,6 +228,7 @@ export class DebugOverlay {
       ],
       ["mind wakes", "cycle exit"],
       ["beat budget", String(this.heartbeat.budgetRemaining)],
+      ...(this.npcAt?.() ?? []),
     ];
 
     for (const [label, value] of rows) {

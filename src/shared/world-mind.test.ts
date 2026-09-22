@@ -102,6 +102,54 @@ describe("World Mind receipts", () => {
     expect(mind.nextSequence).toBe(1);
   });
 
+  test("opening reveals visible contents recursively without disclosing closed descendants", () => {
+    const { world, mind, run } = setup();
+    const box = world.objectById.get("cup")!;
+    box.state.open = false;
+    const children = [
+      object({ id: "loose", location: { kind: "inside", objectId: box.id } }),
+      object({
+        id: "open-bag",
+        state: { open: true },
+        location: { kind: "inside", objectId: box.id },
+      }),
+      object({
+        id: "visible-note",
+        location: { kind: "inside", objectId: "open-bag" },
+      }),
+      object({
+        id: "closed-bag",
+        state: { open: false },
+        location: { kind: "inside", objectId: box.id },
+      }),
+      object({
+        id: "hidden-note",
+        location: { kind: "inside", objectId: "closed-bag" },
+      }),
+    ];
+    for (const child of children) {
+      world.objects.push(child);
+      world.objectById.set(child.id, child);
+    }
+    expect(run({ type: "open", targetId: box.id }).result.ok).toBe(true);
+    const observed = worldMindForFigure(mind, "near")[0]!;
+    expect(observed.before.objects.map((entry) => entry.id)).toEqual([box.id]);
+    expect(observed.after.objects.map((entry) => entry.id)).toEqual([
+      box.id,
+      "loose",
+      "open-bag",
+      "closed-bag",
+      "visible-note",
+    ]);
+    expect(JSON.stringify(mind.events)).not.toContain("hidden-note");
+    expect(worldMindForFigure(mind, "behind-wall")).toEqual([]);
+    expect(worldMindForFigure(mind, "elsewhere")).toEqual([]);
+    // An already-open container has visible contents on both sides, not a fresh discovery.
+    expect(run({ type: "open", targetId: box.id }).result.ok).toBe(true);
+    const repeated = worldMindForFigure(mind, "near").at(-1)!;
+    expect(repeated.before.objects).toEqual(repeated.after.objects);
+  });
+
   test("moving to a distant point in one room does not disclose the endpoint to a source witness", () => {
     const world = createWorldMutator({
       objects: [],

@@ -13,7 +13,9 @@ import {
   WorldDirector,
   directorGuardHolds,
   type DirectorHost,
+  type WorldDirectorOptions,
 } from "./director";
+import { NpcTaskCoordinator } from "../game/npc-task-coordinator";
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -35,6 +37,7 @@ function setup(
   request: NonNullable<DirectorHost["request"]> = async () => ({
     situations: [],
   }),
+  options: WorldDirectorOptions = {},
 ) {
   const artifact = validateDreamArtifact(structuredClone(fixture));
   const world = createWorld(artifact);
@@ -60,7 +63,7 @@ function setup(
     },
     request,
   };
-  const director = new WorldDirector(world, host);
+  const director = new WorldDirector(world, host, options);
   return {
     world,
     director,
@@ -510,4 +513,125 @@ describe("background world director", () => {
       "close",
     ]);
   });
+});
+
+describe("event-driven director and shared NPC ownership", () => {
+  test("quiet simulation never invokes the director in event-driven mode", () => {
+    const state = setup(undefined, { eventDriven: () => true });
+    advance(state.director, 600);
+    expect(state.calls()).toBe(0);
+  });
+
+  test("guidance is deduplicated by goalId across paraphrases, expiry and reload", async () => {
+    const state = setup(undefined, { eventDriven: true });
+    const figureId = state.world.figures[0]!.id;
+    let goals = 0;
+    state.host.onGuidanceChange = (guidance) => {
+      if (guidance.length) goals++;
+    };
+    state.host.request = async () => ({
+      situations: [],
+      npcGuidance: [
+        {
+          figureId,
+          goalId: "my-bottle",
+          goal: "Keep my bottle close",
+          lifetimeSeconds: 100,
+        },
+      ],
+    });
+    state.director.noteProgress("bottle moved");
+    advance(state.director, 4);
+    await flush();
+    expect(goals).toBe(1);
+    expect(state.executed).toHaveLength(0);
+    const saved = state.director.snapshot();
+    state.director.restore(saved);
+    expect(state.director.activeGuidance[0]?.goalId).toBe("my-bottle");
+    advance(state.director, 31);
+    state.host.request = async () => ({
+      situations: [],
+      npcGuidance: [
+        {
+          figureId,
+          goalId: "my-bottle",
+          goal: "Keep hold of my bottle",
+          lifetimeSeconds: 100,
+        },
+      ],
+    });
+    state.director.noteProgress("same intention phrased differently");
+    advance(state.director, 4);
+    await flush();
+    expect(goals).toBe(1);
+    advance(state.director, 110);
+    expect(state.director.activeGuidance).toHaveLength(0);
+    state.director.noteProgress("same old goal after expiry");
+    advance(state.director, 4);
+    await flush();
+    expect(goals).toBe(1);
+    expect(state.executed).toHaveLength(0);
+  });
+
+  test("external coordinator is ticked only by the host and Jev never receives director guards", () => {
+    const state = setup();
+    const figureId = state.world.figures[0]!.id;
+    const coordinator = new NpcTaskCoordinator(state.world, state.host.execute);
+    const director = new WorldDirector(state.world, state.host, {
+      coordinator,
+      eventDriven: true,
+    });
+    coordinator.tryEnqueue(figureId, { kind: "jev", id: "simple" }, [
+      { type: "take", objectId: "bottle" },
+    ]);
+    director.tick(0.1);
+    expect(state.executed).toHaveLength(0);
+    coordinator.tick(0.1);
+    expect(state.executed).toHaveLength(1);
+    expect(director.snapshot().active).toHaveLength(0);
+  });
+});
+
+test("a rejected shared-queue submission retains a restored director suffix", () => {
+  const state = setup();
+  const figureId = state.world.figures[0]!.id;
+  const coordinator = new NpcTaskCoordinator(state.world, state.host.execute);
+  const director = new WorldDirector(state.world, state.host, {
+    coordinator,
+    eventDriven: true,
+  });
+  director.restore({
+    ...state.director.snapshot(),
+    active: [
+      {
+        plan: situation(figureId),
+        step: 0,
+        acceptedAt: 0,
+        lastStepAt: 0,
+        afterSequence: 1,
+        remainingActions: [{ type: "close", targetId: "box" }],
+      },
+    ],
+  });
+  const replacement = { kind: "director", id: "scripted-replacement" } as const;
+  coordinator.tryEnqueue(
+    figureId,
+    { kind: "jev", id: "initial" },
+    [{ type: "take", objectId: "bottle" }],
+    {
+      onComplete: () => {
+        coordinator.tryEnqueue(figureId, replacement, [
+          { type: "drop", objectId: "bottle" },
+        ]);
+      },
+    },
+  );
+  director.tick(0.1);
+  expect(director.snapshot().active[0]!.remainingActions).toEqual([
+    { type: "close", targetId: "box" },
+  ]);
+  coordinator.cancel(figureId, replacement);
+  director.tick(0.1);
+  coordinator.tick(0.1);
+  expect(state.executed.map((entry) => entry.action.type)).toEqual(["close"]);
 });

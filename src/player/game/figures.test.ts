@@ -15,6 +15,18 @@ const YARD = "19-dvor-i-oranzhevye-lavochki";
 const STREET = "path-1-2-e";
 
 describe("a led figure", () => {
+  test("Jev ambient updates never reseat an offscreen agenda", () => {
+    const world = createWorld(artifact);
+    const figure = world.figures.find((entry) => entry.id === "mama")!;
+    const originalRoom = figure.roomId;
+    figure.agenda = [{ phase: "late", roomId: YARD, activity: "ждёт" }];
+    for (let index = 0; index < 60; index++)
+      updateFigures(world, 0.95, 1 / 30, null, STREET, null, new Set(), {
+        skipSchedule: true,
+      });
+    expect(figure.roomId).toBe(originalRoom);
+    expect(figure.agendaPhase).toBe("early");
+  });
   test("a seated or lying figure is not dragged out by ambient movement or the next agenda phase", () => {
     const world = createWorld(artifact);
     const figure = world.figures[0]!;

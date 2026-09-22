@@ -17,6 +17,8 @@ import type {
 } from "../../shared/world-action";
 import type { ActorRef } from "../../shared/world-object";
 import { getActorOccupancy } from "../../shared/world-object";
+import { planApproach } from "../../shared/world-action-engine";
+import { bindWorldMutator, staticPlayerPose } from "./world-mutator";
 import { tileBlockedBySolids } from "./object-collision";
 import { canPassDoor, doorDestination, type WorldState } from "./world";
 
@@ -126,9 +128,19 @@ export function replayWorldActions(
   return { ok: true, executed, refusal: null };
 }
 
-interface FigureWork {
+export interface NpcActionQueueOptions {
+  cause?: WorldActionEnvelope["cause"];
+  beforeAction?: (envelope: WorldActionEnvelope) => boolean | string;
+  afterAction?: (
+    envelope: WorldActionEnvelope,
+    result: WorldActionResult,
+  ) => void;
+}
+
+interface FigureWork extends NpcActionQueueOptions {
   actions: WorldAction[];
   path: GridPoint[] | null;
+  approachGoal?: GridPoint;
   onComplete?: (result: ReplayOutcome) => void;
   executed: number;
   waitSeconds: number;
@@ -202,6 +214,7 @@ export class NpcActionQueue {
     figureId: string,
     actions: readonly WorldAction[],
     onComplete?: (result: ReplayOutcome) => void,
+    options: NpcActionQueueOptions = {},
   ): void {
     this.cancel(figureId, "replaced");
     this.work.set(figureId, {
@@ -210,6 +223,7 @@ export class NpcActionQueue {
       onComplete,
       executed: 0,
       waitSeconds: 0,
+      ...options,
     });
   }
 
@@ -242,7 +256,8 @@ export class NpcActionQueue {
     execute: (envelope: WorldActionEnvelope) => WorldActionResult,
     deltaSeconds = 0.1,
   ): void {
-    for (const [figureId, job] of this.work) {
+    for (const [figureId, job] of [...this.work]) {
+      if (this.work.get(figureId) !== job) continue;
       if (!world.figures.some((figure) => figure.id === figureId)) {
         this.cancel(figureId, "actor does not exist");
         continue;
@@ -257,6 +272,51 @@ export class NpcActionQueue {
         continue;
       }
       const head = job.actions[0]!;
+      const envelope: WorldActionEnvelope = {
+        actor: { kind: "figure", id: figureId },
+        source: "npc",
+        action: head,
+        ...(job.cause ? { cause: job.cause } : {}),
+      };
+      const allowed = job.beforeAction?.(envelope) ?? true;
+      if (allowed !== true) {
+        this.cancel(
+          figureId,
+          typeof allowed === "string" ? allowed : "the situation changed",
+        );
+        continue;
+      }
+      if (this.work.get(figureId) !== job) continue;
+      if (head.type === "approach") {
+        const plan = planApproach(
+          bindWorldMutator(world, staticPlayerPose(null)),
+          { kind: "figure", id: figureId },
+          head.objectId,
+        );
+        if (plan.refusal) {
+          this.cancel(figureId, plan.refusal);
+          continue;
+        }
+        const destination = plan.path.at(-1);
+        if (destination) {
+          if (
+            !job.approachGoal ||
+            job.approachGoal.x !== destination.x ||
+            job.approachGoal.y !== destination.y
+          ) {
+            job.path = null;
+            job.approachGoal = { x: destination.x, y: destination.y };
+          }
+          const done = this.stepMove(
+            world,
+            figureId,
+            job,
+            { type: "moveTo", ...destination },
+            deltaSeconds,
+          );
+          if (this.work.get(figureId) !== job || !done) continue;
+        }
+      }
       if (head.type === "moveTo") {
         if (
           getActorOccupancy(world.objects, { kind: "figure", id: figureId })
@@ -265,14 +325,18 @@ export class NpcActionQueue {
           continue;
         }
         const done = this.stepMove(world, figureId, job, head, deltaSeconds);
-        if (!this.work.has(figureId)) continue;
+        if (this.work.get(figureId) !== job) continue;
         if (!done) continue;
       }
-      const result = this.dispatch(execute, figureId, head);
+      const result = this.dispatch(execute, envelope);
+      if (this.work.get(figureId) !== job) continue;
       job.actions.shift();
       job.path = null;
+      delete job.approachGoal;
       job.executed++;
       job.waitSeconds = 0.25;
+      job.afterAction?.(envelope, result);
+      if (this.work.get(figureId) !== job) continue;
       if (!result.ok) this.cancel(figureId, result.refusal ?? "action refused");
       else if (job.actions.length === 0) {
         this.work.delete(figureId);
@@ -283,15 +347,10 @@ export class NpcActionQueue {
 
   private dispatch(
     execute: (envelope: WorldActionEnvelope) => WorldActionResult,
-    figureId: string,
-    action: WorldAction,
+    envelope: WorldActionEnvelope,
   ): WorldActionResult {
     try {
-      return execute({
-        actor: { kind: "figure", id: figureId },
-        source: "npc",
-        action,
-      });
+      return execute(envelope);
     } catch {
       return {
         ok: false,

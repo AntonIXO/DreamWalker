@@ -71,10 +71,15 @@ export function replayPlayerActions(
       execution,
     };
   }
+  let envelopeIndex = 0;
   const result = replayWorldActions(
     (envelope) => {
+      const original = envelopes[envelopeIndex++]!;
+      const causedEnvelope = original.cause
+        ? { ...envelope, cause: original.cause }
+        : envelope;
       try {
-        const outcome = execute(envelope);
+        const outcome = execute(causedEnvelope);
         execution.push({
           action: envelope.action,
           ok: outcome.ok,

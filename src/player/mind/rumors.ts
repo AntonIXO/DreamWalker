@@ -3,6 +3,7 @@ import type {
   EpisodicMemory,
   MemoryEpisode,
 } from "../../shared/episodic-memory";
+import type { ActionCause } from "../../shared/world-action";
 import { canObserveWorldPose } from "../../shared/world-mind";
 import type { ActorPose } from "../../shared/world-object";
 import { fateOf } from "../game/fates";
@@ -22,6 +23,7 @@ export interface RumorDelivery {
   text: string;
   heardByPlayer: boolean;
   originId: string;
+  cause?: ActionCause;
 }
 
 interface PairCooldown {
@@ -276,6 +278,7 @@ export class RumorExchange {
         entityIds: [...new Set([...source.entityIds, speaker.id])],
         observerIds: [id, "sleeper"],
         originId,
+        ...(source.cause ? { cause: { ...source.cause } } : {}),
         subjectActorId: "player",
         shareable: true,
         provenance: {
@@ -313,6 +316,7 @@ export class RumorExchange {
       text: `${brief(speaker.name, 60)} — ${brief(listener.name, 60)}: «${attribution}${brief(source.text, 260)}»`,
       heardByPlayer,
       originId,
+      ...(source.cause ? { cause: { ...source.cause } } : {}),
     };
   }
 

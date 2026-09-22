@@ -4,11 +4,16 @@ import { validateDreamArtifact } from "../shared/dream";
 import { directorPlanSchema, type DirectorRequest } from "../shared/director";
 import { createWorld } from "../player/game/world";
 import { snapshot } from "../player/mind/remote";
-import { directorInput, sanitiseDirectorPlan } from "./director";
+import {
+  directorInput,
+  directorInstructions,
+  sanitiseDirectorPlan,
+} from "./director";
 import { sonArtifact } from "../../dreams/son/pack";
 import { AgentRuntime } from "./agent-runtime";
 import type { CodexAccountProcess } from "./codex-account";
 import type { CycleExitRequestPayload } from "../shared/ai";
+import { rollWallet } from "../shared/wallet";
 
 function setup() {
   const artifact = validateDreamArtifact(structuredClone(fixture));
@@ -26,6 +31,258 @@ function setup() {
 }
 
 describe("finite director plans", () => {
+  test("guidance keeps old plans compatible but refuses duplicate, executable or unbounded intentions", () => {
+    const guidance = {
+      figureId: "figure1",
+      goalId: "keep-the-bench-clear",
+      goal: "Keep the bench available for visitors",
+      lifetimeSeconds: 80,
+    };
+    expect(directorPlanSchema.parse({ situations: [] })).toEqual({
+      situations: [],
+    });
+    expect(
+      directorPlanSchema.safeParse({
+        situations: [],
+        npcGuidance: [guidance, { ...guidance, goalId: "another-goal" }],
+      }).success,
+    ).toBe(false);
+    for (const change of [
+      { lifetimeSeconds: 4 },
+      { lifetimeSeconds: 181 },
+      { goal: "a".repeat(241) },
+      { actions: [{ type: "leave" }] },
+      { destination: { roomId: "a", x: 2, y: 2 } },
+    ])
+      expect(
+        directorPlanSchema.safeParse({
+          situations: [],
+          npcGuidance: [{ ...guidance, ...change }],
+        }).success,
+      ).toBe(false);
+  });
+
+  test("only live NPCs receive guidance, while the Eye remains excluded", () => {
+    const { artifact, request } = setup();
+    const figure = request.world.figures[0]!;
+    request.world.figures.push(
+      { ...figure, id: "glaz" },
+      { ...figure, id: "dead-figure", fate: "dead" },
+    );
+    const guidance = (figureId: string) => ({
+      figureId,
+      goalId: "guard-place",
+      goal: "Keep the place tidy",
+      lifetimeSeconds: 60,
+    });
+    for (const figureId of ["missing", "dead-figure", "glaz"])
+      expect(
+        sanitiseDirectorPlan(
+          {
+            situations: [],
+            npcGuidance: [guidance("figure1"), guidance(figureId)],
+          },
+          artifact,
+          request,
+        ).npcGuidance,
+      ).toEqual([guidance("figure1")]);
+  });
+
+  test("director sees stable guidance identities and pinned room restrictions", () => {
+    const { artifact, request } = setup();
+    const figure = request.world.figures[0]!;
+    request.world.figures.push(
+      { ...figure, id: "turyshev" },
+      { ...figure, id: "glaz" },
+    );
+    const guidance = {
+      figureId: "turyshev",
+      goalId: "keep-the-bench-clear",
+      goal: "Keep the bench available for visitors",
+      lifetimeSeconds: 80,
+    };
+    request.activeNpcGuidance = [guidance];
+    const input = JSON.parse(directorInput(artifact, request, []));
+    expect(input.activeNpcGuidance).toEqual([guidance]);
+    expect(input.npcGuidanceRestrictions).toContainEqual({
+      figureId: "turyshev",
+      allowed: true,
+      roomId: artifact.spawn.roomId,
+    });
+    expect(input.npcGuidanceRestrictions).toContainEqual({
+      figureId: "glaz",
+      allowed: false,
+      roomId: artifact.finaleRoomId,
+    });
+    expect(
+      sanitiseDirectorPlan(
+        { situations: [], npcGuidance: [guidance] },
+        artifact,
+        request,
+      ).npcGuidance,
+    ).toEqual([guidance]);
+    expect(directorInstructions()).toContain("Reuse exactly the same goalId");
+  });
+
+  test("a dry-wallet crypto-bro stays in the authored metro in guidance, walks and reseating", () => {
+    const artifact = sonArtifact();
+    const runIds = Array.from(
+      { length: 128 },
+      (_, index) =>
+        `00000000-0000-4000-8000-${index.toString().padStart(12, "0")}`,
+    );
+    const dryRunId = runIds.find(
+      (runId) => rollWallet(artifact.slug, runId, 0).wallet === "dry",
+    );
+    const fullRunId = runIds.find(
+      (runId) => rollWallet(artifact.slug, runId, 0).wallet === "full",
+    );
+    expect(dryRunId).toBeDefined();
+    expect(fullRunId).toBeDefined();
+    const metro = artifact.rooms.find((room) => room.id.includes("metro"))!;
+    expect(metro.kind).toBe("place");
+    const request: DirectorRequest = {
+      slug: artifact.slug,
+      runId: dryRunId!,
+      cycleNumber: 1,
+      world: snapshot(createWorld(artifact)),
+      elapsedSeconds: 10,
+      signals: [],
+      activeSituations: [],
+    };
+    const input = JSON.parse(directorInput(artifact, request, []));
+    expect(input.npcGuidanceRestrictions).toContainEqual({
+      figureId: "kripto-bro",
+      allowed: true,
+      roomId: metro.id,
+    });
+    const planFor = (roomId: string, kind: "walk" | "reseat") => ({
+      situations: [
+        {
+          id: `crypto-bro-${kind}`,
+          goal: "Keep the platform tidy",
+          cause: "A visitor rearranged the luggage",
+          lifetimeSeconds: 60,
+          steps: [
+            {
+              id: "act",
+              afterSeconds: 0,
+              guards: [],
+              effect:
+                kind === "walk"
+                  ? {
+                      kind: "npc",
+                      figureId: "kripto-bro",
+                      destination: { roomId, x: 2, y: 2 },
+                      actions: [],
+                    }
+                  : {
+                      kind: "patch",
+                      patch: {
+                        kind: "moveFigure",
+                        figureId: "kripto-bro",
+                        toRoomId: roomId,
+                        reason: "return to the platform",
+                      },
+                    },
+            },
+          ],
+        },
+      ],
+    });
+    for (const kind of ["walk", "reseat"] as const) {
+      expect(
+        sanitiseDirectorPlan(planFor(metro.id, kind), artifact, request)
+          .situations,
+      ).toHaveLength(1);
+      expect(
+        sanitiseDirectorPlan(
+          planFor(artifact.spawn.roomId, kind),
+          artifact,
+          request,
+        ).situations,
+      ).toEqual([]);
+      expect(
+        sanitiseDirectorPlan(planFor(artifact.spawn.roomId, kind), artifact, {
+          ...request,
+          runId: fullRunId!,
+        }).situations,
+      ).toHaveLength(1);
+    }
+  });
+
+  test("the Eye cannot change its pose by occupying or leaving a support", () => {
+    const { artifact, request } = setup();
+    request.world.figures.push({ ...request.world.figures[0]!, id: "glaz" });
+    const objectId = request.world.objects[0]!.id;
+    for (const action of [{ type: "occupy", objectId }, { type: "leave" }]) {
+      const planFor = (figureId: string) => ({
+        situations: [
+          {
+            id: "change-seat",
+            goal: "Make room for a visitor",
+            cause: "The bench is crowded",
+            lifetimeSeconds: 60,
+            steps: [
+              {
+                id: "act",
+                afterSeconds: 0,
+                guards: [],
+                effect: { kind: "npc", figureId, actions: [action] },
+              },
+            ],
+          },
+        ],
+      });
+      expect(
+        sanitiseDirectorPlan(planFor("figure1"), artifact, request).situations,
+      ).toHaveLength(1);
+      expect(
+        sanitiseDirectorPlan(planFor("glaz"), artifact, request).situations,
+      ).toEqual([]);
+    }
+  });
+
+  test("a physical situation cannot also issue a competing guidance to that NPC", () => {
+    const { artifact, request } = setup();
+    const result = sanitiseDirectorPlan(
+      {
+        situations: [
+          {
+            id: "clear-bench",
+            goal: "Clear the bench",
+            cause: "A visitor needs a seat",
+            lifetimeSeconds: 60,
+            steps: [
+              {
+                id: "stand-up",
+                afterSeconds: 0,
+                guards: [],
+                effect: {
+                  kind: "npc",
+                  figureId: "figure1",
+                  actions: [{ type: "leave" }],
+                },
+              },
+            ],
+          },
+        ],
+        npcGuidance: [
+          {
+            figureId: "figure1",
+            goalId: "sit-down",
+            goal: "Stay on the bench",
+            lifetimeSeconds: 60,
+          },
+        ],
+      },
+      artifact,
+      request,
+    );
+    expect(result.situations).toHaveLength(1);
+    expect(result.npcGuidance).toEqual([]);
+  });
+
   test("keeps the whole catalogue but bounds detailed scenes instead of repeating world geometry", () => {
     const artifact = sonArtifact();
     const world = snapshot(createWorld(artifact));

@@ -348,6 +348,7 @@ export function updateFigures(
    */
   follower: { x: number; y: number } | null = null,
   controlledFigures: ReadonlySet<string> = new Set(),
+  options: { skipSchedule?: boolean } = {},
 ): void {
   const phase = phaseAt(cycleProgress);
   const led = whoIsLed(world);
@@ -362,7 +363,8 @@ export function updateFigures(
     }
     const following = figure.id === led && follower !== null;
     // An agenda is a life. Being led is not one, so a led figure has no schedule.
-    if (!following) scheduleFigure(world, figure, phase, visibleRoomId);
+    if (!following && !options.skipSchedule)
+      scheduleFigure(world, figure, phase, visibleRoomId);
     if (figure.id === frozenFigureId || figure.id === "glaz") {
       figure.walking = false;
       figure.targetX = null;

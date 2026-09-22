@@ -10,6 +10,7 @@ import type { ModelMessage } from "ai";
 
 import type { FigureTranscriptLine, WorldSnapshot } from "../shared/ai";
 import type { WorldMutator } from "../shared/world-object";
+import { actorIsConcealed } from "../shared/world-object";
 import { canObserveWorldPose, worldMindForFigure } from "../shared/world-mind";
 import { sandboxFromSnapshot } from "../shared/world-sandbox";
 import { perceivedPlayerIdentity } from "../shared/social-roles";
@@ -83,16 +84,15 @@ export function dialogueWorldContext(
       figure.roomId === roomId &&
       figure.fate !== "dead" &&
       figure.fate !== "gone" &&
-      (figure.id === figureId || canSee(figure)),
+      (figure.id === figureId ||
+        (!actorIsConcealed(physicalWorld.objects, {
+          kind: "figure",
+          id: figure.id,
+        }) &&
+          canSee(figure))),
   );
   const figureIds = new Set(figures.map((figure) => figure.id));
-  const hidingPlace = world.objects.find(
-    (object) => object.state.occupancy?.actor.kind === "player",
-  );
-  const concealed =
-    !!hidingPlace &&
-    (hidingPlace.state.open === false ||
-      hidingPlace.state.occupancy?.pose === "hidden");
+  const concealed = actorIsConcealed(physicalWorld.objects, { kind: "player" });
   const player =
     (figureId === null || !concealed) && canSee(world.player)
       ? world.player
@@ -175,7 +175,12 @@ export function dialogueWorldContext(
           state: {
             ...state,
             occupancy:
-              state.occupancy && (figureId === null || state.open !== false)
+              state.occupancy &&
+              ((state.open !== false && state.occupancy.pose !== "hidden") ||
+                (figureId === null
+                  ? state.occupancy.actor.kind === "player"
+                  : state.occupancy.actor.kind === "figure" &&
+                    state.occupancy.actor.id === figureId))
                 ? { actor: state.occupancy.actor, pose: state.occupancy.pose }
                 : undefined,
           },

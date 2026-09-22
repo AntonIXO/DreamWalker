@@ -15,6 +15,22 @@ import type { PhysicalProfile } from "./object-profile";
 
 export type WorldActionSource = "player" | "npc" | "script" | "sleeper";
 
+/** One external command and every physical consequence it starts share a root. */
+export interface ActionCause {
+  rootId: string;
+  /** Identifies the executing task so its expected receipts do not wake itself. */
+  taskId?: string;
+}
+
+let causeSequence = 0;
+
+/** Works in the authoring CLI, server and browser without platform APIs. */
+export function createActionCause(prefix = "action"): ActionCause {
+  return {
+    rootId: `${prefix}:${Date.now().toString(36)}:${(++causeSequence).toString(36)}:${Math.random().toString(36).slice(2, 10)}`,
+  };
+}
+
 export type WorldAction =
   | { type: "approach"; objectId: string }
   | { type: "occupy"; objectId: string }
@@ -58,6 +74,7 @@ export interface WorldActionEnvelope {
   actor: AnyActor;
   source: WorldActionSource;
   action: WorldAction;
+  cause?: ActionCause;
 }
 
 export type WorldEvent =

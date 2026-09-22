@@ -12,6 +12,7 @@ export const DIRECTOR_LIMITS = {
   maxSituations: 2,
   maxActions: 8,
   maxPatches: 2,
+  maxNpcGuidance: 2,
   maxLifetimeSeconds: 180,
 } as const;
 
@@ -166,16 +167,39 @@ export const directorSituationSchema = z.object({
     .max(8),
 });
 
+/** A private motive for local NPC decisions, never a movement/action program. */
+export const npcGuidanceSchema = z
+  .object({
+    figureId: id,
+    goalId: id,
+    goal: z.string().trim().min(1).max(240),
+    lifetimeSeconds: z.number().min(5).max(DIRECTOR_LIMITS.maxLifetimeSeconds),
+  })
+  .strict();
+
 export const directorPlanSchema = z
   .object({
     situations: z
       .array(directorSituationSchema)
       .max(DIRECTOR_LIMITS.maxSituations),
+    npcGuidance: z
+      .array(npcGuidanceSchema)
+      .max(DIRECTOR_LIMITS.maxNpcGuidance)
+      .optional(),
   })
   .superRefine((plan, context) => {
     let actions = 0;
     let patches = 0;
     const ids = new Set<string>();
+    const guidedFigures = new Set<string>();
+    for (const guidance of plan.npcGuidance ?? []) {
+      if (guidedFigures.has(guidance.figureId))
+        context.addIssue({
+          code: "custom",
+          message: "Only one guidance per NPC is allowed",
+        });
+      guidedFigures.add(guidance.figureId);
+    }
     for (const situation of plan.situations) {
       if (ids.has(situation.id))
         context.addIssue({ code: "custom", message: "Repeated situation id" });
@@ -216,6 +240,12 @@ export type DirectorGuard = z.infer<typeof directorGuardSchema>;
 export type DirectorPlan = z.infer<typeof directorPlanSchema>;
 export type DirectorSituation = z.infer<typeof directorSituationSchema>;
 export type DirectorStep = DirectorSituation["steps"][number];
+export type NpcGuidance = z.infer<typeof npcGuidanceSchema>;
+
+export interface ActiveNpcGuidance extends NpcGuidance {
+  /** Local simulation time; expiry never needs another model call. */
+  acceptedAt: number;
+}
 
 export interface DirectorContext {
   runId: string;
@@ -231,6 +261,7 @@ export interface DirectorRequest extends DirectorContext {
   elapsedSeconds: number;
   signals: string[];
   activeSituations: Array<{ id: string; goal: string; step: number }>;
+  activeNpcGuidance?: NpcGuidance[];
   recentReceipts?: DirectorReceipt[];
 }
 
@@ -270,4 +301,7 @@ export interface DirectorSnapshot {
   active: ActiveDirectorSituation[];
   completedIds: string[];
   receipts?: DirectorReceipt[];
+  npcGuidance?: ActiveNpcGuidance[];
+  /** Stable goal identities survive expiry and reload so paraphrases do not rearm decisions. */
+  seenGuidanceIds?: Array<{ figureId: string; goalId: string }>;
 }

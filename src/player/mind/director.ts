@@ -1,6 +1,8 @@
 /** Background composition, foreground physical truth. Network latency never pauses play. */
 import {
   DIRECTOR_LIMITS,
+  npcGuidanceSchema,
+  type ActiveNpcGuidance,
   directorPlanSchema,
   directorSituationSchema,
   type ActiveDirectorSituation,
@@ -23,7 +25,11 @@ import type {
 import type { WorldMindEvent } from "../../shared/world-mind";
 import { canObserveWorldPose } from "../../shared/world-mind";
 import { perceivedPlayerIdentity } from "../../shared/social-roles";
-import { NpcActionQueue, planNpcRoute } from "../game/npc-action-queue";
+import { planNpcRoute } from "../game/npc-action-queue";
+import {
+  NpcTaskCoordinator,
+  type NpcTaskOwner,
+} from "../game/npc-task-coordinator";
 import {
   applyPatch,
   patchTouches,
@@ -43,10 +49,16 @@ export interface DirectorHost {
   onPatch?(patch: MapPatch, result: PatchResult): void;
   onSpeech?(figureId: string, text: string): void;
   onChange?(): void;
+  onGuidanceChange?(guidance: readonly ActiveNpcGuidance[]): void;
   request?(
     payload: DirectorRequest,
     signal: AbortSignal,
   ): Promise<DirectorPlan>;
+}
+
+export interface WorldDirectorOptions {
+  coordinator?: NpcTaskCoordinator;
+  eventDriven?: boolean | (() => boolean);
 }
 
 export interface DirectorTickOptions {
@@ -220,7 +232,9 @@ export function directorGuardHolds(
 }
 
 export class WorldDirector {
-  readonly npcQueue = new NpcActionQueue();
+  readonly npcQueue: NpcTaskCoordinator;
+  private guidance: ActiveNpcGuidance[] = [];
+  private seenGuidanceIds: Array<{ figureId: string; goalId: string }> = [];
   private elapsedSeconds = 0;
   private lastCallAt: number | null = null;
   private lastProgressAt = 0;
@@ -237,7 +251,26 @@ export class WorldDirector {
   constructor(
     private readonly world: WorldState,
     private readonly host: DirectorHost,
-  ) {}
+    private readonly options: WorldDirectorOptions = {},
+  ) {
+    this.npcQueue =
+      options.coordinator ??
+      new NpcTaskCoordinator(world, (envelope) => host.execute(envelope));
+  }
+
+  get activeGuidance(): readonly ActiveNpcGuidance[] {
+    return structuredClone(this.guidance);
+  }
+
+  private get eventDriven(): boolean {
+    return typeof this.options.eventDriven === "function"
+      ? this.options.eventDriven()
+      : (this.options.eventDriven ?? false);
+  }
+
+  private taskOwner(situation: ActiveDirectorSituation): NpcTaskOwner {
+    return { kind: "director", id: `${situation.plan.id}:${situation.step}` };
+  }
 
   get waiting(): boolean {
     return this.controller !== null;
@@ -314,43 +347,15 @@ export class WorldDirector {
       else if (situation.remainingActions && !this.guardsHold(situation))
         this.finish(situation, "the situation changed");
     }
-    this.npcQueue.tick(
-      this.world,
-      (envelope) => {
-        const situation = this.active.find((entry) => {
-          const effect = entry.plan.steps[entry.step]?.effect;
-          return (
-            entry.remainingActions &&
-            effect?.kind === "npc" &&
-            envelope.actor.kind === "figure" &&
-            effect.figureId === envelope.actor.id
-          );
-        });
-        const step = situation?.plan.steps[situation.step];
-        if (!situation || !step || !this.guardsHold(situation)) {
-          return {
-            ok: false,
-            refusal: "the situation changed",
-            events: [],
-            affectedObjects: [],
-            affectedRooms: [],
-          };
-        }
-        const result = this.host.execute(envelope);
-        if (result.ok) {
-          const consumed = (situation.consumedGuardIndices ??= []);
-          step.guards.forEach((guard, index) => {
-            if (
-              !directorGuardHolds(this.world, guard, situation.afterSequence) &&
-              !consumed.includes(index)
-            )
-              consumed.push(index);
-          });
-        }
-        return result;
-      },
-      delta,
+    const beforeExpiry = this.guidance.length;
+    this.guidance = this.guidance.filter(
+      (entry) => this.elapsedSeconds - entry.acceptedAt < entry.lifetimeSeconds,
     );
+    if (beforeExpiry !== this.guidance.length) {
+      this.host.onGuidanceChange?.(this.activeGuidance);
+      this.host.onChange?.();
+    }
+    if (!this.options.coordinator) this.npcQueue.tick(delta);
     for (const situation of [...this.active]) this.advance(situation);
     if (this.controller || this.active.length >= DIRECTOR_LIMITS.maxSituations)
       return;
@@ -360,6 +365,7 @@ export class WorldDirector {
     )
       return;
     const idle =
+      !this.eventDriven &&
       this.active.length === 0 &&
       this.elapsedSeconds -
         Math.max(this.lastProgressAt, this.lastCallAt ?? 0) >=
@@ -409,6 +415,14 @@ export class WorldDirector {
         step: entry.step,
       })),
       recentReceipts: structuredClone(this.receipts.slice(-12)),
+      activeNpcGuidance: this.activeGuidance.map(
+        ({ figureId, goalId, goal, lifetimeSeconds }) => ({
+          figureId,
+          goalId,
+          goal,
+          lifetimeSeconds,
+        }),
+      ),
     };
     try {
       const result = await (this.host.request ?? requestDirector)(
@@ -423,6 +437,7 @@ export class WorldDirector {
       )
         return;
       const plan = directorPlanSchema.parse(result);
+      this.acceptGuidance(plan.npcGuidance ?? []);
       const currentFacts = new Map(
         current.world.objects.map((object) => [
           object.id,
@@ -487,7 +502,7 @@ export class WorldDirector {
     }
     if (
       step.effect.kind === "npc" &&
-      this.npcQueue.isBusy(step.effect.figureId)
+      this.npcQueue.ownerOf(step.effect.figureId)?.kind === "director"
     )
       return;
     if (this.elapsedSeconds - situation.lastStepAt < step.afterSeconds) return;
@@ -547,16 +562,71 @@ export class WorldDirector {
       return;
     }
     situation.remainingActions = structuredClone(actions);
-    this.npcQueue.enqueue(effect.figureId, actions, (result) => {
-      if (!this.active.includes(situation)) return;
-      delete situation.remainingActions;
-      if (!result.ok) {
-        this.finish(situation, result.refusal ?? "action refused");
-        return;
-      }
-      if (effect.reply) this.speak(effect.figureId, effect.reply);
-      this.next(situation);
+    const owner = this.taskOwner(situation);
+    const context = this.host.context();
+    this.npcQueue.tryEnqueue(effect.figureId, owner, actions, {
+      cause: {
+        rootId: `director:${context.runId}:${context.cycleNumber}:${situation.plan.id}`,
+        taskId: owner.id,
+      },
+      lifetimeSeconds:
+        situation.plan.lifetimeSeconds -
+        (this.elapsedSeconds - situation.acceptedAt),
+      beforeAction: () =>
+        this.active.includes(situation) && this.guardsHold(situation)
+          ? true
+          : "the situation changed",
+      afterAction: (_envelope, result) => {
+        if (!result.ok) return;
+        const consumed = (situation.consumedGuardIndices ??= []);
+        step.guards.forEach((guard, index) => {
+          if (
+            !directorGuardHolds(this.world, guard, situation.afterSequence) &&
+            !consumed.includes(index)
+          )
+            consumed.push(index);
+        });
+      },
+      onComplete: (result) => {
+        if (!this.active.includes(situation)) return;
+        delete situation.remainingActions;
+        if (!result.ok) {
+          this.finish(situation, result.refusal ?? "action refused");
+          return;
+        }
+        if (effect.reply) this.speak(effect.figureId, effect.reply);
+        this.next(situation);
+      },
     });
+  }
+
+  private acceptGuidance(
+    entries: NonNullable<DirectorPlan["npcGuidance"]>,
+  ): void {
+    let changed = false;
+    for (const entry of entries) {
+      if (
+        !this.world.figures.some((figure) => figure.id === entry.figureId) ||
+        this.seenGuidanceIds.some(
+          (seen) =>
+            seen.figureId === entry.figureId && seen.goalId === entry.goalId,
+        )
+      )
+        continue;
+      this.seenGuidanceIds.push({
+        figureId: entry.figureId,
+        goalId: entry.goalId,
+      });
+      this.guidance = this.guidance.filter(
+        (existing) => existing.figureId !== entry.figureId,
+      );
+      this.guidance.push({
+        ...structuredClone(entry),
+        acceptedAt: this.elapsedSeconds,
+      });
+      changed = true;
+    }
+    if (changed) this.host.onGuidanceChange?.(this.activeGuidance);
   }
 
   private isLocalEffect(
@@ -600,7 +670,7 @@ export class WorldDirector {
     this.active = this.active.filter((entry) => entry !== situation);
     const effect = situation.plan.steps[situation.step]?.effect;
     if (effect?.kind === "npc" && situation.remainingActions)
-      this.npcQueue.cancel(effect.figureId, refusal);
+      this.npcQueue.cancel(effect.figureId, this.taskOwner(situation), refusal);
     if (!this.completedIds.includes(situation.plan.id))
       this.completedIds.push(situation.plan.id);
     this.completedIds = this.completedIds.slice(-64);
@@ -663,11 +733,13 @@ export class WorldDirector {
       signals: this.signals,
       completedIds: this.completedIds,
       receipts: this.receipts,
+      npcGuidance: this.guidance,
+      seenGuidanceIds: this.seenGuidanceIds,
       active: this.active.map((entry) => {
         const effect = entry.plan.steps[entry.step]?.effect;
         const remaining =
           entry.remainingActions && effect?.kind === "npc"
-            ? this.npcQueue.remaining(effect.figureId)
+            ? this.npcQueue.remaining(effect.figureId, this.taskOwner(entry))
             : null;
         return {
           ...entry,
@@ -723,6 +795,52 @@ export class WorldDirector {
           .slice(-32)
           .map((entry) => structuredClone(entry))
       : [];
+    this.seenGuidanceIds = Array.isArray(state.seenGuidanceIds)
+      ? state.seenGuidanceIds
+          .filter(
+            (entry) =>
+              typeof entry?.figureId === "string" &&
+              typeof entry?.goalId === "string",
+          )
+          .slice(-4096)
+      : [];
+    for (const entry of Array.isArray(state.npcGuidance)
+      ? state.npcGuidance
+      : []) {
+      if (!entry || typeof entry !== "object") continue;
+      const { acceptedAt: savedAcceptedAt, ...guidance } = entry;
+      const parsed = npcGuidanceSchema.safeParse(guidance);
+      if (
+        !parsed.success ||
+        !this.world.figures.some((figure) => figure.id === parsed.data.figureId)
+      )
+        continue;
+      const acceptedAt = Math.min(
+        this.elapsedSeconds,
+        finite(savedAcceptedAt, this.elapsedSeconds),
+      );
+      if (this.elapsedSeconds - acceptedAt >= parsed.data.lifetimeSeconds)
+        continue;
+      if (
+        this.guidance.some(
+          (existing) => existing.figureId === parsed.data.figureId,
+        )
+      )
+        continue;
+      this.guidance.push({ ...parsed.data, acceptedAt });
+      if (
+        !this.seenGuidanceIds.some(
+          (seen) =>
+            seen.figureId === parsed.data.figureId &&
+            seen.goalId === parsed.data.goalId,
+        )
+      )
+        this.seenGuidanceIds.push({
+          figureId: parsed.data.figureId,
+          goalId: parsed.data.goalId,
+        });
+    }
+    // Restored guidance is state, not a new decision trigger. The controller restores its own deduplication state.
     for (const entry of Array.isArray(state.active)
       ? state.active.slice(0, DIRECTOR_LIMITS.maxSituations)
       : []) {
@@ -789,7 +907,9 @@ export class WorldDirector {
   resetCycle(): void {
     this.cancelRequest();
     this.active = [];
-    this.npcQueue.clear();
+    this.npcQueue.cancelOwner("director");
+    this.guidance = [];
+    this.seenGuidanceIds = [];
     this.elapsedSeconds = 0;
     this.lastCallAt = null;
     this.lastProgressAt = 0;

@@ -180,16 +180,22 @@ describe("nearby rumor exchange", () => {
 
   test("two hops are possible across meetings; a third hop and same-tick cascade are not", () => {
     const { world, bob, carol, david, add, tick, episodes } = setup();
-    const source = add();
-    tick();
+    const source = add({
+      cause: { rootId: "player-command", taskId: "carry" },
+    });
+    expect(tick()!.cause).toEqual(source.cause);
+    // Only episodic memory remains by this meeting; the raw receipt is not needed.
+    episodes.restore(JSON.parse(JSON.stringify(episodes.snapshot())));
     world.figures = [bob, carol];
     bob.roomId = "b";
     expect(episodes.forObserver("carol", 1)).toEqual([]);
     const second = tick()!;
     expect(second.speakerId).toBe("bob");
+    expect(second.cause).toEqual(source.cause);
     expect(second.text).toContain("Алиса");
     expect(episodes.forObserver("carol", 1)[0]).toMatchObject({
       originId: source.originId,
+      cause: source.cause,
       provenance: {
         kind: "heard",
         originWitnessId: "alice",

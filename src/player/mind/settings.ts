@@ -8,6 +8,36 @@ import { getLocale, t, type SupportedLocale } from "../../shared/i18n";
 
 export type MindSettings = CodexAccountStatus;
 
+/** Public availability only. The provider credential never crosses this boundary. */
+export interface NpcDecisionSettings {
+  enabled: boolean;
+  provider: "openrouter";
+  model: string;
+}
+
+export async function loadNpcDecisionSettings(): Promise<NpcDecisionSettings> {
+  try {
+    const response = await fetch("/api/ai/npc-decision/status", {
+      cache: "no-store",
+      signal: AbortSignal.timeout(2000),
+    });
+    if (!response.ok) throw new Error("NPC decisions unavailable");
+    const value = (await response.json()) as Partial<NpcDecisionSettings>;
+    return {
+      enabled: value.enabled === true,
+      provider: "openrouter",
+      model:
+        typeof value.model === "string" ? value.model : "~typesafe/jev-latest",
+    };
+  } catch {
+    return {
+      enabled: false,
+      provider: "openrouter",
+      model: "~typesafe/jev-latest",
+    };
+  }
+}
+
 export const DEFAULT_MIND_SETTINGS: MindSettings = {
   provider: "codex",
   state: "disconnected",

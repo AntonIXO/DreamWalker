@@ -1,6 +1,6 @@
 /** Bounded factual memories for one run. Retrieval never grants new witnesses. */
 import { RETURNS_WHOLE } from "./verbs";
-import type { WorldEvent } from "./world-action";
+import type { ActionCause, WorldEvent } from "./world-action";
 import {
   worldMindForFigure,
   type WorldMindEvent,
@@ -24,6 +24,8 @@ export interface MemoryEpisode {
   observerIds: string[];
   /** Stable across observer-specific views and subsequent retellings. */
   originId?: string;
+  /** Survives receipt-ring rotation and retellings without creating a new cause. */
+  cause?: ActionCause;
   /** The observed actor; being mentioned or witnessing an event does not count. */
   subjectActorId?: string | null;
   shareable?: boolean;
@@ -111,6 +113,15 @@ function normalizeProvenance(value: unknown): MemoryProvenance | undefined {
   };
 }
 
+function normalizeCause(value: unknown): ActionCause | undefined {
+  const cause = record(value);
+  if (!cause) return undefined;
+  const rootId = identifier(cause.rootId);
+  const taskId = identifier(cause.taskId);
+  if (!rootId || (cause.taskId !== undefined && !taskId)) return undefined;
+  return { rootId, ...(taskId ? { taskId } : {}) };
+}
+
 function normalize(value: unknown): MemoryEpisodeInput | null {
   const item = record(value);
   if (!item) return null;
@@ -130,6 +141,7 @@ function normalize(value: unknown): MemoryEpisodeInput | null {
   )
     return null;
   const provenance = normalizeProvenance(item.provenance);
+  const cause = normalizeCause(item.cause);
   const subjectActorId = identifier(item.subjectActorId);
   return {
     id,
@@ -147,6 +159,7 @@ function normalize(value: unknown): MemoryEpisodeInput | null {
       (item.kind === "action" || item.kind === "movement") &&
       provenance !== undefined,
     ...(provenance ? { provenance } : {}),
+    ...(cause ? { cause } : {}),
   };
 }
 
@@ -509,6 +522,7 @@ function episodeForView(
     entityIds: [...entities],
     observerIds: [observerId],
     originId: `world:${view.cycle}:${view.sequence}`,
+    ...(view.cause ? { cause: { ...view.cause } } : {}),
     subjectActorId: actor,
     shareable:
       view.actor?.kind === "player" &&
