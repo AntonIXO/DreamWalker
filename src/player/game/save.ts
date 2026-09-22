@@ -1,12 +1,15 @@
 /** A single atomic local checkpoint. No network or unload-only dependency. */
 import { createWorldMind, type WorldMindState } from "../../shared/world-mind";
 import { migrateWorldObjects } from "./object-migration";
+import { migrateArchitectureSave } from "./save-art-migration";
 import type { DreamArtifact } from "../../shared/dream";
 import type { PlayerActionLine } from "../../shared/ai";
 import type { DirectorSnapshot } from "../../shared/director";
 import {
   LEGACY_SON_PACK_FINGERPRINTS,
   SON_LIVING_PACK_FINGERPRINT,
+  SON_ARCHITECTURE_PACK_FINGERPRINT,
+  SON_ART_PREVIEW_PACK_FINGERPRINTS,
 } from "../../shared/legacy-dream-packs";
 import { cloneObject } from "../../shared/world-object";
 import type { Cycle, JournalEntry } from "./cycle";
@@ -339,15 +342,26 @@ export class RunStore {
       const raw = this.storage().getItem(this.key);
       if (!raw) return { save: null, unavailable: false };
       const envelope = JSON.parse(raw);
+      const architectureMigration =
+        this.artifact.slug === "son" &&
+        this.pack === SON_ARCHITECTURE_PACK_FINGERPRINT &&
+        (envelope.pack === SON_LIVING_PACK_FINGERPRINT ||
+          SON_ART_PREVIEW_PACK_FINGERPRINTS.some(
+            (value) => value === envelope.pack,
+          ) ||
+          LEGACY_SON_PACK_FINGERPRINTS.some(
+            (value) => value === envelope.pack,
+          ));
       const livingMigration =
         this.artifact.slug === "son" &&
-        this.pack === SON_LIVING_PACK_FINGERPRINT &&
+        (this.pack === SON_LIVING_PACK_FINGERPRINT || architectureMigration) &&
         LEGACY_SON_PACK_FINGERPRINTS.some((value) => value === envelope.pack);
       if (
         envelope.version !== 1 ||
         (envelope.pack !== this.pack &&
           envelope.pack !== this.priorContainerPack &&
-          !livingMigration) ||
+          !livingMigration &&
+          !architectureMigration) ||
         typeof envelope.payload !== "string" ||
         fingerprint(envelope.payload) !== envelope.checksum
       ) {
@@ -383,6 +397,7 @@ export class RunStore {
         return { save: null, unavailable: true };
       }
       if (livingMigration) migrateLivingSave(save, this.artifact);
+      if (architectureMigration) migrateArchitectureSave(save, this.artifact);
       return { save, unavailable: false };
     } catch {
       return { save: null, unavailable: true };

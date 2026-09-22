@@ -68,12 +68,13 @@ describe("liveObjectPlacements", () => {
     ]);
   });
 
-  test("fixed furniture stays off the live layer", () => {
+  test("fixed furniture with art shares depth sorting with walkers", () => {
     const list = liveObjectPlacements(
       [bottle({ id: "crate", mobility: "fixed" })],
       new Map(),
     );
-    expect(list).toEqual([]);
+    expect(list).toHaveLength(1);
+    expect(list[0]!.id).toBe("crate");
   });
 });
 

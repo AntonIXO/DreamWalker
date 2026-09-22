@@ -17,6 +17,7 @@ import { ObservationLog } from "../mind/observation";
 import { sonArtifact } from "../../../dreams/son/pack";
 import {
   LEGACY_SON_PACK_FINGERPRINTS,
+  SON_ARCHITECTURE_PACK_FINGERPRINT,
   SON_LIVING_PACK_FINGERPRINT,
 } from "../../shared/legacy-dream-packs";
 
@@ -83,6 +84,92 @@ function setup() {
 }
 
 describe("run checkpoints", () => {
+  test("the visual upgrade moves world coordinates while retaining possessions, memory and object ground contacts", () => {
+    const artifact = sonArtifact();
+    const world = createWorld(artifact);
+    const saved = structuredClone(setup().snapshot());
+    saved.world = structuredClone(snapshotWorld(world));
+    saved.session.meta = null;
+    const yard = saved.world.rooms.find(
+      (room) => room.id === world.currentRoomId,
+    )!;
+    yard.originX = 34;
+    yard.originY = 42;
+    saved.session.player = createPlayer(yard, "default");
+    saved.session.player.x = (34 + 10) * 16;
+    saved.session.player.y = (42 + 8) * 16;
+    const oldDoor = yard.doors[0]!;
+    oldDoor.closed = true;
+    for (const room of saved.world.rooms) {
+      room.props = room.props.filter((prop) => !prop.id.startsWith("style-"));
+      room.hotspots = room.hotspots.filter(
+        (spot) => !spot.id.startsWith("style-"),
+      );
+    }
+    for (const key of ["objects", "baseObjects"] as const) {
+      saved.world[key] = saved.world[key].filter(
+        (object) => !object.id.startsWith("style-"),
+      );
+      const bottle = saved.world[key].find(
+        (object) => object.id === "butylka-riadom-s-turyshevym-ne-pervaia",
+      )!;
+      bottle.location = { kind: "room", roomId: yard.id, x: 2, y: 4 };
+      bottle.body = { w: 1, h: 1, solid: true };
+      const bag = saved.world[key].find((object) => object.id === "riukzak")!;
+      bag.location = { kind: "held", actor: { kind: "player" } };
+      bag.state.inscription = "сохранено";
+    }
+    const data = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => data.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        data.set(key, value);
+      },
+    };
+    const store = new RunStore(artifact, () => storage);
+    expect(store.write(saved)).toBe(true);
+    const envelope = JSON.parse(data.get(store.key)!);
+    envelope.pack = SON_LIVING_PACK_FINGERPRINT;
+    data.set(store.key, JSON.stringify(envelope));
+    const loaded = store.load(artifact);
+    expect(loaded.unavailable).toBe(false);
+    const next = loaded.save!;
+    const current = artifact.rooms.find((room) => room.id === yard.id)!;
+    expect(next.session.player.x).toBe((current.originX + 10) * 16);
+    expect(next.session.player.y).toBe((current.originY + 8) * 16);
+    expect(
+      next.world.objects.find((object) => object.id === "riukzak"),
+    ).toMatchObject({
+      location: { kind: "held", actor: { kind: "player" } },
+      state: { inscription: "сохранено" },
+    });
+    expect(
+      next.world.objects.find(
+        (object) => object.id === "butylka-riadom-s-turyshevym-ne-pervaia",
+      ),
+    ).toMatchObject({
+      location: { x: 2.325, y: 4.3 },
+      body: { w: 0.35, h: 0.7 },
+    });
+    expect(
+      next.world.rooms
+        .find((room) => room.id === yard.id)!
+        .doors.find((door) => door.id === oldDoor.id)!.closed,
+    ).toBe(true);
+    expect(next.journal).toEqual(saved.journal);
+    expect(next.conversations).toEqual(saved.conversations);
+    expect(
+      next.world.objects.filter((object) => object.id === "style-yard-bench-2"),
+    ).toHaveLength(1);
+    expect(store.write(next)).toBe(true);
+    expect(
+      store
+        .load(artifact)
+        .save!.world.objects.filter(
+          (object) => object.id === "style-yard-bench-2",
+        ),
+    ).toHaveLength(1);
+  });
   test("the exact previous son checkpoint gains physical capabilities without resurrecting or duplicating old objects", () => {
     const artifact = sonArtifact();
     const world = createWorld(artifact);
@@ -148,7 +235,7 @@ describe("run checkpoints", () => {
     removedBag.location = { kind: "removed" };
     expect(store.write(saved)).toBe(true);
     const envelope = JSON.parse(data.get(store.key)!);
-    expect(envelope.pack).toBe(SON_LIVING_PACK_FINGERPRINT);
+    expect(envelope.pack).toBe(SON_ARCHITECTURE_PACK_FINGERPRINT);
     envelope.pack = LEGACY_SON_PACK_FINGERPRINTS[0];
     data.set(store.key, JSON.stringify(envelope));
     const loaded = store.load(artifact);

@@ -6,7 +6,8 @@
  * lower in the room in front, which is the whole of depth in a top-down view.
  */
 
-import { Container, Rectangle, Sprite, Texture } from "pixi.js";
+import { Container, Graphics, Rectangle, Sprite, Texture } from "pixi.js";
+import { objectArtSize } from "../../shared/art/frame";
 
 import type { SpriteSheetRef } from "../../shared/content";
 import type { Direction } from "../../shared/roomGrid";
@@ -294,7 +295,7 @@ export function liveObjectPlacements(
 ): LiveObjectPlacement[] {
   const out: LiveObjectPlacement[] = [];
   for (const object of objects) {
-    if (object.mobility === "fixed") continue;
+    if (object.mobility === "fixed" && !object.visual.image) continue;
     if (object.state.wornBy && object.profile?.wear?.appearanceFigureId)
       continue;
     const image =
@@ -344,6 +345,7 @@ export class ActorLayer {
   private readonly paintings = new Map<string, Sprite>();
   private readonly clues = new Map<string, Sprite>();
   private readonly objects = new Map<string, Sprite>();
+  private readonly objectShadows = new Map<string, Graphics>();
   private readonly texturesByImage = new Map<string, Texture>();
 
   constructor(
@@ -352,6 +354,7 @@ export class ActorLayer {
     private readonly figureTextures: ReadonlyMap<string, Texture> = new Map(),
     private readonly objectTextures: ReadonlyMap<string, Texture> = new Map(),
     private readonly figureWalks: ReadonlyMap<string, AuthoredWalk> = new Map(),
+    private readonly objectFallback: Texture | null = null,
   ) {}
 
   add(walker: WalkerSprite): void {
@@ -515,6 +518,10 @@ export class ActorLayer {
     placements: readonly LiveObjectPlacement[],
     tileSize: number,
     world?: WorldState,
+    animation: { seconds: number; reducedMotion: boolean } = {
+      seconds: 0,
+      reducedMotion: true,
+    },
   ): void {
     const seen = new Set<string>();
     for (const placement of placements) {
@@ -533,6 +540,14 @@ export class ActorLayer {
         });
         this.objects.set(placement.id, sprite);
         this.root.addChild(sprite);
+        const shadow = new Graphics({
+          eventMode: "none",
+          label: `object-shadow:${placement.id}`,
+        })
+          .ellipse(0, 0, 0.5, 0.16)
+          .fill({ color: 0x24372d, alpha: 0.25 });
+        this.objectShadows.set(placement.id, shadow);
+        this.root.addChild(shadow);
       } else if (sprite.texture !== texture) {
         sprite.texture = texture;
       }
@@ -552,27 +567,62 @@ export class ActorLayer {
           ? 0.8
           : 0.8
         : (object?.body?.h ?? 1);
-      sprite.setSize(tileSize * width, tileSize * height);
+      const artSize = objectArtSize(
+        texture.width,
+        texture.height,
+        tileSize * width,
+        tileSize *
+          (height +
+            (placement.held || placement.role === "floorDecor" ? 0 : 1)),
+      );
+      sprite.setSize(artSize.width, artSize.height);
       const heldNudge = placement.held && !equipped ? tileSize * 0.5 : 0;
       sprite.x =
         (ox + placement.x + (placement.held ? 0 : width / 2)) * tileSize +
         heldNudge;
       sprite.y = (oy + placement.y + (placement.held ? 0 : height)) * tileSize;
+      const shadow = this.objectShadows.get(placement.id)!;
+      shadow.position.set(sprite.x, sprite.y - 1);
+      shadow.scale.set(Math.max(5, artSize.width * 0.88));
+      shadow.zIndex = -1;
+      shadow.visible = !placement.held;
+      if (placement.role === "floorDecor") shadow.visible = false;
       if (equipped === "head") sprite.y -= 24;
       else if (equipped === "back") sprite.y -= 9;
       else if (equipped === "body") sprite.y -= 2;
       sprite.zIndex = Math.round(sprite.y);
+      if (placement.role === "floorDecor") sprite.zIndex = -2;
       if (object?.state.occupancy && object.state.open !== false) {
         const slotY = object.profile?.occupancy?.y ?? (object.body?.h ?? 1) / 2;
         sprite.zIndex = Math.round((oy + placement.y + slotY) * tileSize) - 1;
       }
       if (equipped)
         sprite.zIndex = Math.round((oy + placement.y) * tileSize) + 1;
+      // The slug's six-second breath is authored in the room atlas. Rigid objects
+      // keep still; an active screen only changes luminance, never its footprint.
+      if (
+        !placement.held &&
+        !animation.reducedMotion &&
+        placement.role === "breathing"
+      ) {
+        sprite.scale.y *=
+          1 + 0.025 * Math.sin((animation.seconds * Math.PI) / 3);
+      }
+      sprite.alpha =
+        placement.role === "screen"
+          ? object?.state.active === false
+            ? 0.68
+            : animation.reducedMotion
+              ? 1
+              : 0.985 + 0.015 * Math.sin((animation.seconds * Math.PI) / 3)
+          : 1;
     }
     for (const [id, sprite] of this.objects) {
       if (seen.has(id)) continue;
       sprite.destroy();
       this.objects.delete(id);
+      this.objectShadows.get(id)?.destroy();
+      this.objectShadows.delete(id);
     }
   }
 
@@ -610,6 +660,8 @@ export class ActorLayer {
       ? this.clueTextures.get(placement.clueId)
       : undefined;
     if (clue) return clue;
+    if ((!placement.role || placement.role === "prop") && this.objectFallback)
+      return this.objectFallback;
     return (
       this.atlas.roles.get(placement.role ?? "prop")?.[0] ??
       this.atlas.roles.get("prop")?.[0]
@@ -625,6 +677,8 @@ export class ActorLayer {
     this.clues.clear();
     for (const sprite of this.objects.values()) sprite.destroy();
     this.objects.clear();
+    for (const shadow of this.objectShadows.values()) shadow.destroy();
+    this.objectShadows.clear();
     this.root.destroy({ children: true });
   }
 }

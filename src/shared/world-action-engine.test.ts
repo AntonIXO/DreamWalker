@@ -563,8 +563,8 @@ describe("createWorld integration", () => {
     expect(bottle?.location).toEqual({
       kind: "room",
       roomId: "19-dvor-i-oranzhevye-lavochki",
-      x: 2,
-      y: 4,
+      x: 2.325,
+      y: 4.3,
     });
     const mutator = bindWorldMutator(
       world,

@@ -161,7 +161,12 @@ export async function buildCommand(
       }
       try {
         await access(
-          join(dir, "content", "assets", backdrop.slice("assets/".length)),
+          join(
+            dir,
+            "content",
+            "assets",
+            backdrop.split("#")[0]!.slice("assets/".length),
+          ),
         );
       } catch {
         throw new Error(
@@ -249,7 +254,7 @@ export async function buildCommand(
         );
       }
       try {
-        await access(join(dir, "content", image));
+        await access(join(dir, "content", image.split("#")[0]!));
       } catch {
         throw new Error(
           `${room.id}/${prop.id} image is missing: content/${image}`,

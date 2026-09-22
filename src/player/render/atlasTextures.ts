@@ -11,6 +11,7 @@
  */
 
 import { Assets, Rectangle, Texture } from "pixi.js";
+import { imageFrame } from "../../shared/art/frame";
 
 import { validateAtlasManifest, type AtlasManifest } from "../../shared/dream";
 
@@ -145,13 +146,25 @@ export async function loadExternalTextures(
     Array.from({ length: Math.min(concurrency, sources.length) }, async () => {
       while (cursor < sources.length) {
         const source = sources[cursor++]!;
-        const url = `${baseUrl}/${source.path}`;
+        const frame = imageFrame(source.path);
+        const url = `${baseUrl}/${frame?.path ?? source.path}`;
         const texture = await loadOptionalTexture(
           url,
-          `dream-external:${source.id}`,
+          `dream-external:${frame?.path ?? source.path}`,
           scaleMode,
         );
-        if (texture) textures.set(source.id, texture);
+        if (texture) {
+          textures.set(
+            source.id,
+            frame
+              ? new Texture({
+                  source: texture.source,
+                  frame: new Rectangle(frame.x, frame.y, frame.w, frame.h),
+                  label: source.id,
+                })
+              : texture,
+          );
+        }
       }
     }),
   );

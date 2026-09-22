@@ -108,6 +108,8 @@ export interface FigureAi {
 
 export interface DreamPack {
   artifact(): DreamArtifact;
+  /** Optional modular material/foliage atlas regions, loaded at boot. */
+  sceneAssets?: Readonly<Record<string, string>>;
   scripts: readonly DreamScript[];
   npcs: Readonly<Record<string, FigureAi>>;
 }

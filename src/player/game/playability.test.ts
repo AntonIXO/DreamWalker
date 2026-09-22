@@ -321,7 +321,45 @@ describe("son is playable", () => {
     );
     player.x = at.x;
     player.y = at.y;
-    walkWorld(world, player, { x: 1, y: 0 }, 180);
+    walkWorld(world, player, { x: 1, y: 0 }, 20);
+    expect(world.currentRoomId).toBe(door.toRoomId);
+    // The route now bends and has its own authored length. Follow its pavement
+    // with real collision-checked movement instead of holding east for six seconds.
+    const route = world.roomById.get(door.toRoomId)!;
+    for (let x = 2; x < route.width; x++) {
+      const rows = route.cells.flatMap((row, y) =>
+        row[x] === "p" || row[x] === "_" ? [y] : [],
+      );
+      const target = toWorldPixels(
+        route,
+        (x + 0.5) * route.tileSize,
+        ((rows[0]! + rows.at(-1)! + 1) / 2) * route.tileSize,
+      );
+      for (
+        let frame = 0;
+        frame < 90 &&
+        Math.hypot(player.x - target.x, player.y - target.y) > 2.2;
+        frame++
+      ) {
+        walkWorld(
+          world,
+          player,
+          {
+            x:
+              (target.x - player.x) /
+              Math.hypot(target.x - player.x, target.y - player.y),
+            y:
+              (target.y - player.y) /
+              Math.hypot(target.x - player.x, target.y - player.y),
+          },
+          1,
+        );
+      }
+      expect(Math.hypot(player.x - target.x, player.y - target.y)).toBeLessThan(
+        2.3,
+      );
+    }
+    walkWorld(world, player, { x: 1, y: 0 }, 20);
     expect(player.enteredDoorId).toBeNull();
     expect(world.currentRoomId).toBe("01-otel-goticheskii-holl");
   });

@@ -2,6 +2,7 @@ import type { DreamRoom } from "../../../src/shared/room";
 import { addSlot, cloneRoom } from "./box";
 import { EXISTING_ROOMS } from "./existing";
 import { applyStreetMap } from "./map";
+import { applyArtDirection } from "./art-direction";
 import { M5 } from "./m5-odinochestvo";
 import { M6 } from "./m6-krugi";
 import { M7 } from "./m7-rm-rf";
@@ -38,5 +39,6 @@ export function authoredRooms(): DreamRoom[] {
 export function allRooms(): DreamRoom[] {
   const rooms = applyStreetMap(authoredRooms());
   addPreparedPassages(rooms);
+  applyArtDirection(rooms);
   return rooms;
 }

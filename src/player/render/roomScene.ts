@@ -20,7 +20,13 @@
  * and stretched to the whole frame, because it has no edges to speak of.
  */
 
-import { Container, Graphics, Sprite, type Texture } from "pixi.js";
+import {
+  Container,
+  Graphics,
+  Sprite,
+  TilingSprite,
+  type Texture,
+} from "pixi.js";
 
 import { cellAt, type RoomCell } from "../../shared/roomGrid";
 import type { DreamArtifact } from "../../shared/dream";
@@ -36,6 +42,14 @@ import {
 import { lobbyColors, type LobbyColors } from "../lobby/palette";
 import type { RoomState } from "../game/world";
 import { variantFor, type AtlasTextures } from "./atlasTextures";
+import {
+  drawArchitecture,
+  drawArchitecturalDoors,
+  drawPassage,
+  floorMask,
+  hasArchitecture,
+} from "./architecture";
+import { objectArtSize } from "../../shared/art/frame";
 
 const ROLE_BY_CELL: Record<string, string> = {
   wall: "wall",
@@ -146,6 +160,7 @@ export class RoomScene {
     private readonly backdrops: ReadonlyMap<string, Texture>,
     /** Per-hotspot object art, keyed `<roomId>:<hotspotId>`. */
     private readonly objects: ReadonlyMap<string, Texture> = new Map(),
+    private readonly scenery: ReadonlyMap<string, Texture> = new Map(),
   ) {
     this.colors = lobbyColors(artifact);
     this.root = new Container({
@@ -323,7 +338,9 @@ export class RoomScene {
       visible: false,
     });
 
-    const tiles = this.drawTiles(room);
+    const tiles = room.tags.includes("route")
+      ? drawPassage(room, this.scenery)
+      : this.drawTiles(room);
     tiles.zIndex = 0;
     container.addChild(tiles);
 
@@ -331,15 +348,35 @@ export class RoomScene {
     // fallback that keeps a not-yet-drawn room walkable rather than invisible.
     const backdrop = this.backdrops.get(room.id);
     if (backdrop && room.graphics.backdropFit === "cells") {
-      const sprite = new Sprite({
+      const SpriteKind = hasArchitecture(room) ? TilingSprite : Sprite;
+      const sprite = new SpriteKind({
         texture: backdrop,
         roundPixels: true,
         eventMode: "none",
         width: room.width * room.tileSize,
         height: room.height * room.tileSize,
       });
-      sprite.zIndex = 1;
-      container.addChild(sprite);
+      if (sprite instanceof TilingSprite) {
+        const repeatSize = room.tileSize * 8;
+        sprite.tileScale.set(
+          repeatSize / backdrop.width,
+          repeatSize / backdrop.height,
+        );
+      }
+      if (hasArchitecture(room)) {
+        const ground = new Container({
+          label: "shaped-floor",
+          eventMode: "none",
+        });
+        const mask = floorMask(room);
+        ground.addChild(sprite, mask);
+        ground.mask = mask;
+        ground.zIndex = 1;
+        container.addChild(ground);
+      } else {
+        sprite.zIndex = 1;
+        container.addChild(sprite);
+      }
     }
 
     // A mural supplies atmosphere, never geometry. The collision mask and connected
@@ -348,12 +385,16 @@ export class RoomScene {
     const mural =
       muralShowsTheRoom(room.graphics) && this.backdrops.has(room.id);
     if (mural) {
-      const geometry = this.drawGeometryOverlay(room);
+      const geometry = hasArchitecture(room)
+        ? drawArchitecture(room, this.scenery)
+        : this.drawGeometryOverlay(room);
       geometry.zIndex = 1.25;
       container.addChild(geometry);
     }
 
-    const doors = this.drawDoors(room, mural);
+    const doors = hasArchitecture(room)
+      ? drawArchitecturalDoors(room, this.scenery)
+      : this.drawDoors(room, mural);
     doors.zIndex = 1.5;
     container.addChild(doors);
 
@@ -678,7 +719,13 @@ export class RoomScene {
         x: (prop.w * size) / 2,
         y: prop.h * size,
       });
-      sprite.setSize(prop.w * size, prop.h * size);
+      const artSize = objectArtSize(
+        objectTexture.width,
+        objectTexture.height,
+        prop.w * size,
+        (prop.h + (prop.role === "floorDecor" ? 0 : 1)) * size,
+      );
+      sprite.setSize(artSize.width, artSize.height);
       node.addChild(sprite);
       node.x = prop.x * size;
       node.y = prop.y * size;

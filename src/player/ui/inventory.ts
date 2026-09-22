@@ -1,4 +1,5 @@
 /** A live view of carried things and nearby targets, with one command at a time. */
+import { imageFrame, objectArtSize } from "../../shared/art/frame";
 import type { WorldAction } from "../../shared/world-action";
 
 export interface InventoryItem {
@@ -354,11 +355,28 @@ export class InventoryPanel {
       art.setAttribute("aria-hidden", "true");
       art.textContent = "◇";
       if (item.thumbnailUrl) {
-        const image = document.createElement("img");
-        image.alt = "";
-        image.src = item.thumbnailUrl;
-        image.addEventListener("error", () => image.remove());
-        art.appendChild(image);
+        const frame = imageFrame(item.thumbnailUrl);
+        if (frame) {
+          const image = document.createElement("span");
+          const size = objectArtSize(frame.w, frame.h, 42, 42);
+          Object.assign(image.style, {
+            display: "block",
+            width: `${size.width}px`,
+            height: `${size.height}px`,
+            backgroundImage: `url("${frame.path}")`,
+            backgroundSize: `${(frame.sheetW / frame.w) * 100}% ${(frame.sheetH / frame.h) * 100}%`,
+            backgroundPosition: `${(frame.x / Math.max(1, frame.sheetW - frame.w)) * 100}% ${(frame.y / Math.max(1, frame.sheetH - frame.h)) * 100}%`,
+            backgroundRepeat: "no-repeat",
+          });
+          art.textContent = "";
+          art.appendChild(image);
+        } else {
+          const image = document.createElement("img");
+          image.alt = "";
+          image.src = item.thumbnailUrl;
+          image.addEventListener("error", () => image.remove());
+          art.appendChild(image);
+        }
       }
       const details = document.createElement("span");
       details.className = "inventory-item-copy";

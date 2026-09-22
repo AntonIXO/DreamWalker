@@ -53,6 +53,12 @@ export const ROAD_W = 14;
 export const ROAD_H = 10;
 export const STRIDE_X = PLACE_W + ROAD_W;
 export const STRIDE_Y = PLACE_H + ROAD_H;
+// Deliberately uneven blocks: a short courtyard passage, a long avenue, a narrow
+// service lane. These are authored distances, stable for saves and every cycle.
+const EAST_GAPS = [8, 23, 11, 29, 7, 18, 12];
+const SOUTH_GAPS = [7, 16, 9, 23, 12, 8];
+const gapX = (column: number): number => EAST_GAPS[column] ?? ROAD_W;
+const gapY = (row: number): number => SOUTH_GAPS[row] ?? ROAD_H;
 const DOOR_X = 9;
 const DOOR_Y = 5;
 const DOOR_SPAN = 2;
@@ -390,7 +396,11 @@ function punch(room: DreamRoom, door: RoomDoor): void {
 }
 
 function originOf(cell: Cell): { x: number; y: number } {
-  return { x: cell.x * STRIDE_X, y: cell.y * STRIDE_Y };
+  let x = 0;
+  let y = 0;
+  for (let i = 0; i < cell.x; i++) x += PLACE_W + gapX(i);
+  for (let i = 0; i < cell.y; i++) y += PLACE_H + gapY(i);
+  return { x, y };
 }
 
 function titleFor(
@@ -431,10 +441,30 @@ function emptyRoute(
     props: [],
     hotspots: [],
     entries: entries ?? [
-      { id: "from-w", x: 1.5, y: DOOR_Y + 1, facing: "e" },
-      { id: "from-e", x: width - 1.5, y: DOOR_Y + 1, facing: "w" },
-      { id: "from-n", x: DOOR_X + 1, y: 1.5, facing: "s" },
-      { id: "from-s", x: DOOR_X + 1, y: height - 1.5, facing: "n" },
+      {
+        id: "from-w",
+        x: 1.5,
+        y: Math.min(height - 1.5, DOOR_Y + 1),
+        facing: "e",
+      },
+      {
+        id: "from-e",
+        x: width - 1.5,
+        y: Math.min(height - 1.5, DOOR_Y + 1),
+        facing: "w",
+      },
+      {
+        id: "from-n",
+        x: Math.min(width - 1.5, DOOR_X + 1),
+        y: 1.5,
+        facing: "s",
+      },
+      {
+        id: "from-s",
+        x: Math.min(width - 1.5, DOOR_X + 1),
+        y: height - 1.5,
+        facing: "n",
+      },
     ],
     doors: [],
     figureSlots: [],
@@ -599,148 +629,73 @@ function pickUnique(
   return forced.toUpperCase();
 }
 
+function routeCells(
+  id: string,
+  width: number,
+  height: number,
+  start: number,
+  end: number,
+  horizontal: boolean,
+): string[] {
+  const cells = grid(width, height, "t");
+  const rnd = rngOf(id);
+  const length = horizontal ? width : height;
+  const breadth = horizontal ? height : width;
+  const bend = (rnd() < 0.5 ? -1 : 1) * (2 + Math.floor(rnd() * 3));
+  const set = (along: number, across: number, mark: string): void => {
+    paint(
+      cells,
+      horizontal ? along : across,
+      horizontal ? across : along,
+      mark,
+    );
+  };
+  let previous = start;
+  for (let i = 0; i < length; i++) {
+    const t = i / Math.max(1, length - 1);
+    // Flat mouths prevent a diagonal bottleneck at a doorway. The bend only starts
+    // after the walker has crossed the shared room edge.
+    const envelope = i < 2 || i >= length - 2 ? 0 : Math.sin(Math.PI * t) ** 2;
+    const center =
+      i === 0
+        ? start
+        : i === length - 1
+          ? end
+          : Math.max(
+              1,
+              Math.min(
+                breadth - 3,
+                Math.round(start * (1 - t) + end * t + bend * envelope),
+              ),
+            );
+    const lo = Math.min(previous, center);
+    const hi = Math.max(previous, center) + 1;
+    for (let j = lo - 1; j <= hi + 1; j++) {
+      if (j >= 0 && j < breadth) set(i, j, j >= lo && j <= hi ? "p" : "g");
+    }
+    previous = center;
+  }
+  return freeze(cells);
+}
+
 function eastWestCells(
   id: string,
   width: number,
   height: number,
-  yWest: number = DOOR_Y,
-  yEast: number = DOOR_Y,
+  yWest = DOOR_Y,
+  yEast = DOOR_Y,
 ): string[] {
-  const rnd = rngOf(id);
-  const cells = grid(width, height, "t");
-  for (let x = 0; x < width; x++) {
-    const t = width > 1 ? x / (width - 1) : 0;
-    const yCenter = Math.min(
-      height - 3,
-      Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
-    );
-    paint(cells, x, yCenter, "p");
-    paint(cells, x, yCenter + 1, "p");
-  }
-  const variant = Math.floor(rnd() * 4);
-  if (variant === 0) {
-    for (let x = 3; x < width - 3; x++) {
-      const t = x / (width - 1);
-      const yCenter = Math.min(
-        height - 3,
-        Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
-      );
-      for (let y = yCenter - 1; y <= yCenter + 2; y++) {
-        if (y >= 1 && y < height - 1 && cells[y]?.[x] === "t") {
-          paint(cells, x, y, rnd() < 0.35 ? "h" : "g");
-        }
-      }
-    }
-  } else if (variant === 1) {
-    for (let x = 1; x < width - 1; x++) {
-      const t = x / (width - 1);
-      const yCenter = Math.min(
-        height - 3,
-        Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
-      );
-      if (yCenter - 1 >= 1 && cells[yCenter - 1]?.[x] === "t") {
-        paint(cells, x, yCenter - 1, "g");
-      }
-      if (yCenter + 2 < height - 1 && cells[yCenter + 2]?.[x] === "t") {
-        paint(cells, x, yCenter + 2, "g");
-      }
-    }
-  } else if (variant === 2) {
-    const ax = 3 + Math.floor(rnd() * Math.max(1, width - 8));
-    const t = ax / (width - 1);
-    const yCenter = Math.min(
-      height - 3,
-      Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
-    );
-    if (yCenter - 1 >= 1) paint(cells, ax, yCenter - 1, "h");
-    if (yCenter + 2 < height - 1) paint(cells, ax, yCenter + 2, "h");
-  } else {
-    for (let x = 1; x < width - 1; x++) {
-      const t = x / (width - 1);
-      const yCenter = Math.min(
-        height - 3,
-        Math.max(1, Math.round(yWest * (1 - t) + yEast * t)),
-      );
-      if (yCenter - 1 >= 1)
-        paint(cells, x, yCenter - 1, rnd() < 0.35 ? "h" : "g");
-      if (yCenter + 2 < height - 1)
-        paint(cells, x, yCenter + 2, rnd() < 0.35 ? "h" : "g");
-    }
-  }
-  stamp(cells, rnd, width, height);
-  return freeze(cells);
+  return routeCells(id, width, height, yWest, yEast, true);
 }
 
 function northSouthCells(
   id: string,
   width: number,
   height: number,
-  xNorth: number = DOOR_X,
-  xSouth: number = DOOR_X,
+  xNorth = DOOR_X,
+  xSouth = DOOR_X,
 ): string[] {
-  const rnd = rngOf(id);
-  const cells = grid(width, height, "t");
-  for (let y = 0; y < height; y++) {
-    const t = height > 1 ? y / (height - 1) : 0;
-    const xCenter = Math.min(
-      width - 3,
-      Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
-    );
-    paint(cells, xCenter, y, "p");
-    paint(cells, xCenter + 1, y, "p");
-  }
-  const variant = Math.floor(rnd() * 4);
-  if (variant === 0) {
-    for (let y = 2; y < height - 2; y++) {
-      const t = y / (height - 1);
-      const xCenter = Math.min(
-        width - 3,
-        Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
-      );
-      for (let x = xCenter - 1; x <= xCenter + 2; x++) {
-        if (x >= 1 && x < width - 1 && cells[y]?.[x] === "t") {
-          paint(cells, x, y, rnd() < 0.35 ? "h" : "g");
-        }
-      }
-    }
-  } else if (variant === 1) {
-    for (let y = 1; y < height - 1; y++) {
-      const t = y / (height - 1);
-      const xCenter = Math.min(
-        width - 3,
-        Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
-      );
-      if (xCenter - 1 >= 1 && cells[y]?.[xCenter - 1] === "t") {
-        paint(cells, xCenter - 1, y, "g");
-      }
-      if (xCenter + 2 < width - 1 && cells[y]?.[xCenter + 2] === "t") {
-        paint(cells, xCenter + 2, y, "g");
-      }
-    }
-  } else if (variant === 2) {
-    const ay = 2 + Math.floor(rnd() * Math.max(1, height - 6));
-    const t = ay / (height - 1);
-    const xCenter = Math.min(
-      width - 3,
-      Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
-    );
-    if (xCenter - 1 >= 1) paint(cells, xCenter - 1, ay, "h");
-    if (xCenter + 2 < width - 1) paint(cells, xCenter + 2, ay, "h");
-  } else {
-    for (let y = 1; y < height - 1; y++) {
-      const t = y / (height - 1);
-      const xCenter = Math.min(
-        width - 3,
-        Math.max(1, Math.round(xNorth * (1 - t) + xSouth * t)),
-      );
-      if (xCenter - 1 >= 1)
-        paint(cells, xCenter - 1, y, rnd() < 0.35 ? "h" : "g");
-      if (xCenter + 2 < width - 1)
-        paint(cells, xCenter + 2, y, rnd() < 0.35 ? "h" : "g");
-    }
-  }
-  stamp(cells, rnd, width, height);
-  return freeze(cells);
+  return routeCells(id, width, height, xNorth, xSouth, false);
 }
 
 function groveCells(id: string, width: number, height: number): string[] {
@@ -888,18 +843,26 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
       const doorFrom = doorway(room, fromDir);
       const doorTo = doorway(neighbour, toDir);
 
+      const roadWidth = gapX(cell.x);
+      const roadHeight = gapY(cell.y);
       const path =
         dir === "e"
           ? emptyRoute(
               pathId,
               name,
-              ROAD_W,
+              roadWidth,
               PLACE_H,
               origin.x + PLACE_W,
               origin.y,
               uniqueCells(
                 pathId,
-                eastWestCells(pathId, ROAD_W, PLACE_H, doorFrom.y, doorTo.y),
+                eastWestCells(
+                  pathId,
+                  roadWidth,
+                  PLACE_H,
+                  Math.floor(doorFrom.y + (doorFrom.h - 2) / 2),
+                  Math.floor(doorTo.y + (doorTo.h - 2) / 2),
+                ),
                 usedLayouts,
               ),
               [
@@ -911,7 +874,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
                 },
                 {
                   id: "from-e",
-                  x: ROAD_W - 1.5,
+                  x: roadWidth - 1.5,
                   y: doorTo.y + doorTo.h / 2,
                   facing: "w",
                 },
@@ -921,12 +884,18 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
               pathId,
               name,
               PLACE_W,
-              ROAD_H,
+              roadHeight,
               origin.x,
               origin.y + PLACE_H,
               uniqueCells(
                 pathId,
-                northSouthCells(pathId, PLACE_W, ROAD_H, doorFrom.x, doorTo.x),
+                northSouthCells(
+                  pathId,
+                  PLACE_W,
+                  roadHeight,
+                  Math.floor(doorFrom.x + (doorFrom.w - 2) / 2),
+                  Math.floor(doorTo.x + (doorTo.w - 2) / 2),
+                ),
                 usedLayouts,
               ),
               [
@@ -939,11 +908,12 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
                 {
                   id: "from-s",
                   x: doorTo.x + doorTo.w / 2,
-                  y: ROAD_H - 1.5,
+                  y: roadHeight - 1.5,
                   facing: "n",
                 },
               ],
             );
+      if (!wild) path.tags.push("passage:arcade");
       dressRoute(path);
       addDoor(
         room,
@@ -985,7 +955,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             toId: neighbour.id,
             dir: "e",
             toEntry: "from-w",
-            rect: { x: ROAD_W - 1, y: doorTo.y, w: 1, h: doorTo.h },
+            rect: { x: roadWidth - 1, y: doorTo.y, w: 1, h: doorTo.h },
           }),
         );
       } else {
@@ -1006,7 +976,7 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             toId: neighbour.id,
             dir: "s",
             toEntry: "from-n",
-            rect: { x: doorTo.x, y: ROAD_H - 1, w: doorTo.w, h: 1 },
+            rect: { x: doorTo.x, y: roadHeight - 1, w: doorTo.w, h: 1 },
           }),
         );
       }
@@ -1028,6 +998,8 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
   if (Number.isFinite(minX)) {
     for (let y = minY; y <= maxY; y++) {
       for (let x = minX; x <= maxX; x++) {
+        const roadWidth = gapX(x);
+        const roadHeight = gapY(y);
         const hasPlace = at.has(`${x},${y}`);
         const hasEast = at.has(`${x + 1},${y}`);
         const hasSouth = at.has(`${x},${y + 1}`);
@@ -1036,13 +1008,17 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
           const woods = emptyRoute(
             `woods-${x}-${y}`,
             titleFor("grove", `woods-${x}-${y}`, usedTitles),
-            STRIDE_X,
-            STRIDE_Y,
+            PLACE_W + roadWidth,
+            PLACE_H + roadHeight,
             origin.x,
             origin.y,
             uniqueCells(
               `woods-${x}-${y}`,
-              groveCells(`woods-${x}-${y}`, STRIDE_X, STRIDE_Y),
+              groveCells(
+                `woods-${x}-${y}`,
+                PLACE_W + roadWidth,
+                PLACE_H + roadHeight,
+              ),
               usedLayouts,
             ),
           );
@@ -1054,13 +1030,13 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
           const gap = emptyRoute(
             `gap-${x}-${y}-e`,
             titleFor("grove", `gap-${x}-${y}-e`, usedTitles),
-            ROAD_W,
+            roadWidth,
             PLACE_H,
             origin.x + PLACE_W,
             origin.y,
             uniqueCells(
               `gap-${x}-${y}-e`,
-              groveCells(`gap-${x}-${y}-e`, ROAD_W, PLACE_H),
+              groveCells(`gap-${x}-${y}-e`, roadWidth, PLACE_H),
               usedLayouts,
             ),
           );
@@ -1072,12 +1048,12 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
             `gap-${x}-${y}-s`,
             titleFor("grove", `gap-${x}-${y}-s`, usedTitles),
             PLACE_W,
-            ROAD_H,
+            roadHeight,
             origin.x,
             origin.y + PLACE_H,
             uniqueCells(
               `gap-${x}-${y}-s`,
-              groveCells(`gap-${x}-${y}-s`, PLACE_W, ROAD_H),
+              groveCells(`gap-${x}-${y}-s`, PLACE_W, roadHeight),
               usedLayouts,
             ),
           );
@@ -1087,13 +1063,13 @@ export function applyStreetMap(rooms: readonly DreamRoom[]): DreamRoom[] {
         const corner = emptyRoute(
           `gap-${x}-${y}-se`,
           titleFor("grove", `gap-${x}-${y}-se`, usedTitles),
-          ROAD_W,
-          ROAD_H,
+          roadWidth,
+          roadHeight,
           origin.x + PLACE_W,
           origin.y + PLACE_H,
           uniqueCells(
             `gap-${x}-${y}-se`,
-            groveCells(`gap-${x}-${y}-se`, ROAD_W, ROAD_H),
+            groveCells(`gap-${x}-${y}-se`, roadWidth, roadHeight),
             usedLayouts,
           ),
         );

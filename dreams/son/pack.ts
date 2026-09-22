@@ -21,6 +21,7 @@ import {
   TITLE,
 } from "./meta";
 import { allRooms } from "./rooms/catalog";
+import { SCENE_ART } from "./rooms/art-direction";
 import { kurtScript } from "./scripts/kurt";
 import { m5Script } from "./scripts/m5";
 import { m6Script } from "./scripts/m6";
@@ -86,6 +87,7 @@ export function sonArtifact(): DreamArtifact {
 
 export const sonPack: DreamPack = {
   artifact: sonArtifact,
+  sceneAssets: SCENE_ART,
   scripts: SCRIPTS,
   npcs: NPCS,
 };

@@ -278,6 +278,14 @@ async function boot(): Promise<void> {
   );
 
   const world = createWorld(artifact);
+  const sceneTextures = await loadExternalTextures(
+    DREAM_URL,
+    Object.entries(sonPack.sceneAssets ?? {}).map(([id, path]) => ({
+      id,
+      path,
+    })),
+    { concurrency: 2, scaleMode: "linear" },
+  );
   let trainingRun = false;
   const background =
     artifact.palette.colors[artifact.palette.roles.background] ?? "#000000";
@@ -342,6 +350,7 @@ async function boot(): Promise<void> {
     atlas,
     backdropTextures,
     objectTextures,
+    sceneTextures,
   );
   worldRoot.addChild(rooms.root);
   // A meta-space's picture has no edges and must not move with the camera.
@@ -353,6 +362,7 @@ async function boot(): Promise<void> {
     figureTextures,
     objectTextures,
     figureWalks,
+    sceneTextures.get("unknown-object") ?? null,
   );
   worldRoot.addChild(actors.root);
 
@@ -507,11 +517,13 @@ async function boot(): Promise<void> {
       (interest) =>
         (!world.objectById.has(interest.id) ||
           (world.objectById.get(interest.id)?.mobility === "fixed" &&
+            !world.objectById.get(interest.id)?.visual.image &&
             world.objectById.get(interest.id)?.location.kind === "room")) &&
         (rooms.shown.has(interest.roomId) ||
           interest.roomId === world.currentRoomId),
     );
 
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const syncLiveLayer = (): void => {
     const room = currentRoom(world);
     const objects = liveObjects(world);
@@ -519,7 +531,9 @@ async function boot(): Promise<void> {
       objects
         .filter(
           (object) =>
-            object.mobility !== "fixed" || object.location.kind !== "room",
+            object.mobility !== "fixed" ||
+            !!object.visual.image ||
+            object.location.kind !== "room",
         )
         .map((object) => object.id),
     );
@@ -545,6 +559,10 @@ async function boot(): Promise<void> {
       ),
       room.tileSize,
       world,
+      {
+        seconds: app.ticker.lastTime / 1000,
+        reducedMotion: reducedMotion.matches,
+      },
     );
   };
 
